@@ -18,7 +18,7 @@ jobs:
           echo API_SALES_HANDLER=${{ secrets.API_SALES_HANDLER }} >> .env
       - uses: actions/setup-node@master
         with:
-          node-version: 14.15.0
+          node-version: 16.2.0
       - name: install node tools
         run: npm install --global --production windows-build-tools@4.0.0
       - name: install node-gyp
