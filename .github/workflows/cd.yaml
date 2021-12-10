@@ -1,0 +1,39 @@
+name: CD
+on:
+  push:
+    branches: [master]
+jobs:
+  build_on_win:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - name: create env-config
+        run: |
+         echo API_DASH=${{ secrets.API_DASH }} > .env
+         echo NFCe_Token=${{ secrets.NFCE_Token }} >> .env
+         echo NFCe_AMBIENTE=${{ secrets.NFCE_AMBIENTE }} >> .env
+         echo API_LOG= ${{ secrets.API_LOG }} >> .env 
+         echo API_AUTH=${{ secrets.API_AUTH }} >> .env
+         echo CHAT_DASH=${{ secrets.CHAT_DASH }} >> .env
+         echo API_SALES_HANDLER=${{ secrets.API_SALES_HANDLER }} >> .env
+      - uses: actions/setup-node@master
+        with:
+          node-version: 14.15.0
+      - name: install node tools
+        run: npm install --global --production windows-build-tools@4.0.0
+      - name: install node-gyp
+        run: npm install --global node-gyp@latest
+      - name: Set node config to use python2.7
+        run: npm config set python python2.7
+      - name: Set node config to set msvs_version to 2019
+        run: npm config set msvs_version 2019
+      - uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x64
+      - name: Install dependencies
+        run: yarn install --network-timeout 600000
+      - name: Build Electron
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: yarn deploy
