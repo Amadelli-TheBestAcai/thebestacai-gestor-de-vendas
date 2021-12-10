@@ -16,6 +16,7 @@ jobs:
           echo API_AUTH=${{ secrets.API_AUTH }} >> .env
           echo CHAT_DASH=${{ secrets.CHAT_DASH }} >> .env
           echo API_SALES_HANDLER=${{ secrets.API_SALES_HANDLER }} >> .env
+          echo SKIP_PREFLIGHT_CHECK=true >> .env
       - uses: actions/setup-node@master
         with:
           node-version: 16.2.0
