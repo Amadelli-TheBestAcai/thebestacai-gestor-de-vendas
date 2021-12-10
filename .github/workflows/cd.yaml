@@ -1,7 +1,7 @@
 name: CD
 on:
   push:
-    branches: [master]
+    branches: [main]
 jobs:
   build_on_win:
     runs-on: windows-2019
@@ -9,13 +9,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: create env-config
         run: |
-         echo API_DASH=${{ secrets.API_DASH }} > .env
-         echo NFCe_Token=${{ secrets.NFCE_Token }} >> .env
-         echo NFCe_AMBIENTE=${{ secrets.NFCE_AMBIENTE }} >> .env
-         echo API_LOG= ${{ secrets.API_LOG }} >> .env 
-         echo API_AUTH=${{ secrets.API_AUTH }} >> .env
-         echo CHAT_DASH=${{ secrets.CHAT_DASH }} >> .env
-         echo API_SALES_HANDLER=${{ secrets.API_SALES_HANDLER }} >> .env
+          echo API_DASH=${{ secrets.API_DASH }} > .env
+          echo NFCe_Token=${{ secrets.NFCE_Token }} >> .env
+          echo NFCe_AMBIENTE=${{ secrets.NFCE_AMBIENTE }} >> .env
+          echo API_LOG= ${{ secrets.API_LOG }} >> .env 
+          echo API_AUTH=${{ secrets.API_AUTH }} >> .env
+          echo CHAT_DASH=${{ secrets.CHAT_DASH }} >> .env
+          echo API_SALES_HANDLER=${{ secrets.API_SALES_HANDLER }} >> .env
       - uses: actions/setup-node@master
         with:
           node-version: 14.15.0
@@ -35,5 +35,5 @@ jobs:
       - name: Build Electron
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          NODE_OPTIONS: '--max_old_space_size=4096'
+          NODE_OPTIONS: "--max_old_space_size=4096"
         run: yarn deploy
