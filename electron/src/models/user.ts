@@ -17,8 +17,9 @@ type Entity = {
 };
 
 class User extends BaseRepository<Entity> {
-  constructor(storageName = "User", conn = database.getConnection()) {
-    super(storageName, conn);
+  loggedUser: Entity | null = null;
+  constructor(storageName = "User") {
+    super(storageName);
     console.log("CurrentUser ready");
   }
 
@@ -40,9 +41,9 @@ class User extends BaseRepository<Entity> {
       token: access_token,
       is_actived: true,
     };
+    this.loggedUser = userPayload;
 
     let users = await this.getAll();
-
     users = users.map((_user) => ({
       ..._user,
       is_actived: false,

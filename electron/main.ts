@@ -3,7 +3,6 @@ import * as path from "path";
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-import database from "./src/providers/database";
 import { inicializeControllers } from "./src/controllers";
 
 function createWindow() {
@@ -48,7 +47,6 @@ app.whenReady().then(async () => {
     .catch((err) => console.log("An error occurred: ", err));
 
   createWindow();
-  await database.init();
   inicializeControllers();
 
   app.on("activate", () => {

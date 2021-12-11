@@ -7,21 +7,14 @@ const Login: React.FC = () => {
     <Container>
       <Button
         onClick={async () =>
-          console.log(
-            await window.Main.send(
-              "user:login",
-              (user: any) => console.log(user),
-              {
-                username: "admin",
-                password: "123456",
-              }
-            )
-          )
+          console.log(await window.Main.user.login("admin", "123456"))
         }
       >
         Login
       </Button>
-      <Button>Get User</Button>
+      <Button onClick={() => console.log(window.Main.user.loggedUser())}>
+        Get User
+      </Button>
     </Container>
   );
 };
