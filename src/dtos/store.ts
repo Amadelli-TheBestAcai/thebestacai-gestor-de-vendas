@@ -1,9 +1,4 @@
-import { BaseRepository } from "../repository/baseRepository";
-import { checkInternet } from "../providers/internetConnection";
-import janusApi from "../providers/janusApi";
-import user from "../models/user";
-
-export type Entity = {
+export type Store = {
   id: number;
   user_id: number;
   company_id: number;
@@ -58,34 +53,3 @@ export type Entity = {
     deleted_at: Date;
   };
 };
-
-class Store extends BaseRepository<Entity> {
-  registratedStore: Entity | null = null;
-  constructor(storageName = "Store") {
-    super(storageName);
-  }
-
-  async hasRegistration(): Promise<Entity | undefined> {
-    const store = await this.getOne();
-    if (!store) {
-      return undefined;
-    }
-    this.registratedStore = store;
-    return store;
-  }
-
-  async getFromApi(): Promise<Entity[]> {
-    const hasInternet = await checkInternet();
-    if (!hasInternet) {
-      return [];
-    }
-
-    const {
-      data: { content },
-    } = await janusApi.get(`/companyUser/${user.loggedUser?.id}/user`);
-
-    return content;
-  }
-}
-
-export default new Store();

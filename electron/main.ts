@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, screen } from "electron";
 import * as path from "path";
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -6,23 +6,23 @@ import installExtension, {
 import { inicializeControllers } from "./src/controllers";
 
 function createWindow() {
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   const win = new BrowserWindow({
-    width: 1000,
-    height: 800,
+    width,
+    height,
+    resizable: false,
+    backgroundColor: "#191622",
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
     },
   });
-
   if (app.isPackaged) {
     // 'build/index.html'
     win.loadURL(`file://${__dirname}/../index.html`);
   } else {
     win.loadURL("http://localhost:3000/index.html");
-
-    win.webContents.openDevTools();
 
     // Hot Reloading on 'node_modules/.bin/electronPath'
     require("electron-reload")(__dirname, {

@@ -24,6 +24,7 @@ interface RouteWithLayoutProps extends RouteProps {
 
 const Routes = () => (
   <Switch>
+    <Route exact path="/home" component={Home} />
     <Route path="*" component={Login} />
   </Switch>
 );

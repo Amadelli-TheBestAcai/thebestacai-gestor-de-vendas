@@ -4,7 +4,7 @@ import janusApi from "../providers/janusApi";
 import criptography from "../providers/Criptography";
 import { checkInternet } from "../providers/internetConnection";
 
-type Entity = {
+export type Entity = {
   id: number;
   username: string;
   password: string;
@@ -59,6 +59,7 @@ class User extends BaseRepository<Entity> {
       } else {
         await this.createMany([...users, userPayload]);
       }
+
       return userPayload;
     } else {
       let users = await this.getAll();

@@ -1,8 +1,4 @@
-import { BaseRepository } from "../repository/baseRepository";
-import { checkInternet } from "../providers/internetConnection";
-import odinApi from "../providers/odinApi";
-
-export type Entity = {
+export type Product = {
   id: number;
   product_id?: number;
   product: {
@@ -53,27 +49,3 @@ export type Entity = {
   aliquot_final_consumer?: string;
   quantity?: number;
 };
-
-class Product extends BaseRepository<Entity> {
-  loggedUser: Entity | null = null;
-  constructor(storageName = "Product") {
-    super(storageName);
-  }
-
-  async getAll(): Promise<Entity[]> {
-    const hasInternet = await checkInternet();
-    if (hasInternet) {
-      const store = { store_id: 1 }; //await this._storeRepository.findCurrent();
-      const {
-        data: { content },
-      } = await odinApi.get(`products_store/store/${store.store_id}`);
-      await this.clear();
-      await this.createMany(content);
-      return content;
-    } else {
-      return await this.getAll();
-    }
-  }
-}
-
-export default new Product();

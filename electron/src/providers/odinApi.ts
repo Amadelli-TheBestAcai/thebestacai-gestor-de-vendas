@@ -1,7 +1,7 @@
 import axios from "axios";
 import userModel from "../models/user";
-
-const API_URL = "https://hml-thebestacai-api.herokuapp.com";
+import env from "./env.json";
+const API_URL = env.API_DASH;
 
 console.log(API_URL);
 const api = axios.create({

@@ -57,7 +57,7 @@ export abstract class BaseRepository<T extends { id?: string | number }>
 
   async getOne(): Promise<T | undefined> {
     const response = await database.getConnection().getItem(this.storageName);
-    return response[0] || undefined;
+    return (response && response[0]) || undefined;
   }
 
   async clear(): Promise<void> {
