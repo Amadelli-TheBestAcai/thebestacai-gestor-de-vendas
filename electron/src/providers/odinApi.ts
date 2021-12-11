@@ -1,10 +1,9 @@
 import axios from "axios";
 import userModel from "../models/user";
 
-const API_URL = "https://hml-authenticator-api.herokuapp.com";
+const API_URL = "https://hml-thebestacai-api.herokuapp.com";
 
 console.log(API_URL);
-
 const api = axios.create({
   baseURL: API_URL,
   responseType: "json",

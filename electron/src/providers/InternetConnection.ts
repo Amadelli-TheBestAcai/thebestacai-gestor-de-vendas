@@ -1,10 +1,9 @@
-import axios from "axios";
+//@ts-ignore
+import fetch from "node-fetch";
 
 export const checkInternet = async (): Promise<boolean> => {
   try {
-    await axios({
-      url: "https://www.google.com",
-    });
+    await fetch("https://www.google.com");
     return true;
   } catch (err) {
     return false;

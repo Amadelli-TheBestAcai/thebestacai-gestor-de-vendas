@@ -1,7 +1,8 @@
 import { BaseRepository } from "../repository/baseRepository";
 import jwt_decode from "jwt-decode";
-import database from "../providers/database";
 import janusApi from "../providers/janusApi";
+import criptography from "../providers/Criptography";
+import { checkInternet } from "../providers/internetConnection";
 
 type Entity = {
   id: number;
@@ -20,48 +21,72 @@ class User extends BaseRepository<Entity> {
   loggedUser: Entity | null = null;
   constructor(storageName = "User") {
     super(storageName);
-    console.log("CurrentUser ready");
-  }
-
-  batata(): void {
-    console.log("batata");
   }
 
   async login(username: string, password: string): Promise<Entity | undefined> {
-    const {
-      data: { access_token },
-    } = await janusApi.post("user/login", { username, password });
-    if (!access_token) {
-      return undefined;
-    }
-    const userPayload = {
-      ...jwt_decode<Entity>(access_token),
-      username,
-      password,
-      token: access_token,
-      is_actived: true,
-    };
-    this.loggedUser = userPayload;
+    const hasInternet = await checkInternet();
+    if (hasInternet) {
+      const {
+        data: { access_token },
+      } = await janusApi.post("user/login", { username, password });
+      if (!access_token) {
+        return undefined;
+      }
 
-    let users = await this.getAll();
-    users = users.map((_user) => ({
-      ..._user,
-      is_actived: false,
-      token: access_token,
-    }));
+      const hashedPassword = await criptography.hash(password);
+      const userPayload = {
+        ...jwt_decode<Entity>(access_token),
+        username,
+        password: hashedPassword,
+        token: access_token,
+        is_actived: true,
+      };
+      this.loggedUser = userPayload;
 
-    const userIndex = users.findIndex(
-      (_user) => _user.username === username && _user.password === password
-    );
+      let users = await this.getAll();
+      users = users.map((_user) => ({
+        ..._user,
+        is_actived: false,
+      }));
 
-    if (userIndex >= 0) {
-      users[userIndex] = userPayload;
-      await this.createMany(users);
+      const userIndex = users.findIndex(
+        (_user) => _user.email === userPayload.email
+      );
+
+      if (userIndex >= 0) {
+        users[userIndex] = userPayload;
+        await this.createMany(users);
+      } else {
+        await this.createMany([...users, userPayload]);
+      }
+      return userPayload;
     } else {
-      await this.createMany([...users, userPayload]);
-    }
+      let users = await this.getAll();
+      users = users.map((_user) => ({
+        ..._user,
+        is_actived: false,
+      }));
 
-    return userPayload;
+      const userIndex = users.findIndex((_user) => _user.username === username);
+
+      if (userIndex < 0) {
+        return undefined;
+      }
+
+      const samePassword = await criptography.compare(
+        password,
+        users[userIndex].password
+      );
+      if (!samePassword) {
+        return undefined;
+      }
+
+      users[userIndex].is_actived = true;
+      this.loggedUser = users[userIndex];
+      await this.createMany(users);
+
+      return users[userIndex];
+    }
   }
 
   async get(): Promise<Entity | undefined> {
