@@ -11,10 +11,12 @@ export abstract class BaseRepository<T extends { id?: string | number }>
   }
 
   async create(payload: T): Promise<void> {
-    await database.getConnection().updateItem(this.storageName, {
-      ...payload,
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-    });
+    await database.getConnection().updateItem(this.storageName, [
+      {
+        ...payload,
+        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      },
+    ]);
   }
 
   async createMany(payload: T[]): Promise<void> {
@@ -51,6 +53,11 @@ export abstract class BaseRepository<T extends { id?: string | number }>
   async getAll(): Promise<T[]> {
     const response = await database.getConnection().getItem(this.storageName);
     return response || [];
+  }
+
+  async getOne(): Promise<T | undefined> {
+    const response = await database.getConnection().getItem(this.storageName);
+    return response[0] || undefined;
   }
 
   async clear(): Promise<void> {

@@ -12,7 +12,9 @@ const Login: React.FC = () => {
       >
         Login
       </Button>
-      <Button onClick={() => console.log(window.Main.user.loggedUser())}>
+      <Button
+        onClick={async () => console.log(await window.Main.store.getFromApi())}
+      >
         Get User
       </Button>
     </Container>

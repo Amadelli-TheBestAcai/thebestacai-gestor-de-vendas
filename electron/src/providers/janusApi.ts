@@ -10,8 +10,8 @@ const api = axios.create({
   responseType: "json",
 });
 
-api.interceptors.request.use(async (config) => {
-  const token = userModel.loggedUser;
+api.interceptors.request.use((config) => {
+  const token = userModel.loggedUser?.token;
   if (token) {
     //@ts-ignore
     config.headers.Authorization = `Bearer ${token}`;

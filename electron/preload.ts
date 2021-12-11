@@ -1,6 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron";
 import database from "./src/providers/database";
 import { userFactory } from "./src/factories/userFactory";
+import { storeFactory } from "./src/factories/storeFactory";
+import { productFactory } from "./src/factories/productFactory";
 
 export const api = {
   send: (channel: string, func: Function, data: any) => {
@@ -14,5 +16,7 @@ export const api = {
     ipcRenderer.once(channel, (_, data) => callback(data)),
   db_init: async () => await database.init(),
   user: userFactory,
+  store: storeFactory,
+  product: productFactory,
 };
 contextBridge.exposeInMainWorld("Main", { ...api });

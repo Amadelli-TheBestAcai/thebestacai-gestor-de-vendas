@@ -5,5 +5,6 @@ export interface IBaseRepository<T> {
   deleteById(id: string | number): Promise<void>;
   update(id: string | number, payload: T): Promise<void>;
   getAll(): Promise<T[]>;
+  getOne(): Promise<T | undefined>;
   clear(): Promise<void>;
 }
