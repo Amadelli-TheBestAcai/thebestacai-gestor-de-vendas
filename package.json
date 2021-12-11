@@ -7,7 +7,12 @@
   "main": "build/electron/main.js",
   "dependencies": {
     "antd": "^4.17.3",
+    "axios": "^0.24.0",
+    "electron-devtools-installer": "^3.2.0",
     "electron-updater": "^4.6.1",
+    "jwt-decode": "^3.1.2",
+    "moment": "^2.29.1",
+    "node-persist": "^3.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hotkeys": "^2.0.0",
@@ -24,8 +29,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "postinstall": "electron-builder install-app-deps",
-    "electron:dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
-    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish never",
+    "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
+    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish always",
     "eject": "react-scripts eject"
   },
   "build": {
@@ -43,6 +48,9 @@
     "files": [
       "build/**/*"
     ],
+    "extraResources": [
+      ".env"
+    ],
     "directories": {
       "buildResources": "assets"
     }
@@ -50,7 +58,9 @@
   "devDependencies": {
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/jest": "^27.0.2",
+    "@types/moment": "^2.13.0",
     "@types/node": "^16.11.7",
+    "@types/node-persist": "^3.1.2",
     "@types/react": "^17.0.35",
     "@types/react-dom": "^17.0.11",
     "@types/react-router-dom": "^5.3.2",
@@ -59,7 +69,6 @@
     "cross-env": "^7.0.3",
     "electron": "^16.0.0",
     "electron-builder": "22.10.5",
-    "electron-devtools-installer": "^3.2.0",
     "electron-reload": "^1.5.0",
     "eslint": "^8.4.1",
     "typescript": "^4.5.2",

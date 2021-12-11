@@ -3,13 +3,16 @@ import * as path from "path";
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
+import database from "./src/providers/database";
+import { inicializeControllers } from "./src/controllers";
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 1000,
     height: 800,
     webPreferences: {
-      // contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
     },
   });
@@ -38,13 +41,15 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // DevTools
   installExtension(REACT_DEVELOPER_TOOLS)
     .then((name) => console.log(`Added Extension:  ${name}`))
     .catch((err) => console.log("An error occurred: ", err));
 
   createWindow();
+  await database.init();
+  inicializeControllers();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

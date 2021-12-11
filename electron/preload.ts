@@ -1,14 +1,10 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 export const api = {
-  sendMessage: (message: string) => {
-    console.log(message);
-    ipcRenderer.send("message", message);
-  },
-
-  on: (channel: string, callback: Function) => {
-    ipcRenderer.on(channel, (_, data) => callback(data));
+  send: (channel: string, func: Function, data: any) => {
+    ipcRenderer.send(channel, data);
+    ipcRenderer.once(`${channel}:response`, (_, ...args) => func(...args));
   },
 };
 
-contextBridge.exposeInMainWorld("Main", api);
+contextBridge.exposeInMainWorld("Main", { ...api });
