@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": "Wirlley Delfino",
   "description": "React-TypeScript-Electron sample with Create React App and Electron Builder",
   "homepage": ".",
@@ -10,7 +10,6 @@
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
-    "electron-devtools-installer": "^3.2.0",
     "electron-updater": "^4.6.1",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
@@ -74,6 +73,7 @@
     "@types/react-router-dom": "^5.3.2",
     "@types/serialport": "^8.0.1",
     "@types/styled-components": "^5.1.17",
+    "electron-devtools-installer": "^3.2.0",
     "concurrently": "^6.4.0",
     "cross-env": "^7.0.3",
     "electron": "^16.0.0",
