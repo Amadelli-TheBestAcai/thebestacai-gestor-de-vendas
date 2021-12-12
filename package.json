@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "author": "Wirlley Delfino",
   "description": "React-TypeScript-Electron sample with Create React App and Electron Builder",
   "homepage": ".",
@@ -13,6 +13,7 @@
     "electron-updater": "^4.6.1",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
+    "node-abi": "^3.5.0",
     "node-fetch": "2.6.1",
     "node-persist": "^3.1.0",
     "node-thermal-printer": "^4.1.2",
@@ -73,15 +74,18 @@
     "@types/react-router-dom": "^5.3.2",
     "@types/serialport": "^8.0.1",
     "@types/styled-components": "^5.1.17",
-    "electron-devtools-installer": "^3.2.0",
     "concurrently": "^6.4.0",
     "cross-env": "^7.0.3",
     "electron": "^16.0.0",
     "electron-builder": "22.10.5",
+    "electron-devtools-installer": "^3.2.0",
     "electron-reload": "^1.5.0",
     "eslint": "^8.4.1",
     "typescript": "^4.5.2",
     "wait-on": "^6.0.0"
+  },
+  "resolutions": {
+    "node-abi": "^3.5.0"
   },
   "browserslist": {
     "production": [
