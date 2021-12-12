@@ -1,4 +1,4 @@
-export type Store = {
+export type StoreDto = {
   id: number;
   user_id: number;
   company_id: number;

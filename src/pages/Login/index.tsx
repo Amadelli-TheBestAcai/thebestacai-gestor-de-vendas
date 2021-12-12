@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { Store } from "../../dtos/store";
-import { message, Form, Modal, Row, Progress } from "antd";
+import { StoreDto } from "../../models/dtos/store";
+import { message, Form } from "antd";
 import {
   Container,
   FormContainer,
@@ -27,7 +27,7 @@ const Login: React.FC<IProps> = ({ history }) => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<number>(1);
   const [store, setStore] = useState<number | undefined>(undefined);
-  const [stores, setStores] = useState<Store[]>([]);
+  const [stores, setStores] = useState<StoreDto[]>([]);
 
   const handleState = ({ target: { name, value } }: any) =>
     setUser((oldValues) => ({ ...oldValues, [name]: value }));

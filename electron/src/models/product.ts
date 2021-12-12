@@ -60,7 +60,7 @@ class Product extends BaseRepository<Entity> {
     super(storageName);
   }
 
-  async getAll(): Promise<Entity[]> {
+  async getProducts(): Promise<Entity[]> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       const store = { store_id: 1 }; //await this._storeRepository.findCurrent();
@@ -73,6 +73,11 @@ class Product extends BaseRepository<Entity> {
     } else {
       return await this.getAll();
     }
+  }
+
+  async getSelfService(): Promise<Entity | undefined> {
+    const products = await this.getAll();
+    return products.find((_product) => _product.product.category_id === 1);
   }
 }
 

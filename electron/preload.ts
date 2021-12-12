@@ -1,11 +1,11 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, app } from "electron";
 import database from "./src/providers/database";
 import { userFactory } from "./src/factories/userFactory";
 import { storeFactory } from "./src/factories/storeFactory";
 import { productFactory } from "./src/factories/productFactory";
 
 export const api = {
-  send: (channel: string, func: Function, data: any) => {
+  send: (channel: string, func: Function, data?: any) => {
     ipcRenderer.send(channel, data);
     ipcRenderer.once(`${channel}:response`, (_, ...args) => func(...args));
   },

@@ -1,4 +1,4 @@
-export type Product = {
+export type ProductDto = {
   id: number;
   product_id?: number;
   product: {

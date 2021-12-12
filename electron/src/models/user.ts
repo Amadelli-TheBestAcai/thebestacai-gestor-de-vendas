@@ -94,6 +94,14 @@ class User extends BaseRepository<Entity> {
     const users = await this.getAll();
     return users.find((_user) => _user.is_actived);
   }
+
+  hasPermission(permission: string): boolean {
+    return this.loggedUser
+      ? this.loggedUser.permissions.some(
+          (_permission) => _permission === permission
+        )
+      : false;
+  }
 }
 
 export default new User();

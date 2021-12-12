@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from "electron";
+import { app, BrowserWindow, screen, ipcMain } from "electron";
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
 
@@ -52,4 +52,8 @@ app.whenReady().then(async () => {
       app.quit();
     }
   });
+});
+
+ipcMain.on("app_version", (event) => {
+  event.sender.send("app_version:response", app.getVersion());
 });

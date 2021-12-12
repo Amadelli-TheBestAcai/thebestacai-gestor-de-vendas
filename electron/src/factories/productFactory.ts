@@ -1,5 +1,6 @@
 import productModel from "../models/product";
 
 export const productFactory = {
-  getAll: async () => await productModel.getAll(),
+  getProducts: async () => await productModel.getProducts(),
+  getSelfService: async () => await productModel.getSelfService(),
 };
