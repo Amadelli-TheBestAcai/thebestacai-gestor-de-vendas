@@ -1,8 +1,5 @@
-import { app, BrowserWindow, ipcMain, screen } from "electron";
+import { app, BrowserWindow, screen } from "electron";
 import * as path from "path";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
 import { inicializeControllers } from "./src/controllers";
 
 function createWindow() {
@@ -41,12 +38,6 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  // DevTools
-  if (!app.isPackaged) {
-    installExtension(REACT_DEVELOPER_TOOLS)
-      .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log("An error occurred: ", err));
-  }
   createWindow();
   inicializeControllers();
 
@@ -61,8 +52,4 @@ app.whenReady().then(async () => {
       app.quit();
     }
   });
-});
-
-ipcMain.on("message", (_, message) => {
-  console.log(message);
 });
