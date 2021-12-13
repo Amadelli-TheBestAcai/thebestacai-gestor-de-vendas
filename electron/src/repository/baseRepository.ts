@@ -40,7 +40,7 @@ export abstract class BaseRepository<T extends { id?: string | number }>
     await database.getConnection().setItem(this.storageName, response);
   }
 
-  async update(id: string | number, payload: T): Promise<void> {
+  async update(id: string | number, payload: T): Promise<T> {
     const data: T[] = await database.getConnection().getItem(this.storageName);
     const entityIndex = data.findIndex((_entity) => _entity.id === id);
     data[entityIndex] = {
@@ -48,6 +48,7 @@ export abstract class BaseRepository<T extends { id?: string | number }>
       ...payload,
     };
     await database.getConnection().setItem(this.storageName, data);
+    return data[entityIndex];
   }
 
   async getAll(): Promise<T[]> {

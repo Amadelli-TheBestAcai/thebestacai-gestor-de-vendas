@@ -7,14 +7,15 @@ export type Entity = {
   product_id?: number;
   product: {
     id: number;
-    name?: string;
-    category_id?: number;
+    name: string;
+    category_id: number;
     category: {
       id: number;
-      name?: string;
+      name: string;
       sort?: number;
+      created_at?: string;
+      deleted_at?: string;
     };
-    product_store_id?: number;
     price_buy?: string;
     permission_store?: boolean;
     permission_order?: boolean;
@@ -26,6 +27,8 @@ export type Entity = {
     weight?: string;
     price_sell?: string;
     description?: string;
+    created_at?: string;
+    deleted_at?: string;
   };
   store_id?: number;
   price_unit?: string;
@@ -52,6 +55,8 @@ export type Entity = {
   redution_icms?: string;
   aliquot_final_consumer?: string;
   quantity?: number;
+  created_at: string;
+  deleted_at?: string;
 };
 
 class Product extends BaseRepository<Entity> {

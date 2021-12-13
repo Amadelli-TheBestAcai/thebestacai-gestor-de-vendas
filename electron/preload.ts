@@ -1,8 +1,9 @@
-import { contextBridge, ipcRenderer, app } from "electron";
+import { contextBridge, ipcRenderer } from "electron";
 import database from "./src/providers/database";
 import { userFactory } from "./src/factories/userFactory";
 import { storeFactory } from "./src/factories/storeFactory";
 import { productFactory } from "./src/factories/productFactory";
+import { saleFactory } from "./src/factories/saleFactory";
 
 export const api = {
   send: (channel: string, func: Function, data?: any) => {
@@ -18,5 +19,6 @@ export const api = {
   user: userFactory,
   store: storeFactory,
   product: productFactory,
+  sale: saleFactory,
 };
 contextBridge.exposeInMainWorld("Main", { ...api });
