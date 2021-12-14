@@ -6,6 +6,7 @@ import Items from "../../containers/Items";
 import Payments from "../../containers/Payments";
 
 import Spinner from "../../components/Spinner";
+import Register from "../../components/Register";
 
 import { ProductDto } from "../../models/dtos/product";
 import { SaleDto } from "../../models/dtos/sale";
@@ -32,6 +33,7 @@ const Home: React.FC = () => {
   const [paymentType, setPaymentType] = useState(0);
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
+  const [savingSale, setSavingSale] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -81,6 +83,28 @@ const Home: React.FC = () => {
     setPaymentModalTitle(title);
   };
 
+  const registerSale = async () => {
+    if (savingSale) {
+      return;
+    }
+
+    if (!sale.items.length) {
+      return message.warning("Nenhum item cadastrado para a venda");
+    }
+
+    if (
+      +(sale.total_sold.toFixed(2) || 0) >
+      sale.total_paid + (sale.discount || 0) + 0.5
+    ) {
+      return message.warning("Pagamento inválido");
+    }
+
+    setSavingSale(true);
+    const _newSale = await window.Main.sale.finishSale();
+    setSale(_newSale);
+    setSavingSale(false);
+  };
+
   return (
     <Container id="mainContainer" allowChanges={true}>
       {loading ? (
@@ -114,7 +138,13 @@ const Home: React.FC = () => {
                     handleOpenPayment={handleOpenPayment}
                   />
                 </PaymentsTypesContainer>
-                <FinishContainer></FinishContainer>
+                <FinishContainer>
+                  <Register
+                    isSavingSale={savingSale}
+                    registerSale={registerSale}
+                    total={sale.total_sold}
+                  />
+                </FinishContainer>
               </PaymentsContainer>
             </Content>
           </RightSide>

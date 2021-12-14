@@ -121,7 +121,7 @@ class Sale extends BaseRepository<Entity> {
     const saleIndex = sales.findIndex((_sale) => _sale.is_current);
 
     sales[saleIndex].is_current = false;
-    sales[saleIndex].to_integrate = false;
+    sales[saleIndex].to_integrate = true;
 
     const newSale: Entity = this.buildNewSale();
     await this.createMany([...sales, newSale]);
@@ -152,7 +152,9 @@ class Sale extends BaseRepository<Entity> {
     const sales = await this.getAll();
     const saleIndex = sales.findIndex((_sale) => _sale.is_current);
 
-    sales[saleIndex].payments = sales[saleIndex].payments.filter(_payment => _payment.id !== id)
+    sales[saleIndex].payments = sales[saleIndex].payments.filter(
+      (_payment) => _payment.id !== id
+    );
 
     sales[saleIndex].total_paid = sales[saleIndex].payments.reduce(
       (total, payment) => +payment.amount + total,
@@ -193,7 +195,7 @@ class Sale extends BaseRepository<Entity> {
       });
     }
 
-    sales[saleIndex].items.reduce(
+    sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
       (total, item) =>
         +(item.storeProduct?.price_unit || 0) * item.quantity + total,
       0
