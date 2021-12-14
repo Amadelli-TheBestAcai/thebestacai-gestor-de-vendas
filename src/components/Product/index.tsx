@@ -6,11 +6,11 @@ import { Container, Column, Description, AddIcon } from "./styles";
 
 interface IProps {
   product: ProductDto;
+  addProduct: (product: ProductDto, quantity: number) => Promise<void>;
 }
-
-const Product: React.FC<IProps> = ({ product }) => {
-  const handleItem = () => {
-    console.log("TODO: IMPLEMENTAR ADD ITEM");
+const Product: React.FC<IProps> = ({ product, addProduct }) => {
+  const handleItem = async () => {
+    await addProduct(product, 1);
   };
 
   return (

@@ -1,4 +1,5 @@
 import { BaseRepository } from "../repository/baseRepository";
+import { Entity as ProductDto } from "./product";
 import userModel from "./user";
 import productModel from "./product";
 import { v4 } from "uuid";
@@ -25,8 +26,10 @@ export type Entity = {
   items: {
     id: string;
     store_product_id: number;
+    total: number;
     product: {
       id: number;
+      name: string;
       price_buy?: string;
       permission_store?: boolean;
       permission_order?: boolean;
@@ -102,10 +105,12 @@ class Sale extends BaseRepository<Entity> {
   async getCurrent(): Promise<Entity> {
     const sales = await this.getAll();
     const currentSale = sales.find((_sale) => _sale.is_current);
+    console.log({ currentSale });
     if (currentSale) {
       return currentSale;
     } else {
       const newSale: Entity = this.buildNewSale();
+      console.log({ newSale });
       await this.createMany([...sales, newSale]);
       return newSale;
     }
@@ -143,25 +148,39 @@ class Sale extends BaseRepository<Entity> {
     return sales[saleIndex];
   }
 
-  async addItem(product_id: number, quantity: number): Promise<Entity> {
+  async deletePayment(id: string): Promise<Entity> {
+    const sales = await this.getAll();
+    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+
+    sales[saleIndex].payments = sales[saleIndex].payments.filter(_payment => _payment.id !== id)
+
+    sales[saleIndex].total_paid = sales[saleIndex].payments.reduce(
+      (total, payment) => +payment.amount + total,
+      0
+    );
+
+    await this.createMany(sales);
+    return sales[saleIndex];
+  }
+
+  async addItem(productToAdd: ProductDto, quantity: number): Promise<Entity> {
     const sales = await this.getAll();
     const saleIndex = sales.findIndex((_sale) => _sale.is_current);
 
     const itemIndex = sales[saleIndex].items.findIndex(
-      (_item) => _item.product.id === product_id
+      (_item) => _item.product.id === productToAdd.product.id
     );
 
     if (
       itemIndex >= 0 &&
       sales[saleIndex].items[itemIndex].product.category.id !== 1
     ) {
-      sales[saleIndex].items[itemIndex].quantity += 1;
+      const newQuantity = +sales[saleIndex].items[itemIndex].quantity + 1;
+      sales[saleIndex].items[itemIndex].quantity = newQuantity;
+      sales[saleIndex].items[itemIndex].total =
+        newQuantity * +(productToAdd.price_unit || 0);
     } else {
-      const products = await productModel.getAll();
-      const productIndex = products.findIndex(
-        (_product) => _product.product_id
-      );
-      const { product, ...storeProduct } = products[productIndex];
+      const { product, ...storeProduct } = productToAdd;
       sales[saleIndex].items.push({
         id: v4(),
         store_product_id: storeProduct.id,
@@ -169,11 +188,46 @@ class Sale extends BaseRepository<Entity> {
         update_stock: true,
         product,
         storeProduct,
+        total: +(productToAdd.price_unit || 0),
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
 
-    sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
+    sales[saleIndex].items.reduce(
+      (total, item) =>
+        +(item.storeProduct?.price_unit || 0) * item.quantity + total,
+      0
+    );
+
+    await this.createMany(sales);
+    return sales[saleIndex];
+  }
+
+  async decressItem(id: string): Promise<Entity> {
+    const sales = await this.getAll();
+    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+
+    const itemIndex = sales[saleIndex].items.findIndex(
+      (_item) => _item.id === id
+    );
+
+    const newQuantity = +sales[saleIndex].items[itemIndex].quantity - 1;
+
+    if (
+      sales[saleIndex].items[itemIndex].product.category.id === 1 ||
+      newQuantity <= 0
+    ) {
+      sales[saleIndex].items = sales[saleIndex].items.filter(
+        (_item) => _item.id !== id
+      );
+    } else {
+      sales[saleIndex].items[itemIndex].quantity = newQuantity;
+      sales[saleIndex].items[itemIndex].total =
+        newQuantity *
+        +(sales[saleIndex].items[itemIndex].storeProduct.price_unit || 0);
+    }
+
+    sales[saleIndex].items.reduce(
       (total, item) =>
         +(item.storeProduct?.price_unit || 0) * item.quantity + total,
       0

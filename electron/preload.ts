@@ -15,7 +15,6 @@ export const api = {
     ipcRenderer.on(channel, (_, data) => callback(data)),
   once: (channel: string, callback: Function) =>
     ipcRenderer.once(channel, (_, data) => callback(data)),
-  db_init: async () => await database.init(),
   user: userFactory,
   store: storeFactory,
   product: productFactory,

@@ -21,7 +21,7 @@ const UserInfo: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      const registratedStore = await window.Main.store.registratedStore();
+      const registratedStore = await window.Main.store.hasRegistration();
       setStore(registratedStore.company.company_name);
     }
     init();
