@@ -1,71 +1,40 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { HotKeys } from "react-hotkeys";
 
 export const Container = styled(HotKeys)`
   display: flex;
   width: 100%;
   height: 100%;
+  padding: 0.8rem;
 `;
-export const LeftSide = styled.div`
+
+const ContentCSS = css`
   height: 100%;
-  width: 30%;
+  background: var(--white);
+  box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
+  border-radius: 10px;
+  padding: 1rem;
+`;
+
+export const LeftSide = styled.div`
+  ${ContentCSS}
+  width: 25%;
+  margin-right: 1.2rem;
 `;
 
 export const BalanceContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 30%;
-`;
-
-export const ProductsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 70%;
-  overflow-y: scroll;
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-  }
-`;
-
-export const RightSide = styled.div`
-  height: 100%;
-  width: 70%;
-  border-left: 1px solid #00000017;
-`;
-
-export const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-export const ActionsContainer = styled.div`
-  display: flex;
-  height: 10%;
+  width: 100%;
+  height: 15%;
+  margin-bottom: 1rem;
 `;
 
 export const ItemsContainer = styled.div`
-  display: flex;
-  background: #f4f4f4;
-  height: 60%;
+  width: 100%;
+  height: 85%;
+  background: pink;
 `;
 
-export const PaymentsContainer = styled.div`
-  display: flex;
-  height: 30%;
-  margin-bottom: 10px;
-`;
-
-export const PaymentsTypesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 70%;
-  height: 100%;
-`;
-
-export const FinishContainer = styled.div`
-  display: flex;
-  width: 30%;
-  height: 100%;
+export const RightSide = styled.div`
+  width: 75%;
+  ${ContentCSS}
 `;

@@ -14,16 +14,10 @@ import { SaleDto } from "../../models/dtos/sale";
 import { message } from "antd";
 import {
   Container,
-  Content,
-  RightSide,
   LeftSide,
+  RightSide,
   BalanceContainer,
-  ProductsContainer,
   ItemsContainer,
-  PaymentsContainer,
-  PaymentsTypesContainer,
-  FinishContainer,
-  ActionsContainer,
 } from "./styles";
 
 const Home: React.FC = () => {
@@ -106,51 +100,56 @@ const Home: React.FC = () => {
   };
 
   return (
-    <Container id="mainContainer" allowChanges={true}>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <LeftSide>
-            <BalanceContainer>
-              <Balance />
-            </BalanceContainer>
-            <ProductsContainer>
-              <Products addProduct={addSaleItem} />
-            </ProductsContainer>
-          </LeftSide>
-          <RightSide>
-            <Content>
-              <ActionsContainer></ActionsContainer>
-              <ItemsContainer>
-                <Items sale={sale} handleItem={decressSaleItem} />
-              </ItemsContainer>
-              <PaymentsContainer>
-                <PaymentsTypesContainer>
-                  <Payments
-                    sale={sale}
-                    addPayment={addPayment}
-                    removePayment={removePayment}
-                    setCurrentPayment={setCurrentPayment}
-                    modalState={paymentModal}
-                    modalTitle={paymentModalTitle}
-                    setModalState={setPaymentModal}
-                    handleOpenPayment={handleOpenPayment}
-                  />
-                </PaymentsTypesContainer>
-                <FinishContainer>
-                  <Register
-                    isSavingSale={savingSale}
-                    registerSale={registerSale}
-                    total={sale.total_sold}
-                  />
-                </FinishContainer>
-              </PaymentsContainer>
-            </Content>
-          </RightSide>
-        </>
-      )}
+    <Container>
+      <LeftSide>
+        <BalanceContainer>
+          <Balance />
+        </BalanceContainer>
+
+        <ItemsContainer>
+          {/* <Products addProduct={addSaleItem} /> */}
+        </ItemsContainer>
+      </LeftSide>
+      <RightSide></RightSide>
     </Container>
+    // <Container id="mainContainer" allowChanges={true}>
+    //   {loading ? (
+    //     <Spinner />
+    //   ) : (
+    //     <>
+    //
+    //       <RightSide>
+    //         <Content>
+    //           <ActionsContainer></ActionsContainer>
+    //           <ItemsContainer>
+    //             <Items sale={sale} handleItem={decressSaleItem} />
+    //           </ItemsContainer>
+    //           <PaymentsContainer>
+    //             <PaymentsTypesContainer>
+    //               <Payments
+    //                 sale={sale}
+    //                 addPayment={addPayment}
+    //                 removePayment={removePayment}
+    //                 setCurrentPayment={setCurrentPayment}
+    //                 modalState={paymentModal}
+    //                 modalTitle={paymentModalTitle}
+    //                 setModalState={setPaymentModal}
+    //                 handleOpenPayment={handleOpenPayment}
+    //               />
+    //             </PaymentsTypesContainer>
+    //             <FinishContainer>
+    //               <Register
+    //                 isSavingSale={savingSale}
+    //                 registerSale={registerSale}
+    //                 total={sale.total_sold}
+    //               />
+    //             </FinishContainer>
+    //           </PaymentsContainer>
+    //         </Content>
+    //       </RightSide>
+    //     </>
+    //   )}
+    // </Container>
   );
 };
 
