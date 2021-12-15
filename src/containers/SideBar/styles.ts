@@ -1,75 +1,82 @@
-import styled, { css } from 'styled-components'
+import styled, { css } from "styled-components";
+
 import {
-  PointOfSale,
-  ListOl,
+  Home,
+  ListAlt,
+  CashRegister,
   Motorcycle,
-  ArrowLeftRight,
-  BarChart,
-  Cashapp,
-  HomeAlt,
-  BoxOpen,
-  FileInvoice,
-} from '../../styles/Icons'
+  Retweet,
+  Box,
+  Coins,
+  Scroll,
+} from "../../styles/Icons";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
-  background: black;
-`
+  width: 100%;
+  background: var(--black-opaco);
+`;
 
-export const IconContainer = styled.div`
-  background: black;
-  width: 5vw;
-  height: 40px;
-  cursor: pointer;
-  margin: 12px 0 12px 0;
+export const LogoContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
+  height: 15%;
+  width: 100%;
+`;
 
-  :hover {
-    background: var(--primary-orange);
-    color: black;
-    transition: 0.5s;
-    svg {
-      color: black;
-    }
-  }
-`
+export const Logo = styled.img`
+  width: 5.5rem;
+  height: 5.5rem;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 85%;
+  width: 100%;
+`;
 
 const IconCSS = css`
-  color: var(--primary-orange);
-  width: 5vw;
-  height: 25px;
-`
-export const Command = styled(ListOl)`
-  ${IconCSS}
-`
-export const Cash = styled(PointOfSale)`
-  ${IconCSS}
-`
-export const Delivery = styled(Motorcycle)`
-  ${IconCSS}
-`
-export const ArrowIcon = styled(ArrowLeftRight)`
-  ${IconCSS}
-`
-export const Graph = styled(BarChart)`
-  ${IconCSS}
-`
-export const Money = styled(Cashapp)`
-  ${IconCSS}
-`
+  height: 1.8rem;
+  width: 1.8rem;
+  color: var(--orange-250);
+  margin-bottom: 3rem;
+  cursor: pointer;
+`;
 
-export const Home = styled(HomeAlt)`
+export const HomeIcon = styled(Home)`
   ${IconCSS}
-`
+`;
 
-export const BoxIcon = styled(BoxOpen)`
+export const Listicon = styled(ListAlt)`
   ${IconCSS}
-`
+`;
 
-export const NfceIcon = styled(FileInvoice)`
+export const CashRegisterIcon = styled(CashRegister)`
   ${IconCSS}
-`
+`;
+
+export const DeliveryIcon = styled(Motorcycle)`
+  ${IconCSS}
+`;
+
+export const RetweetIcon = styled(Retweet)`
+  ${IconCSS}
+`;
+
+export const BoxIcon = styled(Box)`
+  ${IconCSS}
+`;
+
+export const CoinsIcon = styled(Coins)`
+  ${IconCSS}
+`;
+
+export const ScrollIcon = styled(Scroll)`
+  ${IconCSS}
+`;
