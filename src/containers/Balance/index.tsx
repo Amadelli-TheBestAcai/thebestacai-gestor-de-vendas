@@ -6,14 +6,10 @@ import { ProductDto } from "../../models/dtos/product";
 
 import {
   Container,
-  TopContainer,
-  BottomContainer,
-  Price,
-  Weight,
-  PriceContainer,
-  Text,
-  WeightContainer,
+  RightSide,
+  LefttSide,
   InputPrice,
+  InfoWeight,
 } from "./styles";
 
 const BalanceContainer: React.FC = () => {
@@ -36,29 +32,24 @@ const BalanceContainer: React.FC = () => {
         <Spinner />
       ) : (
         <Container>
-          <TopContainer>
-            <Text>Preço indicado na balança</Text>
-
+          <RightSide>
+            <span>Preço indicado na balança</span>
             <InputPrice
               autoFocus={true}
               id="balanceInput"
               getValue={(value: number) => console.log(value)}
             />
-          </TopContainer>
-          <BottomContainer>
-            <PriceContainer>
-              <Text>Preço do KG</Text>
-              <Price>
-                R$ {(+selfService?.price_unit)?.toFixed(2).replace(".", ",")}
-              </Price>
-            </PriceContainer>
-            <WeightContainer>
-              <Text>Peso</Text>
-              <Weight>
-                KG {(+selfService.price_unit)?.toFixed(4).replace(".", ",")}
-              </Weight>
-            </WeightContainer>
-          </BottomContainer>
+          </RightSide>
+          <LefttSide>
+            <span>Peso</span>
+            <InfoWeight>
+              KG {(+selfService.price_unit)?.toFixed(4).replace(".", ",")}
+            </InfoWeight>
+            <span>Preço do KG</span>
+            <InfoWeight>
+              R$ {(+selfService?.price_unit)?.toFixed(2).replace(".", ",")}
+            </InfoWeight>
+          </LefttSide>
         </Container>
       )}
     </>

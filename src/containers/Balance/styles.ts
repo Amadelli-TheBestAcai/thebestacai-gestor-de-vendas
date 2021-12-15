@@ -2,91 +2,73 @@ import styled, { css } from "styled-components";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-export const InputPrice = styled(MonetaryInput)``;
-
 export const Container = styled.div`
+  display: flex;
   width: 100%;
   height: 100%;
 `;
 
-export const TopContainer = styled.div`
+const BalanceCSS = css`
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
   flex-direction: column;
-  background: white;
-  height: 65%;
-  font-size: 20px;
-  color: black;
-  padding: 0 15px;
-  justify-content: center;
+  height: 100%;
+`;
 
-  input {
-    background: white;
-    height: 10vh;
-    padding-right: 10px;
-    border-radius: 2px;
-    font-size: 32px;
-    text-align: end;
-    border: 1px solid #b0afae;
+const InputCSS = css`
+  background: var(--white-30);
+  border: 1px solid var(--grey-70);
+  box-sizing: border-box;
+  border-radius: 9px;
+
+  font-size: 2.2rem;
+
+  :hover,
+  :focus,
+  :active {
+    border: 1px solid var(--grey-70);
   }
 `;
 
-export const BottomContainer = styled.div`
-  width: 100%;
-  height: 35%;
+export const RightSide = styled.div`
+  ${BalanceCSS}
+  width: 60%;
+  margin-right: 1rem;
+
+  span {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  input {
+    ${InputCSS}
+    height: 100%;
+  }
+`;
+
+export const LefttSide = styled.div`
+  justify-content: space-between;
+
+  ${BalanceCSS}
+  width: 40%;
+
+  span {
+    font-size: 12px;
+    line-height: 14px;
+    color: var(--grey-80);
+  }
+`;
+
+export const InfoWeight = styled.div`
+  ${InputCSS}
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
+  height: 2.5rem;
+  font-size: 1rem;
+
+  color: var(--grey-80);
 `;
 
-export const BottomContainerCSS = css`
+export const InputPrice = styled(MonetaryInput)`
   height: 100%;
-  color: #b0afae;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  font-size: 24px;
-  background: #eae8e8;
-`;
-
-export const Price = styled.div`
-  ${BottomContainerCSS};
-`;
-
-export const Weight = styled.div`
-  ${BottomContainerCSS};
-`;
-
-export const PriceContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  width: 50%;
-  height: 80%;
-  margin: 5px 10px 5px 10px;
-  color: #9a9a9a;
-`;
-
-export const Text = styled.label`
-  font-size: 14px;
-
-  text-align: end;
-`;
-
-export const WeightContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  width: 50%;
-  height: 80%;
-  margin: 5px 10px 5px 10px;
-  color: #9a9a9a;
-`;
-export const DisabledInput = styled.input`
-  color: rgba(0, 0, 0, 0.25);
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-  opacity: 1;
-  caret-color: transparent;
 `;

@@ -1,6 +1,4 @@
-import styled from 'styled-components'
-
-import { Spin as SpinAnt } from 'antd'
+import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
@@ -9,6 +7,6 @@ export const Container = styled.div`
 
   width: 100%;
   height: 100%;
-`
+`;
 
-export const Spin = styled(SpinAnt)``
+export const Spin = styled.img``;

@@ -1,13 +1,15 @@
-import React from 'react'
+import React from "react";
 
-import { Container, Spin } from './styles'
+import SpinSVG from "../../assets/svg/spin.svg";
+
+import { Container, Spin } from "./styles";
 
 const Spinner: React.FC = () => {
   return (
     <Container>
-      <Spin />
+      <Spin src={SpinSVG} />
     </Container>
-  )
-}
+  );
+};
 
-export default Spinner
+export default Spinner;
