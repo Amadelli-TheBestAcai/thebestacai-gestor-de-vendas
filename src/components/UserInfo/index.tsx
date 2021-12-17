@@ -22,6 +22,8 @@ const UserInfo: React.FC<ComponentProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       const registratedStore = await window.Main.store.hasRegistration();
+      const storeCash = await window.Main.storeCash.getCurrent();
+      setCash(storeCash?.is_online ? "ABERTO" : "FECHADO");
       setStore(registratedStore.company.company_name);
     }
     init();

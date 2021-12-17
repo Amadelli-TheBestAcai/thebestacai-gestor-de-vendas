@@ -11,7 +11,9 @@ export abstract class BaseRepository<T extends { id?: string | number }>
   }
 
   async create(payload: T): Promise<void> {
-    await database.getConnection().updateItem(this.storageName, [
+    const entities = await database.getConnection().getItem(this.storageName);
+    await database.getConnection().setItem(this.storageName, [
+      ...entities,
       {
         ...payload,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),

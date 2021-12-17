@@ -45,11 +45,11 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
         />
       </IconContainer>
       <IconContainer
-        style={{ background: isRoute("/cashier") ? "#FF9D0A" : "black" }}
+        style={{ background: isRoute("/store-cash") ? "#FF9D0A" : "black" }}
       >
         <Cash
-          style={{ color: isRoute("/cashier") ? "black" : "#FF9D0A" }}
-          onClick={() => handleClick("/cashier")}
+          style={{ color: isRoute("/store-cash") ? "black" : "#FF9D0A" }}
+          onClick={() => handleClick("/store-cash")}
         />
       </IconContainer>
       <IconContainer

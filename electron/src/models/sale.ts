@@ -1,7 +1,6 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
-import productModel from "./product";
 import { v4 } from "uuid";
 import moment from "moment";
 export type Entity = {

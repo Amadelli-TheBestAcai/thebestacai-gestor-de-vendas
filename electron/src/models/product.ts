@@ -59,6 +59,27 @@ export type Entity = {
   deleted_at?: string;
 };
 
+type PurchaseProduct = {
+  id: number;
+  name: string;
+  sort: number;
+  products: {
+    id: number;
+    name: string;
+    category_id: number;
+    price_buy: string;
+    permission_store: boolean;
+    permission_order: boolean;
+    cod_product: string;
+    cod_ncm: string;
+    brand: string;
+    unity: number;
+    weight: string;
+    price_sell: string;
+    created_at: string;
+    deleted_at: string;
+  }[];
+};
 class Product extends BaseRepository<Entity> {
   loggedUser: Entity | null = null;
   constructor(storageName = "Product") {
@@ -83,6 +104,18 @@ class Product extends BaseRepository<Entity> {
   async getSelfService(): Promise<Entity | undefined> {
     const products = await this.getAll();
     return products.find((_product) => _product.product.category_id === 1);
+  }
+
+  async getAllPurchaseProducts(): Promise<PurchaseProduct[]> {
+    const hasInternet = await checkInternet();
+    if (!hasInternet) {
+      return [];
+    }
+    const {
+      data: { content },
+    } = await odinApi.get("/product_categories/products/purchases");
+
+    return content;
   }
 }
 
