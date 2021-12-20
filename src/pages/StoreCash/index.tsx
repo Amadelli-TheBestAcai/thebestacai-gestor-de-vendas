@@ -71,7 +71,6 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
       if (currentStoreCash?.is_opened) {
         setCurrentCash(currentStoreCash?.code);
         setStep(2);
-        return;
       }
       const availableStoreCashes =
         await window.Main.storeCash.getAvailableStoreCashes();

@@ -23,7 +23,7 @@ const UserInfo: React.FC<ComponentProps> = ({ history }) => {
     async function init() {
       const registratedStore = await window.Main.store.hasRegistration();
       const storeCash = await window.Main.storeCash.getCurrent();
-      setCash(storeCash?.is_online ? "ABERTO" : "FECHADO");
+      setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
       setStore(registratedStore.company.company_name);
     }
     init();

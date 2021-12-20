@@ -1,6 +1,7 @@
 import { IBaseRepository } from "./baseRepository.interface";
 import database from "../../src/providers/database";
 import moment from "moment";
+import { v4 } from "uuid";
 
 export abstract class BaseRepository<T extends { id?: string | number }>
   implements IBaseRepository<T>
@@ -11,11 +12,13 @@ export abstract class BaseRepository<T extends { id?: string | number }>
   }
 
   async create(payload: T): Promise<void> {
-    const entities = await database.getConnection().getItem(this.storageName);
+    const entities =
+      (await database.getConnection().getItem(this.storageName)) || [];
     await database.getConnection().setItem(this.storageName, [
       ...entities,
       {
         ...payload,
+        id: payload?.id || v4(),
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       },
     ]);
@@ -42,7 +45,13 @@ export abstract class BaseRepository<T extends { id?: string | number }>
     await database.getConnection().setItem(this.storageName, response);
   }
 
-  async update(id: string | number, payload: T): Promise<T> {
+  async update(
+    id: string | number | undefined,
+    payload
+  ): Promise<T | undefined> {
+    if (!id) {
+      return;
+    }
     const data: T[] = await database.getConnection().getItem(this.storageName);
     const entityIndex = data.findIndex((_entity) => _entity.id === id);
     data[entityIndex] = {

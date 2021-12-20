@@ -3,6 +3,7 @@ import { checkInternet } from "../providers/internetConnection";
 import odinApi from "../providers/odinApi";
 import storeModel from "../models/store";
 import { v4 } from "uuid";
+
 export type Entity = {
   id: string;
   code: string;
@@ -14,12 +15,17 @@ export type Entity = {
   is_online: boolean;
 };
 
+export const context = "StoreCash";
+
 class StoreCash extends BaseRepository<Entity> {
-  constructor(storageName = "StoreCash") {
+  constructor(storageName = context) {
     super(storageName);
   }
 
-  async openStoreCash(code: string, amount_on_open: number): Promise<Entity> {
+  async openStoreCash(
+    code: string,
+    amount_on_open: number
+  ): Promise<Entity | undefined> {
     const payload: Entity = {
       id: v4(),
       code,
@@ -45,15 +51,17 @@ class StoreCash extends BaseRepository<Entity> {
       payload.store_id = store_id;
       payload.is_online = true;
     }
+    await this.clear();
     await this.create(payload);
     return payload;
   }
 
   async getAvailableStoreCashes(): Promise<
-    {
-      store_cash: string;
-      available: boolean;
-    }[]
+    | {
+        store_cash: string;
+        available: boolean;
+      }[]
+    | undefined
   > {
     const isOnline = await checkInternet();
     if (isOnline) {
@@ -102,6 +110,10 @@ class StoreCash extends BaseRepository<Entity> {
         { amount_on_close: amount_on_close.toString() }
       );
     }
+    const storeCash = await this.getOne();
+    await this.update(storeCash?.id, {
+      is_opened: false,
+    });
   }
 }
 

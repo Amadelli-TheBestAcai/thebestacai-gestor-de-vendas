@@ -8,7 +8,6 @@ export function useAsyncHook<T>(func: Function): [T, boolean] {
     async function fetchAsyncFunc() {
       setLoading(true);
       const response = await func();
-      console.log({ response });
       setResult(response);
       setLoading(false);
     }

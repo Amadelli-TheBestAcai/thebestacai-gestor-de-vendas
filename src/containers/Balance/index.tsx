@@ -25,7 +25,6 @@ const BalanceContainer: React.FC = () => {
     async function init() {
       setLoading(true);
       const selfService = await window.Main.product.getSelfService();
-      console.log({ selfService });
       setselfService(selfService);
       setLoading(false);
     }
