@@ -136,10 +136,9 @@ class Sale extends BaseRepository<Entity> {
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     });
 
-    sales[saleIndex].total_paid = sales[saleIndex].payments.reduce(
-      (total, payment) => +payment.amount + total,
-      0
-    );
+    sales[saleIndex].total_paid = +sales[saleIndex].payments
+      .reduce((total, payment) => +payment.amount + total, 0)
+      .toFixed(2);
 
     await this.createMany(sales);
     return sales[saleIndex];
@@ -153,10 +152,9 @@ class Sale extends BaseRepository<Entity> {
       (_payment) => _payment.id !== id
     );
 
-    sales[saleIndex].total_paid = sales[saleIndex].payments.reduce(
-      (total, payment) => +payment.amount + total,
-      0
-    );
+    sales[saleIndex].total_paid = +sales[saleIndex].payments
+      .reduce((total, payment) => +payment.amount + total, 0)
+      .toFixed(2);
 
     await this.createMany(sales);
     return sales[saleIndex];
@@ -176,8 +174,9 @@ class Sale extends BaseRepository<Entity> {
     ) {
       const newQuantity = +sales[saleIndex].items[itemIndex].quantity + 1;
       sales[saleIndex].items[itemIndex].quantity = newQuantity;
-      sales[saleIndex].items[itemIndex].total =
-        newQuantity * +(productToAdd.price_unit || 0);
+      sales[saleIndex].items[itemIndex].total = +(
+        newQuantity * +(productToAdd.price_unit || 0)
+      ).toFixed(2);
     } else {
       const { product, ...storeProduct } = productToAdd;
       sales[saleIndex].items.push({
@@ -192,11 +191,13 @@ class Sale extends BaseRepository<Entity> {
       });
     }
 
-    sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
-      (total, item) =>
-        +(item.storeProduct?.price_unit || 0) * item.quantity + total,
-      0
-    );
+    sales[saleIndex].total_sold = +sales[saleIndex].items
+      .reduce(
+        (total, item) =>
+          +(item.storeProduct?.price_unit || 0) * item.quantity + total,
+        0
+      )
+      .toFixed(2);
 
     await this.createMany(sales);
     return sales[saleIndex];
