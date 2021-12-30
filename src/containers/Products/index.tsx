@@ -47,38 +47,39 @@ const ProductsContainer: React.FC<IProps> = ({ addProduct }) => {
   }, []);
 
   return (
-    <Container>
-      {loading ? (
-        <LoadingContainer>
-          <Spin />
-        </LoadingContainer>
-      ) : (
-        <TabContainer defaultActiveKey="1">
-          {products?.map((productCategory, index) => (
-            <TabItem tab={productCategory.category} key={index + 1}>
-              <ProductHeader>
-                <ProductHeaderCol span={8}>
-                  <ProductHeaderDescription>Produtos</ProductHeaderDescription>
-                </ProductHeaderCol>
-                <ProductHeaderCol span={6}>
-                  <ProductHeaderDescription>Preço</ProductHeaderDescription>
-                </ProductHeaderCol>
-                <ProductHeaderCol span={4}>
-                  <ProductHeaderDescription>Add</ProductHeaderDescription>
-                </ProductHeaderCol>
-              </ProductHeader>
-              {productCategory.products.map((product) => (
-                <Product
-                  key={product.product_id}
-                  product={product}
-                  addProduct={addProduct}
-                />
-              ))}
-            </TabItem>
-          ))}
-        </TabContainer>
-      )}
-    </Container>
+    <Container>teste</Container>
+    // <Container>
+    //   {loading ? (
+    //     <LoadingContainer>
+    //       <Spin />
+    //     </LoadingContainer>
+    //   ) : (
+    //     <TabContainer defaultActiveKey="1">
+    //       {products?.map((productCategory, index) => (
+    //         <TabItem tab={productCategory.category} key={index + 1}>
+    //           <ProductHeader>
+    //             <ProductHeaderCol span={8}>
+    //               <ProductHeaderDescription>Produtos</ProductHeaderDescription>
+    //             </ProductHeaderCol>
+    //             <ProductHeaderCol span={6}>
+    //               <ProductHeaderDescription>Preço</ProductHeaderDescription>
+    //             </ProductHeaderCol>
+    //             <ProductHeaderCol span={4}>
+    //               <ProductHeaderDescription>Add</ProductHeaderDescription>
+    //             </ProductHeaderCol>
+    //           </ProductHeader>
+    //           {productCategory.products.map((product) => (
+    //             <Product
+    //               key={product.product_id}
+    //               product={product}
+    //               addProduct={addProduct}
+    //             />
+    //           ))}
+    //         </TabItem>
+    //       ))}
+    //     </TabContainer>
+    //   )}
+    // </Container>
   );
 };
 

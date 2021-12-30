@@ -18,6 +18,8 @@ import {
   RightSide,
   BalanceContainer,
   ItemsContainer,
+  TopActions,
+  Content,
 } from "./styles";
 
 const Home: React.FC = () => {
@@ -110,8 +112,13 @@ const Home: React.FC = () => {
           {/* <Products addProduct={addSaleItem} /> */}
         </ItemsContainer>
       </LeftSide>
-      <RightSide></RightSide>
+
+      <RightSide>
+        <TopActions></TopActions>
+        <Content></Content>
+      </RightSide>
     </Container>
+
     // <Container id="mainContainer" allowChanges={true}>
     //   {loading ? (
     //     <Spinner />

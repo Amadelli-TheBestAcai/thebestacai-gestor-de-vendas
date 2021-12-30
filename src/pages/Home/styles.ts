@@ -9,7 +9,6 @@ export const Container = styled(HotKeys)`
 `;
 
 const ContentCSS = css`
-  height: 100%;
   background: var(--white);
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
@@ -18,6 +17,7 @@ const ContentCSS = css`
 
 export const LeftSide = styled.div`
   ${ContentCSS}
+  height: 100%;
   width: 25%;
   margin-right: 1.2rem;
 `;
@@ -35,6 +35,20 @@ export const ItemsContainer = styled.div`
 `;
 
 export const RightSide = styled.div`
+  flex-direction: column;
   width: 75%;
+  height: 100%;
+`;
+
+export const Content = styled.div`
+  flex-direction: column;
+  width: 100%;
+  height: 90%;
   ${ContentCSS}
+`;
+
+export const TopActions = styled.div`
+  width: 100%;
+  height: 10%;
+  background: purple;
 `;

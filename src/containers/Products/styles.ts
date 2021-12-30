@@ -8,11 +8,8 @@ import {
 
 export const Container = styled.div`
   display: flex;
-  align-items: center;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: flex-start;
-  background: var(--mainBackground);
+  width: 100%;
+  height: 100%;
 `;
 
 export const LoadingContainer = styled.div`
