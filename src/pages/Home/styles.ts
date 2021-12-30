@@ -50,5 +50,4 @@ export const Content = styled.div`
 export const TopActions = styled.div`
   width: 100%;
   height: 10%;
-  background: purple;
 `;

@@ -10,6 +10,11 @@ export {
   Scroll,
 } from "@styled-icons/fa-solid";
 
+export { Offer } from "@styled-icons/boxicons-solid/Offer";
+export { LogInCircle, LogOutCircle } from "@styled-icons/boxicons-regular";
+export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
+export { Chatbubbles } from "@styled-icons/ionicons-sharp/Chatbubbles";
+
 //---------------------------------------------------//
 
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
@@ -24,12 +29,11 @@ export {
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
 export { Cashapp, Ifood, Ubereats } from "@styled-icons/simple-icons";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
-export { Offer, AddToQueue, User } from "@styled-icons/boxicons-solid";
+export { AddToQueue, User } from "@styled-icons/boxicons-solid";
 export {
   ArrowFromLeft,
   ArrowFromRight,
   HomeAlt,
-  LogOutCircle,
   ListOl,
 } from "@styled-icons/boxicons-regular";
 export { CloseOutline, SettingsOutline } from "@styled-icons/evaicons-outline";

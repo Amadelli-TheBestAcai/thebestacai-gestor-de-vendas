@@ -1,103 +1,133 @@
-import styled, { css } from 'styled-components'
+import styled, { css } from "styled-components";
+
 import {
   Offer,
-  ArrowFromLeft,
-  ArrowFromRight,
-  AddToQueue,
-  Chat,
-} from '../../styles/Icons'
+  LogInCircle,
+  DocumentBulletList,
+  LogOutCircle,
+  Chatbubbles,
+} from "../../styles/Icons";
 
-export const Container = styled.div`
-  display: flex;
-  width: 100%;
+const BasicCSS = css`
   height: 100%;
   align-items: center;
   flex-direction: center;
-`
+  display: flex;
+`;
 
 const ButtonCSS = css`
-  width: 10vw;
-  height: 6vh;
-  border: none;
-  margin: 0 18px 0 0;
-  color: white;
-  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: 700;
-
-  @media only screen and (max-width: 1300px) {
-    font-size: 12px;
-  }
-`
-
-export const DiscountButton = styled.button`
-  background: #000;
-  ${ButtonCSS};
+  width: 9.8rem;
+  height: 4.4rem;
+  border: 1px solid var(--gray-50);
+  box-sizing: border-box;
+  box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
+  border-radius: 1.8rem;
+  font-weight: bold;
+  transition: 0.5s;
 
   :hover {
-    background: var(--primary-orange);
-    color: black;
+    border: 1px solid var(--orange-250);
+    color: var(--orange-250);
+
+    svg {
+      color: var(--orange-250);
+    }
   }
-`
-
-export const EntryButton = styled.button`
-  ${ButtonCSS};
-  background: #2d3ed8;
-
-  :hover {
-    background: #2033e5;
-    transition: 0.5s;
-  }
-`
-
-export const OutButton = styled.button`
-  ${ButtonCSS};
-  background: #e14a4a;
-
-  :hover {
-    background: #ea1d2c;
-    transition: 0.5s;
-  }
-`
-
-export const CommandButton = styled.button`
-  ${ButtonCSS};
-  background: #29de60;
-
-  :hover {
-    background: #03e247;
-    transition: 0.5s;
-  }
-`
+`;
 
 const IconCSS = css`
-  width: 26px;
-  height: 26px;
-  margin-left: 10px;
+  width: 1.3rem;
+  height: 1.3rem;
+  color: black;
+  margin-right: 7px;
+  transition: 0.5s;
+`;
 
-  @media only screen and (max-width: 1300px) {
-    width: 20px;
-    height: 20px;
-  }
-`
+export const Container = styled.div`
+  ${BasicCSS}
+  width: 100%;
+`;
+
+export const ActionButtons = styled.div`
+  ${BasicCSS}
+  align-items: flex-start;
+  width: 65%;
+  justify-content: space-between;
+`;
+
+export const InfosAndChat = styled.div`
+  ${BasicCSS}
+  width: 35%;
+  align-items: flex-start;
+  justify-content: flex-end;
+
+  /* hr {
+    position: absolute;
+    width: 1px;
+    height: 68.94px;
+    left: 1679px;
+    top: 25.03px;
+
+    background: #e3e3e3;
+  } */
+`;
+
+export const ContentHeaderInfos = styled.div`
+  ${BasicCSS}
+  width: 26rem;
+  height: 4.4rem;
+  background: var(--white);
+  border: 1px solid var(--gray-50);
+  box-sizing: border-box;
+  box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
+  border-radius: 10px;
+`;
+
+export const InfoStore = styled.div`
+  ${BasicCSS}
+  width: 50%;
+  font-size: 15px;
+  justify-content: center;
+`;
+
+export const UserPhoto = styled.div`
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50px;
+  background: gray;
+`;
+
+export const ChatContainer = styled.div`
+  ${BasicCSS}
+  width: 50%;
+  justify-content: space-evenly;
+`;
+
+export const Button = styled.button`
+  ${ButtonCSS}
+`;
+
 export const OfferIcon = styled(Offer)`
-  ${IconCSS};
-`
-export const EntryIcon = styled(ArrowFromLeft)`
-  ${IconCSS};
-`
-export const OutIcon = styled(ArrowFromRight)`
-  ${IconCSS};
-`
+  ${IconCSS}
+`;
 
-export const CommandIcon = styled(AddToQueue)`
-  ${IconCSS};
-`
+export const InputIcon = styled(LogInCircle)`
+  ${IconCSS}
+`;
 
-export const ChatIcon = styled(Chat)`
-  ${IconCSS};
-`
+export const OutputIcon = styled(LogOutCircle)`
+  ${IconCSS}
+`;
+
+export const ListIcon = styled(DocumentBulletList)`
+  ${IconCSS}
+`;
+
+export const ChatIcon = styled(Chatbubbles)`
+  ${IconCSS}
+  width: 2rem;
+  height: 2rem;
+`;

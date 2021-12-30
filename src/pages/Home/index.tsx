@@ -133,7 +133,15 @@ const Home: React.FC = () => {
       </LeftSide>
 
       <RightSide>
-        <TopActions></TopActions>
+        <TopActions>
+          <Actions
+            haveItensOnSale={!!sale.items.length}
+            addToQueue={addToQueue}
+            addDiscount={addDiscount}
+            discountState={discountState}
+            setDiscountState={setDiscountState}
+          />
+        </TopActions>
         <Content></Content>
       </RightSide>
     </Container>

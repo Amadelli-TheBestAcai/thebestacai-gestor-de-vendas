@@ -8,15 +8,18 @@ import { message } from "antd";
 
 import {
   Container,
-  DiscountButton,
-  EntryButton,
-  CommandButton,
-  OutButton,
+  ActionButtons,
+  InfosAndChat,
+  Button,
   OfferIcon,
-  EntryIcon,
-  OutIcon,
-  CommandIcon,
+  InputIcon,
+  OutputIcon,
+  ListIcon,
+  ContentHeaderInfos,
+  InfoStore,
+  ChatContainer,
   ChatIcon,
+  UserPhoto,
 } from "./styles";
 
 type IProps = {
@@ -48,31 +51,39 @@ const Actions: React.FC<IProps> = ({
 
   return (
     <Container>
-      <DiscountButton
-        onClick={() => setDiscountState(true)}
-        style={{ fontSize: "12px" }}
-      >
-        [R] DESCONTO
-        <OfferIcon />
-      </DiscountButton>
-      <EntryButton onClick={() => setHandlerInState(true)}>
-        ENTRADA
-        <EntryIcon />
-      </EntryButton>
-      <OutButton onClick={() => setHandlerOutState(true)}>
-        SAÍDA
-        <OutIcon />
-      </OutButton>
-      <CommandButton onClick={() => handleCommand()}>
-        COMANDA
-        <CommandIcon />
-      </CommandButton>
-      <CommandButton onClick={() => setOpenChat(!openChat)}>
-        Chat
-        <ChatIcon />
-      </CommandButton>
+      <ActionButtons>
+        <Button onClick={() => setDiscountState(true)}>
+          <OfferIcon />
+          Desconto [R]
+        </Button>
 
-      <InputForm
+        <Button onClick={() => setHandlerInState(true)}>
+          <InputIcon />
+          Entrada
+        </Button>
+
+        <Button onClick={() => setHandlerOutState(true)}>
+          <OutputIcon />
+          Saída
+        </Button>
+        <Button>
+          <ListIcon />
+          Comanda
+        </Button>
+      </ActionButtons>
+
+      <InfosAndChat>
+        <ContentHeaderInfos>
+          <InfoStore>LOJA TESTE </InfoStore>
+          <hr />
+          <ChatContainer>
+            <ChatIcon />
+            <UserPhoto />
+          </ChatContainer>
+        </ContentHeaderInfos>
+      </InfosAndChat>
+
+      {/* <InputForm
         placeHolder="Digite o nome do cliente"
         onFinish={addToQueue}
         modalState={commandState}
@@ -92,7 +103,7 @@ const Actions: React.FC<IProps> = ({
         type="saida"
         modalState={handlerOutState}
         setModalState={setHandlerOutState}
-      />
+      /> */}
     </Container>
   );
 };
