@@ -4,12 +4,15 @@ import Products from "../../containers/Products";
 import Balance from "../../containers/Balance";
 import Items from "../../containers/Items";
 import Payments from "../../containers/Payments";
+import Actions from "../../containers/Actions";
 
 import Spinner from "../../components/Spinner";
 import Register from "../../components/Register";
+import CashNotFound from "../../components/CashNotFound";
 
 import { ProductDto } from "../../models/dtos/product";
 import { SaleDto } from "../../models/dtos/sale";
+import { StoreCashDto } from "../../models/dtos/storeCash";
 
 import { message } from "antd";
 import {
@@ -30,11 +33,15 @@ const Home: React.FC = () => {
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [savingSale, setSavingSale] = useState(false);
+  const [discountState, setDiscountState] = useState(false);
+  const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
 
   useEffect(() => {
     async function init() {
       setLoading(true);
       const _sale = await window.Main.sale.getCurrent();
+      const _storeCash = await window.Main.storeCash.getCurrent();
+      setStoreCash(_storeCash);
       setSale(_sale);
       setLoading(false);
     }
@@ -99,6 +106,18 @@ const Home: React.FC = () => {
     const _newSale = await window.Main.sale.finishSale();
     setSale(_newSale);
     setSavingSale(false);
+  };
+
+  const addToQueue = (name: string): void => {
+    console.log(name);
+  };
+
+  const addDiscount = (value: number): void => {
+    if (value > sale.total_sold) {
+      message.warning("Desconto maior que o valor da venda.");
+      return;
+    }
+    setSale((oldValues) => ({ ...oldValues, discount: value }));
   };
 
   return (

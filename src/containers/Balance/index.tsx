@@ -20,8 +20,8 @@ const BalanceContainer: React.FC = () => {
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const products = await window.Main.product.getSelfService();
-      setselfService(products);
+      const selfService = await window.Main.product.getSelfService();
+      setselfService(selfService);
       setLoading(false);
     }
     init();

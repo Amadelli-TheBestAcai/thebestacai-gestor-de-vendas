@@ -1,7 +1,6 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
-import productModel from "./product";
 import { v4 } from "uuid";
 import moment from "moment";
 export type Entity = {
@@ -105,12 +104,10 @@ class Sale extends BaseRepository<Entity> {
   async getCurrent(): Promise<Entity> {
     const sales = await this.getAll();
     const currentSale = sales.find((_sale) => _sale.is_current);
-    console.log({ currentSale });
     if (currentSale) {
       return currentSale;
     } else {
       const newSale: Entity = this.buildNewSale();
-      console.log({ newSale });
       await this.createMany([...sales, newSale]);
       return newSale;
     }
@@ -139,10 +136,9 @@ class Sale extends BaseRepository<Entity> {
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     });
 
-    sales[saleIndex].total_paid = sales[saleIndex].payments.reduce(
-      (total, payment) => +payment.amount + total,
-      0
-    );
+    sales[saleIndex].total_paid = +sales[saleIndex].payments
+      .reduce((total, payment) => +payment.amount + total, 0)
+      .toFixed(2);
 
     await this.createMany(sales);
     return sales[saleIndex];
@@ -156,10 +152,9 @@ class Sale extends BaseRepository<Entity> {
       (_payment) => _payment.id !== id
     );
 
-    sales[saleIndex].total_paid = sales[saleIndex].payments.reduce(
-      (total, payment) => +payment.amount + total,
-      0
-    );
+    sales[saleIndex].total_paid = +sales[saleIndex].payments
+      .reduce((total, payment) => +payment.amount + total, 0)
+      .toFixed(2);
 
     await this.createMany(sales);
     return sales[saleIndex];
@@ -179,8 +174,9 @@ class Sale extends BaseRepository<Entity> {
     ) {
       const newQuantity = +sales[saleIndex].items[itemIndex].quantity + 1;
       sales[saleIndex].items[itemIndex].quantity = newQuantity;
-      sales[saleIndex].items[itemIndex].total =
-        newQuantity * +(productToAdd.price_unit || 0);
+      sales[saleIndex].items[itemIndex].total = +(
+        newQuantity * +(productToAdd.price_unit || 0)
+      ).toFixed(2);
     } else {
       const { product, ...storeProduct } = productToAdd;
       sales[saleIndex].items.push({
@@ -195,11 +191,13 @@ class Sale extends BaseRepository<Entity> {
       });
     }
 
-    sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
-      (total, item) =>
-        +(item.storeProduct?.price_unit || 0) * item.quantity + total,
-      0
-    );
+    sales[saleIndex].total_sold = +sales[saleIndex].items
+      .reduce(
+        (total, item) =>
+          +(item.storeProduct?.price_unit || 0) * item.quantity + total,
+        0
+      )
+      .toFixed(2);
 
     await this.createMany(sales);
     return sales[saleIndex];

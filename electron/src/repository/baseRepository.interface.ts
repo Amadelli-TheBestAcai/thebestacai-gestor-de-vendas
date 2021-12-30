@@ -3,7 +3,7 @@ export interface IBaseRepository<T> {
   createMany(payload: T[]): Promise<void>;
   getById(id: string | number): Promise<T | undefined>;
   deleteById(id: string | number): Promise<void>;
-  update(id: string | number, payload: T): Promise<T>;
+  update(id: string | number | undefined, payload: T): Promise<T | undefined>;
   getAll(): Promise<T[]>;
   getOne(): Promise<T | undefined>;
   clear(): Promise<void>;
