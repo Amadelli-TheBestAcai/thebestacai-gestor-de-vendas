@@ -1,49 +1,43 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  margin-right: 10px;
-`
-
-export const Content = styled.div`
-  display: flex;
-  height: 65%;
-`
-
-export const Description = styled.label``
-
-export const AmountContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 0 1%;
-`
-
-export const AmountValue = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex-grow: 1;
-  align-items: center;
-  color: black;
   width: 100%;
-  font-size: 22px;
-  padding-right: 10px;
-  background: #FF9D0A;
-  font-weight: bold;
-`
+  height: 100%;
+`;
 
-export const Footer = styled.div`
+export const ContentValue = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: white;
-  font-size: 20px;
-  font-weight: 400;
+  justify-content: center;
+  width: 100%;
+  height: 80%;
+  background: var(--white-30);
+  border: 1px solid var(--grey-70);
+  box-sizing: border-box;
+  border-radius: 3px;
+  margin-bottom: 11px;
+
+  span {
+    color: var(--grey-100);
+    strong {
+      font-size: 3.4rem;
+      color: var(--black-opaco);
+    }
+  }
+`;
+
+export const ButtonFinisher = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 30%;
-  margin: 3% 1% 0% 1%;
-  background: black;
-  cursor: pointer;
-`
+  background: #f0ad4e;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  font-size: 1.5rem;
+  color: var(--black-opaco);
+  font-weight: bold;
+`;
