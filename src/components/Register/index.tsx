@@ -18,7 +18,8 @@ const Register: React.FC = () => {
     <Container>
       <ContentValue>
         <span>
-          VALOR TOTAL <br /> <strong>R$ {monetaryFormat(sale.total)}</strong>
+          VALOR TOTAL <br />{" "}
+          <strong>R$ {monetaryFormat(sale.total_sold)}</strong>
         </span>
       </ContentValue>
       <ButtonFinisher onClick={() => onRegisterSale()}>
