@@ -29,6 +29,8 @@ import {
   ActionsContainer,
 } from "./styles";
 
+import { PaymentType } from "../../models/enums/paymentType";
+
 const Home: React.FC = () => {
   const [sale, setSale] = useState<SaleDto>();
   const [loading, setLoading] = useState(true);
@@ -124,8 +126,57 @@ const Home: React.FC = () => {
     setSale((oldValues) => ({ ...oldValues, discount: value }));
   };
 
+  const sendFocusToBalance = () => {
+    document.getElementById("balanceInput").focus();
+  };
+
+  const openDiscoundModal = () => {
+    setDiscountState(true);
+  };
+
+  const keyMap = {
+    money: "a",
+    MONEY: "A",
+    c_credit: "s",
+    C_CREDIT: "S",
+    c_debit: "d",
+    C_DEBIT: "D",
+    ticket: "t",
+    TICKET: "T",
+    pix: "p",
+    PIX: "P",
+    REGISTER: "f1",
+    focus_balance: "b",
+    FOCUS_BALANCE: "B",
+    insert_discount: "r",
+    INSERT_DISCOUNT: "R",
+  };
+
+  const handlers = {
+    money: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
+    MONEY: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
+    c_credit: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
+    C_CREDIT: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
+    c_debit: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    C_DEBIT: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    ticket: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+    TICKET: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+    pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),
+    PIX: () => handleOpenPayment(PaymentType.PIX, "PIX"),
+    REGISTER: () => registerSale(),
+    focus_balance: () => sendFocusToBalance(),
+    FOCUS_BALANCE: () => sendFocusToBalance(),
+    insert_discount: () => openDiscoundModal(),
+    INSERT_DISCOUNT: () => openDiscoundModal(),
+  };
+
   return (
-    <Container id="mainContainer" allowChanges={true}>
+    <Container
+      id="mainContainer"
+      handlers={handlers}
+      keyMap={keyMap}
+      allowChanges={true}
+    >
       {loading ? (
         <Spinner />
       ) : (
@@ -136,7 +187,11 @@ const Home: React.FC = () => {
             <>
               <LeftSide>
                 <BalanceContainer>
-                  <Balance />
+                  <Balance
+                    handleOpenPayment={handleOpenPayment}
+                    openDiscoundModal={openDiscoundModal}
+                    addItem={addSaleItem}
+                  />
                 </BalanceContainer>
                 <ProductsContainer>
                   <Products addProduct={addSaleItem} />
