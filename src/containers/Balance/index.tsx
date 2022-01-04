@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import Spinner from "../../components/Spinner";
-
+import { Modal } from "antd";
 import { ProductDto } from "../../models/dtos/product";
 
 import {
@@ -11,12 +11,26 @@ import {
   InputPrice,
   InfoWeight,
 } from "./styles";
+import { PaymentType } from "../../models/enums/paymentType";
 
-const BalanceContainer: React.FC = () => {
+interface IProps {
+  openDiscoundModal: () => void;
+  handleOpenPayment: (type: number, title: string) => void;
+  addItem: (product: ProductDto, quantity?: number, total?: number) => void;
+}
+
+const BalanceContainer: React.FC<IProps> = ({
+  handleOpenPayment,
+  openDiscoundModal,
+}) => {
   const [selfService, setselfService] = useState<ProductDto | undefined>(
     undefined
   );
+  const [shouldUseBalance, setShouldUseBalance] = useState(true);
   const [loading, setLoading] = useState<boolean>(true);
+  const [fetchingBalanceWeight, setFetchingBalanceWeight] =
+    useState<boolean>(false);
+  const [balanceAmount, setBalanceAmount] = useState<number>();
   useEffect(() => {
     async function init() {
       setLoading(true);
@@ -26,6 +40,74 @@ const BalanceContainer: React.FC = () => {
     }
     init();
   }, []);
+
+  const getQuantity = (): number => {
+    if (!balanceAmount) {
+      return 0;
+    }
+    return +(+balanceAmount / +(selfService?.price_unit || 0)).toFixed(4);
+  };
+
+  const handleEnterToSubmit = () => {
+    if (!balanceAmount) {
+      return;
+    }
+    document.getElementById("mainContainer").focus();
+    //addItem(selfService, getQuantity(), balanceAmount);
+    setBalanceAmount(undefined);
+  };
+
+  const getWeightByBalance = async (): Promise<void> => {
+    if (!fetchingBalanceWeight) {
+      setFetchingBalanceWeight(true);
+      // TODO: INTEGRAR BALANÇA
+      const response = { weight: 1, error: null };
+      const { weight, error } = response;
+      setFetchingBalanceWeight(false);
+      if (error) {
+        Modal.info({
+          title: "Falha de Leitura",
+          content:
+            "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+        });
+      } else {
+        const amount = +weight * +selfService.price_unit;
+        setBalanceAmount(amount);
+      }
+    }
+  };
+
+  const handlerEventKey = async (key: string): Promise<void> => {
+    const lowerKey = key.toLowerCase();
+    if (lowerKey === "a") {
+      handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro");
+    }
+    if (lowerKey === "s") {
+      handleOpenPayment(PaymentType.CREDITO, "Crédito");
+    }
+    if (lowerKey === "d") {
+      handleOpenPayment(PaymentType.DEBITO, "Débito");
+    }
+    if (lowerKey === "t") {
+      handleOpenPayment(PaymentType.TICKET, "Ticket");
+    }
+    if (lowerKey === "p") {
+      handleOpenPayment(PaymentType.PIX, "PIX");
+    }
+    if (shouldUseBalance && key === "Enter") {
+      handleEnterToSubmit();
+    }
+    if (lowerKey === "f1") {
+      // registerSale();
+    }
+    if (lowerKey === "r") {
+      openDiscoundModal();
+    }
+    if (shouldUseBalance && lowerKey === "b") {
+      await getWeightByBalance();
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -43,7 +125,7 @@ const BalanceContainer: React.FC = () => {
           <LefttSide>
             <span>Peso</span>
             <InfoWeight>
-              KG {(+selfService.price_unit)?.toFixed(4).replace(".", ",")}
+              KG {(+selfService?.price_unit)?.toFixed(4).replace(".", ",")}
             </InfoWeight>
             <span>Preço do KG</span>
             <InfoWeight>

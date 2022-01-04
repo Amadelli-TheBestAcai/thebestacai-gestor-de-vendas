@@ -9,11 +9,11 @@ const api = axios.create({
   responseType: "json",
 });
 
-api.interceptors.request.use((config) => {
-  const token = userModel.loggedUser?.token;
-  if (token) {
+api.interceptors.request.use(async (config) => {
+  const user = await userModel.get();
+  if (user?.token) {
     //@ts-ignore
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${user.token}`;
   }
   return config;
 });

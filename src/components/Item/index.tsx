@@ -2,16 +2,16 @@ import React from "react";
 
 import { ItemDto } from "../../models/dtos/item";
 
-import { message as messageAnt } from "antd";
+import { useSale } from "../../hooks/useSale";
 
 import { Container, Column, Button, Description, RemoveIcon } from "./styles";
 
 type IProps = {
   item: ItemDto;
-  handleItem: (id: string) => void;
 };
 
-const Item: React.FC<IProps> = ({ item, handleItem }) => {
+const Item: React.FC<IProps> = ({ item }) => {
+  const { onDecressItem } = useSale();
   return (
     <Container>
       <Column span={10}>
@@ -29,7 +29,7 @@ const Item: React.FC<IProps> = ({ item, handleItem }) => {
         <Description>R$ {item.total.toFixed(2).replace(".", ",")}</Description>
       </Column>
       <Column span={2}>
-        <Button onClick={() => handleItem(item.id)}>
+        <Button onClick={() => onDecressItem(item.id)}>
           <RemoveIcon />
         </Button>
       </Column>

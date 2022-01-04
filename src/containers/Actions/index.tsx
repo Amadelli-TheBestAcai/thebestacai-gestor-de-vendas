@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState } from "react";
 
 import InputForm from "../InputForm";
 import DiscountForm from "../DiscountForm";
@@ -22,28 +22,17 @@ import {
   UserPhoto,
 } from "./styles";
 
-type IProps = {
-  haveItensOnSale: boolean;
-  addToQueue: (name: string) => void;
-  addDiscount: (value: number) => void;
-  discountState: boolean;
-  setDiscountState: Dispatch<SetStateAction<boolean>>;
-};
+import { useSale } from "../../hooks/useSale";
 
-const Actions: React.FC<IProps> = ({
-  haveItensOnSale,
-  addToQueue,
-  addDiscount,
-  discountState,
-  setDiscountState,
-}) => {
+const Actions: React.FC = () => {
+  const { sale, discountModalHandler, onAddToQueue } = useSale();
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
   const [handlerOutState, setHandlerOutState] = useState(false);
   const [openChat, setOpenChat] = useState(false);
 
   const handleCommand = () => {
-    if (!haveItensOnSale) {
+    if (!sale.items.length) {
       return message.warning("A lista de itens está vazia");
     }
     setCommandState(true);
@@ -52,7 +41,7 @@ const Actions: React.FC<IProps> = ({
   return (
     <Container>
       <ActionButtons>
-        <Button onClick={() => setDiscountState(true)}>
+        <Button onClick={() => discountModalHandler.openDiscoundModal()}>
           <OfferIcon />
           Desconto [R]
         </Button>
@@ -85,15 +74,11 @@ const Actions: React.FC<IProps> = ({
 
       {/* <InputForm
         placeHolder="Digite o nome do cliente"
-        onFinish={addToQueue}
+        onFinish={onAddToQueue}
         modalState={commandState}
         setModalState={setCommandState}
       />
-      <DiscountForm
-        onFinish={addDiscount}
-        modalState={discountState}
-        setModalState={setDiscountState}
-      />
+      <DiscountForm />
       <InOutForm
         type="entrada"
         modalState={handlerInState}

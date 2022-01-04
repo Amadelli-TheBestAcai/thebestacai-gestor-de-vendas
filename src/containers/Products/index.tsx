@@ -20,11 +20,7 @@ type ProductByCategory = {
   products: ProductDto[];
 };
 
-interface IProps {
-  addProduct: (product: ProductDto, quantity: number) => Promise<void>;
-}
-
-const ProductsContainer: React.FC<IProps> = ({ addProduct }) => {
+const ProductsContainer: React.FC = () => {
   const [products, setProducts] = useState<ProductByCategory[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -65,23 +61,10 @@ const ProductsContainer: React.FC<IProps> = ({ addProduct }) => {
               <Column sm={8}>Preço</Column>
               <Column sm={5}>Ação</Column>
             </Header>
-            {/* <ProductHeaderCol span={8}>
-                <ProductHeaderDescription>Produtos</ProductHeaderDescription>
-              </ProductHeaderCol>
-              <ProductHeaderCol span={6}>
-                <ProductHeaderDescription>Preço</ProductHeaderDescription>
-              </ProductHeaderCol>
-              <ProductHeaderCol span={4}>
-                <ProductHeaderDescription>Add</ProductHeaderDescription>
-              </ProductHeaderCol> */}
 
-            {/* {productCategory.products.map((product) => (
-              <Product
-                key={product.product_id}
-                product={product}
-                addProduct={addProduct}
-              />
-            ))} */}
+            {productCategory.products.map((product) => (
+              <Product key={product.product_id} product={product} />
+            ))}
           </TabItem>
         ))}
       </TabContainer>

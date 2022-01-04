@@ -9,10 +9,8 @@ import Actions from "../../containers/Actions";
 import Spinner from "../../components/Spinner";
 import Register from "../../components/Register";
 import CashNotFound from "../../components/CashNotFound";
-
-import { ProductDto } from "../../models/dtos/product";
-import { SaleDto } from "../../models/dtos/sale";
 import { StoreCashDto } from "../../models/dtos/storeCash";
+import { useSale } from "../../hooks/useSale";
 
 import { message } from "antd";
 import {
@@ -29,15 +27,22 @@ import {
   RegisterContent,
 } from "./styles";
 
+import { PaymentType } from "../../models/enums/paymentType";
+
 const Home: React.FC = () => {
-  const [sale, setSale] = useState<SaleDto>();
+  const {
+    sale,
+    setSale,
+    loadingSale,
+    onRegisterSale,
+    discountModalHandler,
+    onAddItem,
+  } = useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
-  const [savingSale, setSavingSale] = useState(false);
-  const [discountState, setDiscountState] = useState(false);
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
 
   useEffect(() => {
@@ -51,19 +56,6 @@ const Home: React.FC = () => {
     }
     init();
   }, []);
-
-  const addSaleItem = async (
-    product: ProductDto,
-    quantity: number
-  ): Promise<void> => {
-    const updatedSale = await window.Main.sale.addItem(product, quantity);
-    setSale(updatedSale);
-  };
-
-  const decressSaleItem = async (id: string): Promise<void> => {
-    const updatedSale = await window.Main.sale.decressItem(id);
-    setSale(updatedSale);
-  };
 
   const addPayment = async () => {
     if (!currentPayment) {
@@ -90,64 +82,68 @@ const Home: React.FC = () => {
     setPaymentModalTitle(title);
   };
 
-  const registerSale = async () => {
-    if (savingSale) {
-      return;
-    }
-
-    if (!sale.items.length) {
-      return message.warning("Nenhum item cadastrado para a venda");
-    }
-
-    if (
-      +(sale.total_sold.toFixed(2) || 0) >
-      sale.total_paid + (sale.discount || 0) + 0.5
-    ) {
-      return message.warning("Pagamento inválido");
-    }
-
-    setSavingSale(true);
-    const _newSale = await window.Main.sale.finishSale();
-    setSale(_newSale);
-    setSavingSale(false);
+  const sendFocusToBalance = () => {
+    document.getElementById("balanceInput").focus();
   };
 
-  const addToQueue = (name: string): void => {
-    console.log(name);
+  const keyMap = {
+    money: "a",
+    MONEY: "A",
+    c_credit: "s",
+    C_CREDIT: "S",
+    c_debit: "d",
+    C_DEBIT: "D",
+    ticket: "t",
+    TICKET: "T",
+    pix: "p",
+    PIX: "P",
+    REGISTER: "f1",
+    focus_balance: "b",
+    FOCUS_BALANCE: "B",
+    insert_discount: "r",
+    INSERT_DISCOUNT: "R",
   };
 
-  const addDiscount = (value: number): void => {
-    if (value > sale.total_sold) {
-      message.warning("Desconto maior que o valor da venda.");
-      return;
-    }
-    setSale((oldValues) => ({ ...oldValues, discount: value }));
+  const handlers = {
+    money: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
+    MONEY: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
+    c_credit: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
+    C_CREDIT: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
+    c_debit: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    C_DEBIT: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    ticket: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+    TICKET: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+    pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),
+    PIX: () => handleOpenPayment(PaymentType.PIX, "PIX"),
+    REGISTER: () => onRegisterSale(),
+    focus_balance: () => sendFocusToBalance(),
+    FOCUS_BALANCE: () => sendFocusToBalance(),
+    insert_discount: () => discountModalHandler.openDiscoundModal(),
+    INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
   };
 
   return (
     <Container>
       <LeftSide>
         <BalanceContainer>
-          <Balance />
+          <Balance
+            addItem={onAddItem}
+            handleOpenPayment={handleOpenPayment}
+            openDiscoundModal={discountModalHandler.openDiscoundModal}
+          />
         </BalanceContainer>
 
         <ItemsContainer>
-          <Products addProduct={addSaleItem} />
+          <Products />
         </ItemsContainer>
       </LeftSide>
       <RightSide>
         <TopActions>
-          <Actions
-            haveItensOnSale={!!sale.items.length}
-            addToQueue={addToQueue}
-            addDiscount={addDiscount}
-            discountState={discountState}
-            setDiscountState={setDiscountState}
-          />
+          <Actions />
         </TopActions>
         <Content>
           <ItemsCardContainer>
-            <Items sale={sale} handleItem={decressSaleItem} />
+            <Items />
           </ItemsCardContainer>
 
           <PaymentsContainer>
@@ -165,11 +161,7 @@ const Home: React.FC = () => {
             </PaymentsContent>
 
             <RegisterContent>
-              <Register
-                isSavingSale={savingSale}
-                registerSale={registerSale}
-                total={sale.total_sold}
-              />
+              <Register />
             </RegisterContent>
           </PaymentsContainer>
         </Content>
