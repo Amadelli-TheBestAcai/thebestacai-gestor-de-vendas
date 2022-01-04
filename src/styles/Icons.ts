@@ -11,6 +11,7 @@ export {
   MoneyBillAlt,
   CreditCard,
   TicketAlt,
+  Search,
 } from "@styled-icons/fa-solid";
 
 export { Offer } from "@styled-icons/boxicons-solid/Offer";

@@ -5,13 +5,14 @@ import Product from "../../components/Product";
 
 import {
   Container,
-  LoadingContainer,
-  Spin,
   TabContainer,
+  ProductSearch,
+  InputSearchProduct,
   TabItem,
-  ProductHeader,
-  ProductHeaderCol,
-  ProductHeaderDescription,
+  IconContainer,
+  SearchIcon,
+  Header,
+  Column,
 } from "./styles";
 
 type ProductByCategory = {
@@ -26,6 +27,7 @@ interface IProps {
 const ProductsContainer: React.FC<IProps> = ({ addProduct }) => {
   const [products, setProducts] = useState<ProductByCategory[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     async function init() {
       setLoading(true);
@@ -47,7 +49,43 @@ const ProductsContainer: React.FC<IProps> = ({ addProduct }) => {
   }, []);
 
   return (
-    <Container>teste</Container>
+    <Container>
+      <TabContainer defaultActiveKey="1">
+        {products?.map((productCategory, index) => (
+          <TabItem tab={productCategory.category} key={index + 1}>
+            <ProductSearch>
+              <IconContainer>
+                <SearchIcon />
+              </IconContainer>
+              <InputSearchProduct placeholder="Procurar item" />
+            </ProductSearch>
+
+            <Header>
+              <Column sm={11}>Produto</Column>
+              <Column sm={8}>Preço</Column>
+              <Column sm={5}>Ação</Column>
+            </Header>
+            {/* <ProductHeaderCol span={8}>
+                <ProductHeaderDescription>Produtos</ProductHeaderDescription>
+              </ProductHeaderCol>
+              <ProductHeaderCol span={6}>
+                <ProductHeaderDescription>Preço</ProductHeaderDescription>
+              </ProductHeaderCol>
+              <ProductHeaderCol span={4}>
+                <ProductHeaderDescription>Add</ProductHeaderDescription>
+              </ProductHeaderCol> */}
+
+            {/* {productCategory.products.map((product) => (
+              <Product
+                key={product.product_id}
+                product={product}
+                addProduct={addProduct}
+              />
+            ))} */}
+          </TabItem>
+        ))}
+      </TabContainer>
+    </Container>
     // <Container>
     //   {loading ? (
     //     <LoadingContainer>

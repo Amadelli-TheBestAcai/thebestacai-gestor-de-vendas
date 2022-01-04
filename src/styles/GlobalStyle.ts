@@ -7,6 +7,7 @@ export const GlobalStyle = createGlobalStyle`
    --white-30: #f7f7f7;
    --white-40: #f9f9f9;
    --white-70: #f5f5f5;
+   --white-80: #f6f6f6;
    
    --black-opaco: #1C1E23;
    --gray-50: #e0e0e0;
@@ -53,6 +54,30 @@ export const GlobalStyle = createGlobalStyle`
         outline: none;
         box-shadow: 0 0 0 0;
       }
+    }
+
+    .ant-tabs-nav {
+    background: var(--black-opaco);
+    color: white;
+    border-radius: 6px 6px 0px 0px;
+    padding: 1%;
+    margin: 0px;
+  }
+  
+    .ant-tabs-tab.ant-tabs-tab-active,
+    .ant-tabs-tab-btn {
+     color: white;
+
+      :active,
+      :hover,
+      :focus {
+        color: white;
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      position: absolute;
+      background: white;
     }
   }
 

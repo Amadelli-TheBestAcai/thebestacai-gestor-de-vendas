@@ -31,7 +31,6 @@ export const BalanceContainer = styled.div`
 export const ItemsContainer = styled.div`
   width: 100%;
   height: 85%;
-  background: pink;
 `;
 
 export const RightSide = styled.div`

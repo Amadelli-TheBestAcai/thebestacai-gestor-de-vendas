@@ -1,10 +1,7 @@
 import styled from "styled-components";
-import {
-  Spin as SpinAnt,
-  Tabs as TabsAnd,
-  Row as RowAnt,
-  Col as ColAnt,
-} from "antd";
+import { Search } from "../../styles/Icons";
+
+import { Spin as SpinAnt, Tabs as TabsAnd, Col } from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -12,56 +9,69 @@ export const Container = styled.div`
   height: 100%;
 `;
 
-export const LoadingContainer = styled.div`
+export const TabContainer = styled(TabsAnd)`
+  width: 100%;
+`;
+
+export const ProductSearch = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 3.8rem;
+  background: var(--white-80);
+  padding: 2%;
+  margin-bottom: 8px;
+`;
+
+export const InputSearchProduct = styled.input`
+  width: 90%;
+  height: 37px;
+  background: var(--white);
+  border-radius: 0px 7px 7px 0px;
+  padding: 5px;
+`;
+
+export const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-grow: 1;
+  width: 10%;
+  height: 37px;
+  background: var(--white);
+  border-radius: 7px 0px 0px 7px;
+  padding: 5px;
 `;
 
-export const Spin = styled(SpinAnt)``;
+export const SearchIcon = styled(Search)`
+  width: 1rem;
+  height: 1rem;
+  color: var(--grey-80);
+`;
 
-export const TabContainer = styled(TabsAnd)`
+export const Header = styled.header`
+  display: flex;
+  align-items: center;
   width: 100%;
-  div.ant-tabs-nav {
-    background: var(--primary-orange);
-    margin-bottom: 0px;
-  }
-  div.ant-tabs-nav-wrap {
-    display: flex;
-    justify-content: center;
-  }
-  .ant-tabs-tab {
-    font-weight: bold;
-    line-height: 0.2;
-  }
-  .ant-tabs-tab-btn {
-    color: black !important;
-  }
-  .ant-tabs-ink-bar {
-    position: absolute;
-    background: black;
-    pointer-events: none;
-  }
+  height: 47px;
+  background: #f9f9f9;
+  margin-bottom: 8px;
 `;
 
 export const TabItem = styled(TabsAnd.TabPane)``;
 
-export const ProductHeader = styled(RowAnt)`
+export const Column = styled(Col)`
   display: flex;
-  justify-content: space-evenly;
-  background: black;
-  padding: 1% 0;
-`;
-
-export const ProductHeaderCol = styled(ColAnt)`
-  display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
 `;
 
-export const ProductHeaderDescription = styled.label`
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-`;
+// export const LoadingContainer = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   flex-grow: 1;
+// `;
+
+// export const Spin = styled(SpinAnt)``;

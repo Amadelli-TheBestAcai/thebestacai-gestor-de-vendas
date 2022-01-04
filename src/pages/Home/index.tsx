@@ -132,10 +132,9 @@ const Home: React.FC = () => {
         </BalanceContainer>
 
         <ItemsContainer>
-          {/* <Products addProduct={addSaleItem} /> */}
+          <Products addProduct={addSaleItem} />
         </ItemsContainer>
       </LeftSide>
-
       <RightSide>
         <TopActions>
           <Actions
