@@ -23,6 +23,10 @@ import {
   ItemsContainer,
   TopActions,
   Content,
+  ItemsCardContainer,
+  PaymentsContainer,
+  PaymentsContent,
+  RegisterContent,
 } from "./styles";
 
 const Home: React.FC = () => {
@@ -142,7 +146,34 @@ const Home: React.FC = () => {
             setDiscountState={setDiscountState}
           />
         </TopActions>
-        <Content></Content>
+        <Content>
+          <ItemsCardContainer>
+            <Items sale={sale} handleItem={decressSaleItem} />
+          </ItemsCardContainer>
+
+          <PaymentsContainer>
+            <PaymentsContent>
+              <Payments
+                sale={sale}
+                addPayment={addPayment}
+                removePayment={removePayment}
+                setCurrentPayment={setCurrentPayment}
+                modalState={paymentModal}
+                modalTitle={paymentModalTitle}
+                setModalState={setPaymentModal}
+                handleOpenPayment={handleOpenPayment}
+              />
+            </PaymentsContent>
+
+            <RegisterContent>
+              <Register
+                isSavingSale={savingSale}
+                registerSale={registerSale}
+                total={sale.total_sold}
+              />
+            </RegisterContent>
+          </PaymentsContainer>
+        </Content>
       </RightSide>
     </Container>
 
@@ -154,7 +185,7 @@ const Home: React.FC = () => {
     //
     //       <RightSide>
     //         <Content>
-    //           <ActionsContainer></ActionsContainer>
+    //
     //           <ItemsContainer>
     //             <Items sale={sale} handleItem={decressSaleItem} />
     //           </ItemsContainer>

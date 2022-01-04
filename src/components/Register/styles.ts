@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   width: 100%;
   height: 100%;
 `;
@@ -12,7 +13,7 @@ export const ContentValue = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 80%;
+  height: 67%;
   background: var(--white-30);
   border: 1px solid var(--grey-70);
   box-sizing: border-box;
@@ -33,11 +34,11 @@ export const ButtonFinisher = styled.button`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 30%;
+  height: 25%;
   background: #f0ad4e;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: var(--black-opaco);
   font-weight: bold;
 `;

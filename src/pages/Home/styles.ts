@@ -40,6 +40,11 @@ export const RightSide = styled.div`
   height: 100%;
 `;
 
+export const TopActions = styled.div`
+  width: 100%;
+  height: 10%;
+`;
+
 export const Content = styled.div`
   flex-direction: column;
   width: 100%;
@@ -47,7 +52,26 @@ export const Content = styled.div`
   ${ContentCSS}
 `;
 
-export const TopActions = styled.div`
+export const ItemsCardContainer = styled.div`
+  display: flex;
   width: 100%;
-  height: 10%;
+  height: 70%;
+`;
+
+export const PaymentsContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 30%;
+`;
+
+export const PaymentsContent = styled.div`
+  display: flex;
+  width: 70%;
+  height: 100%;
+`;
+
+export const RegisterContent = styled.div`
+  display: flex;
+  width: 30%;
+  height: 100%;
 `;

@@ -5,14 +5,27 @@ export const GlobalStyle = createGlobalStyle`
    --white: #FFFFFF;
    --white-25: #F3F3F3;
    --white-30: #f7f7f7;
+   --white-40: #f9f9f9;
+   --white-70: #f5f5f5;
+   
    --black-opaco: #1C1E23;
    --gray-50: #e0e0e0;
    --grey-70: #bebebe;
    --grey-80: #acacac;
+   --grey-100: #666666;
 
 
    --orange-200: #FFB956;
    --orange-250: #FF9D0A;
+
+   --green-400: #47BC47;
+   --green-600: #3A7538;
+   --teal-400: #4BB8A9;
+   --blue-300: #5BC0DE;
+   --blue-400: #1963A2;
+   --purple-450: #7E3AFC;
+   --red-600: #A43C3F;
+
   }
 
   * {

@@ -5,26 +5,23 @@ import { SaleDto } from "../../models/dtos/sale";
 
 import Payment from "../../components/Payment";
 
+import PixLogo from "../../assets/svg/pix.svg";
+
 import {
   Container,
-  PaymentsList,
+  TypesPaymentsContainer,
   Button,
-  Modal,
-  Input,
-  Header,
-  Content,
-  Footer,
-  ListContainer,
-  AmountContainer,
-  AmountValue,
-  AmountDescription,
   MoneyIcon,
   CreditIcon,
   DebitIcon,
   TicketIcon,
+  PixIcon,
+  PaymentsInfoContainer,
+  ValuesContainer,
+  Input,
+  Modal,
+  ValueInfo,
 } from "./styles";
-
-import PixLogo from "../../assets/img/pix.png";
 
 interface IProps {
   sale: SaleDto;
@@ -55,9 +52,83 @@ const PaymentsContainer: React.FC<IProps> = ({
     setCurrentPayment(amount);
   };
 
+  const buttonsPaymentsStyle = [
+    {
+      icon: <MoneyIcon />,
+      label: "Dinheiro [A}",
+      background: "var(--green-400)",
+      action: `${console.log("teste")}`,
+    },
+    {
+      icon: <CreditIcon />,
+      label: "Crédito [S]",
+      background: "var(--blue-300)",
+      action: "",
+    },
+    {
+      icon: <DebitIcon />,
+      label: "Débito [D]",
+      background: "var(--blue-400)",
+      action: "",
+    },
+    {
+      icon: <TicketIcon />,
+      label: "Ticket",
+      background: "var(--purple-450)",
+      action: "",
+    },
+    {
+      icon: <PixIcon src={PixLogo} />,
+      label: "Pix [P]",
+      background: "var(--teal-400)",
+      action: "",
+    },
+  ];
+
   return (
     <Container>
-      <Header>
+      <TypesPaymentsContainer>
+        {buttonsPaymentsStyle.map((buttonStyle) => (
+          <Button
+            style={{ background: buttonStyle.background }}
+            onClick={() => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro")}
+          >
+            {buttonStyle.icon} {buttonStyle.label}
+          </Button>
+        ))}
+      </TypesPaymentsContainer>
+
+      <PaymentsInfoContainer>
+        {sale.payments?.map((payment, index) => (
+          <Payment
+            key={index}
+            payment={payment}
+            removePayment={removePayment}
+          />
+        ))}
+      </PaymentsInfoContainer>
+
+      <ValuesContainer>
+        <ValueInfo>
+          R$ Troco <br />{" "}
+          <strong style={{ color: "var(--red-600" }}>
+            {sale.change_amount.toFixed(2).replace(".", ",")}
+          </strong>
+        </ValueInfo>
+        <ValueInfo>
+          R$ Valor Pago <br />{" "}
+          <strong style={{ color: "var(--green-600" }}>
+            {sale.total_paid.toFixed(2).replace(".", ",")}
+          </strong>
+        </ValueInfo>
+        <ValueInfo>
+          Quantidade Itens <br />{" "}
+          <strong style={{ color: "var(--grey-80" }}>
+            {sale.quantity || 0}
+          </strong>
+        </ValueInfo>
+      </ValuesContainer>
+      {/* <Header>
         <Button
           className="ant-btn"
           onClick={() => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro")}
@@ -101,48 +172,16 @@ const PaymentsContainer: React.FC<IProps> = ({
           />
         </Button>
       </Header>
-      <Content>
-        <ListContainer>
-          <PaymentsList>
-            {sale.payments?.map((payment, index) => (
-              <Payment
-                key={index}
-                payment={payment}
-                removePayment={removePayment}
-              />
-            ))}
-          </PaymentsList>
-        </ListContainer>
-      </Content>
       <Footer>
-        <AmountContainer span={6}>
-          <AmountDescription>Troco</AmountDescription>
-          <AmountValue
-            style={{
-              color: sale.change_amount < 0 ? "red" : "#fff",
-              background: "#FF9D0A",
-            }}
-          >
-            R$ {sale.change_amount.toFixed(2).replace(".", ",")}
-          </AmountValue>
-        </AmountContainer>
-        <AmountContainer span={6}>
-          <AmountDescription>Valor Pago</AmountDescription>
-          <AmountValue>
-            R$ {sale.total_paid.toFixed(2).replace(".", ",")}
-          </AmountValue>
-        </AmountContainer>
         <AmountContainer span={6}>
           <AmountDescription>Desconto:</AmountDescription>
           <AmountValue>
             R$ {sale.discount.toFixed(2).replace(".", ",")}
           </AmountValue>
         </AmountContainer>
-        <AmountContainer span={6}>
-          <AmountDescription>Quantidade Itens:</AmountDescription>
-          <AmountValue>{sale.quantity || 0}</AmountValue>
-        </AmountContainer>
       </Footer>
+     */}
+
       <Modal
         title={`Pagamento em ${modalTitle}`}
         width={250}

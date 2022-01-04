@@ -8,12 +8,16 @@ export {
   Box,
   Coins,
   Scroll,
+  MoneyBillAlt,
+  CreditCard,
+  TicketAlt,
 } from "@styled-icons/fa-solid";
 
 export { Offer } from "@styled-icons/boxicons-solid/Offer";
 export { LogInCircle, LogOutCircle } from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles } from "@styled-icons/ionicons-sharp/Chatbubbles";
+export { CreditCard2BackFill } from "@styled-icons/bootstrap";
 
 //---------------------------------------------------//
 
@@ -22,7 +26,6 @@ export { Trash } from "@styled-icons/fa-solid";
 export {
   ArrowLeftRight,
   CreditCard2Back,
-  CreditCard,
   CheckCircleFill,
   TelephoneFill,
 } from "@styled-icons/bootstrap";

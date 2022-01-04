@@ -1,38 +1,46 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
-import { Row, Col } from 'antd'
+import { Row, Col } from "antd";
 
-import { RemoveCircle } from '../../styles/Icons'
-
-export const Container = styled(Row)`
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  border: 2px solid #f4f4f4;
-  background: #ffc165;
-`
+`;
+
+export const Header = styled.header`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 30%;
+  font-weight: 600;
+  color: var(--black-opaco);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 70%;
+  overflow-y: scroll;
+`;
+
+export const InfoPayment = styled(Row)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40%;
+  margin-top: 3px;
+  background: var(--white-70);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--black-opaco);
+`;
 
 export const Column = styled(Col)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-export const Description = styled.label``
-
-export const Button = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-export const RemoveIcon = styled(RemoveCircle)`
-  width: 24px;
-  height: 24px;
-  color: var(--button-remove);
-  cursor: pointer;
-
-  :hover {
-    color: #ea1d2c;
-    transition: 0.5s;
-  }
-`
+  text-align: center;
+`;

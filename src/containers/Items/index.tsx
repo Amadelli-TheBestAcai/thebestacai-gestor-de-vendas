@@ -10,6 +10,7 @@ import {
   Column,
   Description,
   ItemContainer,
+  ItemContent,
 } from "./styles";
 
 type IProps = {
@@ -33,12 +34,17 @@ const Items: React.FC<IProps> = ({ sale, handleItem }) => {
         <Column span={4}>
           <Description>Valor Total</Description>
         </Column>
-        <Column span={2} />
+        <Column span={2}>
+          <Description>Ação</Description>
+        </Column>
       </Header>
+
       <ItemContainer>
-        {sale.items.map((item) => (
-          <Item key={item.id} item={item} handleItem={handleItem} />
-        ))}
+        <ItemContent>
+          {sale.items.map((item) => (
+            <Item key={item.id} item={item} handleItem={handleItem} />
+          ))}
+        </ItemContent>
       </ItemContainer>
     </Container>
   );
