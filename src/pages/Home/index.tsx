@@ -9,10 +9,8 @@ import Actions from "../../containers/Actions";
 import Spinner from "../../components/Spinner";
 import Register from "../../components/Register";
 import CashNotFound from "../../components/CashNotFound";
-
-import { ProductDto } from "../../models/dtos/product";
-import { SaleDto } from "../../models/dtos/sale";
 import { StoreCashDto } from "../../models/dtos/storeCash";
+import { useSale } from "../../hooks/useSale";
 
 import { message } from "antd";
 import {
@@ -32,14 +30,19 @@ import {
 import { PaymentType } from "../../models/enums/paymentType";
 
 const Home: React.FC = () => {
-  const [sale, setSale] = useState<SaleDto>();
+  const {
+    sale,
+    setSale,
+    loadingSale,
+    onRegisterSale,
+    discountModalHandler,
+    onAddItem,
+  } = useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
-  const [savingSale, setSavingSale] = useState(false);
-  const [discountState, setDiscountState] = useState(false);
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
 
   useEffect(() => {
@@ -53,19 +56,6 @@ const Home: React.FC = () => {
     }
     init();
   }, []);
-
-  const addSaleItem = async (
-    product: ProductDto,
-    quantity: number
-  ): Promise<void> => {
-    const updatedSale = await window.Main.sale.addItem(product, quantity);
-    setSale(updatedSale);
-  };
-
-  const decressSaleItem = async (id: string): Promise<void> => {
-    const updatedSale = await window.Main.sale.decressItem(id);
-    setSale(updatedSale);
-  };
 
   const addPayment = async () => {
     if (!currentPayment) {
@@ -92,46 +82,8 @@ const Home: React.FC = () => {
     setPaymentModalTitle(title);
   };
 
-  const registerSale = async () => {
-    if (savingSale) {
-      return;
-    }
-
-    if (!sale.items.length) {
-      return message.warning("Nenhum item cadastrado para a venda");
-    }
-
-    if (
-      +(sale.total_sold.toFixed(2) || 0) >
-      sale.total_paid + (sale.discount || 0) + 0.5
-    ) {
-      return message.warning("Pagamento inválido");
-    }
-
-    setSavingSale(true);
-    const _newSale = await window.Main.sale.finishSale();
-    setSale(_newSale);
-    setSavingSale(false);
-  };
-
-  const addToQueue = (name: string): void => {
-    console.log(name);
-  };
-
-  const addDiscount = (value: number): void => {
-    if (value > sale.total_sold) {
-      message.warning("Desconto maior que o valor da venda.");
-      return;
-    }
-    setSale((oldValues) => ({ ...oldValues, discount: value }));
-  };
-
   const sendFocusToBalance = () => {
     document.getElementById("balanceInput").focus();
-  };
-
-  const openDiscoundModal = () => {
-    setDiscountState(true);
   };
 
   const keyMap = {
@@ -163,11 +115,11 @@ const Home: React.FC = () => {
     TICKET: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),
     PIX: () => handleOpenPayment(PaymentType.PIX, "PIX"),
-    REGISTER: () => registerSale(),
+    REGISTER: () => onRegisterSale(),
     focus_balance: () => sendFocusToBalance(),
     FOCUS_BALANCE: () => sendFocusToBalance(),
-    insert_discount: () => openDiscoundModal(),
-    INSERT_DISCOUNT: () => openDiscoundModal(),
+    insert_discount: () => discountModalHandler.openDiscoundModal(),
+    INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
   };
 
   return (
@@ -177,7 +129,7 @@ const Home: React.FC = () => {
       keyMap={keyMap}
       allowChanges={true}
     >
-      {loading ? (
+      {loading || loadingSale ? (
         <Spinner />
       ) : (
         <>
@@ -189,27 +141,21 @@ const Home: React.FC = () => {
                 <BalanceContainer>
                   <Balance
                     handleOpenPayment={handleOpenPayment}
-                    openDiscoundModal={openDiscoundModal}
-                    addItem={addSaleItem}
+                    openDiscoundModal={discountModalHandler.openDiscoundModal}
+                    addItem={onAddItem}
                   />
                 </BalanceContainer>
                 <ProductsContainer>
-                  <Products addProduct={addSaleItem} />
+                  <Products />
                 </ProductsContainer>
               </LeftSide>
               <RightSide>
                 <Content>
                   <ActionsContainer>
-                    <Actions
-                      haveItensOnSale={!!sale.items.length}
-                      addToQueue={addToQueue}
-                      addDiscount={addDiscount}
-                      discountState={discountState}
-                      setDiscountState={setDiscountState}
-                    />
+                    <Actions />
                   </ActionsContainer>
                   <ItemsContainer>
-                    <Items sale={sale} handleItem={decressSaleItem} />
+                    <Items />
                   </ItemsContainer>
                   <PaymentsContainer>
                     <PaymentsTypesContainer>
@@ -225,11 +171,7 @@ const Home: React.FC = () => {
                       />
                     </PaymentsTypesContainer>
                     <FinishContainer>
-                      <Register
-                        isSavingSale={savingSale}
-                        registerSale={registerSale}
-                        total={sale.total_sold}
-                      />
+                      <Register />
                     </FinishContainer>
                   </PaymentsContainer>
                 </Content>

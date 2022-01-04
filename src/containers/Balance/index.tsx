@@ -49,7 +49,7 @@ const BalanceContainer: React.FC<IProps> = ({
     if (!balanceAmount) {
       return 0;
     }
-    return +(+balanceAmount / +selfService.price_unit).toFixed(4);
+    return +(+balanceAmount / +(selfService?.price_unit || 0)).toFixed(4);
   };
 
   const handleEnterToSubmit = () => {
@@ -137,7 +137,7 @@ const BalanceContainer: React.FC<IProps> = ({
             <WeightContainer>
               <Text>Peso</Text>
               <Weight>
-                KG {(+selfService.price_unit)?.toFixed(4).replace(".", ",")}
+                KG {(+selfService?.price_unit)?.toFixed(4).replace(".", ",")}
               </Weight>
             </WeightContainer>
           </BottomContainer>

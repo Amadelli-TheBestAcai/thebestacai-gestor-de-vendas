@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SaleDto } from "../../models/dtos/sale";
+import { useSale } from "../../hooks/useSale";
 
 import Item from "../../components/Item";
 
@@ -12,12 +12,8 @@ import {
   ItemContainer,
 } from "./styles";
 
-type IProps = {
-  sale: SaleDto;
-  handleItem: (id: string) => void;
-};
-
-const Items: React.FC<IProps> = ({ sale, handleItem }) => {
+const Items: React.FC = () => {
+  const { sale } = useSale();
   return (
     <Container>
       <Header>
@@ -37,7 +33,7 @@ const Items: React.FC<IProps> = ({ sale, handleItem }) => {
       </Header>
       <ItemContainer>
         {sale.items.map((item) => (
-          <Item key={item.id} item={item} handleItem={handleItem} />
+          <Item key={item.id} item={item} />
         ))}
       </ItemContainer>
     </Container>

@@ -3,14 +3,15 @@ import React from "react";
 import { ProductDto } from "../../models/dtos/product";
 
 import { Container, Column, Description, AddIcon } from "./styles";
+import { useSale } from "../../hooks/useSale";
 
 interface IProps {
   product: ProductDto;
-  addProduct: (product: ProductDto, quantity: number) => Promise<void>;
 }
-const Product: React.FC<IProps> = ({ product, addProduct }) => {
+const Product: React.FC<IProps> = ({ product }) => {
+  const { onAddItem } = useSale();
   const handleItem = async () => {
-    await addProduct(product, 1);
+    await onAddItem(product, 1);
   };
 
   return (

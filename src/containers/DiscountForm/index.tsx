@@ -1,28 +1,21 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState } from "react";
 
 import { message } from "antd";
 
 import { Container, Input } from "./styles";
+import { useSale } from "../../hooks/useSale";
 
-interface IProps {
-  modalState: boolean;
-  setModalState: Dispatch<SetStateAction<boolean>>;
-  onFinish: (value: number) => void;
-}
-const DiscountForm: React.FC<IProps> = ({
-  modalState,
-  setModalState,
-  onFinish,
-}) => {
+const DiscountForm: React.FC = () => {
+  const { discountModalState, onAddDiscount, discountModalHandler } = useSale();
   const [value, setValue] = useState<number>();
 
   const handleSubmit = () => {
     if (value < 0) {
       return message.warning("Informe um valor válido");
     }
-    setModalState(false);
+    discountModalHandler.closeDiscoundModal();
     setValue(0);
-    onFinish(value);
+    onAddDiscount(value);
     document.getElementById("mainContainer").focus();
   };
 
@@ -33,12 +26,12 @@ const DiscountForm: React.FC<IProps> = ({
   return (
     <Container
       title="Desconto"
-      visible={modalState}
+      visible={discountModalState}
       onOk={handleSubmit}
       closable={false}
       onCancel={() => {
         document.getElementById("mainContainer").focus();
-        setModalState(false);
+        discountModalHandler.closeDiscoundModal();
       }}
       width={300}
       destroyOnClose={true}

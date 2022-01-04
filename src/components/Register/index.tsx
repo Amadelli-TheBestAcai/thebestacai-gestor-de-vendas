@@ -11,13 +11,9 @@ import {
   AmountValue,
 } from "./styles";
 
-interface IProps {
-  isSavingSale: boolean;
-  total: number;
-  registerSale: () => void;
-}
-
-const Register: React.FC<IProps> = ({ total, registerSale, isSavingSale }) => {
+import { useSale } from "../../hooks/useSale";
+const Register: React.FC = () => {
+  const { sale, onRegisterSale, isSavingSale } = useSale();
   const monetaryFormat = (value: number): string => {
     if (!value) {
       return "0,00";
@@ -30,11 +26,11 @@ const Register: React.FC<IProps> = ({ total, registerSale, isSavingSale }) => {
         <AmountContainer style={{ width: "100%" }}>
           <Description>Total</Description>
           <AmountValue style={{ fontSize: "35px" }}>
-            R$ {monetaryFormat(total)}
+            R$ {monetaryFormat(sale.total_sold)}
           </AmountValue>
         </AmountContainer>
       </Content>
-      <Footer onClick={() => registerSale()}>
+      <Footer onClick={() => onRegisterSale()}>
         {isSavingSale ? <Spin /> : "[F1] REGISTRAR"}
       </Footer>
     </Container>

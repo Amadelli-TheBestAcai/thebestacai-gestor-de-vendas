@@ -227,7 +227,7 @@ class Sale extends BaseRepository<Entity> {
         +(sales[saleIndex].items[itemIndex].storeProduct.price_unit || 0);
     }
 
-    sales[saleIndex].items.reduce(
+    sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
       (total, item) =>
         +(item.storeProduct?.price_unit || 0) * item.quantity + total,
       0
