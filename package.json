@@ -51,8 +51,8 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "wirlleyd",
-        "repo": "electron-react-typescript",
+        "owner": "Amadelli-TheBestAcai",
+        "repo": "thebestacai-gestor-de-vendas",
         "releaseType": "release"
       }
     ],
