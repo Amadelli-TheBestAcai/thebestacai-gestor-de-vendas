@@ -11,7 +11,7 @@ npm install --global node-gyp@latest
 ```
 
 ```bash
-- npm config set python python2.7
+npm config set python python2.7
 ```
 
 ```bash
