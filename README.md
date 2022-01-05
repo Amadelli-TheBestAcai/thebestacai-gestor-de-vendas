@@ -71,4 +71,4 @@ Após o primeiro finalizar a subida do frontend, executar:
 yarn dev:electron
 ```
 
-**dica**: mudanças feitas na pasta **electron** não atualizam sozinhas ao salvar, pra ser mais rapido, pode só parar o terminal que esta usando o comando **yarn dev:electron** e executar novamente.
+**dica**: mudanças feitas na pasta **electron** não refletem na aplicação ao salvar, para ser mais eficiente, pode apenas parar o terminal que esta usando o comando **yarn dev:electron** e executar novamente.
