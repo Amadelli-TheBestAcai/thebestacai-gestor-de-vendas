@@ -10,6 +10,6 @@ export const saleFactory = {
     await saleModel.addPayment(amount, type),
   deletePayment: async (id: string) => await saleModel.deletePayment(id),
   decressItem: async (id: string) => await saleModel.decressItem(id),
-  addItem: async (productToAdd: ProductDto, quantity: number) =>
-    await saleModel.addItem(productToAdd, quantity),
+  addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
+    await saleModel.addItem(productToAdd, quantity, price),
 };

@@ -12,7 +12,11 @@ type SaleContextType = {
   loading: boolean;
   savingSale: boolean;
   discountModalState: boolean;
-  onAddItem: (product: ProductDto, quantity: number) => Promise<void>;
+  onAddItem: (
+    product: ProductDto,
+    quantity: number,
+    price?: number
+  ) => Promise<void>;
   onDecressItem: (id: string) => Promise<void>;
   onAddDiscount: (value: number) => Promise<void>;
   onAddToQueue: (name: string) => Promise<void>;
@@ -48,9 +52,15 @@ export function SaleProvider({ children }) {
 
   const onAddItem = async (
     product: ProductDto,
-    quantity: number
+    quantity: number,
+    price?: number
   ): Promise<void> => {
-    const updatedSale = await window.Main.sale.addItem(product, quantity);
+    price;
+    const updatedSale = await window.Main.sale.addItem(
+      product,
+      quantity,
+      price
+    );
     setSale(updatedSale);
   };
 

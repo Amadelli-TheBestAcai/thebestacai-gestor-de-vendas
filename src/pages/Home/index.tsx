@@ -123,7 +123,12 @@ const Home: React.FC = () => {
   };
 
   return (
-    <Container>
+    <Container
+      id="mainContainer"
+      handlers={handlers}
+      keyMap={keyMap}
+      allowChanges={true}
+    >
       <LeftSide>
         <BalanceContainer>
           <Balance
@@ -167,45 +172,6 @@ const Home: React.FC = () => {
         </Content>
       </RightSide>
     </Container>
-
-    // <Container id="mainContainer" allowChanges={true}>
-    //   {loading ? (
-    //     <Spinner />
-    //   ) : (
-    //     <>
-    //
-    //       <RightSide>
-    //         <Content>
-    //
-    //           <ItemsContainer>
-    //             <Items sale={sale} handleItem={decressSaleItem} />
-    //           </ItemsContainer>
-    //           <PaymentsContainer>
-    //             <PaymentsTypesContainer>
-    //               <Payments
-    //                 sale={sale}
-    //                 addPayment={addPayment}
-    //                 removePayment={removePayment}
-    //                 setCurrentPayment={setCurrentPayment}
-    //                 modalState={paymentModal}
-    //                 modalTitle={paymentModalTitle}
-    //                 setModalState={setPaymentModal}
-    //                 handleOpenPayment={handleOpenPayment}
-    //               />
-    //             </PaymentsTypesContainer>
-    //             <FinishContainer>
-    //               <Register
-    //                 isSavingSale={savingSale}
-    //                 registerSale={registerSale}
-    //                 total={sale.total_sold}
-    //               />
-    //             </FinishContainer>
-    //           </PaymentsContainer>
-    //         </Content>
-    //       </RightSide>
-    //     </>
-    //   )}
-    // </Container>
   );
 };
 

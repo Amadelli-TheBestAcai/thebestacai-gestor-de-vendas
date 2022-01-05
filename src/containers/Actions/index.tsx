@@ -72,7 +72,7 @@ const Actions: React.FC = () => {
         </ContentHeaderInfos>
       </InfosAndChat>
 
-      {/* <InputForm
+      <InputForm
         placeHolder="Digite o nome do cliente"
         onFinish={onAddToQueue}
         modalState={commandState}
@@ -88,7 +88,7 @@ const Actions: React.FC = () => {
         type="saida"
         modalState={handlerOutState}
         setModalState={setHandlerOutState}
-      /> */}
+      />
     </Container>
   );
 };

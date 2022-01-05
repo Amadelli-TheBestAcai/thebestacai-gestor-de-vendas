@@ -13,6 +13,7 @@ import {
 } from "./styles";
 import { PaymentType } from "../../models/enums/paymentType";
 
+import { useSale } from "../../hooks/useSale";
 interface IProps {
   openDiscoundModal: () => void;
   handleOpenPayment: (type: number, title: string) => void;
@@ -23,6 +24,7 @@ const BalanceContainer: React.FC<IProps> = ({
   handleOpenPayment,
   openDiscoundModal,
 }) => {
+  const { onAddItem, onRegisterSale } = useSale();
   const [selfService, setselfService] = useState<ProductDto | undefined>(
     undefined
   );
@@ -53,7 +55,7 @@ const BalanceContainer: React.FC<IProps> = ({
       return;
     }
     document.getElementById("mainContainer").focus();
-    //addItem(selfService, getQuantity(), balanceAmount);
+    onAddItem(selfService, getQuantity(), balanceAmount);
     setBalanceAmount(undefined);
   };
 
@@ -98,7 +100,7 @@ const BalanceContainer: React.FC<IProps> = ({
       handleEnterToSubmit();
     }
     if (lowerKey === "f1") {
-      // registerSale();
+      onRegisterSale();
     }
     if (lowerKey === "r") {
       openDiscoundModal();
@@ -119,13 +121,20 @@ const BalanceContainer: React.FC<IProps> = ({
             <InputPrice
               autoFocus={true}
               id="balanceInput"
-              getValue={(value: number) => console.log(value)}
+              getValue={(value) => setBalanceAmount(value)}
+              onEnterPress={handleEnterToSubmit}
+              onPressKey={handlerEventKey}
             />
           </RightSide>
           <LefttSide>
             <span>Peso</span>
             <InfoWeight>
-              KG {(+selfService?.price_unit)?.toFixed(4).replace(".", ",")}
+              KG{" "}
+              {+balanceAmount
+                ? (balanceAmount / +selfService?.price_unit)
+                    ?.toFixed(4)
+                    .replace(".", ",")
+                : "0,0000"}
             </InfoWeight>
             <span>Preço do KG</span>
             <InfoWeight>

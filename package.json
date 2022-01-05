@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "version": "0.8.0",
+  "version": "0.0.1",
   "author": "Wirlley Delfino",
   "description": "React-TypeScript-Electron sample with Create React App and Electron Builder",
   "homepage": ".",
@@ -41,7 +41,7 @@
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
     "dev:react": "cross-env BROWSER=none yarn start",
     "dev:electron": "tsc -p electron && electron .",
-    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish never",
+    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish always",
     "eject": "react-scripts eject"
   },
   "build": {

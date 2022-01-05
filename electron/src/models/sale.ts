@@ -160,7 +160,11 @@ class Sale extends BaseRepository<Entity> {
     return sales[saleIndex];
   }
 
-  async addItem(productToAdd: ProductDto, quantity: number): Promise<Entity> {
+  async addItem(
+    productToAdd: ProductDto,
+    quantity: number,
+    price?: number
+  ): Promise<Entity> {
     const sales = await this.getAll();
     const saleIndex = sales.findIndex((_sale) => _sale.is_current);
 
@@ -186,17 +190,13 @@ class Sale extends BaseRepository<Entity> {
         update_stock: true,
         product,
         storeProduct,
-        total: +(productToAdd.price_unit || 0),
+        total: +(price || productToAdd.price_unit || 0),
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
 
     sales[saleIndex].total_sold = +sales[saleIndex].items
-      .reduce(
-        (total, item) =>
-          +(item.storeProduct?.price_unit || 0) * item.quantity + total,
-        0
-      )
+      .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
     await this.createMany(sales);

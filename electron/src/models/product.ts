@@ -1,6 +1,7 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { checkInternet } from "../providers/internetConnection";
 import odinApi from "../providers/odinApi";
+import storeModel from "./store";
 
 export type Entity = {
   id: number;
@@ -89,10 +90,10 @@ class Product extends BaseRepository<Entity> {
   async getProducts(): Promise<Entity[]> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
-      const store = { store_id: 1 }; //await this._storeRepository.findCurrent();
+      const store = await storeModel.getOne();
       const {
         data: { content },
-      } = await odinApi.get(`products_store/store/${store.store_id}`);
+      } = await odinApi.get(`products_store/store/${store?.company_id}`);
       await this.clear();
       await this.createMany(content);
       return content;
