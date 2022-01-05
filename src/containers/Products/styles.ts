@@ -74,11 +74,9 @@ export const ProductsContent = styled.div`
   overflow-y: scroll;
 `;
 
-// export const LoadingContainer = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   flex-grow: 1;
-// `;
-
-// export const Spin = styled(SpinAnt)``;
+export const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+`;

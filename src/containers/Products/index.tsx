@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ProductDto } from "../../models/dtos/product";
 
+import Spinner from "../../components/Spinner";
 import Product from "../../components/Product";
 
 import {
@@ -14,6 +15,7 @@ import {
   Header,
   Column,
   ProductsContent,
+  LoadingContainer,
 } from "./styles";
 
 type ProductByCategory = {
@@ -47,63 +49,37 @@ const ProductsContainer: React.FC = () => {
 
   return (
     <Container>
-      <TabContainer defaultActiveKey="1">
-        {products?.map((productCategory, index) => (
-          <TabItem tab={productCategory.category} key={index + 1}>
-            <ProductSearch>
-              <IconContainer>
-                <SearchIcon />
-              </IconContainer>
-              <InputSearchProduct placeholder="Procurar item" />
-            </ProductSearch>
+      {loading ? (
+        <LoadingContainer>
+          <Spinner />
+        </LoadingContainer>
+      ) : (
+        <TabContainer defaultActiveKey="1">
+          {products?.map((productCategory, index) => (
+            <TabItem tab={productCategory.category} key={index + 1}>
+              <ProductSearch>
+                <IconContainer>
+                  <SearchIcon />
+                </IconContainer>
+                <InputSearchProduct placeholder="Procurar item" />
+              </ProductSearch>
 
-            <Header>
-              <Column sm={11}>Produto</Column>
-              <Column sm={8}>Preço</Column>
-              <Column sm={5}>Ação</Column>
-            </Header>
+              <Header>
+                <Column sm={11}>Produto</Column>
+                <Column sm={8}>Preço</Column>
+                <Column sm={5}>Ação</Column>
+              </Header>
 
-            <ProductsContent>
-              {productCategory.products.map((product) => (
-                <Product key={product.product_id} product={product} />
-              ))}
-            </ProductsContent>
-          </TabItem>
-        ))}
-      </TabContainer>
+              <ProductsContent>
+                {productCategory.products.map((product) => (
+                  <Product key={product.product_id} product={product} />
+                ))}
+              </ProductsContent>
+            </TabItem>
+          ))}
+        </TabContainer>
+      )}
     </Container>
-    // <Container>
-    //   {loading ? (
-    //     <LoadingContainer>
-    //       <Spin />
-    //     </LoadingContainer>
-    //   ) : (
-    //     <TabContainer defaultActiveKey="1">
-    //       {products?.map((productCategory, index) => (
-    //         <TabItem tab={productCategory.category} key={index + 1}>
-    //           <ProductHeader>
-    //             <ProductHeaderCol span={8}>
-    //               <ProductHeaderDescription>Produtos</ProductHeaderDescription>
-    //             </ProductHeaderCol>
-    //             <ProductHeaderCol span={6}>
-    //               <ProductHeaderDescription>Preço</ProductHeaderDescription>
-    //             </ProductHeaderCol>
-    //             <ProductHeaderCol span={4}>
-    //               <ProductHeaderDescription>Add</ProductHeaderDescription>
-    //             </ProductHeaderCol>
-    //           </ProductHeader>
-    //           {productCategory.products.map((product) => (
-    //             <Product
-    //               key={product.product_id}
-    //               product={product}
-    //               addProduct={addProduct}
-    //             />
-    //           ))}
-    //         </TabItem>
-    //       ))}
-    //     </TabContainer>
-    //   )}
-    // </Container>
   );
 };
 
