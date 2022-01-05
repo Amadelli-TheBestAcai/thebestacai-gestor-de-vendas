@@ -54,3 +54,21 @@ O conteúdo do arquivo **env.json** deverá conster as sequintes informações:
 ```
 
 **Observação:** Apenas o valor ${\*} deverá ser alterado, não adicionando " " na substituição.
+
+## Executando Aplicação
+
+Abrir dois terminais e:
+
+Executar no primeiro:
+
+```bash
+yarn dev:react
+```
+
+Após o primeiro finalizar a subida do frontend, executar:
+
+```bash
+yarn dev:electron
+```
+
+**dica**: mudanças feitas na pasta **electron** não atualizam sozinhas ao salvar, pra ser mais rapido, pode só parar o terminal que esta usando o comando **yarn dev:electron** e executar novamente.
