@@ -137,6 +137,7 @@ const Home: React.FC = () => {
           <Products />
         </ItemsContainer>
       </LeftSide>
+
       <RightSide>
         <TopActions>
           <Actions />

@@ -34,6 +34,20 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
+
+    ::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #EEEEEE;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gray-250);
+      border-radius: 5px;
+    }
   }
 
   html, body, #root {
@@ -57,12 +71,12 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     .ant-tabs-nav {
-    background: var(--black-opaco);
-    color: white;
-    border-radius: 6px 6px 0px 0px;
-    padding: 1%;
-    margin: 0px;
-  }
+      background: var(--black-opaco);
+      color: white;
+      border-radius: 6px 6px 0px 0px;
+      padding: 1%;
+      margin: 0px;
+    }
   
     .ant-tabs-tab.ant-tabs-tab-active,
     .ant-tabs-tab-btn {

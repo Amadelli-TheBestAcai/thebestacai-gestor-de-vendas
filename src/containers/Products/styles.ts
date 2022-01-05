@@ -53,9 +53,8 @@ export const Header = styled.header`
   display: flex;
   align-items: center;
   width: 100%;
-  height: 47px;
+  height: 2.9rem;
   background: #f9f9f9;
-  margin-bottom: 8px;
 `;
 
 export const TabItem = styled(TabsAnd.TabPane)``;
@@ -65,6 +64,14 @@ export const Column = styled(Col)`
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
+`;
+
+export const ProductsContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
 `;
 
 // export const LoadingContainer = styled.div`

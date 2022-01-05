@@ -13,6 +13,7 @@ import {
   SearchIcon,
   Header,
   Column,
+  ProductsContent,
 } from "./styles";
 
 type ProductByCategory = {
@@ -62,9 +63,11 @@ const ProductsContainer: React.FC = () => {
               <Column sm={5}>Ação</Column>
             </Header>
 
-            {productCategory.products.map((product) => (
-              <Product key={product.product_id} product={product} />
-            ))}
+            <ProductsContent>
+              {productCategory.products.map((product) => (
+                <Product key={product.product_id} product={product} />
+              ))}
+            </ProductsContent>
           </TabItem>
         ))}
       </TabContainer>

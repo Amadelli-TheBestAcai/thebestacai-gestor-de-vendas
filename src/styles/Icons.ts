@@ -12,6 +12,7 @@ export {
   CreditCard,
   TicketAlt,
   Search,
+  TrashRestoreAlt,
 } from "@styled-icons/fa-solid";
 
 export { Offer } from "@styled-icons/boxicons-solid/Offer";
