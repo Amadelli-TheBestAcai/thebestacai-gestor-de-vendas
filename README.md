@@ -39,6 +39,7 @@ npm config set msvs_version 2019
 Com o Build Tools deverá instalar as ferramentas:
 
 **Desenvolvimento para desktop com C++** e **Ferramentas de build do Node.js**
+
 **7-**
 
 ```bash

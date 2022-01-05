@@ -1,6 +1,8 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
+import storeCashModel from "./storeCash";
+import integrationModel from "./integration";
 import { v4 } from "uuid";
 import moment from "moment";
 export type Entity = {
@@ -17,6 +19,7 @@ export type Entity = {
   cash_id?: number;
   client_id?: number;
   cash_history_id?: number;
+  is_online: boolean;
   is_current: boolean;
   is_integrated: boolean;
   to_integrate: boolean;
@@ -107,7 +110,7 @@ class Sale extends BaseRepository<Entity> {
     if (currentSale) {
       return currentSale;
     } else {
-      const newSale: Entity = this.buildNewSale();
+      const newSale: Entity = await this.buildNewSale();
       await this.createMany([...sales, newSale]);
       return newSale;
     }
@@ -120,8 +123,11 @@ class Sale extends BaseRepository<Entity> {
     sales[saleIndex].is_current = false;
     sales[saleIndex].to_integrate = true;
 
-    const newSale: Entity = this.buildNewSale();
+    const newSale: Entity = await this.buildNewSale();
     await this.createMany([...sales, newSale]);
+
+    await integrationModel.moveToPreIntegration();
+
     return newSale;
   }
 
@@ -237,14 +243,19 @@ class Sale extends BaseRepository<Entity> {
     return sales[saleIndex];
   }
 
-  buildNewSale(): Entity {
+  async buildNewSale(): Promise<Entity> {
+    const user = await userModel.get();
+    const storeCash = await storeCashModel.getOne();
     return {
       id: v4(),
-      user_id: userModel.loggedUser?.id,
+      user_id: user?.id,
       quantity: 0,
       change_amount: 0,
       type: 0,
       discount: 0,
+      cash_id: storeCash?.cash_id,
+      cash_history_id: storeCash?.history_id,
+      is_online: storeCash?.history_id && storeCash?.cash_id ? true : false,
       is_current: true,
       is_integrated: false,
       to_integrate: false,
