@@ -18,7 +18,7 @@ npm config set python python2.7
 npm config set msvs_version 2019
 ```
 
-- [Build Tools for Visual Studio 2022 - Link para download](https://aka.ms/vs/17/release/vs_BuildTools.exe) - [Clique aqui para entrar no site](https://visualstudio.microsoft.com/downloads/)
+- [Build Tools for Visual Studio 2022 - Click para download](https://aka.ms/vs/17/release/vs_BuildTools.exe) - [Clique para entrar no site](https://visualstudio.microsoft.com/downloads/)
 
 ```bash
 yarn install --network-timeout 600000
