@@ -10,25 +10,7 @@ import PendingSaleForm from "../../containers/PendingSaleForm";
 
 import { message as messageAnt, Modal } from "antd";
 
-import {
-  Container,
-  PrimaryContent,
-  SecondaryContent,
-  CashesContainer,
-  Header,
-  AmountAction,
-  AmountContainer,
-  AmountResult,
-  BackButton,
-  FinishButton,
-  Result,
-  AmountRow,
-  Column,
-  AmountLabel,
-  AmountInput,
-  InputPrice,
-  FullAmountColumn,
-} from "./styles";
+import { Container } from "./styles";
 
 const { confirm } = Modal;
 
@@ -144,7 +126,7 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
 
   return (
     <Container>
-      <RouterDescription
+      {/* <RouterDescription
         description={currentCash ? "Fechamento de Caixa" : "Abertura de Caixa"}
       />
       {loadingCashes ? (
@@ -314,7 +296,7 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
               ))}
           </>
         </>
-      )}
+      )} */}
     </Container>
   );
 };

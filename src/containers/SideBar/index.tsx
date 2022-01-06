@@ -36,8 +36,8 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
       </LogoContainer>
       <Content>
         <HomeIcon onClick={() => handleClick("/home")} />
+        <CashRegisterIcon onClick={() => handleClick("/store-cash")} />
         <Listicon onClick={() => handleClick("/command")} />
-        <CashRegisterIcon onClick={() => handleClick("/cashier")} />
         <DeliveryIcon onClick={() => handleClick("/delivery")} />
         <RetweetIcon onClick={() => handleClick("/handler")} />
         <BoxIcon onClick={() => handleClick("/stock")} />
