@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useUser } from "../../hooks/useUser";
 
 import InputForm from "../InputForm";
 import DiscountForm from "../DiscountForm";
@@ -26,6 +27,7 @@ import { useSale } from "../../hooks/useSale";
 
 const Actions: React.FC = () => {
   const { sale, discountModalHandler, onAddToQueue } = useSale();
+  const { user } = useUser();
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
   const [handlerOutState, setHandlerOutState] = useState(false);
@@ -63,32 +65,41 @@ const Actions: React.FC = () => {
 
       <InfosAndChat>
         <ContentHeaderInfos>
-          <InfoStore>LOJA TESTE </InfoStore>
+          <InfoStore>{}</InfoStore>
           <hr />
           <ChatContainer>
             <ChatIcon />
-            <UserPhoto />
+            <UserPhoto
+              src={
+                user?.image
+                  ? user?.image
+                  : "https://www.ecp.org.br/wp-content/uploads/2017/12/default-avatar-1.png"
+              }
+            />
           </ChatContainer>
         </ContentHeaderInfos>
       </InfosAndChat>
 
-      {/* <InputForm
+      <DiscountForm />
+
+      <InputForm
         placeHolder="Digite o nome do cliente"
         onFinish={onAddToQueue}
         modalState={commandState}
         setModalState={setCommandState}
       />
-      <DiscountForm />
+
       <InOutForm
         type="entrada"
         modalState={handlerInState}
         setModalState={setHandlerInState}
       />
+
       <InOutForm
         type="saida"
         modalState={handlerOutState}
         setModalState={setHandlerOutState}
-      /> */}
+      />
     </Container>
   );
 };

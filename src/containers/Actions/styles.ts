@@ -93,11 +93,10 @@ export const InfoStore = styled.div`
   justify-content: center;
 `;
 
-export const UserPhoto = styled.div`
+export const UserPhoto = styled.img`
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50px;
-  background: gray;
 `;
 
 export const ChatContainer = styled.div`

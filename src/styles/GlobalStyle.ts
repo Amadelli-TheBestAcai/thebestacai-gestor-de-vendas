@@ -93,6 +93,22 @@ export const GlobalStyle = createGlobalStyle`
       position: absolute;
       background: white;
     }
+
+    .ant-input, .ant-input-password, .ant-select-selector, .ant-picker {
+      border-radius: 0.7rem;
+      outline: none;
+      border: none;
+      box-shadow: 0 0 0 0;
+      background: var(--white-70);
+      
+      :focus,
+      :active,
+      :hover {
+        outline: none;
+        border: none;
+        box-shadow: 0 0 0 0;
+      }
+    }
   }
 
   *, button, input{

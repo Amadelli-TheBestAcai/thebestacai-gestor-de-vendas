@@ -15,8 +15,8 @@ const BalanceCSS = css`
 `;
 
 const InputCSS = css`
-  background: var(--white-30);
-  border: 1px solid var(--grey-70);
+  background: var(--white-30) !important;
+  border: 1px solid var(--grey-70) !important;
   box-sizing: border-box;
   border-radius: 9px;
 
@@ -40,7 +40,7 @@ export const RightSide = styled.div`
   }
 
   input {
-    ${InputCSS}
+    ${InputCSS} !important;
     height: 100%;
   }
 `;

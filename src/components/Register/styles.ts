@@ -23,7 +23,7 @@ export const ContentValue = styled.div`
   span {
     color: var(--grey-100);
     strong {
-      font-size: 3.4rem;
+      font-size: 3rem;
       color: var(--black-opaco);
     }
   }

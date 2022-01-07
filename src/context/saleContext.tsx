@@ -4,6 +4,7 @@ import { createContext } from "use-context-selector";
 import { message } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
+import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 
 type SaleContextType = {
@@ -21,6 +22,7 @@ type SaleContextType = {
     openDiscoundModal: () => void;
     closeDiscoundModal: () => void;
   };
+  user: UserDto | null;
 };
 
 export const SaleContext = createContext<SaleContextType>(null);
@@ -30,12 +32,15 @@ export function SaleProvider({ children }) {
   const [savingSale, setSavingSale] = useState(false);
   const [loading, setLoading] = useState(true);
   const [discountModalState, setDiscountModalState] = useState(false);
+  const [user, setUser] = useState<UserDto | null>(null);
 
   useEffect(() => {
     async function init() {
       setLoading(true);
       const _sale = await window.Main.sale.getCurrent();
+      const _user = await window.Main.user.getUser();
       setSale(_sale);
+      setUser(_user);
       setLoading(false);
     }
     init();
@@ -116,6 +121,7 @@ export function SaleProvider({ children }) {
         onDecressItem,
         onRegisterSale,
         onAddToQueue,
+        user,
       }}
     >
       {children}

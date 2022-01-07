@@ -34,13 +34,13 @@ const InputForm: React.FC<IProps> = ({
       width={300}
       destroyOnClose={true}
     >
-      <Input
+      {/* <Input
         placeholder={placeHolder}
         autoFocus={true}
         value={name}
         onPressEnter={handleSubmit}
         onChange={({ target: { value } }) => setName(value)}
-      />
+      /> */}
     </Container>
   );
 };

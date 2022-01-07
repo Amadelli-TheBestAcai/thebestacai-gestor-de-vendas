@@ -70,6 +70,7 @@ export const ValueInfo = styled.div`
   background: white;
   color: var(--grey-100);
   font-weight: 500;
+  margin: 3px;
 
   strong {
     font-size: 1.5rem;

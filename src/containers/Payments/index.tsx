@@ -116,6 +116,12 @@ const PaymentsContainer: React.FC<IProps> = ({
           </strong>
         </ValueInfo>
         <ValueInfo>
+          R$ Desconto <br />{" "}
+          <strong style={{ color: "var(--green-600" }}>
+            {sale.total_paid.toFixed(2).replace(".", ",")}
+          </strong>
+        </ValueInfo>
+        <ValueInfo>
           R$ Valor Pago <br />{" "}
           <strong style={{ color: "var(--green-600" }}>
             {sale.total_paid.toFixed(2).replace(".", ",")}
