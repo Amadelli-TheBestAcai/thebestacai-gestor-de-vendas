@@ -3,6 +3,8 @@ import React from "react";
 import { PaymentDto } from "../../models/dtos/payment";
 import { PaymentType } from "../../models/enums/paymentType";
 
+import { Tooltip } from "antd";
+
 import {
   Container,
   Header,
@@ -34,25 +36,14 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
             R$ {payment.amount?.toFixed(2).replace(".", ",")}
           </Column>
           <Column sm={8}>
-            <Button onClick={() => removePayment(payment.id)}>
-              <DeleteIcon />
-            </Button>
+            <Tooltip title="Remover" placement="bottom">
+              <Button onClick={() => removePayment(payment.id)}>
+                <DeleteIcon />
+              </Button>
+            </Tooltip>
           </Column>
         </InfoPayment>
       </Content>
-      {/* <Column span={10}>
-        <Description>{PaymentType[payment.type]}</Description>
-      </Column>
-      <Column span={10}>
-        <Description>
-          R$ {payment.amount?.toFixed(2).replace(".", ",")}
-        </Description>
-      </Column>
-      <Column span={4}>
-        <Button onClick={() => removePayment(payment.id)}>
-          <RemoveIcon />
-        </Button>
-      </Column> */}
     </Container>
   );
 };

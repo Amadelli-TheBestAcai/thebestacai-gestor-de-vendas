@@ -3,6 +3,8 @@ import { useSale } from "../../hooks/useSale";
 
 import { ProductDto } from "../../models/dtos/product";
 
+import { Tooltip } from "antd";
+
 import { Container, Column, AddIcon } from "./styles";
 
 interface IProps {
@@ -21,7 +23,9 @@ const Product: React.FC<IProps> = ({ product }) => {
         {(+product.price_unit).toFixed(2).replace(".", ",")}
       </Column>
       <Column span={5}>
-        <AddIcon onClick={handleItem} />
+        <Tooltip title="Adicionar" placement="right">
+          <AddIcon onClick={handleItem} />
+        </Tooltip>
       </Column>
     </Container>
   );

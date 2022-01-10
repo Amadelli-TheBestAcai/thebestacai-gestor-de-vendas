@@ -21,26 +21,25 @@ const Items: React.FC = () => {
   const { sale } = useSale();
   return (
     <Container>
+      <Header>
+        <Column span={10}>
+          <Description>Produto</Description>
+        </Column>
+        <Column span={4}>
+          <Description>Quantidade</Description>
+        </Column>
+        <Column span={4}>
+          <Description>Valor Unitário</Description>
+        </Column>
+        <Column span={4}>
+          <Description>Valor Total</Description>
+        </Column>
+        <Column span={2}>
+          <Description>Ação</Description>
+        </Column>
+      </Header>
       {sale.items.length !== 0 ? (
         <>
-          <Header>
-            <Column span={10}>
-              <Description>Produto</Description>
-            </Column>
-            <Column span={4}>
-              <Description>Quantidade</Description>
-            </Column>
-            <Column span={4}>
-              <Description>Valor Unitário</Description>
-            </Column>
-            <Column span={4}>
-              <Description>Valor Total</Description>
-            </Column>
-            <Column span={2}>
-              <Description>Ação</Description>
-            </Column>
-          </Header>
-
           <ItemContainer>
             <ItemContent>
               {sale.items.map((item) => (

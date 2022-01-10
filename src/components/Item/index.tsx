@@ -4,6 +4,8 @@ import { ItemDto } from "../../models/dtos/item";
 
 import { useSale } from "../../hooks/useSale";
 
+import { Tooltip } from "antd";
+
 import { Container, Column, DeleteIcon, Button } from "./styles";
 
 type IProps = {
@@ -21,9 +23,11 @@ const Item: React.FC<IProps> = ({ item }) => {
       </Column>
       <Column span={4}>R$ {item.total.toFixed(2).replace(".", ",")}</Column>
       <Column span={2}>
-        <Button onClick={() => onDecressItem(item.id)}>
-          <DeleteIcon />
-        </Button>
+        <Tooltip title="Remover" placement="bottom">
+          <Button onClick={() => onDecressItem(item.id)}>
+            <DeleteIcon />
+          </Button>
+        </Tooltip>
       </Column>
     </Container>
   );
