@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "../../hooks/useUser";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import InputForm from "../InputForm";
 import DiscountForm from "../DiscountForm";
@@ -25,13 +26,27 @@ import {
 
 import { useSale } from "../../hooks/useSale";
 
-const Actions: React.FC = () => {
+type ComponentProps = RouteComponentProps;
+
+const Actions: React.FC<ComponentProps> = ({ history }) => {
   const { sale, discountModalHandler, onAddToQueue } = useSale();
   const { user } = useUser();
+  const [store, setStore] = useState<string | undefined>(undefined);
+  const [cash, setCash] = useState<string | undefined>("");
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
   const [handlerOutState, setHandlerOutState] = useState(false);
   const [openChat, setOpenChat] = useState(false);
+
+  useEffect(() => {
+    async function init() {
+      const registratedStore = await window.Main.store.hasRegistration();
+      const storeCash = await window.Main.storeCash.getCurrent();
+      setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
+      setStore(registratedStore.company.company_name);
+    }
+    init();
+  }, [history.location]);
 
   const handleCommand = () => {
     if (!sale.items.length) {
@@ -65,8 +80,17 @@ const Actions: React.FC = () => {
 
       <InfosAndChat>
         <ContentHeaderInfos>
-          <InfoStore>{}</InfoStore>
-          <hr />
+          <InfoStore>
+            {store.toUpperCase()} <br />
+            <span
+              style={{
+                color: cash === "ABERTO" ? "green" : "red",
+              }}
+            >
+              {cash}
+            </span>
+          </InfoStore>
+
           <ChatContainer>
             <ChatIcon />
             <UserPhoto
@@ -104,4 +128,4 @@ const Actions: React.FC = () => {
   );
 };
 
-export default Actions;
+export default withRouter(Actions);

@@ -123,90 +123,57 @@ const Home: React.FC = () => {
   };
 
   return (
-    <Container>
-      <LeftSide>
-        <BalanceContainer>
-          <Balance
-            addItem={onAddItem}
-            handleOpenPayment={handleOpenPayment}
-            openDiscoundModal={discountModalHandler.openDiscoundModal}
-          />
-        </BalanceContainer>
-
-        <ItemsContainer>
-          <Products />
-        </ItemsContainer>
-      </LeftSide>
-
-      <RightSide>
-        <TopActions>
-          <Actions />
-        </TopActions>
-        <Content>
-          <ItemsCardContainer>
-            <Items />
-          </ItemsCardContainer>
-
-          <PaymentsContainer>
-            <PaymentsContent>
-              <Payments
-                sale={sale}
-                addPayment={addPayment}
-                removePayment={removePayment}
-                setCurrentPayment={setCurrentPayment}
-                modalState={paymentModal}
-                modalTitle={paymentModalTitle}
-                setModalState={setPaymentModal}
+    <Container id="mainContainer" allowChanges={true}>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <LeftSide>
+            <BalanceContainer>
+              <Balance
+                addItem={onAddItem}
                 handleOpenPayment={handleOpenPayment}
+                openDiscoundModal={discountModalHandler.openDiscoundModal}
               />
-            </PaymentsContent>
+            </BalanceContainer>
 
-            <RegisterContent>
-              <Register />
-            </RegisterContent>
-          </PaymentsContainer>
-        </Content>
-      </RightSide>
+            <ItemsContainer>
+              <Products />
+            </ItemsContainer>
+          </LeftSide>
+
+          <RightSide>
+            <TopActions>
+              <Actions />
+            </TopActions>
+            <Content>
+              <ItemsCardContainer>
+                <Items />
+              </ItemsCardContainer>
+
+              <PaymentsContainer>
+                <PaymentsContent>
+                  <Payments
+                    sale={sale}
+                    addPayment={addPayment}
+                    removePayment={removePayment}
+                    setCurrentPayment={setCurrentPayment}
+                    modalState={paymentModal}
+                    modalTitle={paymentModalTitle}
+                    setModalState={setPaymentModal}
+                    handleOpenPayment={handleOpenPayment}
+                  />
+                </PaymentsContent>
+
+                <RegisterContent>
+                  <Register />
+                </RegisterContent>
+              </PaymentsContainer>
+            </Content>
+          </RightSide>
+        </>
+      )}
     </Container>
-
-    // <Container id="mainContainer" allowChanges={true}>
-    //   {loading ? (
-    //     <Spinner />
-    //   ) : (
-    //     <>
-    //
-    //       <RightSide>
-    //         <Content>
-    //
-    //           <ItemsContainer>
-    //             <Items sale={sale} handleItem={decressSaleItem} />
-    //           </ItemsContainer>
-    //           <PaymentsContainer>
-    //             <PaymentsTypesContainer>
-    //               <Payments
-    //                 sale={sale}
-    //                 addPayment={addPayment}
-    //                 removePayment={removePayment}
-    //                 setCurrentPayment={setCurrentPayment}
-    //                 modalState={paymentModal}
-    //                 modalTitle={paymentModalTitle}
-    //                 setModalState={setPaymentModal}
-    //                 handleOpenPayment={handleOpenPayment}
-    //               />
-    //             </PaymentsTypesContainer>
-    //             <FinishContainer>
-    //               <Register
-    //                 isSavingSale={savingSale}
-    //                 registerSale={registerSale}
-    //                 total={sale.total_sold}
-    //               />
-    //             </FinishContainer>
-    //           </PaymentsContainer>
-    //         </Content>
-    //       </RightSide>
-    //     </>
-    //   )}
-    // </Container>
   );
 };
 
