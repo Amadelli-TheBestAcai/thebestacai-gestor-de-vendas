@@ -21,6 +21,9 @@ import {
   Input,
   Modal,
   ValueInfo,
+  Footer,
+  ButtonCancel,
+  ButtonSave,
 } from "./styles";
 
 interface IProps {
@@ -55,7 +58,7 @@ const PaymentsContainer: React.FC<IProps> = ({
   const buttonsPaymentsStyle = [
     {
       icon: <MoneyIcon />,
-      label: "Dinheiro [A}",
+      label: "Dinheiro [A]",
       background: "var(--green-400)",
       action: `${console.log("teste")}`,
     },
@@ -190,13 +193,19 @@ const PaymentsContainer: React.FC<IProps> = ({
 
       <Modal
         title={`Pagamento em ${modalTitle}`}
-        width={250}
         visible={modalState}
         onCancel={onModalCancel}
         onOk={() => addPayment()}
         destroyOnClose={true}
         closable={true}
+        centered
         afterClose={() => document.getElementById("mainContainer").focus()}
+        footer={
+          <Footer>
+            <ButtonCancel>Cancelar</ButtonCancel>
+            <ButtonSave>Salvar Alteração</ButtonSave>
+          </Footer>
+        }
       >
         Valor:
         <Input

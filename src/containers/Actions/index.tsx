@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../../hooks/useUser";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import InputForm from "../InputForm";
+import RegistrationCard from "../RegistrationCard";
 import DiscountForm from "../DiscountForm";
 import InOutForm from "../InOutForm";
 
@@ -72,7 +72,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
           <OutputIcon />
           Saída
         </Button>
-        <Button>
+        <Button onClick={() => setCommandState(true)}>
           <ListIcon />
           Comanda
         </Button>
@@ -106,7 +106,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
       <DiscountForm />
 
-      <InputForm
+      <RegistrationCard
         placeHolder="Digite o nome do cliente"
         onFinish={onAddToQueue}
         modalState={commandState}
