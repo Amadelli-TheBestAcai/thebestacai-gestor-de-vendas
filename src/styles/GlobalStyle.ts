@@ -40,12 +40,12 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     ::-webkit-scrollbar-track {
-      background: #EEEEEE;
+      background: var(--gray-50);
       border-radius: 3px;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: var(--gray-250);
+      background: var(--grey-80);
       border-radius: 5px;
     }
   }
@@ -59,16 +59,6 @@ export const GlobalStyle = createGlobalStyle`
     font: 500 1rem "Roboto", sans-serif;
     -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;
-
-
-    .ant-input, .ant-input-password, .ant-select-selector, .ant-picker {
-      :focus,
-      :active,
-      :hover {
-        outline: none;
-        box-shadow: 0 0 0 0;
-      }
-    }
 
     .ant-tabs-nav {
       background: var(--black-opaco);
@@ -94,7 +84,7 @@ export const GlobalStyle = createGlobalStyle`
       background: white;
     }
 
-    .ant-input, .ant-input-password, .ant-select-selector, .ant-picker {
+    .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
       border-radius: 0.7rem;
       outline: none;
       border: none;
@@ -109,6 +99,7 @@ export const GlobalStyle = createGlobalStyle`
         box-shadow: 0 0 0 0;
       }
     }
+    
   }
 
   *, button, input{

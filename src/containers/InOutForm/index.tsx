@@ -2,23 +2,23 @@ import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
+import { ReasonOutValue } from "../../models/enums/reasonSangria";
 
-import { message, Spin, Col, Input as InputAnt } from "antd";
+import MonetaryInput from "../../components/MonetaryInput";
+
+import { message, Form } from "antd";
 
 import {
   Container,
-  Input,
-  InputArea,
-  Header,
-  Title,
-  Description,
-  GroupContainer,
-  ActionContainer,
-  Register,
-  Leave,
+  Footer,
+  ButtonSave,
+  ButtonCancel,
+  Content,
+  Row,
+  Col,
   Select,
   Option,
-  Row,
+  Input,
 } from "./styles";
 
 type IProps = {
@@ -165,6 +165,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
   };
 
   const handleClose = (): void => {
+    //document.getElementById("mainContainer").focus();
     setModalState(false);
     setValue(null);
     setReasson(null);
@@ -212,205 +213,274 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
   return (
     <Container
-      title={
-        <Header
-          style={{ background: type === "entrada" ? "#2D3ED8" : "#E14A4A" }}
-        >
-          <Title>{type === "entrada" ? "Entrada" : "Saída"}</Title>
-        </Header>
-      }
-      footer={
-        <ActionContainer>
-          <Register onClick={() => handleSubmit()}>
-            {loading ? <Spin /> : "REGISTRAR"}
-          </Register>
-          <Leave onClick={() => handleClose()}>SAIR</Leave>
-        </ActionContainer>
-      }
+      title={type === "entrada" ? "Entrada" : "Saída"}
       visible={modalState}
-      onOk={handleSubmit}
-      closable={false}
-      onCancel={() => {
-        document.getElementById("mainContainer").focus();
-        setModalState(false);
-      }}
-      width={300}
       destroyOnClose={true}
+      closable={false}
+      centered
+      footer={
+        <Footer>
+          <ButtonCancel onClick={() => handleClose()}>Cancelar</ButtonCancel>
+          <ButtonSave onClick={() => handleSubmit()}>
+            Salvar alteração
+          </ButtonSave>
+        </Footer>
+      }
     >
-      <GroupContainer>
-        <Description>Motivo</Description>
-        <Select onChange={handleSelect}>
-          {type === "entrada"
-            ? inValue.map((item) => <Option key={item.id}>{item.value}</Option>)
-            : outValue.map((item) => (
-                <Option key={item.id}>{item.value}</Option>
-              ))}
-        </Select>
-        <Description>Valor</Description>
-        {type !== "entrada" &&
-        hasInternet &&
-        (reasontype === "Pagamento fornecedor" ||
-          reasontype === "Pagamento freelance") ? (
-          <InputAnt
-            value={currencyFormater(
-              (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
-            )}
-            disabled
-          />
-        ) : (
-          <Input
-            autoFocus={false}
-            getValue={getAmount}
-            onEnterPress={handleSubmit}
-          />
-        )}
-        {reasontype === "Outros" && (
-          <GroupContainer style={{ width: "100%" }}>
-            <Description>Observação</Description>
-            <InputArea
-              value={reasson}
-              onPressEnter={handleSubmit}
-              onChange={({ target: { value } }) => setReasson(value)}
-            />
-          </GroupContainer>
-        )}
-        {type !== "entrada" && (
+      <Form layout="vertical" initialValues={{ remember: false }}>
+        <Content>
           <Row>
-            {reasontype === "Pagamento fornecedor" && hasInternet && (
-              <Row>
-                <Col sm={24}>
-                  <GroupContainer>
-                    <Description>Categoria</Description>
-                    <Select
-                      placeholder="Escolha a opção"
-                      loading={fetchingProductsCategory}
-                      onChange={(value) =>
-                        handleShopInfo("category_id", +value)
-                      }
-                    >
-                      {productsCategory?.map((productCategory) => (
-                        <Option
-                          value={productCategory.id}
-                          key={productCategory.id}
-                        >
-                          {productCategory.name}
-                        </Option>
+            <Col sm={24}>
+              <Form.Item
+                label="Motivo"
+                name="reason"
+                rules={[
+                  {
+                    required: true,
+                    message: "Motivo é obrigatório",
+                  },
+                ]}
+              >
+                <Select onChange={handleSelect} placeholder="Escolha a opção">
+                  {type === "entrada"
+                    ? inValue.map((item) => (
+                        <Option key={item.id}>{item.value}</Option>
+                      ))
+                    : outValue.map((item) => (
+                        <Option key={item.id}>{item.value}</Option>
                       ))}
-                    </Select>
-                  </GroupContainer>
-                </Col>
-                <Col sm={24}>
-                  <GroupContainer>
-                    <Description>Produto</Description>
-                    <Select
-                      placeholder="Escolha a opção"
-                      disabled={!shopInfo?.category_id}
-                      style={{ textTransform: "capitalize" }}
-                      onChange={(value) => handleShopInfo("product_id", +value)}
-                    >
-                      {productsCategory?.map(
-                        (productCategory) =>
-                          productCategory.id === shopInfo?.category_id &&
-                          productCategory.products.map((product) => (
-                            <Option
-                              value={product.id}
-                              key={product.id}
-                              style={{ textTransform: "capitalize" }}
-                            >
-                              {product.name}
-                            </Option>
-                          ))
-                      )}
-                    </Select>
-                  </GroupContainer>
-                </Col>
-                <Col sm={12}>
-                  <GroupContainer>
-                    <Description>Quantidade</Description>
-                    <InputAnt
-                      placeholder="Quantidade"
-                      type="number"
-                      onChange={({ target: { value } }) =>
-                        handleShopInfo("quantity", value)
-                      }
-                    />
-                  </GroupContainer>
-                </Col>
-                <Col sm={12}>
-                  <GroupContainer>
-                    <Description>Valor Unitário</Description>
-                    <Input
-                      autoFocus={false}
-                      getValue={(value) =>
-                        handleShopInfo("unitary_value", value)
-                      }
-                    />
-                  </GroupContainer>
-                </Col>
-                <Col sm={24}>
-                  <GroupContainer>
-                    <Description>Observação</Description>
-                    <InputAnt
-                      placeholder="Observação"
-                      onChange={({ target: { value } }) =>
-                        handleShopInfo("observation", value)
-                      }
-                    />
-                  </GroupContainer>
-                </Col>
-              </Row>
-            )}
-            {reasontype === "Pagamento freelance" && hasInternet && (
-              <Row>
-                <Col sm={12}>
-                  <GroupContainer>
-                    <Description>Quantidade</Description>
-                    <InputAnt
-                      type="number"
-                      placeholder="Quantidade"
-                      onChange={({ target: { value } }) =>
-                        handleShopInfo("quantity", value)
-                      }
-                    />
-                  </GroupContainer>
-                </Col>
-                <Col sm={12}>
-                  <GroupContainer>
-                    <Description>Valor Unitário</Description>
-                    <Input
-                      autoFocus={false}
-                      getValue={(value) =>
-                        handleShopInfo("unitary_value", value)
-                      }
-                    />
-                  </GroupContainer>
-                </Col>
-                <Col sm={24}>
-                  <GroupContainer>
-                    <Description>Nome Freelancer</Description>
-                    <InputAnt
-                      placeholder="Nome Freelancer"
-                      onChange={({ target: { value } }) =>
-                        handleShopInfo("observation", value)
-                      }
-                    />
-                  </GroupContainer>
-                </Col>
-              </Row>
-            )}
-            <>
-              {(reasontype === "Pagamento fornecedor" ||
-                reasontype === "Pagamento freelance") &&
-                !hasInternet && (
-                  <Row style={{ textAlign: "center", color: "red" }}>
-                    Sem conexão. Para lançar a saída como compra, utilize o
-                    Dashboard.
-                  </Row>
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col sm={24}>
+              <Form.Item
+                label="Valor"
+                name="value"
+                rules={[
+                  {
+                    required: true,
+                    message: "Valor é obrigatório",
+                  },
+                ]}
+              >
+                {type !== "entrada" &&
+                hasInternet &&
+                (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
+                  reasontype === ReasonOutValue.PAG_FREELA) ? (
+                  <Input
+                    value={currencyFormater(
+                      (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
+                    )}
+                    disabled
+                  />
+                ) : (
+                  <MonetaryInput
+                    autoFocus={false}
+                    getValue={getAmount}
+                    onEnterPress={handleSubmit}
+                  />
                 )}
-            </>
+              </Form.Item>
+            </Col>
+
+            {reasontype === "Outros" && (
+              <Col sm={24}>
+                <Form.Item
+                  label="Observação"
+                  name="observation"
+                  rules={[
+                    {
+                      required: false,
+                      message: "Observação é obrigatório",
+                    },
+                  ]}
+                >
+                  <Input.TextArea
+                    placeholder="Digite alguma obsevação"
+                    autoSize={{ minRows: 3, maxRows: 5 }}
+                    showCount
+                    maxLength={140}
+                    value={reasson}
+                    onPressEnter={handleSubmit}
+                    onChange={({ target: { value } }) => setReasson(value)}
+                  />
+                </Form.Item>
+              </Col>
+            )}
+
+            {type !== "entrada" && (
+              <>
+                {reasontype === ReasonOutValue.PAG_FORNECEDOR && hasInternet && (
+                  <>
+                    <Col sm={24}>
+                      <Form.Item
+                        label="Categoria"
+                        name="category_id"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Categoria é obrigatório",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Escolha a opção"
+                          loading={fetchingProductsCategory}
+                          onChange={(value) =>
+                            handleShopInfo("category_id", +value)
+                          }
+                        >
+                          {productsCategory?.map((productCategory) => (
+                            <Option
+                              value={productCategory.id}
+                              key={productCategory.id}
+                            >
+                              {productCategory.name}
+                            </Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+
+                    <Col sm={24}>
+                      <Form.Item
+                        label="Produto"
+                        name="product_id"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Produto é obrigatório",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Escolha a opção"
+                          disabled={!shopInfo?.category_id}
+                          onChange={(value) =>
+                            handleShopInfo("product_id", +value)
+                          }
+                        >
+                          {productsCategory?.map(
+                            (productCategory) =>
+                              productCategory.id === shopInfo?.category_id &&
+                              productCategory.products.map((product) => (
+                                <Option value={product.id} key={product.id}>
+                                  {product.name}
+                                </Option>
+                              ))
+                          )}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </>
+                )}
+
+                {reasontype === ReasonOutValue.PAG_FREELA && hasInternet && (
+                  <Col sm={24}>
+                    <Form.Item
+                      label="Nome Freelancer"
+                      name="observation"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Categoria é obrigatório",
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="Nome Freelancer"
+                        onChange={({ target: { value } }) =>
+                          handleShopInfo("observation", value)
+                        }
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+
+                {(reasontype === ReasonOutValue.PAG_FORNECEDOR ||
+                  reasontype === ReasonOutValue.PAG_FREELA) &&
+                  hasInternet && (
+                    <>
+                      <Col sm={12}>
+                        <Form.Item
+                          label="Quantidade"
+                          name="quantity"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Quantidade é obrigatório",
+                            },
+                          ]}
+                        >
+                          <Input
+                            placeholder="Quantidade"
+                            type="number"
+                            onChange={({ target: { value } }) =>
+                              handleShopInfo("quantity", value)
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      <Col sm={12}>
+                        <Form.Item
+                          label="Valor Unitário"
+                          name="unitary_value"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Campo é obrigatório",
+                            },
+                          ]}
+                        >
+                          <MonetaryInput
+                            autoFocus={false}
+                            getValue={(value) =>
+                              handleShopInfo("unitary_value", value)
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      <Col sm={24}>
+                        <Form.Item
+                          label="Observação"
+                          name="observation"
+                          rules={[
+                            {
+                              required: false,
+                              message: "Observação é obrigatório",
+                            },
+                          ]}
+                        >
+                          <Input.TextArea
+                            placeholder="Digite alguma obsevação"
+                            autoSize={{ minRows: 3, maxRows: 5 }}
+                            showCount
+                            maxLength={140}
+                            onChange={({ target: { value } }) =>
+                              handleShopInfo("observation", value)
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+                    </>
+                  )}
+
+                {(reasontype === "Pagamento fornecedor" ||
+                  reasontype === "Pagamento freelance") &&
+                  !hasInternet && (
+                    <Row style={{ textAlign: "center", color: "red" }}>
+                      📢 Sem conexão! Utilize o Dashboard para lançar a saída
+                      como compra.
+                    </Row>
+                  )}
+              </>
+            )}
           </Row>
-        )}
-      </GroupContainer>
+        </Content>
+      </Form>
     </Container>
   );
 };

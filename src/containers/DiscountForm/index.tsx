@@ -33,9 +33,9 @@ const DiscountForm: React.FC = () => {
       title="Desconto"
       visible={discountModalState}
       onOk={handleSubmit}
-      closable={false}
+      closable={true}
       onCancel={() => {
-        document.getElementById("mainContainer").focus();
+        // document.getElementById("mainContainer").focus();
         discountModalHandler.closeDiscoundModal();
       }}
       destroyOnClose={true}
