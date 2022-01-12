@@ -1,21 +1,28 @@
 import React, { useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+
+import LogoImg from "../../assets/img/logo-login.png";
 import { StoreDto } from "../../models/dtos/store";
-import { message, Form } from "antd";
+
+import { message, Form, Select } from "antd";
+
 import {
   Container,
+  LeftContent,
+  RightContent,
+  Footer,
   FormContainer,
+  LogoContainer,
   Logo,
-  Description,
-  Button,
+  FormContent,
   Input,
-  Password,
-  FormItem,
-  ButtonSecondary,
-  Select,
-  Option,
+  ActionsContainer,
+  LoginButton,
+  ContactInfo,
+  BackButton,
 } from "./styles";
-import ImageLogo from "../../assets/img/logo-login.png";
+
+const Option = Select;
 
 type IProps = RouteComponentProps;
 
@@ -28,9 +35,21 @@ const Login: React.FC<IProps> = ({ history }) => {
   const [step, setStep] = useState<number>(1);
   const [store, setStore] = useState<number | undefined>(undefined);
   const [stores, setStores] = useState<StoreDto[]>([]);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [typeInput, setTypeInput] = useState<string>("password");
+  const [rememberUser, setRememberUser] = useState<boolean>(false);
 
   const handleState = ({ target: { name, value } }: any) =>
     setUser((oldValues) => ({ ...oldValues, [name]: value }));
+
+  const persistUser = async () => {
+    setRememberUser(!rememberUser);
+
+    const _user = await window.Main.user.getUser();
+    if (rememberUser) {
+      console.log(_user.username);
+    }
+  };
 
   const onLogin = async () => {
     setLoading(true);
@@ -67,113 +86,122 @@ const Login: React.FC<IProps> = ({ history }) => {
     return history.push("/home");
   };
 
+  const viewPassword = () => {
+    setShowPassword(!showPassword);
+    if (showPassword) {
+      setTypeInput("text");
+    } else {
+      setTypeInput("password");
+    }
+  };
+
   return (
     <Container>
-      {step === 1 && (
-        <FormContainer>
-          <Logo src={ImageLogo} />
-          <Description>
-            <h1>Gestor de Vendas</h1>
-            <h3>Insira seu usuário e senha para se conectar</h3>
-          </Description>
-          <Form onFinish={onLogin} layout="vertical">
-            <FormItem
-              label="Usuário"
-              style={{ fontSize: "14px" }}
-              name="username"
-              rules={[{ required: true, message: "Digite o usuário!" }]}
-            >
-              <Input
-                name="username"
-                placeholder="Digite seu usuário"
-                onChange={(event) => handleState(event)}
-              />
-            </FormItem>
-            <FormItem
-              label="Senha"
-              style={{ fontSize: "14px" }}
-              name="password"
-              rules={[{ required: true, message: "Digite a senha!" }]}
-            >
-              <Password
-                name="password"
-                placeholder="Digite sua senha"
-                onChange={(event) => handleState(event)}
-              />
-            </FormItem>
-            <FormItem>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                style={{ width: "100%", height: "37px" }}
-              >
-                ENTRAR
-              </Button>
-            </FormItem>
-            <FormItem>
-              <ButtonSecondary
-                type="default"
-                style={{ width: "100%", height: "37px" }}
-                onClick={() => console.log(stores)}
-              >
-                ESTOU COM PROBLEMAS!
-              </ButtonSecondary>
-            </FormItem>
-          </Form>
-        </FormContainer>
-      )}
-      {step === 2 && (
-        <FormContainer>
-          <Logo src={ImageLogo} />
-          <Description>
-            <h1>Defina sua Loja</h1>
-          </Description>
-          <Form onFinish={registerStore} layout="vertical">
-            <FormItem
-              label="Loja"
-              style={{ fontSize: "14px" }}
-              name="username"
-              rules={[{ required: true, message: "Selecione a Loja" }]}
-            >
-              <Select
-                onChange={(value) => setStore(+value)}
-                placeholder="Selecione uma loja"
-                style={{ textTransform: "uppercase" }}
-              >
-                {stores.map((store) => (
-                  <Option
-                    style={{ textTransform: "uppercase" }}
-                    key={store.company_id}
-                  >
-                    {store.company.company_name}
-                  </Option>
-                ))}
-              </Select>
-            </FormItem>
+      <LeftContent />
 
-            <FormItem>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                style={{ width: "100%", height: "37px" }}
-              >
-                ENTRAR
-              </Button>
-            </FormItem>
-            <FormItem>
-              <ButtonSecondary
-                type="default"
-                onClick={() => setStep(1)}
-                style={{ width: "100%", height: "37px" }}
-              >
-                VOLTAR
-              </ButtonSecondary>
-            </FormItem>
-          </Form>
+      <RightContent>
+        <LogoContainer>
+          <Logo src={LogoImg} />
+        </LogoContainer>
+
+        <FormContainer>
+          <FormContent>
+            <h3>{step === 1 ? "Gestor de Vendas" : "Defina sua loja"}</h3>
+            <p>
+              {step === 1
+                ? "Insira seu usuário e senha para conectar"
+                : "Selecione uma loja para continuar o login"}
+            </p>
+            <Form
+              onFinish={step === 1 ? onLogin : registerStore}
+              layout="vertical"
+            >
+              {step === 1 ? (
+                <>
+                  <Form.Item
+                    label="Usuário"
+                    name="username"
+                    rules={[{ required: true, message: "Campo obrigatório" }]}
+                  >
+                    <Input
+                      name="username"
+                      placeholder="Digite seu usuário"
+                      onChange={(event) => handleState(event)}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Senha"
+                    name="password"
+                    rules={[{ required: true, message: "Campo obrigatório" }]}
+                  >
+                    <Input
+                      name="password"
+                      placeholder="Digite sua senha"
+                      type={typeInput}
+                      onChange={(event) => handleState(event)}
+                    />
+                  </Form.Item>
+                </>
+              ) : (
+                <>
+                  <Form.Item
+                    label="Loja"
+                    style={{ fontSize: "14px" }}
+                    name="store"
+                    rules={[{ required: true, message: "Selecione a Loja" }]}
+                  >
+                    <Select
+                      onChange={(value) => setStore(+value)}
+                      placeholder="Selecione uma loja"
+                    >
+                      {stores.map((store) => (
+                        <Option key={store.company_id}>
+                          {store.company.company_name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </>
+              )}
+
+              {step === 1 && (
+                <>
+                  <ActionsContainer>
+                    <button onClick={() => persistUser()}>
+                      <input type="checkbox" checked={rememberUser} />
+                      Lembra usuário
+                    </button>
+
+                    <button onClick={() => viewPassword()}>Mostra senha</button>
+                  </ActionsContainer>
+                </>
+              )}
+
+              <LoginButton htmlType="submit" loading={loading}>
+                Entrar
+              </LoginButton>
+
+              {step === 2 && (
+                <>
+                  <BackButton onClick={() => setStep(1)}>Voltar</BackButton>
+                </>
+              )}
+            </Form>
+
+            <ContactInfo>
+              <p>
+                Está com problemas para acessar? Entre em contato <br /> conosco
+                <span> comunicathebestacai@gmail.com</span>.
+              </p>
+            </ContactInfo>
+          </FormContent>
         </FormContainer>
-      )}
+
+        <Footer>
+          <span>Developed by The Best Açai Company v 4.0.0</span>
+        </Footer>
+      </RightContent>
     </Container>
   );
 };

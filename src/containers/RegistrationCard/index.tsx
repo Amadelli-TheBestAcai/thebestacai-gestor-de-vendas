@@ -51,6 +51,8 @@ const RegistrationCard: React.FC<IProps> = ({
       <AddContainer>
         <Input
           placeholder="Digite o nome do cliente"
+          autoFocus={true}
+          onPressEnter={handleSubmit}
           onChange={({ target: { value } }) => setName(value)}
           value={name}
         />
@@ -75,13 +77,6 @@ const RegistrationCard: React.FC<IProps> = ({
           </Card>
         </Content>
       </ListContainer>
-
-      {/* <Input
-        autoFocus={true}
-        value={name}
-        onPressEnter={handleSubmit}
-        onChange={({ target: { value } }) => setName(value)}
-      /> */}
     </Container>
   );
 };
