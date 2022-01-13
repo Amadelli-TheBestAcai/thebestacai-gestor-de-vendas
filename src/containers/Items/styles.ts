@@ -41,7 +41,14 @@ export const ItemContainer = styled.div`
 
 export const ItemContent = styled.div`
   width: 100%;
-  height: 46px;
-  background: var(--white-40);
+  height: 2.8rem;
   margin-top: 8px;
+`;
+
+export const EmptyContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 `;

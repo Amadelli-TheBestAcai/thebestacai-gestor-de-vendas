@@ -1,4 +1,8 @@
 import { BaseRepository } from "../repository/baseRepository";
+import { CashHandlerDTO } from "./dtos/cashHandler";
+import storeCashModel from "./storeCash";
+import { checkInternet } from "../providers/internetConnection";
+import odinApi from "../providers/odinApi";
 import { v4 } from "uuid";
 
 export type Entity = {
@@ -41,6 +45,37 @@ class Handler extends BaseRepository<Entity> {
     const newHandler: Entity = { id: v4(), ...payload };
     await this.create(newHandler);
     return newHandler;
+  }
+
+  async getCashHandlersByStoreCash(): Promise<CashHandlerDTO> {
+    const isConnected = await checkInternet();
+    if (!isConnected) {
+      return {
+        handlers: [],
+      };
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash || !currentCash.is_opened) {
+      return {
+        handlers: [],
+      };
+    }
+
+    const { store_id, code } = currentCash;
+    if (!store_id || !code) {
+      return {
+        handlers: [],
+      };
+    }
+    const {
+      data: { data },
+    } = await odinApi.get(`/cash_handler/${store_id}-${code}`);
+
+    return {
+      history_id: currentCash.history_id,
+      handlers: data,
+    };
   }
 }
 

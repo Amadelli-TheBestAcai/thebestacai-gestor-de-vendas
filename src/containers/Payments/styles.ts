@@ -70,6 +70,7 @@ export const ValueInfo = styled.div`
   background: white;
   color: var(--grey-100);
   font-weight: 500;
+  margin: 3px;
 
   strong {
     font-size: 1.5rem;
@@ -80,7 +81,39 @@ export const Button = styled.button`
   ${ButtonCSS}
 `;
 
-export const Modal = styled(ModalAnt)``;
+export const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+export const ButtonCancel = styled.button`
+  font-size: 0.9rem;
+  color: var(--orange-250);
+  font-weight: 500;
+`;
+
+export const ButtonSave = styled.button`
+  padding: 3px 7px;
+  font-weight: 500;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  background: var(--orange-250);
+  color: white;
+  transition: 0.5s;
+
+  :hover {
+    background: var(--orange-200);
+  }
+`;
+
+export const Modal = styled(ModalAnt)`
+  .ant-modal-body {
+    input {
+      height: 3.7rem;
+    }
+  }
+`;
 
 export const Input = styled(MonetaryInput)``;
 

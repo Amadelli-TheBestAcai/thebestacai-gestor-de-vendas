@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import { TrashRestoreAlt } from "../../styles/Icons";
+
 import { Row, Col } from "antd";
 
 export const Container = styled.div`
@@ -43,4 +45,14 @@ export const InfoPayment = styled(Row)`
 
 export const Column = styled(Col)`
   text-align: center;
+`;
+
+export const Button = styled.button`
+  padding: 3%;
+`;
+
+export const DeleteIcon = styled(TrashRestoreAlt)`
+  width: 1rem;
+  height: 1rem;
+  color: var(--red-600);
 `;

@@ -63,16 +63,6 @@ export const InfosAndChat = styled.div`
   width: 35%;
   align-items: flex-start;
   justify-content: flex-end;
-
-  /* hr {
-    position: absolute;
-    width: 1px;
-    height: 68.94px;
-    left: 1679px;
-    top: 25.03px;
-
-    background: #e3e3e3;
-  } */
 `;
 
 export const ContentHeaderInfos = styled.div`
@@ -88,16 +78,17 @@ export const ContentHeaderInfos = styled.div`
 
 export const InfoStore = styled.div`
   ${BasicCSS}
+  flex-direction: column;
   width: 50%;
   font-size: 15px;
   justify-content: center;
+  border-right: 1px solid var(--gray-25);
 `;
 
-export const UserPhoto = styled.div`
+export const UserPhoto = styled.img`
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50px;
-  background: gray;
 `;
 
 export const ChatContainer = styled.div`

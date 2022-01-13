@@ -1,9 +1,11 @@
 import React from "react";
+import { useSale } from "../../hooks/useSale";
 
 import { ProductDto } from "../../models/dtos/product";
 
-import { Container, Column, Description, AddIcon } from "./styles";
-import { useSale } from "../../hooks/useSale";
+import { Tooltip } from "antd";
+
+import { Container, Column, AddIcon } from "./styles";
 
 interface IProps {
   product: ProductDto;
@@ -16,16 +18,14 @@ const Product: React.FC<IProps> = ({ product }) => {
 
   return (
     <Container>
+      <Column span={11}>{product.product.name}</Column>
       <Column span={8}>
-        <Description>{product.product.name}</Description>
+        {(+product.price_unit).toFixed(2).replace(".", ",")}
       </Column>
-      <Column span={6}>
-        <Description>
-          {(+product.price_unit).toFixed(2).replace(".", ",")}
-        </Description>
-      </Column>
-      <Column span={4}>
-        <AddIcon onClick={handleItem} />
+      <Column span={5}>
+        <Tooltip title="Adicionar" placement="right">
+          <AddIcon onClick={handleItem} />
+        </Tooltip>
       </Column>
     </Container>
   );

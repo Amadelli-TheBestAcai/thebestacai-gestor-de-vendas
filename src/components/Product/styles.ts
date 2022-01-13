@@ -6,10 +6,9 @@ import { AddCircle } from "../../styles/Icons";
 
 export const Container = styled(Row)`
   width: 100%;
-  padding: 2% 0;
-  justify-content: space-evenly;
-  border-bottom: 1px solid black;
-  background: white;
+  height: 45px;
+  background: var(--white-40);
+  margin-top: 9px;
 `;
 
 export const Column = styled(Col)`
@@ -17,19 +16,10 @@ export const Column = styled(Col)`
   align-items: center;
   justify-content: center;
 `;
-export const Description = styled.label`
-  font-size: 14px;
-  font-weight: bold;
-`;
 
 export const AddIcon = styled(AddCircle)`
-  width: 24px;
-  height: 24px;
-  color: var(--button-add);
   cursor: pointer;
-
-  :hover {
-    color: #1ed760;
-    transition: 0.5s;
-  }
+  height: 1.5rem;
+  width: 1.5rem;
+  fill: var(--green-600);
 `;

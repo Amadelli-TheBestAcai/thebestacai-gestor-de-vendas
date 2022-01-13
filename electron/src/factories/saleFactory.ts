@@ -3,6 +3,16 @@ import { Entity as ProductDto } from "../models/product";
 
 export const saleFactory = {
   getCurrent: async () => await saleModel.getCurrent(),
+  deleteSaleFromApi: async (id: string) => {
+    try {
+      await saleModel.deleteSaleFromApi(id);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  getSaleFromApi: async (withClosedCash = false) =>
+    await saleModel.getSaleFromApi(withClosedCash),
   finishSale: async () => await saleModel.finishSale(),
   update: async (id: string | number, payload: Entity) =>
     await saleModel.update(id, payload),

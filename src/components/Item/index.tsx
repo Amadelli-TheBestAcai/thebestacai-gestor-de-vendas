@@ -4,7 +4,9 @@ import { ItemDto } from "../../models/dtos/item";
 
 import { useSale } from "../../hooks/useSale";
 
-import { Container, Column, Button, Description, RemoveIcon } from "./styles";
+import { Tooltip } from "antd";
+
+import { Container, Column, DeleteIcon, Button } from "./styles";
 
 type IProps = {
   item: ItemDto;
@@ -14,24 +16,18 @@ const Item: React.FC<IProps> = ({ item }) => {
   const { onDecressItem } = useSale();
   return (
     <Container>
-      <Column span={10}>
-        <Description>{item.product.name}</Description>
-      </Column>
+      <Column span={10}>{item.product.name}</Column>
+      <Column span={4}>{item.quantity}</Column>
       <Column span={4}>
-        <Description>{item.quantity}</Description>
+        R$ {(+item.storeProduct.price_unit).toFixed(2).replace(".", ",")}
       </Column>
-      <Column span={4}>
-        <Description>
-          R$ {(+item.storeProduct.price_unit).toFixed(2).replace(".", ",")}
-        </Description>
-      </Column>
-      <Column span={4}>
-        <Description>R$ {item.total.toFixed(2).replace(".", ",")}</Description>
-      </Column>
+      <Column span={4}>R$ {item.total.toFixed(2).replace(".", ",")}</Column>
       <Column span={2}>
-        <Button onClick={() => onDecressItem(item.id)}>
-          <RemoveIcon />
-        </Button>
+        <Tooltip title="Remover" placement="bottom">
+          <Button onClick={() => onDecressItem(item.id)}>
+            <DeleteIcon />
+          </Button>
+        </Tooltip>
       </Column>
     </Container>
   );

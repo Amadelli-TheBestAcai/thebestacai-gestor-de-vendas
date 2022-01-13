@@ -3,6 +3,8 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import LogoImg from "../../assets/img/logo-login.png";
 
+import { Tooltip } from "antd";
+
 import {
   Container,
   LogoContainer,
@@ -16,6 +18,7 @@ import {
   CoinsIcon,
   DeliveryIcon,
   ScrollIcon,
+  CardIcon,
 } from "./styles";
 
 type IProps = RouteComponentProps;
@@ -29,20 +32,68 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
     return location.pathname === route;
   };
 
+  const menus = [
+    {
+      id: 1,
+      icon: <HomeIcon />,
+      label: "Página Inicial",
+      router: "/home",
+    },
+    {
+      id: 2,
+      icon: <CashRegisterIcon />,
+      label: "Gerenciamento de Caixa",
+      router: "/store-cash",
+    },
+    {
+      id: 3,
+      icon: <DeliveryIcon />,
+      label: "Delivery",
+      router: "/delivery",
+    },
+    {
+      id: 4,
+      icon: <RetweetIcon />,
+      label: "Movimentações",
+      router: "/handler",
+    },
+    {
+      id: 5,
+      icon: <BoxIcon />,
+      label: "Estoque",
+      router: "/stock",
+    },
+    {
+      id: 6,
+      icon: <CoinsIcon />,
+      label: "Vendas",
+      router: "/sale",
+    },
+    {
+      id: 7,
+      icon: <ScrollIcon />,
+      label: "NFC-e",
+      router: "/nfce",
+    },
+  ];
+
   return (
     <Container>
       <LogoContainer>
         <Logo src={LogoImg} />
       </LogoContainer>
       <Content>
-        <HomeIcon onClick={() => handleClick("/home")} />
-        <Listicon onClick={() => handleClick("/command")} />
-        <CashRegisterIcon onClick={() => handleClick("/store-cash")} />
-        <DeliveryIcon onClick={() => handleClick("/delivery")} />
-        <RetweetIcon onClick={() => handleClick("/handler")} />
-        <BoxIcon onClick={() => handleClick("/stock")} />
-        <CoinsIcon onClick={() => handleClick("/sale")} />
-        <ScrollIcon onClick={() => handleClick("/nfce")} />
+        {menus.map((menu) => (
+          <Tooltip
+            placement="right"
+            title={menu.label}
+            color={"var(--orange-250)"}
+          >
+            <CardIcon onClick={() => handleClick(menu.router)}>
+              {menu.icon}
+            </CardIcon>
+          </Tooltip>
+        ))}
       </Content>
     </Container>
   );

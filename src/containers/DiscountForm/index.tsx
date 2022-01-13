@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { useSale } from "../../hooks/useSale";
 
 import { message } from "antd";
 
-import { Container, Input } from "./styles";
-import { useSale } from "../../hooks/useSale";
+import { Container, Input, Footer, ButtonCancel, ButtonSave } from "./styles";
 
 const DiscountForm: React.FC = () => {
   const { discountModalState, onAddDiscount, discountModalHandler } = useSale();
@@ -23,21 +23,33 @@ const DiscountForm: React.FC = () => {
     setValue(amount);
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+    }
+  };
+
   return (
     <Container
       title="Desconto"
       visible={discountModalState}
       onOk={handleSubmit}
-      closable={false}
+      closable={true}
       onCancel={() => {
-        document.getElementById("mainContainer").focus();
+        // document.getElementById("mainContainer").focus();
         discountModalHandler.closeDiscoundModal();
       }}
-      width={300}
       destroyOnClose={true}
+      centered
+      width={400}
+      footer={
+        <Footer>
+          <ButtonCancel>Cancelar</ButtonCancel>
+          <ButtonSave>Aplicar desconto</ButtonSave>
+        </Footer>
+      }
     >
       <Input
-        autoFocus={true}
+        //autoFocus={true}
         getValue={getAmount}
         onEnterPress={handleSubmit}
       />

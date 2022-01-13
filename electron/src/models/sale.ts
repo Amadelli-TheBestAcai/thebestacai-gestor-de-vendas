@@ -5,6 +5,10 @@ import storeCashModel from "./storeCash";
 import integrationModel from "./integration";
 import { v4 } from "uuid";
 import moment from "moment";
+import { checkInternet } from "../providers/internetConnection";
+import midasApi from "../providers/midasApi";
+import { SaleDto } from "./dtos/sale";
+
 export type Entity = {
   id: string;
   user_id?: number;
@@ -264,6 +268,49 @@ class Sale extends BaseRepository<Entity> {
       items: [],
       payments: [],
     };
+  }
+
+  async getSaleFromApi(withClosedCash = false): Promise<SaleDto[]> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return [];
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash) {
+      return [];
+    }
+
+    if (!withClosedCash && !currentCash?.is_opened) {
+      return [];
+    }
+
+    const { store_id, code } = currentCash;
+    if (!store_id || !code) {
+      return [];
+    }
+
+    const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
+    return data;
+  }
+
+  async deleteSaleFromApi(id: string): Promise<void> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return;
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash || !currentCash.is_opened) {
+      return;
+    }
+
+    const { store_id, code } = currentCash;
+    if (!store_id || !code) {
+      return;
+    }
+
+    await midasApi.delete(`/sales/${id}`);
   }
 }
 

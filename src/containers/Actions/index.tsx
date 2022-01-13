@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useUser } from "../../hooks/useUser";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import InputForm from "../InputForm";
+import RegistrationCard from "../RegistrationCard";
 import DiscountForm from "../DiscountForm";
 import InOutForm from "../InOutForm";
 
@@ -24,12 +26,27 @@ import {
 
 import { useSale } from "../../hooks/useSale";
 
-const Actions: React.FC = () => {
+type ComponentProps = RouteComponentProps;
+
+const Actions: React.FC<ComponentProps> = ({ history }) => {
   const { sale, discountModalHandler, onAddToQueue } = useSale();
+  const { user } = useUser();
+  const [store, setStore] = useState<string | undefined>(undefined);
+  const [cash, setCash] = useState<string | undefined>("");
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
   const [handlerOutState, setHandlerOutState] = useState(false);
   const [openChat, setOpenChat] = useState(false);
+
+  useEffect(() => {
+    async function init() {
+      const registratedStore = await window.Main.store.hasRegistration();
+      const storeCash = await window.Main.storeCash.getCurrent();
+      setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
+      setStore(registratedStore.company.company_name);
+    }
+    init();
+  }, [history.location]);
 
   const handleCommand = () => {
     if (!sale.items.length) {
@@ -55,7 +72,7 @@ const Actions: React.FC = () => {
           <OutputIcon />
           Saída
         </Button>
-        <Button>
+        <Button onClick={() => setCommandState(true)}>
           <ListIcon />
           Comanda
         </Button>
@@ -63,27 +80,43 @@ const Actions: React.FC = () => {
 
       <InfosAndChat>
         <ContentHeaderInfos>
-          <InfoStore>LOJA TESTE </InfoStore>
-          <hr />
+          <InfoStore>
+            {/* {store.toUpperCase()} <br /> */}
+            <span
+              style={{
+                color: cash === "ABERTO" ? "green" : "red",
+              }}
+            >
+              {cash}
+            </span>
+          </InfoStore>
+
           <ChatContainer>
             <ChatIcon />
-            <UserPhoto />
+            <UserPhoto
+              src={
+                user?.image
+                  ? user?.image
+                  : "https://www.ecp.org.br/wp-content/uploads/2017/12/default-avatar-1.png"
+              }
+            />
           </ChatContainer>
         </ContentHeaderInfos>
       </InfosAndChat>
-
+      <DiscountForm />
       <InputForm
         placeHolder="Digite o nome do cliente"
         onFinish={onAddToQueue}
         modalState={commandState}
         setModalState={setCommandState}
       />
-      <DiscountForm />
+
       <InOutForm
         type="entrada"
         modalState={handlerInState}
         setModalState={setHandlerInState}
       />
+
       <InOutForm
         type="saida"
         modalState={handlerOutState}
@@ -93,4 +126,4 @@ const Actions: React.FC = () => {
   );
 };
 
-export default Actions;
+export default withRouter(Actions);

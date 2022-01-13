@@ -10,6 +10,7 @@ export const GlobalStyle = createGlobalStyle`
    --white-80: #f6f6f6;
    
    --black-opaco: #1C1E23;
+   --gray-25: #e3e3e3;
    --gray-50: #e0e0e0;
    --grey-70: #bebebe;
    --grey-80: #acacac;
@@ -34,6 +35,20 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
+
+    ::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--gray-50);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--grey-80);
+      border-radius: 5px;
+    }
   }
 
   html, body, #root {
@@ -46,23 +61,15 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;
 
-
-    .ant-input, .ant-input-password, .ant-select-selector, .ant-picker {
-      :focus,
-      :active,
-      :hover {
-        outline: none;
-        box-shadow: 0 0 0 0;
-      }
+    .ant-tabs-nav {
+      background: var(--black-opaco);
+      color: white;
+      border-radius: 6px 6px 0px 0px;
+      padding: 1%;
+      margin: 0px;
     }
 
-    .ant-tabs-nav {
-    background: var(--black-opaco);
-    color: white;
-    border-radius: 6px 6px 0px 0px;
-    padding: 1%;
-    margin: 0px;
-  }
+    
   
     .ant-tabs-tab.ant-tabs-tab-active,
     .ant-tabs-tab-btn {
@@ -79,6 +86,23 @@ export const GlobalStyle = createGlobalStyle`
       position: absolute;
       background: white;
     }
+
+    .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
+      border-radius: 0.7rem;
+      outline: none;
+      border: none;
+      box-shadow: 0 0 0 0;
+      background: var(--white-70);
+      
+      :focus,
+      :active,
+      :hover {
+        outline: none;
+        border: none;
+        box-shadow: 0 0 0 0;
+      }
+    }
+    
   }
 
   *, button, input{
