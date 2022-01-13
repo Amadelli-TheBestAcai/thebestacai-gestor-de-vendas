@@ -103,8 +103,10 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
           </ChatContainer>
         </ContentHeaderInfos>
       </InfosAndChat>
+
       <DiscountForm />
-      <InputForm
+
+      <RegistrationCard
         placeHolder="Digite o nome do cliente"
         onFinish={onAddToQueue}
         modalState={commandState}
