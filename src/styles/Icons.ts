@@ -22,7 +22,7 @@ export { Chatbubbles } from "@styled-icons/ionicons-sharp/Chatbubbles";
 export { CreditCard2BackFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 
-//---------------------------------------------------//
+//---------------------------------------------------///
 
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export { Trash } from "@styled-icons/fa-solid";
