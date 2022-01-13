@@ -68,6 +68,8 @@ export const GlobalStyle = createGlobalStyle`
       padding: 1%;
       margin: 0px;
     }
+
+    
   
     .ant-tabs-tab.ant-tabs-tab-active,
     .ant-tabs-tab-btn {
