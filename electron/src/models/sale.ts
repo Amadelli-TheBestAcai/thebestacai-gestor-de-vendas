@@ -1,8 +1,14 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
+import storeCashModel from "./storeCash";
+// import integrationModel from "./integration";
 import { v4 } from "uuid";
 import moment from "moment";
+import { checkInternet } from "../providers/internetConnection";
+import midasApi from "../providers/midasApi";
+import { SaleDto } from "./dtos/sale";
+
 export type Entity = {
   id: string;
   user_id?: number;
@@ -17,6 +23,7 @@ export type Entity = {
   cash_id?: number;
   client_id?: number;
   cash_history_id?: number;
+  is_online: boolean;
   is_current: boolean;
   is_integrated: boolean;
   to_integrate: boolean;
@@ -107,7 +114,7 @@ class Sale extends BaseRepository<Entity> {
     if (currentSale) {
       return currentSale;
     } else {
-      const newSale: Entity = this.buildNewSale();
+      const newSale: Entity = await this.buildNewSale();
       await this.createMany([...sales, newSale]);
       return newSale;
     }
@@ -120,8 +127,11 @@ class Sale extends BaseRepository<Entity> {
     sales[saleIndex].is_current = false;
     sales[saleIndex].to_integrate = true;
 
-    const newSale: Entity = this.buildNewSale();
+    const newSale: Entity = await this.buildNewSale();
     await this.createMany([...sales, newSale]);
+
+    // await integrationModel.moveToPreIntegration();
+
     return newSale;
   }
 
@@ -160,7 +170,11 @@ class Sale extends BaseRepository<Entity> {
     return sales[saleIndex];
   }
 
-  async addItem(productToAdd: ProductDto, quantity: number): Promise<Entity> {
+  async addItem(
+    productToAdd: ProductDto,
+    quantity: number,
+    price?: number
+  ): Promise<Entity> {
     const sales = await this.getAll();
     const saleIndex = sales.findIndex((_sale) => _sale.is_current);
 
@@ -186,17 +200,13 @@ class Sale extends BaseRepository<Entity> {
         update_stock: true,
         product,
         storeProduct,
-        total: +(productToAdd.price_unit || 0),
+        total: +(price || productToAdd.price_unit || 0),
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
 
     sales[saleIndex].total_sold = +sales[saleIndex].items
-      .reduce(
-        (total, item) =>
-          +(item.storeProduct?.price_unit || 0) * item.quantity + total,
-        0
-      )
+      .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
     await this.createMany(sales);
@@ -237,14 +247,19 @@ class Sale extends BaseRepository<Entity> {
     return sales[saleIndex];
   }
 
-  buildNewSale(): Entity {
+  async buildNewSale(): Promise<Entity> {
+    const user = await userModel.get();
+    const storeCash = await storeCashModel.getOne();
     return {
       id: v4(),
-      user_id: userModel.loggedUser?.id,
+      user_id: user?.id,
       quantity: 0,
       change_amount: 0,
       type: 0,
       discount: 0,
+      cash_id: storeCash?.cash_id,
+      cash_history_id: storeCash?.history_id,
+      is_online: storeCash?.history_id && storeCash?.cash_id ? true : false,
       is_current: true,
       is_integrated: false,
       to_integrate: false,
@@ -253,6 +268,49 @@ class Sale extends BaseRepository<Entity> {
       items: [],
       payments: [],
     };
+  }
+
+  async getSaleFromApi(withClosedCash = false): Promise<SaleDto[]> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return [];
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash) {
+      return [];
+    }
+
+    if (!withClosedCash && !currentCash?.is_opened) {
+      return [];
+    }
+
+    const { store_id, code } = currentCash;
+    if (!store_id || !code) {
+      return [];
+    }
+
+    const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
+    return data;
+  }
+
+  async deleteSaleFromApi(id: string): Promise<void> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return;
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash || !currentCash.is_opened) {
+      return;
+    }
+
+    const { store_id, code } = currentCash;
+    if (!store_id || !code) {
+      return;
+    }
+
+    await midasApi.delete(`/sales/${id}`);
   }
 }
 
