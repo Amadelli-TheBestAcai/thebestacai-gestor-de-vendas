@@ -81,7 +81,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <InfosAndChat>
         <ContentHeaderInfos>
           <InfoStore>
-            {store.toUpperCase()} <br />
+            {/* {store.toUpperCase()} <br /> */}
             <span
               style={{
                 color: cash === "ABERTO" ? "green" : "red",
