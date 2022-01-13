@@ -152,13 +152,15 @@ class Product extends BaseRepository<Entity> {
     return content;
   }
 
-  async updateProductStock(id: number, quantity: number): Promise<Entity[]> {
+  async updateProductStock(id: number, quantity: number): Promise<Entity> {
     const hasInternet = await checkInternet();
     if (!hasInternet) {
     }
-    return await odinApi.patch(`/products_store/${id}/quantity`, {
+
+    const { data } = await odinApi.patch(`/products_store/${id}/quantity`, {
       quantity,
     });
+    return data;
   }
 }
 

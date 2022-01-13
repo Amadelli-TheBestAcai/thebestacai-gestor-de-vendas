@@ -100,11 +100,11 @@ export function SaleProvider({ children }) {
       message.warning("Desconto maior que o valor da venda.");
       return;
     }
-    const _updatedSale = await window.Main.sale.update(sale.id, {
-      ...sale,
-      discount: +value,
-    });
-    setSale(_updatedSale);
+    // const _updatedSale = await window.Main.sale.update(sale.id, {
+    //   ...sale,
+    //   discount: +value,
+    // });
+    // setSale(_updatedSale);
   };
 
   return (
