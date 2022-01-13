@@ -6,6 +6,7 @@ import { productFactory } from "./src/factories/productFactory";
 import { saleFactory } from "./src/factories/saleFactory";
 import { handlerFactory } from "./src/factories/handlerFactory";
 import { storeCashFactory } from "./src/factories/storeCashFactory";
+import env from "./src/providers/env.json";
 
 export const api = {
   send: (channel: string, func: Function, data?: any) => {
@@ -18,6 +19,7 @@ export const api = {
   once: (channel: string, callback: Function) =>
     ipcRenderer.once(channel, (_, data) => callback(data)),
   hasInternet: async (): Promise<boolean> => await checkInternet(),
+  env,
   user: userFactory,
   store: storeFactory,
   product: productFactory,
