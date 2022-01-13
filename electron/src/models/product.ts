@@ -1,6 +1,8 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { checkInternet } from "../providers/internetConnection";
 import odinApi from "../providers/odinApi";
+import storeModel from "./store";
+import { Audit } from "./dtos/audit";
 
 export type Entity = {
   id: number;
@@ -89,10 +91,10 @@ class Product extends BaseRepository<Entity> {
   async getProducts(): Promise<Entity[]> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
-      const store = { store_id: 1 }; //await this._storeRepository.findCurrent();
+      const store = await storeModel.getOne();
       const {
         data: { content },
-      } = await odinApi.get(`products_store/store/${store.store_id}`);
+      } = await odinApi.get(`products_store/store/${store?.company_id}`);
       await this.clear();
       await this.createMany(content);
       return content;
@@ -116,6 +118,47 @@ class Product extends BaseRepository<Entity> {
     } = await odinApi.get("/product_categories/products/purchases");
 
     return content;
+  }
+
+  async getAllProductStore(): Promise<Entity[]> {
+    const hasInternet = await checkInternet();
+    if (hasInternet) {
+      const store = await storeModel.getOne();
+      const {
+        data: { content },
+      } = await odinApi.get(
+        `/products_store/store/${store?.company_id}?stockProducts=true`
+      );
+      return content;
+    } else {
+      return [];
+    }
+  }
+
+  async GetPtoductStoreHistory(
+    id: number,
+    page: number,
+    size: number
+  ): Promise<Audit[]> {
+    const hasInternet = await checkInternet();
+    if (!hasInternet) {
+      return [];
+    }
+    const {
+      data: { content, totalElements },
+    } = await odinApi.get(
+      `/products_store_history/${id}?page=${page}&size=${size}`
+    );
+    return content;
+  }
+
+  async updateProductStock(id: number, quantity: number): Promise<Entity[]> {
+    const hasInternet = await checkInternet();
+    if (!hasInternet) {
+    }
+    return await odinApi.patch(`/products_store/${id}/quantity`, {
+      quantity,
+    });
   }
 }
 
