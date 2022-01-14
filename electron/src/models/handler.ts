@@ -77,6 +77,25 @@ class Handler extends BaseRepository<Entity> {
       handlers: data,
     };
   }
+
+  async deleteCashHandlerFromApiService(id: string): Promise<void> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return;
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash || !currentCash.is_opened) {
+      return;
+    }
+
+    const { store_id, code } = currentCash;
+    if (!store_id || !code) {
+      return;
+    }
+
+    await odinApi.delete(`/cash_handler/${id}`);
+  }
 }
 
 export default new Handler();
