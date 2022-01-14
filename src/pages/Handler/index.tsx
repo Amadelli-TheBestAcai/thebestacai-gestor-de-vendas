@@ -40,30 +40,27 @@ const Handler: React.FC = () => {
     init();
   }, []);
 
-  // const onDelete = (id: number): void => {
-  //   confirm({
-  //     title: "Remoção de Movimentação",
-  //     content: "Tem certeza que gostaria de prosseguir?",
-  //     okText: "Sim",
-  //     okType: "default",
-  //     cancelText: "Não",
-  //     onOk() {
-  //       setIsLoading(true);
-  //       ipcRenderer.send("handler:delete", id);
-  //       ipcRenderer.once(
-  //         "handler:delete:response",
-  //         (event, { success, data }) => {
-  //           setIsLoading(false);
-  //           if (!success) {
-  //             message.warning("Falha ao remover movimentação");
-  //           }
-  //           setHandlers(data);
-  //           message.success("Movimentação removida com sucesso");
-  //         }
-  //       );
-  //     },
-  //   });
-  // };
+  const onDelete = (id: string): void => {
+    confirm({
+      title: "Remoção de Movimentação",
+      content: "Tem certeza que gostaria de prosseguir?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      async onOk() {
+        setIsLoading(true);
+        const success =
+          await window.Main.handler.deleteCashHandlerFromApiService(id);
+        const data = await window.Main.handler.getCashHandlersByStoreCash();
+        setIsLoading(false);
+        if (!success) {
+          message.warning("Falha ao remover movimentação");
+        }
+        setHandlers(data.handlers);
+        message.success("Movimentação removida com sucesso");
+      },
+    });
+  };
 
   const onPdf = async () => {
     if ((await window.Main.user.getUser()).token) {
