@@ -32,15 +32,16 @@ const StockAuditList: React.FC<IProps> = ({
 
   useEffect(() => {
     async function init() {
-      const products = await window.Main.product.GetPtoductStoreHistory(
+      const products = await window.Main.product.GetProductStoreHistory(
         id,
         page,
         size
       );
+      const totalElements = products.totalElements;
       if (products) {
         setLoading(false);
-        setAudits(products);
-        setPaginate((oldValues) => ({ ...oldValues }));
+        setAudits(products.audits);
+        setPaginate((oldValues) => ({ ...oldValues, totalElements }));
       } else {
         message.error("Erro ao obter auditoria do produto!");
       }

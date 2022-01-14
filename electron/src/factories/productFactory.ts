@@ -6,8 +6,8 @@ export const productFactory = {
   getAllPurchaseProducts: async () =>
     await productModel.getAllPurchaseProducts(),
   getAllProductStore: async () => await productModel.getAllProductStore(),
-  GetPtoductStoreHistory: async (id: number, page: number, size: number) =>
-    await productModel.GetPtoductStoreHistory(id, page, size),
+  GetProductStoreHistory: async (id: number, page: number, size: number) =>
+    await productModel.GetProductStoreHistory(id, page, size),
   updateProductStock: async (id: number, quantity: number) =>
     await productModel.updateProductStock(id, quantity),
 };

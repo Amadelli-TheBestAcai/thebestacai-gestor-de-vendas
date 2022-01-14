@@ -2,7 +2,7 @@ import { BaseRepository } from "../repository/baseRepository";
 import { checkInternet } from "../providers/internetConnection";
 import odinApi from "../providers/odinApi";
 import storeModel from "./store";
-import { Audit } from "./dtos/audit";
+import { AuditDTO } from "./dtos/audit";
 
 export type Entity = {
   id: number;
@@ -135,21 +135,21 @@ class Product extends BaseRepository<Entity> {
     }
   }
 
-  async GetPtoductStoreHistory(
+  async GetProductStoreHistory(
     id: number,
     page: number,
     size: number
-  ): Promise<Audit[]> {
+  ): Promise<AuditDTO> {
     const hasInternet = await checkInternet();
     if (!hasInternet) {
-      return [];
+      return { audits: [], totalElements: 0 };
     }
     const {
       data: { content, totalElements },
     } = await odinApi.get(
       `/products_store_history/${id}?page=${page}&size=${size}`
     );
-    return content;
+    return { audits: content, totalElements: totalElements };
   }
 
   async updateProductStock(id: number, quantity: number): Promise<Entity> {

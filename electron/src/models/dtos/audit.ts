@@ -1,3 +1,8 @@
+export type AuditDTO = {
+  audits: Audit[];
+  totalElements: number;
+};
+
 export type Audit = {
   id: number;
   totalElements: number;
