@@ -7,7 +7,6 @@ import { v4 } from "uuid";
 import moment from "moment";
 import { checkInternet } from "../providers/internetConnection";
 import midasApi from "../providers/midasApi";
-import { SaleDto } from "./dtos/sale";
 
 export type Entity = {
   id: string;
@@ -270,7 +269,7 @@ class Sale extends BaseRepository<Entity> {
     };
   }
 
-  async getSaleFromApi(withClosedCash = false): Promise<SaleDto[]> {
+  async getSaleFromApi(withClosedCash = false): Promise<Entity[]> {
     const is_online = await checkInternet();
     if (!is_online) {
       return [];
