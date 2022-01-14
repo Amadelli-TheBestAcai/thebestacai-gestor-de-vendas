@@ -3,7 +3,6 @@ import axios from "axios";
 import { v4 } from "uuid";
 import { onlyNumbers } from "../../helpers/onlyNumber";
 import { cleanObject } from "../../helpers/cleanObject";
-// import { ipcRenderer } from "electron";
 
 import { Divider, message as messageAnt } from "antd";
 

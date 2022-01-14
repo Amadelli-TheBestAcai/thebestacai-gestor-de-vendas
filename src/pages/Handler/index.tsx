@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-// import { ipcRenderer } from "electron";
 import axios from "axios";
 import DisconectedForm from "../../containers/DisconectedForm";
 import Centralizer from "../../containers/Centralizer";
-import currentUser from "../../helpers/currentUser";
 import RouterDescription from "../../components/RouterDescription";
 import Spinner from "../../components/Spinner";
 import HandlerItem from "../../components/HandlerItem";
@@ -68,7 +66,7 @@ const Handler: React.FC = () => {
   // };
 
   const onPdf = async () => {
-    if (!currentUser.getUser().token) {
+    if ((await window.Main.user.getUser()).token) {
       return message.warning(
         "Usuário em modo offline. Refaça o login com conexão à internet"
       );
@@ -77,7 +75,7 @@ const Handler: React.FC = () => {
       method: "GET",
       responseType: "blob",
       headers: {
-        Authorization: `Bearer ${currentUser.getUser().token}`,
+        Authorization: `Bearer ${(await window.Main.user.getUser()).token}`,
       },
       url: `${window.Main.env.API_DASH}/cash_handler/pdf/${historyId}`,
     });

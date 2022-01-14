@@ -39,15 +39,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
       const _sale = await window.Main.sale.getSaleFromApi();
       setSales(_sale);
       setIsLoading(false);
-      // ipcRenderer.send('sale:api:get')
-      // ipcRenderer.once(
-      //   'sale:api:get:response',
-      //   (event, { isConnected, data }) => {
-      //     setIsLoading(false)
-      //     setIsConected(isConnected)
-      //     setSales(data)
-      //   }
-      // )
       // ipcRenderer.send('integrate:status')
       // ipcRenderer.once('integrate:status:response', (event, { sales }) => {
       //   setPendingSales(sales?.length)
