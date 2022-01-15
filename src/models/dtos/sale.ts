@@ -15,6 +15,7 @@ export type SaleDto = {
   cash_id?: number;
   client_id?: number;
   cash_history_id?: number;
+  is_online: boolean;
   is_current: boolean;
   is_integrated: boolean;
   to_integrate: boolean;

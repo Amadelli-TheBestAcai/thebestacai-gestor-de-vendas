@@ -1,8 +1,8 @@
 {
-  "name": "my-app",
-  "version": "0.8.0",
+  "name": "gestor-de-vendas",
+  "version": "0.0.3",
   "author": "Wirlley Delfino",
-  "description": "React-TypeScript-Electron sample with Create React App and Electron Builder",
+  "description": "Desktop app to manage a store",
   "homepage": ".",
   "main": "build/electron/main.js",
   "dependencies": {
@@ -15,6 +15,7 @@
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
     "node-abi": "^3.5.0",
+    "node-cron": "^3.0.0",
     "node-fetch": "2.6.1",
     "node-persist": "^3.1.0",
     "node-thermal-printer": "^4.1.2",
@@ -41,7 +42,7 @@
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
     "dev:react": "cross-env BROWSER=none yarn start",
     "dev:electron": "tsc -p electron && electron .",
-    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish never",
+    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish always",
     "eject": "react-scripts eject"
   },
   "build": {
@@ -51,8 +52,8 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "wirlleyd",
-        "repo": "electron-react-typescript",
+        "owner": "Amadelli-TheBestAcai",
+        "repo": "thebestacai-gestor-de-vendas",
         "releaseType": "release"
       }
     ],

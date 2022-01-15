@@ -2,7 +2,7 @@ import { BaseRepository } from "../repository/baseRepository";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
 import storeCashModel from "./storeCash";
-// import integrationModel from "./integration";
+import integrationModel from "./integration";
 import { v4 } from "uuid";
 import moment from "moment";
 import { checkInternet } from "../providers/internetConnection";
@@ -129,7 +129,7 @@ class Sale extends BaseRepository<Entity> {
     const newSale: Entity = await this.buildNewSale();
     await this.createMany([...sales, newSale]);
 
-    // await integrationModel.moveToPreIntegration();
+    await integrationModel.moveToPreIntegration();
 
     return newSale;
   }

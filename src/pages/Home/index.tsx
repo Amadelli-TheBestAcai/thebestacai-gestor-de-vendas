@@ -123,7 +123,12 @@ const Home: React.FC = () => {
   };
 
   return (
-    <Container id="mainContainer" allowChanges={true}>
+    <Container
+      id="mainContainer"
+      handlers={handlers}
+      keyMap={keyMap}
+      allowChanges={true}
+    >
       {loading ? (
         <Spinner />
       ) : (
