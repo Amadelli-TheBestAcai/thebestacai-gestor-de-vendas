@@ -22,4 +22,5 @@ export const saleFactory = {
   decressItem: async (id: string) => await saleModel.decressItem(id),
   addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
     await saleModel.addItem(productToAdd, quantity, price),
+  getSaleFromApp: async () => await saleModel.getSaleFromApp(),
 };
