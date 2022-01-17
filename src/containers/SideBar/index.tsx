@@ -73,7 +73,7 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
       id: 7,
       icon: <ScrollIcon />,
       label: "NFC-e",
-      router: "/nfce",
+      router: "/balance",
     },
   ];
 

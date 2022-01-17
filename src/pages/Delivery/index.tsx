@@ -53,6 +53,7 @@ import { Cashier } from "../../models/cashier";
 import ImageLogo from "../../assets/img/logo-login.png";
 
 import PixLogo from "../../assets/svg/pix.svg";
+import { StoreCashDto } from "../../models/dtos/storeCash";
 
 const { confirm } = Modal;
 
@@ -60,7 +61,7 @@ type ComponentProps = RouteComponentProps;
 
 const Delivery: React.FC<ComponentProps> = ({ history }) => {
   const [sale, setSale] = useState<Sale | null>(null);
-  const [cashier, setCashier] = useState<Cashier>();
+  const [cashier, setCashier] = useState<StoreCashDto>();
   const [sales, setSales] = useState<AppSaleModel[]>([]);
   const [hasConnection, setHasConnection] = useState<boolean>(false);
   const [appSalesResult, setAppSalesResult] =
@@ -70,53 +71,54 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   const [paymentType, setPaymentType] = useState<number>(0);
   const [amount, setAmount] = useState<number>();
 
-  // useEffect(() => {
-  //   ipcRenderer.send("sale:getCurrent");
-  //   ipcRenderer.once("sale:getCurrent:response", (event, { cashier }) => {
-  //     setCashier(cashier);
-  //     setSale((oldValues) => ({
-  //       ...oldValues,
-  //       store_id: cashier?.store_id,
-  //       cash_id: cashier?.cash_id,
-  //       cash_code: cashier?.code,
-  //       cash_history_id: cashier?.history_id,
-  //       change_amount: 0,
-  //       type: "APP",
-  //       discount: 0,
-  //       to_integrate: true,
-  //       is_current: false,
-  //     }));
-  //     setLoading(false);
-  //   });
-  // }, []);
+  useEffect(() => {
+    async function init() {
+      const _storeCash = await window.Main.storeCash.getCurrent();
+      setCashier(_storeCash);
+      setSale((oldValues) => ({
+        ...oldValues,
+        store_id: _storeCash?.store_id,
+        cash_id: _storeCash?.cash_id,
+        cash_code: _storeCash?.code,
+        cash_history_id: _storeCash?.history_id,
+        change_amount: 0,
+        type: "APP",
+        discount: 0,
+        to_integrate: true,
+        is_current: false,
+      }));
+      setLoading(false);
+    }
+    init();
+  }, []);
 
-  // useEffect(() => {
-  //   setLoadingSales(true);
-  //   ipcRenderer.send("appSale:get");
-  //   ipcRenderer.once(
-  //     "appSale:get:response",
-  //     (event, { sales, hasInternet }) => {
-  //       setHasConnection(hasInternet);
-  //       setSales(sales);
-  //       setLoadingSales(false);
-  //       const salesResult: IntegrateAppSalesDTO = {
-  //         sales_in_delivery: sales.length,
-  //         total: sales.reduce((total, sale) => total + +sale.valor_pedido, 0),
-  //         money: sales
-  //           .filter((sale) => +sale.tipo_pagamento === PaymentType.DINHEIRO)
-  //           .reduce((total, sale) => total + +sale.valor_pedido, 0),
-  //         credit_card: sales
-  //           .filter((sale) => +sale.tipo_pagamento === PaymentType.CREDITO)
-  //           .reduce((total, sale) => total + +sale.valor_pedido, 0),
-  //         debit_card: sales
-  //           .filter((sale) => +sale.tipo_pagamento === PaymentType.DEBITO)
-  //           .reduce((total, sale) => total + +sale.valor_pedido, 0),
-  //         salesIds: sales.map((sale) => sale.id),
-  //       };
-  //       setAppSalesResult(salesResult);
-  //     }
-  //   );
-  // }, []);
+  useEffect(() => {
+    async function init() {
+      setLoadingSales(true);
+      const _sale = await window.Main.sale.getSaleFromApp();
+      const inConnected = await window.Main.hasInternet();
+      console.log(_sale);
+      setHasConnection(inConnected);
+      setSales(_sale);
+      setLoadingSales(false);
+      const salesResult: IntegrateAppSalesDTO = {
+        sales_in_delivery: _sale.length,
+        total: _sale.reduce((total, sale) => total + +sale.valor_pedido, 0),
+        money: _sale
+          .filter((sale) => +sale.tipo_pagamento === PaymentType.DINHEIRO)
+          .reduce((total, sale) => total + +sale.valor_pedido, 0),
+        credit_card: _sale
+          .filter((sale) => +sale.tipo_pagamento === PaymentType.CREDITO)
+          .reduce((total, sale) => total + +sale.valor_pedido, 0),
+        debit_card: _sale
+          .filter((sale) => +sale.tipo_pagamento === PaymentType.DEBITO)
+          .reduce((total, sale) => total + +sale.valor_pedido, 0),
+        salesIds: _sale.map((sale) => sale.id),
+      };
+      setAppSalesResult(salesResult);
+    }
+    init();
+  }, []);
 
   const handlePlatform = (value: string) => {
     setSale((oldValues) => ({ ...oldValues, type: value }));

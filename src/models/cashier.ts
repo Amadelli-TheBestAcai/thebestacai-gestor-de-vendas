@@ -1,5 +1,5 @@
 export type Cashier = {
-  id: number;
+  id: string;
   code: string;
   amount_on_open: number;
   cash_id?: number;

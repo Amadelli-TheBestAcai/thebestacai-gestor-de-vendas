@@ -10,6 +10,7 @@ import Sale from "../pages/Sale";
 import Stock from "../pages/Stock";
 import Handler from "../pages/Handler";
 import Delivery from "../pages/Delivery";
+import Balance from "../pages/Balance";
 
 interface RouteWithLayoutProps extends RouteProps {
   component: any;
@@ -37,6 +38,7 @@ const Routes = () => (
     <RouteWithLayout exact path="/stock" component={Stock} />
     <RouteWithLayout exact path="/handler" component={Handler} />
     <RouteWithLayout exact path="/delivery" component={Delivery} />
+    <RouteWithLayout exact path="/balance" component={Balance} />
     <Route path="*" component={Login} />
   </Switch>
 );
