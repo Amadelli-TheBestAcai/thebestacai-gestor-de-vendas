@@ -7,6 +7,7 @@ import {
   Motorcycle,
   Retweet,
   Box,
+  BarChart,
   Coins,
   Scroll,
 } from "../../styles/Icons";
@@ -89,6 +90,10 @@ export const RetweetIcon = styled(Retweet)`
 `;
 
 export const BoxIcon = styled(Box)`
+  ${IconCSS}
+`;
+
+export const Graph = styled(BarChart)`
   ${IconCSS}
 `;
 
