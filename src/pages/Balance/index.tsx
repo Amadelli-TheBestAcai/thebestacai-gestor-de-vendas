@@ -34,10 +34,11 @@ const Balance: React.FC = () => {
 
   useEffect(() => {
     async function init() {
+      const isConnected = await window.Main.hasInternet();
       const _storeCash = await window.Main.storeCash.getStoreCashBalance();
-      setBalance(_storeCash.balance);
+      setBalance(_storeCash);
       setLoading(false);
-      setIsConected(_storeCash.isConnected);
+      setIsConected(isConnected);
     }
     init();
   }, []);

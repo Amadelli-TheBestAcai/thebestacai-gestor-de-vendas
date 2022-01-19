@@ -48,7 +48,6 @@ import {
 import { message, Modal, Spin, Button, Empty } from "antd";
 
 import { Sale } from "../../models/sale";
-import { Cashier } from "../../models/cashier";
 
 import ImageLogo from "../../assets/img/logo-login.png";
 
