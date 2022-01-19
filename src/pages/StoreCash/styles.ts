@@ -1,13 +1,6 @@
 import styled from "styled-components";
 
-import MonetaryInput from "../../components/MonetaryInput";
-
-import {
-  Button as ButtonAnt,
-  Input as InputAnt,
-  Col as ColAnt,
-  Row as RowAnt,
-} from "antd";
+import vectorChart from "../../assets/svg/vectorChart.svg";
 
 export const Container = styled.div`
   display: flex;
@@ -129,7 +122,33 @@ export const CardStatus = styled.div`
   background: var(--white-40);
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   border-radius: 3px;
-  padding: 1rem;
+  padding: 2rem;
   font-size: 2.5rem;
   color: var(--grey-100);
+
+  background-image: url(${vectorChart});
+  background-repeat: no-repeat;
+  background-position: right;
+  background-origin: content-box;
+`;
+
+export const CloseCashContatiner = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 10%;
+`;
+
+export const CloseButton = styled.button`
+  width: 25%;
+  height: 75%;
+  background: #c53030;
+  color: white;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-radius: 4px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 `;

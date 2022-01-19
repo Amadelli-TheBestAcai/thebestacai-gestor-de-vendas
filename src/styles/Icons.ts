@@ -13,6 +13,7 @@ export {
   TicketAlt,
   Search,
   TrashRestoreAlt,
+  ChartBar,
 } from "@styled-icons/fa-solid";
 
 export { Offer } from "@styled-icons/boxicons-solid/Offer";

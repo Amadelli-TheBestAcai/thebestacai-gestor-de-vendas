@@ -23,6 +23,8 @@ import {
   Right,
   ContentStatusCash,
   CardStatus,
+  CloseCashContatiner,
+  CloseButton,
 } from "./styles";
 
 const { confirm } = Modal;
@@ -166,13 +168,17 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
           </HeaderStatus>
 
           <ContentStatusCash>
-            <CardStatus></CardStatus>
-            <CardStatus></CardStatus>
-            <CardStatus></CardStatus>
-            <CardStatus></CardStatus>
-            <CardStatus></CardStatus>
-            <CardStatus></CardStatus>
+            <CardStatus>R$ 200,00</CardStatus>
+            <CardStatus>R$ 200,00</CardStatus>
+            <CardStatus>R$ 200,00</CardStatus>
+            <CardStatus>R$ 200,00</CardStatus>
+            <CardStatus>R$ 200,00</CardStatus>
+            <CardStatus>R$ 200,00</CardStatus>
           </ContentStatusCash>
+
+          <CloseCashContatiner>
+            <CloseButton>Fechar Caixa</CloseButton>
+          </CloseCashContatiner>
         </CashStatusContainer>
       </PageContent>
       {/* 
