@@ -15,6 +15,7 @@ import {
   CashRegisterIcon,
   RetweetIcon,
   BoxIcon,
+  Graph,
   CoinsIcon,
   DeliveryIcon,
   ScrollIcon,

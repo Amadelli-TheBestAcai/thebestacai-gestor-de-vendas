@@ -143,10 +143,7 @@ class StoreCash extends BaseRepository<Entity> {
 
     const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
     const balance = getBalance(data);
-    return {
-      balance,
-      isConnected,
-    };
+    return balance;
   }
 }
 

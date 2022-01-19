@@ -40,7 +40,7 @@ const Handler: React.FC = () => {
     init();
   }, []);
 
-  const onDelete = (id: string): void => {
+  const onDelete = (id: number): void => {
     confirm({
       title: "Remoção de Movimentação",
       content: "Tem certeza que gostaria de prosseguir?",
@@ -126,7 +126,7 @@ const Handler: React.FC = () => {
                   <HandlerItem
                     key={handler.id}
                     handler={handler}
-                    // onDelete={onDelete}
+                    onDelete={onDelete}
                   />
                 ))}
               </HandlersList>

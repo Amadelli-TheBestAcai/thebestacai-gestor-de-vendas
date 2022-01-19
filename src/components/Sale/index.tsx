@@ -19,7 +19,7 @@ import moment from "moment";
 
 type IProps = {
   sale: SaleDto;
-  onDelete?: (id: string) => void;
+  onDelete: (id: string) => void;
   setShouldSearch: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -36,7 +36,7 @@ const Sale: React.FC<IProps> = ({ sale, onDelete, setShouldSearch }) => {
     items,
     payments,
   } = sale;
-  const time = moment(created_at).format("HH:mm:ss");
+  const time = moment(created_at).utc(false).format("HH:mm:ss");
   const getType = (type: number): string => {
     if (type === 0) return "Loja";
     if (type === 1) return "IFOOD";

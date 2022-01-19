@@ -1,9 +1,9 @@
 import { SalesHistory, PaymentResponse } from "./salesHistoryResponse";
-import { Balance } from "../models/dtos/balance";
+import { BalanceDTO } from "../models/dtos/balance";
 import { PaymentType } from "../models/enums/paymentType";
 
-export const getBalance = (sales: SalesHistory[]): Balance => {
-  const balance: Balance = {
+export const getBalance = (sales: SalesHistory[]): BalanceDTO => {
+  const balance: BalanceDTO = {
     store: {
       total: 0,
       money: 0,

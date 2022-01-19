@@ -12,7 +12,7 @@ import { Handler as HandlerModel } from "../../models/dtos/handler";
 
 type IProps = {
   handler: HandlerModel;
-  onDelete?: (id: number) => void;
+  onDelete: (id: number) => void;
 };
 
 const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
