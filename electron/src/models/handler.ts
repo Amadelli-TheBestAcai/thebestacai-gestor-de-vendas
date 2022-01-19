@@ -78,7 +78,7 @@ class Handler extends BaseRepository<Entity> {
     };
   }
 
-  async deleteCashHandlerFromApiService(id: string): Promise<void> {
+  async deleteCashHandlerFromApiService(id: number): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
       return;
