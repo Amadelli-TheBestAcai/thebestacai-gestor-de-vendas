@@ -1,9 +1,4 @@
 export type BalanceDTO = {
-  balance: Balance;
-  isConnected: boolean;
-};
-
-export type Balance = {
   store: {
     total: number;
     money: number;
