@@ -10,7 +10,20 @@ import PendingSaleForm from "../../containers/PendingSaleForm";
 
 import { message as messageAnt, Modal } from "antd";
 
-import { Container } from "./styles";
+import {
+  Container,
+  PageContent,
+  Header,
+  CashContainer,
+  CashStatusContainer,
+  HeaderStatus,
+  StatusCash,
+  Status,
+  Left,
+  Right,
+  ContentStatusCash,
+  CardStatus,
+} from "./styles";
 
 const { confirm } = Modal;
 
@@ -126,24 +139,50 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
 
   return (
     <Container>
-      {/* <RouterDescription
-        description={currentCash ? "Fechamento de Caixa" : "Abertura de Caixa"}
-      />
+      <PageContent>
+        <Header>
+          <h2>Gerenciamento de Caixa</h2>
+        </Header>
+        <CashContainer>
+          {cashes.map((cash) => (
+            <Cash
+              key={cash.store_cash}
+              cash={cash}
+              handleClick={selectCashier}
+            />
+          ))}
+        </CashContainer>
+
+        <CashStatusContainer>
+          <HeaderStatus>
+            <h2>Status do Caixa</h2>
+            <StatusCash>
+              <Status>
+                <Left>Caixa</Left>
+                <Right>Fechado</Right>
+              </Status>
+              <span>18 de Janeiro de 2022 14:41</span>
+            </StatusCash>
+          </HeaderStatus>
+
+          <ContentStatusCash>
+            <CardStatus></CardStatus>
+            <CardStatus></CardStatus>
+            <CardStatus></CardStatus>
+            <CardStatus></CardStatus>
+            <CardStatus></CardStatus>
+            <CardStatus></CardStatus>
+          </ContentStatusCash>
+        </CashStatusContainer>
+      </PageContent>
+      {/* 
       {loadingCashes ? (
         <Spinner />
       ) : (
         <>
           <>
             {step === 1 && (
-              <PrimaryContent>
-                {cashes.map((cash) => (
-                  <Cash
-                    key={cash.store_cash}
-                    cash={cash}
-                    handleClick={selectCashier}
-                  />
-                ))}
-              </PrimaryContent>
+              
             )}
           </>
           <>
