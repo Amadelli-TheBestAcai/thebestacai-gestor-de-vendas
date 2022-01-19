@@ -7,24 +7,12 @@ import Spinner from "../../components/Spinner";
 
 import { Balance as BalanceModel } from "../../models/balance";
 
-import PixLogo from "../../assets/svg/pix.svg";
-
 import {
   Container,
-  CardContainer,
-  Card,
-  CardHeader,
-  CardBody,
-  CardRow,
-  Description,
-  CardFooter,
-  Title,
-  MoneyIcon,
-  CreditIcon,
-  DebitIcon,
-  TicketIcon,
-  CardContent,
-  CheckOnline,
+  PageContent,
+  Header,
+  AmountContainer,
+  TabContainer,
 } from "./styles";
 
 const Balance: React.FC = () => {
@@ -32,19 +20,27 @@ const Balance: React.FC = () => {
   const [isLoading, setLoading] = useState(true);
   const [balance, setBalance] = useState<BalanceModel>();
 
-  useEffect(() => {
-    async function init() {
-      const _storeCash = await window.Main.storeCash.getStoreCashBalance();
-      setBalance(_storeCash.balance);
-      setLoading(false);
-      setIsConected(_storeCash.isConnected);
-    }
-    init();
-  }, []);
+  // useEffect(() => {
+  //   async function init() {
+  //     const _storeCash = await window.Main.storeCash.getStoreCashBalance();
+  //     setBalance(_storeCash.balance);
+  //     setLoading(false);
+  //     setIsConected(_storeCash.isConnected);
+  //   }
+  //   init();
+  // }, []);
 
   return (
     <Container>
-      <RouterDescription description="Balanço" />
+      <PageContent>
+        <Header>
+          <h2>Balanço</h2>
+        </Header>
+
+        <TabContainer></TabContainer>
+        <AmountContainer></AmountContainer>
+      </PageContent>
+      {/* <RouterDescription description="Balanço" />
       {isLoading ? (
         <Spinner />
       ) : isConected ? (
@@ -202,7 +198,7 @@ const Balance: React.FC = () => {
         </CardContainer>
       ) : (
         <DisconectedForm />
-      )}
+      )} */}
     </Container>
   );
 };

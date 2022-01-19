@@ -9,6 +9,7 @@ import {
   Box,
   Coins,
   Scroll,
+  ChartBar,
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -97,5 +98,9 @@ export const CoinsIcon = styled(Coins)`
 `;
 
 export const ScrollIcon = styled(Scroll)`
+  ${IconCSS}
+`;
+
+export const ChartIcon = styled(ChartBar)`
   ${IconCSS}
 `;
