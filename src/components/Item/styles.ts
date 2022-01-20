@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Row, Col } from "antd";
+import { Row, Col, Modal as ModalAnt, Input as InputAnt } from "antd";
 
 import { TrashRestoreAlt } from "../../styles/Icons";
 
@@ -27,3 +27,6 @@ export const DeleteIcon = styled(TrashRestoreAlt)`
   height: 1.2rem;
   color: var(--red-600);
 `;
+
+export const Modal = styled(ModalAnt)``;
+export const Input = styled(InputAnt)``;

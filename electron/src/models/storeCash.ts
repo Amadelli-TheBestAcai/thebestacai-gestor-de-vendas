@@ -145,6 +145,10 @@ class StoreCash extends BaseRepository<Entity> {
     const balance = getBalance(data);
     return balance;
   }
+
+  async getCurrentCash(): Promise<Entity | undefined> {
+    return await this.getOne();
+  }
 }
 
 export default new StoreCash();

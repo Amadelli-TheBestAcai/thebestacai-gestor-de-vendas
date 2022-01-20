@@ -6,6 +6,7 @@ import { productFactory } from "./src/factories/productFactory";
 import { saleFactory } from "./src/factories/saleFactory";
 import { handlerFactory } from "./src/factories/handlerFactory";
 import { storeCashFactory } from "./src/factories/storeCashFactory";
+import { itemOutCartFactory } from "./src/factories/itemOutCartFactory";
 import "./src/models/integration";
 import env from "./src/providers/env.json";
 
@@ -27,5 +28,6 @@ export const api = {
   sale: saleFactory,
   handler: handlerFactory,
   storeCash: storeCashFactory,
+  itemOutCart: itemOutCartFactory,
 };
 contextBridge.exposeInMainWorld("Main", { ...api });

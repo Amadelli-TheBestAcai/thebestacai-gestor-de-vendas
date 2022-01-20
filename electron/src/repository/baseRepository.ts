@@ -3,7 +3,7 @@ import database from "../../src/providers/database";
 import moment from "moment";
 import { v4 } from "uuid";
 
-export abstract class BaseRepository<T extends { id?: string | number }>
+export class BaseRepository<T extends { id?: string | number }>
   implements IBaseRepository<T>
 {
   private storageName: string;
@@ -47,7 +47,7 @@ export abstract class BaseRepository<T extends { id?: string | number }>
 
   async update(
     id: string | number | undefined,
-    payload
+    payload: Partial<T>
   ): Promise<T | undefined> {
     if (!id) {
       return;
