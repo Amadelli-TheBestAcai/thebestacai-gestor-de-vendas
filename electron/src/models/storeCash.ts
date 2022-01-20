@@ -115,6 +115,10 @@ class StoreCash extends BaseRepository<Entity> {
       is_opened: false,
     });
   }
+
+  async getCurrentCash(): Promise<Entity | undefined> {
+    return await this.getOne();
+  }
 }
 
 export default new StoreCash();

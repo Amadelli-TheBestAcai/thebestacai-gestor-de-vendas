@@ -129,55 +129,63 @@ const Home: React.FC = () => {
       keyMap={keyMap}
       allowChanges={true}
     >
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <LeftSide>
-            <BalanceContainer>
-              <Balance
-                addItem={onAddItem}
-                handleOpenPayment={handleOpenPayment}
-                openDiscoundModal={discountModalHandler.openDiscoundModal}
-              />
-            </BalanceContainer>
+      <>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            {storeCash?.is_opened ? (
+              <>
+                <LeftSide>
+                  <BalanceContainer>
+                    <Balance
+                      addItem={onAddItem}
+                      handleOpenPayment={handleOpenPayment}
+                      openDiscoundModal={discountModalHandler.openDiscoundModal}
+                    />
+                  </BalanceContainer>
 
-            <ItemsContainer>
-              <Products />
-            </ItemsContainer>
-          </LeftSide>
+                  <ItemsContainer>
+                    <Products />
+                  </ItemsContainer>
+                </LeftSide>
 
-          <RightSide>
-            <TopActions>
-              <Actions />
-            </TopActions>
-            <Content>
-              <ItemsCardContainer>
-                <Items />
-              </ItemsCardContainer>
+                <RightSide>
+                  <TopActions>
+                    <Actions />
+                  </TopActions>
+                  <Content>
+                    <ItemsCardContainer>
+                      <Items />
+                    </ItemsCardContainer>
 
-              <PaymentsContainer>
-                <PaymentsContent>
-                  <Payments
-                    sale={sale}
-                    addPayment={addPayment}
-                    removePayment={removePayment}
-                    setCurrentPayment={setCurrentPayment}
-                    modalState={paymentModal}
-                    modalTitle={paymentModalTitle}
-                    setModalState={setPaymentModal}
-                    handleOpenPayment={handleOpenPayment}
-                  />
-                </PaymentsContent>
+                    <PaymentsContainer>
+                      <PaymentsContent>
+                        <Payments
+                          sale={sale}
+                          addPayment={addPayment}
+                          removePayment={removePayment}
+                          setCurrentPayment={setCurrentPayment}
+                          modalState={paymentModal}
+                          modalTitle={paymentModalTitle}
+                          setModalState={setPaymentModal}
+                          handleOpenPayment={handleOpenPayment}
+                        />
+                      </PaymentsContent>
 
-                <RegisterContent>
-                  <Register />
-                </RegisterContent>
-              </PaymentsContainer>
-            </Content>
-          </RightSide>
-        </>
-      )}
+                      <RegisterContent>
+                        <Register />
+                      </RegisterContent>
+                    </PaymentsContainer>
+                  </Content>
+                </RightSide>
+              </>
+            ) : (
+              <CashNotFound />
+            )}
+          </>
+        )}
+      </>
     </Container>
   );
 };
