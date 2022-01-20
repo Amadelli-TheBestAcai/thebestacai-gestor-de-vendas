@@ -7,6 +7,8 @@ import { v4 } from "uuid";
 import moment from "moment";
 import { checkInternet } from "../providers/internetConnection";
 import midasApi from "../providers/midasApi";
+import odinApi from "../providers/odinApi";
+import { AppSaleDTO } from "./dtos/appSale";
 
 export type Entity = {
   id: string;
@@ -310,6 +312,29 @@ class Sale extends BaseRepository<Entity> {
     }
 
     await midasApi.delete(`/sales/${id}`);
+  }
+
+  async getSaleFromApp(): Promise<AppSaleDTO[]> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return [];
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash || !currentCash?.is_opened) {
+      throw new Error("Caixa fechado");
+    }
+
+    const { store_id } = currentCash;
+    if (!store_id) {
+      throw new Error("Id da loja não encontrado");
+    }
+
+    const {
+      data: { content },
+    } = await odinApi.get(`/app_sale/${store_id}/toIntegrate`);
+
+    return content;
   }
 }
 

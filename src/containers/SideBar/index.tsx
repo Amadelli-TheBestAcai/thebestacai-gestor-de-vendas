@@ -15,6 +15,7 @@ import {
   CashRegisterIcon,
   RetweetIcon,
   BoxIcon,
+  Graph,
   CoinsIcon,
   DeliveryIcon,
   ScrollIcon,
@@ -65,12 +66,18 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
     },
     {
       id: 6,
+      icon: <Graph />,
+      label: "Balanço",
+      router: "/balance",
+    },
+    {
+      id: 7,
       icon: <CoinsIcon />,
       label: "Vendas",
       router: "/sale",
     },
     {
-      id: 7,
+      id: 8,
       icon: <ScrollIcon />,
       label: "NFC-e",
       router: "/nfce",

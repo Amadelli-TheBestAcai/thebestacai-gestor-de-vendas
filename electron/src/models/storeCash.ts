@@ -1,8 +1,11 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { checkInternet } from "../providers/internetConnection";
 import odinApi from "../providers/odinApi";
+import midasApi from "../providers/midasApi";
 import storeModel from "../models/store";
 import { v4 } from "uuid";
+import { BalanceDTO } from "./dtos/balance";
+import { getBalance } from "../helpers/BalanceFormater";
 
 export type Entity = {
   id: string;
@@ -114,6 +117,33 @@ class StoreCash extends BaseRepository<Entity> {
     await this.update(storeCash?.id, {
       is_opened: false,
     });
+  }
+
+  async getStoreCashBalance(
+    withClosedCash = false
+  ): Promise<BalanceDTO | undefined> {
+    const isConnected = await checkInternet();
+    if (!isConnected) {
+      return undefined;
+    }
+
+    const currentCash = await this.getOne();
+    if (!currentCash) {
+      return undefined;
+    }
+
+    if (!withClosedCash && !currentCash?.is_opened) {
+      return undefined;
+    }
+
+    const { store_id, code } = currentCash;
+    if (!store_id || !code) {
+      return undefined;
+    }
+
+    const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
+    const balance = getBalance(data);
+    return balance;
   }
 
   async getCurrentCash(): Promise<Entity | undefined> {
