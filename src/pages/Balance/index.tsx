@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import DisconectedForm from "../../containers/DisconectedForm";
 
 import RouterDescription from "../../components/RouterDescription";
+import ChartPayment from "../../components/ChartPayment";
+
 import Spinner from "../../components/Spinner";
+import pixImg from "../../assets/svg/pixIcon.svg";
 
 import { Balance as BalanceModel } from "../../models/balance";
 
@@ -22,11 +25,17 @@ import {
   LabelCardTab,
   TabPaneContainer,
   TabPane,
+  IconContainer,
+  MoneyIcon,
+  CreditIcon,
+  DebitIcon,
+  OnlineIcon,
+  PixIcon,
 } from "./styles";
 
 const Balance: React.FC = () => {
   const [isConected, setIsConected] = useState(true);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [balance, setBalance] = useState<BalanceModel>();
 
   // useEffect(() => {
@@ -46,7 +55,9 @@ const Balance: React.FC = () => {
         <TabPaneContainer tab_id={1}>
           <LabelCardTab>
             <p>Delivery</p>
-            <span>R$ 0,00</span>
+            <span>
+              R$ {balance?.delivery.total.toFixed(2).replace(".", ",")}
+            </span>
           </LabelCardTab>
         </TabPaneContainer>
       ),
@@ -75,28 +86,79 @@ const Balance: React.FC = () => {
     },
   ];
 
+  const AmountTypePayments = [
+    {
+      id: 1,
+      icon: <MoneyIcon />,
+      type: "DINHEIRO",
+      value: "",
+    },
+    {
+      id: 2,
+      icon: <CreditIcon />,
+      type: "CRÉDITO",
+      value: "",
+    },
+    {
+      id: 3,
+      icon: <DebitIcon />,
+      type: "DÉBITO",
+      value: "",
+    },
+    {
+      id: 4,
+      icon: <PixIcon src={pixImg} />,
+      type: "PIX",
+      value: "",
+    },
+    {
+      id: 5,
+      icon: <OnlineIcon />,
+      type: "ONLINE",
+      value: "",
+    },
+  ];
+
   return (
     <Container>
-      <PageContent>
-        <Header>
-          <h2>Balanço</h2>
-        </Header>
+      {isLoading ? (
+        <Spinner />
+      ) : isConected ? (
+        <PageContent>
+          <Header>
+            <h2>Balanço</h2>
+          </Header>
 
-        <TabContainer>
-          <Tabs defaultActiveKey="1">
-            {tabPanes.map((_tab) => (
-              <TabPane tab={_tab.label} key={_tab.id}>
-                <Content>
-                  <h2>Estátisticas</h2>
-                  <PaymentTypesContainer>a</PaymentTypesContainer>
-                  <Footer>a</Footer>
-                </Content>
-              </TabPane>
-            ))}
-          </Tabs>
-        </TabContainer>
-      </PageContent>
-      {/* 
+          <TabContainer>
+            <Tabs defaultActiveKey="1">
+              {tabPanes.map((_tab) => (
+                <TabPane tab={_tab.label} key={_tab.id}>
+                  <Content>
+                    <h2>Estátisticas</h2>
+                    <PaymentTypesContainer>
+                      <PaymentTypes>
+                        {AmountTypePayments.map((typePayment) => (
+                          <CardType>
+                            <IconContainer>{typePayment.icon}</IconContainer>
+                            <p>{typePayment.type}</p>
+                            <span>R$ 0,00</span>
+                          </CardType>
+                        ))}
+                      </PaymentTypes>
+                      <ChartContainer></ChartContainer>
+                    </PaymentTypesContainer>
+                    <Footer>a</Footer>
+                  </Content>
+                </TabPane>
+              ))}
+            </Tabs>
+          </TabContainer>
+        </PageContent>
+      ) : (
+        <DisconectedForm />
+      )}
+    </Container>
+    /* 
       {isLoading ? (
         <Spinner />
       ) : isConected ? (
@@ -254,8 +316,7 @@ const Balance: React.FC = () => {
         </CardContainer>
       ) : (
         <DisconectedForm />
-      )} */}
-    </Container>
+      )} */
   );
 };
 

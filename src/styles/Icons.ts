@@ -16,12 +16,13 @@ export {
   ChartBar,
 } from "@styled-icons/fa-solid";
 
-export { Offer } from "@styled-icons/boxicons-solid/Offer";
+export { Offer, CheckboxChecked } from "@styled-icons/boxicons-solid";
 export { LogInCircle, LogOutCircle } from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles } from "@styled-icons/ionicons-sharp/Chatbubbles";
 export { CreditCard2BackFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
+export { AttachMoney } from "@styled-icons/material/AttachMoney";
 
 //---------------------------------------------------///
 
@@ -54,7 +55,7 @@ export { CloseOutline, SettingsOutline } from "@styled-icons/evaicons-outline";
 export { Repeat } from "@styled-icons/evaicons-solid/Repeat";
 export { Receipt } from "@styled-icons/ionicons-solid/Receipt";
 export { StatusOffline } from "@styled-icons/heroicons-solid/StatusOffline";
-export { AttachMoney } from "@styled-icons/material/AttachMoney";
+
 export { Ticket } from "@styled-icons/entypo/Ticket";
 export { UserCircle } from "@styled-icons/fa-solid/UserCircle";
 export { WhatsappSquare } from "@styled-icons/boxicons-logos";

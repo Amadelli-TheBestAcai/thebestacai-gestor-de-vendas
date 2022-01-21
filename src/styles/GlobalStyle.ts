@@ -8,6 +8,7 @@ export const GlobalStyle = createGlobalStyle`
    --white-40: #f9f9f9;
    --white-70: #f5f5f5;
    --white-80: #f6f6f6;
+   --white-90: #ececec;
    
    --black-opaco: #1C1E23;
    --gray-25: #e3e3e3;
@@ -19,13 +20,17 @@ export const GlobalStyle = createGlobalStyle`
 
    --orange-200: #FFB956;
    --orange-250: #FF9D0A;
+   --orange-400: #E98E4E;
    --brown-500: #aa6600;
 
    --green-400: #47BC47;
    --green-600: #3A7538;
    --teal-400: #4BB8A9;
    --blue-300: #5BC0DE;
+   --blue-350: #0279D5;
    --blue-400: #1963A2;
+   --blue-500: #2D5AAC;
+   --blue-700: #174275;
    --purple-450: #7E3AFC;
    --red-600: #A43C3F;
 

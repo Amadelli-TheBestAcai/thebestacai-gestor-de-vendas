@@ -2,6 +2,13 @@ import styled, { css } from "styled-components";
 
 import { Tabs as TabsAnt } from "antd";
 
+import {
+  AttachMoney,
+  CreditCard,
+  CreditCard2BackFill,
+  CheckboxChecked,
+} from "../../styles/Icons";
+
 import deliveryIcon from "../../assets/svg/deliveryIcon.svg";
 import storeIcon from "../../assets/svg/storeIcon.svg";
 import fatuIcon from "../../assets/svg/fatuIcon.svg";
@@ -66,6 +73,14 @@ export const Tabs = styled(TabsAnt)`
   .ant-tabs-nav::before {
     display: none;
   }
+  .ant-tabs-tab {
+    transition: 0.4s;
+    opacity: 0.6;
+  }
+
+  .ant-tabs-tab-active {
+    opacity: 1;
+  }
 
   .ant-tabs-nav-list {
     display: flex;
@@ -79,7 +94,7 @@ export const Tabs = styled(TabsAnt)`
 
   .ant-tabs-content {
     width: 100%;
-    height: 750px;
+    height: 69vh;
     background: #f7f7f7;
   }
 `;
@@ -148,24 +163,52 @@ export const LabelCardTab = styled.div`
 
 export const PaymentTypesContainer = styled.div`
   display: flex;
-  background: red;
   width: 100%;
-  height: 450px;
+  height: 60%;
 `;
 
 export const PaymentTypes = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
   width: 70%;
   height: 100%;
 `;
 
 export const CardType = styled.div`
-  width: 210px;
-  height: 407px;
-  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 19%;
+  height: 95%;
+  background: var(--white);
   box-shadow: 0px 4px 6px rgba(163, 163, 163, 0.28);
   border-radius: 20px;
+
+  p {
+    margin-top: 1rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--grey-100);
+  }
+
+  span {
+    margin-top: 2rem;
+    font-weight: 500;
+    font-size: 27px;
+    color: var(--blue-700);
+  }
+`;
+
+export const IconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45%;
+  height: 25%;
+  border-radius: 50%;
+  background: var(--white-90);
 `;
 
 export const ChartContainer = styled.div`
@@ -173,6 +216,38 @@ export const ChartContainer = styled.div`
   width: 30%;
   height: 100%;
   background: yellow;
+  margin-left: 1rem;
+`;
+
+const IconCSS = css`
+  width: 40%;
+  height: 40%;
+`;
+
+export const MoneyIcon = styled(AttachMoney)`
+  ${IconCSS}
+  color: var(--blue-700);
+`;
+
+export const CreditIcon = styled(CreditCard)`
+  ${IconCSS}
+
+  color: var(--blue-500);
+`;
+
+export const DebitIcon = styled(CreditCard2BackFill)`
+  ${IconCSS}
+  color: var(--blue-350);
+`;
+
+export const OnlineIcon = styled(CheckboxChecked)`
+  width: 60%;
+  height: 60%;
+  color: var(--orange-400);
+`;
+
+export const PixIcon = styled.img`
+  ${IconCSS}
 `;
 
 export const Footer = styled.footer``;
