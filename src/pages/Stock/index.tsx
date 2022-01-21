@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import RouterDescription from "../../components/RouterDescription";
 import StockList from "../../containers/StockList";
 
 import { ProductDto } from "../../models/dtos/product";
 import { RestrictedProducts } from "../../models/enums/restrictedProducts";
 
-import { Input } from "antd";
-import { Container, TopSide, Content, Col, Row } from "./styles";
+import { Container, Content, Name, SearchBar } from "./styles";
 
 const Stock: React.FC = () => {
   const [productsStock, setProductsStock] = useState<ProductDto[]>([]);
@@ -40,25 +38,19 @@ const Stock: React.FC = () => {
 
   return (
     <Container>
-      <RouterDescription description="Estoque" />
-      <TopSide>
-        <Row>
-          <Col sm={6} xs={24}>
-            <Input
-              placeholder="Digite o nome do produto"
-              onChange={findProduct}
-            />
-          </Col>
-        </Row>
-      </TopSide>
       <Content>
+        <Name>Estoque</Name>
+        <SearchBar
+          placeholder="Digite o nome do produtos"
+          onChange={findProduct}
+        ></SearchBar>
         <StockList
           loading={loading}
           setLoading={setLoading}
           filteredProducts={filteredProducts}
           products={productsStock}
           setProductsStock={setProductsStock}
-        ></StockList>
+        />
       </Content>
     </Container>
   );

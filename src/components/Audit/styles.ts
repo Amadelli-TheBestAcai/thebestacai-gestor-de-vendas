@@ -29,13 +29,13 @@ export const Container = styled(RowAnt)<IProps>`
 
     if (oldvalue && newvalue) {
       return css`
-        border: 1px solid #f2a516;
+        border: 1px solid #f49345;
         background: #fffbe6;
       `;
     }
 
     return css`
-      border: 1px solid #f22738;
+      border: 1px solid #a43c3f;
       background: #fff1f0;
     `;
   }}
@@ -77,12 +77,12 @@ export const Action = styled.div<IProps>`
 
     if (oldvalue && newvalue) {
       return css`
-        background: #f2a516;
+        background: #f49345;
       `;
     }
 
     return css`
-      background: #f22738;
+      background: #a43c3f;
     `;
   }};
 `;

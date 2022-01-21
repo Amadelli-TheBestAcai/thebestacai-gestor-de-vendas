@@ -24,6 +24,13 @@ export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 
 //---------------------------------------------------///
 
+export {
+  AddShoppingCart,
+  RemoveShoppingCart,
+  Payments,
+  MoreHoriz,
+} from "@styled-icons/material-outlined";
+
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export { Trash } from "@styled-icons/fa-solid";
 export {
