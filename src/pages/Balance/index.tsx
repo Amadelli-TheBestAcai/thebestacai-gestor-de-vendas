@@ -11,8 +11,17 @@ import {
   Container,
   PageContent,
   Header,
-  AmountContainer,
   TabContainer,
+  Tabs,
+  Content,
+  PaymentTypesContainer,
+  PaymentTypes,
+  ChartContainer,
+  CardType,
+  Footer,
+  LabelCardTab,
+  TabPaneContainer,
+  TabPane,
 } from "./styles";
 
 const Balance: React.FC = () => {
@@ -30,6 +39,42 @@ const Balance: React.FC = () => {
   //   init();
   // }, []);
 
+  const tabPanes = [
+    {
+      id: 1,
+      label: (
+        <TabPaneContainer tab_id={1}>
+          <LabelCardTab>
+            <p>Delivery</p>
+            <span>R$ 0,00</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 2,
+      label: (
+        <TabPaneContainer tab_id={2}>
+          <LabelCardTab>
+            <p>Loja</p>
+            <span>R$ 0,00</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 3,
+      label: (
+        <TabPaneContainer tab_id={3}>
+          <LabelCardTab>
+            <p>Faturamento</p>
+            <span>R$ 0,00</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+  ];
+
   return (
     <Container>
       <PageContent>
@@ -37,10 +82,21 @@ const Balance: React.FC = () => {
           <h2>Balanço</h2>
         </Header>
 
-        <TabContainer></TabContainer>
-        <AmountContainer></AmountContainer>
+        <TabContainer>
+          <Tabs defaultActiveKey="1">
+            {tabPanes.map((_tab) => (
+              <TabPane tab={_tab.label} key={_tab.id}>
+                <Content>
+                  <h2>Estátisticas</h2>
+                  <PaymentTypesContainer>a</PaymentTypesContainer>
+                  <Footer>a</Footer>
+                </Content>
+              </TabPane>
+            ))}
+          </Tabs>
+        </TabContainer>
       </PageContent>
-      {/* <RouterDescription description="Balanço" />
+      {/* 
       {isLoading ? (
         <Spinner />
       ) : isConected ? (

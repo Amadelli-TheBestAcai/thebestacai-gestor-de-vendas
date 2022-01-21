@@ -53,8 +53,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html, body, #root {
-    max-height: 100vh;
-    max-width: 100vw;
+    max-height: 100%;
+    max-width: 100%;
 
     width: 100%;
     height: 100%;
@@ -62,30 +62,15 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;
 
-    .ant-tabs-nav {
-      background: var(--black-opaco);
-      color: white;
-      border-radius: 6px 6px 0px 0px;
-      padding: 1%;
-      margin: 0px;
-    }
-
-    
-  
     .ant-tabs-tab.ant-tabs-tab-active,
     .ant-tabs-tab-btn {
-     color: white;
+      color: white;
 
       :active,
       :hover,
       :focus {
-        color: white;
+       color: white;
       }
-    }
-
-    .ant-tabs-ink-bar {
-      position: absolute;
-      background: white;
     }
 
     .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
