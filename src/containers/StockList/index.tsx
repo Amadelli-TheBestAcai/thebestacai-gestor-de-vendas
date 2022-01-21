@@ -6,7 +6,7 @@ import { Page } from "../../models/dtos/page";
 import { ProductDto } from "../../models/dtos/product";
 
 import Table from "../Table";
-import { Tooltip, Modal, message } from "antd";
+import { Modal, message, Dropdown, Menu } from "antd";
 
 import {
   Container,
@@ -14,9 +14,7 @@ import {
   Col,
   LabelName,
   Actions,
-  Button,
-  EditIcon,
-  HistoryIcon,
+  MoreInfo,
   Status,
   EditInfo,
   Input,
@@ -24,6 +22,9 @@ import {
   QtdCurrent,
   QtdChange,
   InputChange,
+  Footer,
+  ButtonCancel,
+  ButtonSave,
 } from "./styles";
 
 const { confirm } = Modal;
@@ -57,23 +58,28 @@ const StockList: React.FC<IProps> = ({
 
   const header = [
     {
-      sm: 6,
+      sm: 5,
+      xs: 0,
+      description: "Imagem",
+    },
+    {
+      sm: 5,
       xs: 12,
       description: "Produto",
     },
     {
-      sm: 6,
+      sm: 5,
       xs: 6,
       description: "Qtd.",
     },
 
     {
-      sm: 6,
+      sm: 5,
       xs: 0,
       description: "Status",
     },
     {
-      sm: 6,
+      sm: 4,
       xs: 6,
       description: "Ações",
     },
@@ -130,35 +136,35 @@ const StockList: React.FC<IProps> = ({
       <Table header={header} loading={loading}>
         {(filteredProducts || products).map((storeProduct) => (
           <Tupla align="middle" key={`${storeProduct.id}`}>
-            <Col sm={6} xs={12}>
+            <Col sm={5} xs={0}>
+              <LabelName>Imagem</LabelName>
+            </Col>
+            <Col sm={5} xs={12}>
               <LabelName>{storeProduct.product?.name}</LabelName>
             </Col>
-            <Col sm={6} xs={6} style={{ textAlign: "center" }}>
+            <Col sm={5} xs={6} style={{ textAlign: "center" }}>
               <LabelName>{storeProduct.quantity}</LabelName>
             </Col>
-            <Col sm={6} xs={0}>
+            <Col sm={5} xs={0}>
               <Status quantity={storeProduct?.quantity}>
                 {getQuatity(storeProduct?.quantity)}
               </Status>
             </Col>
-            <Col sm={6} xs={6}>
+            <Col sm={4} xs={6}>
               <Actions>
-                <Tooltip placement="top" title="Editar">
-                  <Button
-                    style={{ border: "none", background: "none" }}
-                    icon={<EditIcon />}
-                    onClick={() => {
-                      setNewQuantity(undefined);
-                      setIsModalVisible(true);
-                      setSelectedProduct(storeProduct);
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip placement="top" title="Histórico">
-                  <Button
-                    style={{ border: "none", background: "none" }}
-                    icon={
-                      <HistoryIcon
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item
+                        onClick={() => {
+                          setNewQuantity(undefined);
+                          setIsModalVisible(true);
+                          setSelectedProduct(storeProduct);
+                        }}
+                      >
+                        Editar
+                      </Menu.Item>
+                      <Menu.Item
                         onClick={() => {
                           setPaginate((oldValues) => ({
                             ...oldValues,
@@ -168,10 +174,16 @@ const StockList: React.FC<IProps> = ({
                           setSelectedProduct(storeProduct);
                           setVisible(true);
                         }}
-                      />
-                    }
-                  />
-                </Tooltip>
+                      >
+                        Histórico
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  trigger={["click"]}
+                  placement="bottomLeft"
+                >
+                  <MoreInfo />
+                </Dropdown>
               </Actions>
             </Col>
           </Tupla>
@@ -180,10 +192,18 @@ const StockList: React.FC<IProps> = ({
       <Modal
         title="Editar"
         visible={isModalVisible}
-        onOk={() => handleUpdateProduct()}
-        onCancel={() => setIsModalVisible(false)}
         centered
         closable={false}
+        footer={
+          <Footer>
+            <ButtonCancel onClick={() => setIsModalVisible(false)}>
+              Cancelar
+            </ButtonCancel>
+            <ButtonSave onClick={() => handleUpdateProduct()}>
+              Salvar alteração
+            </ButtonSave>
+          </Footer>
+        }
       >
         <UpdateContainer>
           <QtdCurrent>
