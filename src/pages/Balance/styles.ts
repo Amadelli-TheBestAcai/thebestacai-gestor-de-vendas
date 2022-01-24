@@ -215,7 +215,7 @@ export const ChartContainer = styled.div`
   display: flex;
   width: 30%;
   height: 100%;
-  background: yellow;
+  padding: 1rem;
   margin-left: 1rem;
 `;
 
@@ -250,4 +250,45 @@ export const PixIcon = styled.img`
   ${IconCSS}
 `;
 
-export const Footer = styled.footer``;
+export const FooterContainer = styled.footer`
+  display: flex;
+  align-items: end;
+  width: 100%;
+  height: 40%;
+
+  footer {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    width: 100%;
+    height: 15%;
+    border-top: 1px solid var(--gray-25);
+
+    span {
+      color: var(--grey-100);
+    }
+  }
+`;
+
+export const LegendDescription = styled.div`
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  width: 35%;
+  height: 100%;
+
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15%;
+
+    #circle {
+      margin-right: 9px;
+      width: 1rem;
+      height: 1rem;
+      background: #174275;
+      border-radius: 15px;
+    }
+  }
+`;

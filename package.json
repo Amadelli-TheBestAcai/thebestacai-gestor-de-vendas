@@ -25,6 +25,7 @@
     "react-hotkeys": "^2.0.0",
     "react-input-mask": "^2.0.4",
     "react-intl-currency-input": "^0.2.6",
+    "react-minimal-pie-chart": "^8.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "serialport": "^9.0.4",

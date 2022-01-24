@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { PieChart } from "react-minimal-pie-chart";
 
 import DisconectedForm from "../../containers/DisconectedForm";
 
 import RouterDescription from "../../components/RouterDescription";
-import ChartPayment from "../../components/ChartPayment";
 
 import Spinner from "../../components/Spinner";
 import pixImg from "../../assets/svg/pixIcon.svg";
@@ -21,7 +21,7 @@ import {
   PaymentTypes,
   ChartContainer,
   CardType,
-  Footer,
+  FooterContainer,
   LabelCardTab,
   TabPaneContainer,
   TabPane,
@@ -31,6 +31,7 @@ import {
   DebitIcon,
   OnlineIcon,
   PixIcon,
+  LegendDescription,
 } from "./styles";
 
 const Balance: React.FC = () => {
@@ -38,15 +39,15 @@ const Balance: React.FC = () => {
   const [isLoading, setLoading] = useState(false);
   const [balance, setBalance] = useState<BalanceModel>();
 
-  // useEffect(() => {
-  //   async function init() {
-  //     const _storeCash = await window.Main.storeCash.getStoreCashBalance();
-  //     setBalance(_storeCash.balance);
-  //     setLoading(false);
-  //     setIsConected(_storeCash.isConnected);
-  //   }
-  //   init();
-  // }, []);
+  useEffect(() => {
+    async function init() {
+      const _storeCash = await window.Main.storeCash.getStoreCashBalance();
+      console.log(_storeCash);
+      setLoading(false);
+      //setIsConected(_storeCash.isConnected);
+    }
+    init();
+  }, []);
 
   const tabPanes = [
     {
@@ -56,7 +57,8 @@ const Balance: React.FC = () => {
           <LabelCardTab>
             <p>Delivery</p>
             <span>
-              R$ {balance?.delivery.total.toFixed(2).replace(".", ",")}
+              R$ 0,00
+              {/* R$ {balance?.delivery.total.toFixed(2).replace(".", ",")} */}
             </span>
           </LabelCardTab>
         </TabPaneContainer>
@@ -85,6 +87,46 @@ const Balance: React.FC = () => {
       ),
     },
   ];
+
+  const getPercent = (number: number, total: number): number => {
+    if (!total) {
+      return 100;
+    }
+    return +((+number * 100) / total).toFixed(2);
+  };
+
+  const createPaymentsPie = () => {
+    const pie = [
+      {
+        id: "Dinheiro",
+        value: 1,
+        color: "var(--blue-700)",
+      },
+      {
+        id: "Crédito",
+        value: 1,
+        color: "var(--blue-350)",
+      },
+      {
+        id: "Débito",
+        value: 1,
+        color: "var(--blue-500)",
+      },
+
+      {
+        id: "Pix",
+        value: 1,
+        color: "var(--orange-700)",
+      },
+      {
+        id: "Online",
+        value: 1,
+        color: "var(--orange-400)",
+      },
+    ];
+
+    return pie.filter((item) => item.value !== 0);
+  };
 
   const AmountTypePayments = [
     {
@@ -119,6 +161,29 @@ const Balance: React.FC = () => {
     },
   ];
 
+  var legendGraph = [
+    {
+      label: "Dinheiro",
+      color: "var(--blue-700)",
+    },
+    {
+      label: "Crédito",
+      color: "var(--blue-350)",
+    },
+    {
+      label: "Débito",
+      color: "var(--blue-500)",
+    },
+    {
+      label: "Pix",
+      color: "var(--orange-700)",
+    },
+    {
+      label: "Online",
+      color: "var(--orange-400)",
+    },
+  ];
+
   return (
     <Container>
       {isLoading ? (
@@ -145,9 +210,48 @@ const Balance: React.FC = () => {
                           </CardType>
                         ))}
                       </PaymentTypes>
-                      <ChartContainer></ChartContainer>
+                      <ChartContainer>
+                        <PieChart
+                          data={createPaymentsPie()}
+                          lineWidth={18}
+                          rounded
+                          background="var(--grey-70)"
+                          label={({ x, y, dx, dy }) => (
+                            <text
+                              x={x}
+                              y={y}
+                              dx={dx}
+                              dy={dy}
+                              dominant-baseline="central"
+                              text-anchor="middle"
+                              style={{
+                                fontSize: "0.6rem",
+                                fill: "var(--grey-100)",
+                              }}
+                            >
+                              R$ 0,00
+                            </text>
+                          )}
+                          labelPosition={0}
+                        />
+                      </ChartContainer>
                     </PaymentTypesContainer>
-                    <Footer>a</Footer>
+                    <FooterContainer>
+                      <footer>
+                        <span>Legenda Gráfico</span>
+                        <LegendDescription>
+                          {legendGraph.map((legend) => (
+                            <div>
+                              <div
+                                id="circle"
+                                style={{ background: `${legend.color}` }}
+                              />
+                              <span>{legend.label}</span>
+                            </div>
+                          ))}
+                        </LegendDescription>
+                      </footer>
+                    </FooterContainer>
                   </Content>
                 </TabPane>
               ))}
