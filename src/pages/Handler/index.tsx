@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DisconectedForm from "../../containers/DisconectedForm";
 import Centralizer from "../../containers/Centralizer";
-import RouterDescription from "../../components/RouterDescription";
 import Spinner from "../../components/Spinner";
 import HandlerItem from "../../components/HandlerItem";
 
@@ -12,6 +11,8 @@ import { Empty, message, Modal } from "antd";
 import moment from "moment";
 import {
   Container,
+  Content,
+  Name,
   HandlersContainer,
   HandlersHeader,
   Column,
@@ -91,55 +92,57 @@ const Handler: React.FC = () => {
 
   return (
     <Container>
-      <RouterDescription description="Movimentações" />
-      {isLoading ? (
-        <Spinner />
-      ) : isConected ? (
-        handlers?.length ? (
-          <>
-            <Button onClick={() => onPdf()} type="primary">
-              Baixar PDF
-            </Button>
-            <HandlersContainer>
-              <HandlersHeader>
-                <Column span={4}>
-                  <Title>ID</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Tipo</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Valor</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Hora</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Razão</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Ações</Title>
-                </Column>
-              </HandlersHeader>
-              <HandlersList>
-                {handlers.map((handler) => (
-                  <HandlerItem
-                    key={handler.id}
-                    handler={handler}
-                    onDelete={onDelete}
-                  />
-                ))}
-              </HandlersList>
-            </HandlersContainer>
-          </>
+      <Content>
+        <Name>Movimentações</Name>
+        {isLoading ? (
+          <Spinner />
+        ) : isConected ? (
+          handlers?.length ? (
+            <>
+              <Button onClick={() => onPdf()} type="primary">
+                Baixar PDF
+              </Button>
+              <HandlersContainer>
+                <HandlersHeader>
+                  <Column span={4}>
+                    <Title>ID</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Tipo</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Valor</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Hora</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Razão</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Ações</Title>
+                  </Column>
+                </HandlersHeader>
+                <HandlersList>
+                  {handlers.map((handler) => (
+                    <HandlerItem
+                      key={handler.id}
+                      handler={handler}
+                      onDelete={onDelete}
+                    />
+                  ))}
+                </HandlersList>
+              </HandlersContainer>
+            </>
+          ) : (
+            <Centralizer>
+              <Empty description="Nenhuma movimentação encontrada" />
+            </Centralizer>
+          )
         ) : (
-          <Centralizer>
-            <Empty description="Nenhuma movimentação encontrada" />
-          </Centralizer>
-        )
-      ) : (
-        <DisconectedForm />
-      )}
+          <DisconectedForm />
+        )}
+      </Content>
     </Container>
   );
 };
