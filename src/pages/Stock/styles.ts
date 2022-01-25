@@ -1,7 +1,6 @@
 import styled, { css } from "styled-components";
 
 import { Col as ColAnt, Row as RowAnt, Input } from "antd";
-import { Search } from "../../styles/Icons";
 
 export const Container = styled.div`
   display: flex;
