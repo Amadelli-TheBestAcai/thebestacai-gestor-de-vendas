@@ -23,6 +23,8 @@ export { Chatbubbles } from "@styled-icons/ionicons-sharp/Chatbubbles";
 export { CreditCard2BackFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
+export { Grid3x2GapFill } from "@styled-icons/bootstrap/Grid3x2GapFill";
+export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
 
 //---------------------------------------------------///
 

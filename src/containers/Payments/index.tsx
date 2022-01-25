@@ -60,7 +60,6 @@ const PaymentsContainer: React.FC<IProps> = ({
       icon: <MoneyIcon />,
       label: "Dinheiro [A]",
       background: "var(--green-400)",
-      action: `${console.log("teste")}`,
     },
     {
       icon: <CreditIcon />,
@@ -195,15 +194,18 @@ const PaymentsContainer: React.FC<IProps> = ({
         title={`Pagamento em ${modalTitle}`}
         visible={modalState}
         onCancel={onModalCancel}
-        onOk={() => addPayment()}
         destroyOnClose={true}
         closable={true}
         centered
         afterClose={() => document.getElementById("mainContainer").focus()}
         footer={
           <Footer>
-            <ButtonCancel>Cancelar</ButtonCancel>
-            <ButtonSave>Salvar Alteração</ButtonSave>
+            <ButtonCancel onClick={() => onModalCancel()}>
+              Cancelar
+            </ButtonCancel>
+            <ButtonSave onClick={() => addPayment()}>
+              Salvar Alteração
+            </ButtonSave>
           </Footer>
         }
       >

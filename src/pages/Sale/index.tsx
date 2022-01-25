@@ -2,26 +2,28 @@ import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import DisconectedForm from "../../containers/DisconectedForm";
+import SalesHistory from "../../containers/SalesHistory";
 import Centralizer from "../../containers/Centralizer";
-
 import RouterDescription from "../../components/RouterDescription";
 import Spinner from "../../components/Spinner";
 import SaleItem from "../../components/Sale";
 
-import { Empty, message, Modal, Row, Button } from "antd";
+import { SaleDto } from "../../models/dtos/sale";
 
 import {
   Container,
-  Column,
-  Title,
-  SalesList,
-  SalesHeader,
-  SalesContainer,
+  PageContent,
+  Header,
+  SearchContainer,
+  Input,
+  ListSaleContainer,
+  Row,
+  Col,
+  Panel,
+  Collapse,
+  HeaderTable,
+  SalesHistoryContainer,
 } from "./styles";
-
-import { SaleDto } from "../../models/dtos/sale";
-
-const { confirm } = Modal;
 
 type IProps = RouteComponentProps;
 
@@ -50,25 +52,25 @@ const Sale: React.FC<IProps> = ({ history }) => {
     }
   }, [shouldSearch]);
 
-  const onDelete = (id: string): void => {
-    confirm({
-      content: "Tem certeza que gostaria de remover esta venda",
-      okText: "Sim",
-      okType: "default",
-      cancelText: "Não",
-      async onOk() {
-        setIsLoading(true);
-        const success = await window.Main.sale.deleteSaleFromApi(id);
-        if (!success) {
-          message.warning("Falha ao remover venda");
-        }
-        const _sale = await window.Main.sale.getSaleFromApi();
-        setSales(_sale);
-        message.success("Venda removida com sucesso");
-        setIsLoading(false);
-      },
-    });
-  };
+  // const onDelete = (id: string): void => {
+  //   confirm({
+  //     content: "Tem certeza que gostaria de remover esta venda",
+  //     okText: "Sim",
+  //     okType: "default",
+  //     cancelText: "Não",
+  //     async onOk() {
+  //       setIsLoading(true);
+  //       const success = await window.Main.sale.deleteSaleFromApi(id);
+  //       if (!success) {
+  //         message.warning("Falha ao remover venda");
+  //       }
+  //       const _sale = await window.Main.sale.getSaleFromApi();
+  //       setSales(_sale);
+  //       message.success("Venda removida com sucesso");
+  //       setIsLoading(false);
+  //     },
+  //   });
+  // };
 
   // const handleIntegrate = () => {
   //   setIsIntegrating(true)
@@ -94,7 +96,42 @@ const Sale: React.FC<IProps> = ({ history }) => {
 
   return (
     <Container>
-      <RouterDescription description="Vendas" />
+      <PageContent>
+        <Header>
+          <h2>Vendas</h2>
+        </Header>
+        <SearchContainer>
+          <Input placeholder="Digite a identificação da venda" />
+        </SearchContainer>
+        <ListSaleContainer>
+          <HeaderTable>
+            <Col sm={4}>ID</Col>
+            <Col sm={4}>VALOR</Col>
+            <Col sm={4}>QUANTIDADE</Col>
+            <Col sm={4}>HORA</Col>
+            <Col sm={4}>TIPO</Col>
+            <Col sm={4}>AÇÕES</Col>
+          </HeaderTable>
+          <Collapse defaultActiveKey={["1"]} collapsible="disabled">
+            <Panel header="This is panel header 1" key="1">
+              <Collapse defaultActiveKey={["2"]}>
+                <Panel header="Pagamentos" key="2">
+                  <p>2</p>
+                </Panel>
+              </Collapse>
+              <Collapse defaultActiveKey={["3"]}>
+                <Panel header="Itens" key="2">
+                  <p>2</p>
+                </Panel>
+              </Collapse>
+            </Panel>
+          </Collapse>
+        </ListSaleContainer>
+        <SalesHistoryContainer>
+          <SalesHistory />
+        </SalesHistoryContainer>
+      </PageContent>
+      {/* <RouterDescription description="Vendas" />
       {isLoading ? (
         <Spinner />
       ) : isConected ? (
@@ -122,26 +159,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
           <>
             {sales?.length ? (
               <SalesContainer>
-                <SalesHeader>
-                  <Column span={4}>
-                    <Title>ID</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Valor</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Quantidade</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Hora</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Tipo</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Ações</Title>
-                  </Column>
-                </SalesHeader>
+               
                 <SalesList>
                   {sales.map((sale) => (
                     <SaleItem
@@ -162,7 +180,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
         </>
       ) : (
         <DisconectedForm />
-      )}
+      )} */}
     </Container>
   );
 };
