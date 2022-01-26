@@ -1,51 +1,268 @@
 import React, { useState, useEffect } from "react";
+import { PieChart } from "react-minimal-pie-chart";
 
 import DisconectedForm from "../../containers/DisconectedForm";
 
 import RouterDescription from "../../components/RouterDescription";
+
 import Spinner from "../../components/Spinner";
+import pixImg from "../../assets/svg/pixIcon.svg";
 
 import { Balance as BalanceModel } from "../../models/balance";
 
-import PixLogo from "../../assets/svg/pix.svg";
-
 import {
   Container,
-  CardContainer,
-  Card,
-  CardHeader,
-  CardBody,
-  CardRow,
-  Description,
-  CardFooter,
-  Title,
+  PageContent,
+  Header,
+  TabContainer,
+  Tabs,
+  Content,
+  PaymentTypesContainer,
+  PaymentTypes,
+  ChartContainer,
+  CardType,
+  FooterContainer,
+  LabelCardTab,
+  TabPaneContainer,
+  TabPane,
+  IconContainer,
   MoneyIcon,
   CreditIcon,
   DebitIcon,
-  TicketIcon,
-  CardContent,
-  CheckOnline,
+  OnlineIcon,
+  PixIcon,
+  LegendDescription,
 } from "./styles";
 
 const Balance: React.FC = () => {
   const [isConected, setIsConected] = useState(true);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [balance, setBalance] = useState<BalanceModel>();
 
   useEffect(() => {
     async function init() {
-      const isConnected = await window.Main.hasInternet();
       const _storeCash = await window.Main.storeCash.getStoreCashBalance();
-      setBalance(_storeCash);
+      console.log(_storeCash);
       setLoading(false);
-      setIsConected(isConnected);
+      //setIsConected(_storeCash.isConnected);
     }
     init();
   }, []);
 
+  const tabPanes = [
+    {
+      id: 1,
+      label: (
+        <TabPaneContainer tab_id={1}>
+          <LabelCardTab>
+            <p>Delivery</p>
+            <span>
+              R$ 0,00
+              {/* R$ {balance?.delivery.total.toFixed(2).replace(".", ",")} */}
+            </span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 2,
+      label: (
+        <TabPaneContainer tab_id={2}>
+          <LabelCardTab>
+            <p>Loja</p>
+            <span>R$ 0,00</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 3,
+      label: (
+        <TabPaneContainer tab_id={3}>
+          <LabelCardTab>
+            <p>Faturamento</p>
+            <span>R$ 0,00</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+  ];
+
+  const getPercent = (number: number, total: number): number => {
+    if (!total) {
+      return 100;
+    }
+    return +((+number * 100) / total).toFixed(2);
+  };
+
+  const createPaymentsPie = () => {
+    const pie = [
+      {
+        id: "Dinheiro",
+        value: 1,
+        color: "var(--blue-700)",
+      },
+      {
+        id: "Crédito",
+        value: 1,
+        color: "var(--blue-350)",
+      },
+      {
+        id: "Débito",
+        value: 1,
+        color: "var(--blue-500)",
+      },
+
+      {
+        id: "Pix",
+        value: 1,
+        color: "var(--orange-700)",
+      },
+      {
+        id: "Online",
+        value: 1,
+        color: "var(--orange-400)",
+      },
+    ];
+
+    return pie.filter((item) => item.value !== 0);
+  };
+
+  const AmountTypePayments = [
+    {
+      id: 1,
+      icon: <MoneyIcon />,
+      type: "DINHEIRO",
+      value: "",
+    },
+    {
+      id: 2,
+      icon: <CreditIcon />,
+      type: "CRÉDITO",
+      value: "",
+    },
+    {
+      id: 3,
+      icon: <DebitIcon />,
+      type: "DÉBITO",
+      value: "",
+    },
+    {
+      id: 4,
+      icon: <PixIcon src={pixImg} />,
+      type: "PIX",
+      value: "",
+    },
+    {
+      id: 5,
+      icon: <OnlineIcon />,
+      type: "ONLINE",
+      value: "",
+    },
+  ];
+
+  var legendGraph = [
+    {
+      label: "Dinheiro",
+      color: "var(--blue-700)",
+    },
+    {
+      label: "Crédito",
+      color: "var(--blue-350)",
+    },
+    {
+      label: "Débito",
+      color: "var(--blue-500)",
+    },
+    {
+      label: "Pix",
+      color: "var(--orange-700)",
+    },
+    {
+      label: "Online",
+      color: "var(--orange-400)",
+    },
+  ];
+
   return (
     <Container>
-      <RouterDescription description="Balanço" />
+      {isLoading ? (
+        <Spinner />
+      ) : isConected ? (
+        <PageContent>
+          <Header>
+            <h2>Balanço</h2>
+          </Header>
+
+          <TabContainer>
+            <Tabs defaultActiveKey="1">
+              {tabPanes.map((_tab) => (
+                <TabPane tab={_tab.label} key={_tab.id}>
+                  <Content>
+                    <h2>Estátisticas</h2>
+                    <PaymentTypesContainer>
+                      <PaymentTypes>
+                        {AmountTypePayments.map((typePayment) => (
+                          <CardType>
+                            <IconContainer>{typePayment.icon}</IconContainer>
+                            <p>{typePayment.type}</p>
+                            <span>R$ 0,00</span>
+                          </CardType>
+                        ))}
+                      </PaymentTypes>
+                      <ChartContainer>
+                        <PieChart
+                          data={createPaymentsPie()}
+                          lineWidth={18}
+                          rounded
+                          background="var(--grey-70)"
+                          label={({ x, y, dx, dy }) => (
+                            <text
+                              x={x}
+                              y={y}
+                              dx={dx}
+                              dy={dy}
+                              dominant-baseline="central"
+                              text-anchor="middle"
+                              style={{
+                                fontSize: "0.6rem",
+                                fill: "var(--grey-100)",
+                              }}
+                            >
+                              R$ 0,00
+                            </text>
+                          )}
+                          labelPosition={0}
+                        />
+                      </ChartContainer>
+                    </PaymentTypesContainer>
+                    <FooterContainer>
+                      <footer>
+                        <span>Legenda Gráfico</span>
+                        <LegendDescription>
+                          {legendGraph.map((legend) => (
+                            <div>
+                              <div
+                                id="circle"
+                                style={{ background: `${legend.color}` }}
+                              />
+                              <span>{legend.label}</span>
+                            </div>
+                          ))}
+                        </LegendDescription>
+                      </footer>
+                    </FooterContainer>
+                  </Content>
+                </TabPane>
+              ))}
+            </Tabs>
+          </TabContainer>
+        </PageContent>
+      ) : (
+        <DisconectedForm />
+      )}
+    </Container>
+    /* 
       {isLoading ? (
         <Spinner />
       ) : isConected ? (
@@ -203,8 +420,7 @@ const Balance: React.FC = () => {
         </CardContainer>
       ) : (
         <DisconectedForm />
-      )}
-    </Container>
+      )} */
   );
 };
 

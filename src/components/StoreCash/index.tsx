@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+
+import AmountModal from "../../components/AmountModal";
 
 import {
   Container,
-  Description,
+  CardCashContainer,
+  ButtonStatusContainer,
+  CardCash,
   CashIcon,
-  IconContainer,
-  Status,
+  Icon,
+  InfoCash,
+  StatusButton,
 } from "./styles";
 
 type IProps = {
@@ -15,18 +20,28 @@ type IProps = {
 
 const StoreCash: React.FC<IProps> = ({ cash, handleClick }) => {
   const { store_cash, available } = cash;
+  const [visible, setVisible] = useState<boolean>(false);
   return (
     <Container>
-      <Description>Caixa {store_cash}</Description>
-      <IconContainer
-        onClick={() => handleClick(cash)}
-        style={{ background: available ? "#FFB13D" : "#989898" }}
-      >
-        <CashIcon />
-      </IconContainer>
-      <Status style={{ color: available ? "#3CD223" : "#FF2E2E" }}>
-        {available ? "HABILITADO" : "DESABILITADO"}
-      </Status>
+      <CardCashContainer>
+        <CardCash onClick={() => setVisible(true)} disabled={!available}>
+          <Icon>
+            <CashIcon />
+          </Icon>
+          <InfoCash>
+            <p>CAIXA</p>
+            <span>{store_cash}</span>
+          </InfoCash>
+        </CardCash>
+      </CardCashContainer>
+
+      <ButtonStatusContainer>
+        <StatusButton available={available}>
+          {available && "HABILITADO"}
+        </StatusButton>
+      </ButtonStatusContainer>
+
+      <AmountModal visible={visible} setVisible={setVisible} />
     </Container>
   );
 };

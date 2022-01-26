@@ -141,7 +141,6 @@ const PaymentsContainer: React.FC<IProps> = ({
         title={`Pagamento em ${modalTitle}`}
         visible={modalState}
         onCancel={onModalCancel}
-        onOk={() => addPayment()}
         destroyOnClose={true}
         closable={true}
         centered

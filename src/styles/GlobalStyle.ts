@@ -8,6 +8,7 @@ export const GlobalStyle = createGlobalStyle`
    --white-40: #f9f9f9;
    --white-70: #f5f5f5;
    --white-80: #f6f6f6;
+   --white-90: #ececec;
    
    --black-opaco: #1C1E23;
    --gray-25: #e3e3e3;
@@ -15,16 +16,23 @@ export const GlobalStyle = createGlobalStyle`
    --grey-70: #bebebe;
    --grey-80: #acacac;
    --grey-100: #666666;
+   --grey-200: #4D4D4D;
 
 
    --orange-200: #FFB956;
    --orange-250: #FF9D0A;
+   --orange-400: #E98E4E;
+   --orange-700: #DD610A;
+   --brown-500: #aa6600;
 
    --green-400: #47BC47;
    --green-600: #3A7538;
    --teal-400: #4BB8A9;
    --blue-300: #5BC0DE;
+   --blue-350: #0279D5;
    --blue-400: #1963A2;
+   --blue-500: #2D5AAC;
+   --blue-700: #174275;
    --purple-450: #7E3AFC;
    --red-600: #A43C3F;
 
@@ -52,8 +60,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html, body, #root {
-    max-height: 100vh;
-    max-width: 100vw;
+    max-height: 100%;
+    max-width: 100%;
 
     width: 100%;
     height: 100%;
@@ -61,30 +69,15 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;
 
-    .ant-tabs-nav {
-      background: var(--black-opaco);
-      color: white;
-      border-radius: 6px 6px 0px 0px;
-      padding: 1%;
-      margin: 0px;
-    }
-
-    
-  
     .ant-tabs-tab.ant-tabs-tab-active,
     .ant-tabs-tab-btn {
-     color: white;
+      color: white;
 
       :active,
       :hover,
       :focus {
-        color: white;
+       color: white;
       }
-    }
-
-    .ant-tabs-ink-bar {
-      position: absolute;
-      background: white;
     }
 
     .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {

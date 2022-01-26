@@ -32,7 +32,7 @@ const UserInfo: React.FC<ComponentProps> = ({ history }) => {
   return store && cash ? (
     <Container>
       <UserContent>
-        <Store>{store.toUpperCase()}</Store>
+        {/* <Store>{store.toUpperCase()}</Store> */}
         <Description>
           CAIXA:{" "}
           <Description
