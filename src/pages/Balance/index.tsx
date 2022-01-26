@@ -3,11 +3,10 @@ import { PieChart } from "react-minimal-pie-chart";
 
 import DisconectedForm from "../../containers/DisconectedForm";
 
-import RouterDescription from "../../components/RouterDescription";
-
 import Spinner from "../../components/Spinner";
 import pixImg from "../../assets/svg/pixIcon.svg";
 
+import { currencyFormater } from "../../helpers/currencyFormater";
 import { Balance as BalanceModel } from "../../models/balance";
 
 import {
@@ -35,58 +34,62 @@ import {
 } from "./styles";
 
 const Balance: React.FC = () => {
-  const [isConected, setIsConected] = useState(true);
-  const [isLoading, setLoading] = useState(false);
+  const [isConected, setIsConected] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [balance, setBalance] = useState<BalanceModel>();
 
   useEffect(() => {
     async function init() {
       const _storeCash = await window.Main.storeCash.getStoreCashBalance();
-      console.log(_storeCash);
+      const _isConnected = await window.Main.hasInternet();
+      console.log({ _isConnected, _storeCash });
+      setBalance(_storeCash);
       setLoading(false);
-      //setIsConected(_storeCash.isConnected);
+      setIsConected(_isConnected);
     }
     init();
   }, []);
 
-  const tabPanes = [
-    {
-      id: 1,
-      label: (
-        <TabPaneContainer tab_id={1}>
-          <LabelCardTab>
-            <p>Delivery</p>
-            <span>
-              R$ 0,00
-              {/* R$ {balance?.delivery.total.toFixed(2).replace(".", ",")} */}
-            </span>
-          </LabelCardTab>
-        </TabPaneContainer>
-      ),
-    },
-    {
-      id: 2,
-      label: (
-        <TabPaneContainer tab_id={2}>
-          <LabelCardTab>
-            <p>Loja</p>
-            <span>R$ 0,00</span>
-          </LabelCardTab>
-        </TabPaneContainer>
-      ),
-    },
-    {
-      id: 3,
-      label: (
-        <TabPaneContainer tab_id={3}>
-          <LabelCardTab>
-            <p>Faturamento</p>
-            <span>R$ 0,00</span>
-          </LabelCardTab>
-        </TabPaneContainer>
-      ),
-    },
-  ];
+  const createTabPanes = (payload: BalanceModel) => {
+    return [
+      {
+        id: "delivery",
+        label: (
+          <TabPaneContainer tab_id={1}>
+            <LabelCardTab>
+              <p>Delivery</p>
+              <span>
+                R$ {currencyFormater(+payload.delivery.total)}
+                {/* R$ {balance?.delivery.total.toFixed(2).replace(".", ",")} */}
+              </span>
+            </LabelCardTab>
+          </TabPaneContainer>
+        ),
+      },
+      {
+        id: "store",
+        label: (
+          <TabPaneContainer tab_id={2}>
+            <LabelCardTab>
+              <p>Loja</p>
+              <span>R$ {currencyFormater(+payload.store.total)}</span>
+            </LabelCardTab>
+          </TabPaneContainer>
+        ),
+      },
+      {
+        id: "billing",
+        label: (
+          <TabPaneContainer tab_id={3}>
+            <LabelCardTab>
+              <p>Faturamento</p>
+              <span>R$ {currencyFormater(+payload.billing.total)}</span>
+            </LabelCardTab>
+          </TabPaneContainer>
+        ),
+      },
+    ];
+  };
 
   const getPercent = (number: number, total: number): number => {
     if (!total) {
@@ -95,73 +98,75 @@ const Balance: React.FC = () => {
     return +((+number * 100) / total).toFixed(2);
   };
 
-  const createPaymentsPie = () => {
-    const pie = [
+  const createPaymentsPie = (tab: string, payload: BalanceModel) => {
+    return [
       {
         id: "Dinheiro",
-        value: 1,
+        value: getPercent(payload[tab].money, payload[tab].total),
         color: "var(--blue-700)",
       },
       {
         id: "Crédito",
-        value: 1,
+        value: getPercent(payload[tab].credit, payload[tab].total),
         color: "var(--blue-350)",
       },
       {
         id: "Débito",
-        value: 1,
+        value: getPercent(payload[tab].debit, payload[tab].total),
         color: "var(--blue-500)",
       },
 
       {
         id: "Pix",
-        value: 1,
+        value: getPercent(payload[tab].pix, payload[tab].total),
         color: "var(--orange-700)",
       },
       {
         id: "Online",
-        value: 1,
+        value: getPercent(
+          tab === "store" ? payload[tab].ticket : payload[tab].online,
+          payload[tab].total
+        ),
         color: "var(--orange-400)",
       },
     ];
-
-    return pie.filter((item) => item.value !== 0);
   };
 
-  const AmountTypePayments = [
-    {
-      id: 1,
-      icon: <MoneyIcon />,
-      type: "DINHEIRO",
-      value: "",
-    },
-    {
-      id: 2,
-      icon: <CreditIcon />,
-      type: "CRÉDITO",
-      value: "",
-    },
-    {
-      id: 3,
-      icon: <DebitIcon />,
-      type: "DÉBITO",
-      value: "",
-    },
-    {
-      id: 4,
-      icon: <PixIcon src={pixImg} />,
-      type: "PIX",
-      value: "",
-    },
-    {
-      id: 5,
-      icon: <OnlineIcon />,
-      type: "ONLINE",
-      value: "",
-    },
-  ];
-
-  var legendGraph = [
+  const createAmountTypePayments = (tab: string, payload: BalanceModel) => {
+    return [
+      {
+        id: 1,
+        icon: <MoneyIcon />,
+        type: "DINHEIRO",
+        value: payload[tab].money,
+      },
+      {
+        id: 2,
+        icon: <CreditIcon />,
+        type: "CRÉDITO",
+        value: payload[tab].credit,
+      },
+      {
+        id: 3,
+        icon: <DebitIcon />,
+        type: "DÉBITO",
+        value: payload[tab].debit,
+      },
+      {
+        id: 4,
+        icon: <PixIcon src={pixImg} />,
+        type: "PIX",
+        value: payload[tab].pix,
+      },
+      {
+        id: 5,
+        icon: <OnlineIcon />,
+        type: "ONLINE",
+        value: payload[tab].online,
+      },
+    ];
+  };
+  const legendGraph = [
     {
       label: "Dinheiro",
       color: "var(--blue-700)",
@@ -196,23 +201,27 @@ const Balance: React.FC = () => {
 
           <TabContainer>
             <Tabs defaultActiveKey="1">
-              {tabPanes.map((_tab) => (
+              {createTabPanes(balance).map((_tab) => (
                 <TabPane tab={_tab.label} key={_tab.id}>
                   <Content>
                     <h2>Estátisticas</h2>
                     <PaymentTypesContainer>
                       <PaymentTypes>
-                        {AmountTypePayments.map((typePayment) => (
-                          <CardType>
-                            <IconContainer>{typePayment.icon}</IconContainer>
-                            <p>{typePayment.type}</p>
-                            <span>R$ 0,00</span>
-                          </CardType>
-                        ))}
+                        {createAmountTypePayments(_tab.id, balance).map(
+                          (typePayment) => (
+                            <CardType>
+                              <IconContainer>{typePayment.icon}</IconContainer>
+                              <p>{typePayment.type}</p>
+                              <span>
+                                R$ {currencyFormater(+typePayment.value)}
+                              </span>
+                            </CardType>
+                          )
+                        )}
                       </PaymentTypes>
                       <ChartContainer>
                         <PieChart
-                          data={createPaymentsPie()}
+                          data={createPaymentsPie(_tab.id, balance)}
                           lineWidth={18}
                           rounded
                           background="var(--grey-70)"
@@ -229,9 +238,10 @@ const Balance: React.FC = () => {
                                 fill: "var(--grey-100)",
                               }}
                             >
-                              R$ 0,00
+                              R$ {currencyFormater(balance[_tab.id].total)}
                             </text>
                           )}
+                          animate
                           labelPosition={0}
                         />
                       </ChartContainer>
