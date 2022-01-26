@@ -17,6 +17,15 @@ const Item: React.FC<IProps> = ({ item }) => {
   const [modalState, setModalState] = useState(false);
   const [reasson, setReasson] = useState<string>("");
 
+  const removeItem = async (): Promise<void> => {
+    if (reasson.length < 3) {
+      message.warning("Digite um motivo válido");
+      return;
+    }
+    await window.Main.itemOutCart.create(reasson, item.product.id);
+    await onDecressItem(item.id);
+  };
+
   const onDelete = () => {
     Modal.confirm({
       title: "Deseja remover este item?",
@@ -29,15 +38,7 @@ const Item: React.FC<IProps> = ({ item }) => {
           onChange={({ target: { value } }) => setReasson(value)}
         />
       ),
-      async onOk() {
-        console.log({ reasson: reasson.length });
-        if (reasson.length < 3) {
-          message.warning("Digite um motivo válido");
-          return;
-        }
-        await window.Main.itemOutCart.create(reasson, item.product.id);
-        await onDecressItem(item.id);
-      },
+      onOk: async () => await removeItem(),
     });
   };
 

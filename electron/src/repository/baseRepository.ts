@@ -25,11 +25,15 @@ export class BaseRepository<T extends { id?: string | number }>
   }
 
   async createMany(payload: T[]): Promise<void> {
+    const oldEntities =
+      (await database.getConnection().getItem(this.storageName)) || [];
     const response = payload.map((_payload) => ({
       ..._payload,
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     }));
-    await database.getConnection().setItem(this.storageName, response);
+    await database
+      .getConnection()
+      .setItem(this.storageName, [...response, ...oldEntities]);
   }
 
   async getById(id: string | number): Promise<T | undefined> {

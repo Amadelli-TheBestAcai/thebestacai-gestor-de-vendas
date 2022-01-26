@@ -31,7 +31,7 @@ class ItemOutCart extends BaseRepository<Entity> {
   async insert(reason: string, product_id: number): Promise<Entity> {
     const newItem: Entity = {
       id: v4(),
-      to_integrate: false,
+      to_integrate: true,
       reason,
       product_id,
     };
@@ -66,15 +66,17 @@ class ItemOutCart extends BaseRepository<Entity> {
 
     const items = await this.notIntegratedQueueRepository.getAll();
 
-    try {
-      await odinApi.post(
-        `/items_out_cart/${store.company.id}-${storeCash.code}`,
-        [items]
-      );
-      await this.integrateQueueRepository.createMany(items);
-      await this.notIntegratedQueueRepository.clear();
-    } catch (error) {
-      console.log(error);
+    if (items.length) {
+      try {
+        await odinApi.post(
+          `/items_out_cart/${store.company.id}-${storeCash.code}`,
+          items
+        );
+        await this.integrateQueueRepository.createMany(items);
+        await this.notIntegratedQueueRepository.clear();
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 }
