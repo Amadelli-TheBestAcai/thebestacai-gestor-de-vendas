@@ -6,6 +6,7 @@ import { AppSale as AppSaleModel } from "../../models/appSales";
 import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
 import { PaymentType } from "../../models/enums/paymentType";
 import Payments from "../../containers/Payments";
+import OrderProgressList from "../../containers/OrderProgressList";
 
 import { Sale } from "../../models/sale";
 
@@ -37,6 +38,7 @@ import {
   ButtonsContainer,
   ButtonConfirm,
   ButtonCancel,
+  OrdersListContainer,
 } from "./styles";
 
 type ComponentProps = RouteComponentProps;
@@ -333,6 +335,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
                 <RightContainer>
                   <h2>Delivery em Andamento</h2>
+                  <OrdersListContainer>
+                    <OrderProgressList />
+                  </OrdersListContainer>
                 </RightContainer>
               </Content>
             </TabPane>

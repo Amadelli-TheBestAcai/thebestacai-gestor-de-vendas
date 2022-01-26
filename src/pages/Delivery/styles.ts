@@ -218,8 +218,12 @@ export const ButtonConfirm = styled.button`
 
 export const RightContainer = styled.div`
   ${ContentCSS}
-  background: #e7e7e7;
   margin-left: 1rem;
+`;
+
+export const OrdersListContainer = styled.div`
+  width: 100%;
+  height: 100%;
 `;
 
 const IconCSS = css`
