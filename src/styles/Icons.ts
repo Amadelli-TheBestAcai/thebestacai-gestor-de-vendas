@@ -20,11 +20,13 @@ export { Offer, CheckboxChecked } from "@styled-icons/boxicons-solid";
 export { LogInCircle, LogOutCircle } from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles } from "@styled-icons/ionicons-sharp/Chatbubbles";
-export { CreditCard2BackFill } from "@styled-icons/bootstrap";
+export { CreditCard2BackFill, TelephoneFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
 export { Grid3x2GapFill } from "@styled-icons/bootstrap/Grid3x2GapFill";
 export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
+export { PhoneIphone } from "@styled-icons/material-outlined";
+export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
 
 //---------------------------------------------------///
 
@@ -41,10 +43,9 @@ export {
   ArrowLeftRight,
   CreditCard2Back,
   CheckCircleFill,
-  TelephoneFill,
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
-export { Cashapp, Ifood, Ubereats } from "@styled-icons/simple-icons";
+export { Cashapp, Ubereats } from "@styled-icons/simple-icons";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
 export { AddToQueue, User } from "@styled-icons/boxicons-solid";
 export {

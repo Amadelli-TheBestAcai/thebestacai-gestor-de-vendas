@@ -2,64 +2,48 @@ import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 // import { ipcRenderer } from "electron";
 
-import DisconectedForm from "../../containers/DisconectedForm";
-import Centralizer from "../../containers/Centralizer";
-import RouterDescription from "../../components/RouterDescription";
-import CashNotFound from "../../components/CashNotFound";
-import AppSale from "../../components/AppSale";
-
 import { AppSale as AppSaleModel } from "../../models/appSales";
 import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
 import { PaymentType } from "../../models/enums/paymentType";
-
-import { currencyFormater } from "../../helpers/currencyFormater";
-
-import {
-  Container,
-  PlatformContainer,
-  PlatformItem,
-  Radio,
-  AppIcon,
-  IFoodIcon,
-  UberEatsIcon,
-  TelefoneIcon,
-  WhatsAppIcon,
-  MainContainer,
-  PaymentContainer,
-  PaymentItem,
-  RegisterContainer,
-  MoneyIcon,
-  CreditIcon,
-  DebitIcon,
-  CheckOnline,
-  InputPrice,
-  RegisterButton,
-  InputGroup,
-  InputDescription,
-  SalesContainer,
-  SalesList,
-  SalesDescription,
-  SalesListHeader,
-  Column,
-  Title,
-  SalesTable,
-} from "./styles";
-
-import { message, Modal, Spin, Button, Empty } from "antd";
+import Payments from "../../containers/Payments";
 
 import { Sale } from "../../models/sale";
 
-import ImageLogo from "../../assets/img/logo-login.png";
-
-import PixLogo from "../../assets/svg/pix.svg";
 import { StoreCashDto } from "../../models/dtos/storeCash";
+import { useSale } from "../../hooks/useSale";
 
-const { confirm } = Modal;
+import {
+  Container,
+  PageContent,
+  Header,
+  TabPane,
+  Tabs,
+  LabelCardTab,
+  TabPaneContainer,
+  Content,
+  AiqfomeIcon,
+  AppIcon,
+  IfoodIcon,
+  TelephoneIcon,
+  WhatsappIcon,
+  RightContainer,
+  LeftContainer,
+  ActionContent,
+  Input,
+  Select,
+  Option,
+  InputValue,
+  PaymentsContainer,
+  ButtonsContainer,
+  ButtonConfirm,
+  ButtonCancel,
+} from "./styles";
 
 type ComponentProps = RouteComponentProps;
 
 const Delivery: React.FC<ComponentProps> = ({ history }) => {
-  const [sale, setSale] = useState<Sale | null>(null);
+  const { sale, setSale } = useSale();
+  //const [sale, setSale] = useState<Sale | null>(null);
   const [cashier, setCashier] = useState<StoreCashDto>();
   const [sales, setSales] = useState<AppSaleModel[]>([]);
   const [hasConnection, setHasConnection] = useState<boolean>(false);
@@ -69,23 +53,26 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [paymentType, setPaymentType] = useState<number>(0);
   const [amount, setAmount] = useState<number>();
+  const [paymentModalTitle, setPaymentModalTitle] = useState("");
+  const [currentPayment, setCurrentPayment] = useState(0);
+  const [paymentModal, setPaymentModal] = useState(false);
 
   useEffect(() => {
     async function init() {
       const _storeCash = await window.Main.storeCash.getCurrent();
       setCashier(_storeCash);
-      setSale((oldValues) => ({
-        ...oldValues,
-        store_id: _storeCash?.store_id,
-        cash_id: _storeCash?.cash_id,
-        cash_code: _storeCash?.code,
-        cash_history_id: _storeCash?.history_id,
-        change_amount: 0,
-        type: "APP",
-        discount: 0,
-        to_integrate: true,
-        is_current: false,
-      }));
+      // setSale((oldValues) => ({
+      //   ...oldValues,
+      //   store_id: _storeCash?.store_id,
+      //   cash_id: _storeCash?.cash_id,
+      //   cash_code: _storeCash?.code,
+      //   cash_history_id: _storeCash?.history_id,
+      //   change_amount: 0,
+      //   type: "APP",
+      //   discount: 0,
+      //   to_integrate: true,
+      //   is_current: false,
+      // }));
       setLoading(false);
     }
     init();
@@ -120,7 +107,32 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   }, []);
 
   const handlePlatform = (value: string) => {
-    setSale((oldValues) => ({ ...oldValues, type: value }));
+    //setSale((oldValues) => ({ ...oldValues, type: value }));
+  };
+
+  const addPayment = async () => {
+    if (!currentPayment) {
+    }
+
+    const updatedSale = await window.Main.sale.addPayment(
+      currentPayment,
+      paymentType
+    );
+    //setSale(updatedSale);
+
+    setCurrentPayment(0);
+    setPaymentModal(false);
+  };
+
+  const removePayment = async (id: string) => {
+    const updatedSale = await window.Main.sale.deletePayment(id);
+    //setSale(updatedSale);
+  };
+
+  const handleOpenPayment = (type: number, title: string): void => {
+    setPaymentType(type);
+    setPaymentModal(true);
+    setPaymentModalTitle(title);
   };
 
   // const handleCreateSale = async () => {
@@ -218,9 +230,117 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   //   });
   // };
 
+  const tabPanes = [
+    {
+      id: 1,
+      label: (
+        <TabPaneContainer>
+          <label>[F2]</label>
+          <LabelCardTab>
+            <AppIcon />
+            <span>Aplicativo</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 2,
+      label: (
+        <TabPaneContainer>
+          <label>[F3]</label>
+          <LabelCardTab>
+            <IfoodIcon />
+            <span>Ifood</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 3,
+      label: (
+        <TabPaneContainer>
+          <label>[F4]</label>
+          <LabelCardTab>
+            <AiqfomeIcon />
+            <span>Outros</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 4,
+      label: (
+        <TabPaneContainer>
+          <label>[F5</label>
+          <LabelCardTab>
+            <WhatsappIcon />
+            <span>Whatsapp</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+    {
+      id: 5,
+      label: (
+        <TabPaneContainer>
+          <label>[F6]</label>
+          <LabelCardTab>
+            <TelephoneIcon />
+            <span>Telefone</span>
+          </LabelCardTab>
+        </TabPaneContainer>
+      ),
+    },
+  ];
+
   return (
     <Container>
-      <RouterDescription description="Delivery" />
+      <PageContent>
+        <Header>
+          <h2>Delivery</h2>
+        </Header>
+        <Tabs defaultActiveKey="1" centered>
+          {tabPanes.map((_tab) => (
+            <TabPane key={_tab.id} tab={_tab.label}>
+              <Content>
+                <LeftContainer>
+                  <h2>Adicionar Pedidos</h2>
+                  <ActionContent>
+                    <Input placeholder="Nome do cliente" />
+                    <Select placeholder="Escolha a opção">
+                      <Option>Entrega</Option>
+                    </Select>
+                  </ActionContent>
+                  <InputValue />
+                  <PaymentsContainer>
+                    <Payments
+                      sale={sale}
+                      addPayment={addPayment}
+                      removePayment={removePayment}
+                      setCurrentPayment={setCurrentPayment}
+                      modalState={paymentModal}
+                      modalTitle={paymentModalTitle}
+                      setModalState={setPaymentModal}
+                      handleOpenPayment={handleOpenPayment}
+                    />
+                  </PaymentsContainer>
+
+                  <ButtonsContainer>
+                    <ButtonCancel>CANCELAR [C]</ButtonCancel>
+                    <ButtonConfirm>ADICIONAR [F]</ButtonConfirm>
+                  </ButtonsContainer>
+                </LeftContainer>
+
+                <RightContainer>
+                  <h2>Delivery em Andamento</h2>
+                </RightContainer>
+              </Content>
+            </TabPane>
+          ))}
+        </Tabs>
+      </PageContent>
+
+      {/* <RouterDescription description="Delivery" />
       {cashier && cashier.is_opened ? (
         <>
           <PlatformContainer>
@@ -228,60 +348,10 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
               onChange={({ target: { value } }) => handlePlatform(value)}
               value={sale?.type}
             >
-              <PlatformItem>
-                <Radio value="APP">APP</Radio>
-                <AppIcon src={ImageLogo} />
-              </PlatformItem>
-              <PlatformItem>
-                <Radio value="IFOOD">IFood</Radio>
-                <IFoodIcon style={{ color: "red" }} />
-              </PlatformItem>
-              <PlatformItem>
-                <Radio value="WHATSAPP">WhatsApp</Radio>
-                <WhatsAppIcon style={{ color: "green" }} />
-              </PlatformItem>
-              <PlatformItem>
-                <Radio value="UBBEREATS">UberEats</Radio>
-                <UberEatsIcon />
-              </PlatformItem>
-              <PlatformItem>
-                <Radio value="TELEFONE">Telefone</Radio>
-                <TelefoneIcon />
-              </PlatformItem>
             </Radio.Group>
           </PlatformContainer>
           <MainContainer>
-            <PaymentContainer>
-              Pagamento
-              <Radio.Group
-                onChange={({ target: { value } }) => setPaymentType(value)}
-                value={paymentType}
-              >
-                <PaymentItem>
-                  <Radio value={0}>Dinheiro</Radio>
-                  <MoneyIcon />
-                </PaymentItem>
-                <PaymentItem>
-                  <Radio value={1}>Crédito</Radio>
-                  <CreditIcon />
-                </PaymentItem>
-                <PaymentItem>
-                  <Radio value={2}>Débito</Radio>
-                  <DebitIcon />
-                </PaymentItem>
-                <PaymentItem>
-                  <Radio value={4}>Online</Radio>
-                  <CheckOnline />
-                </PaymentItem>
-                <PaymentItem>
-                  <Radio value={6}>PIX</Radio>
-                  <AppIcon
-                    src={PixLogo}
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                    }}
-                  />
+           
                 </PaymentItem>
               </Radio.Group>
             </PaymentContainer>
@@ -297,15 +367,15 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                     <InputPrice
                       autoFocus={true}
                       getValue={(value) => setAmount(value)}
-                      // onEnterPress={handleCreateSale}
+                       onEnterPress={handleCreateSale}
                     />
                   </InputGroup>
 
                   <RegisterButton>Registrar</RegisterButton>
 
-                  {/* <RegisterButton onClick={() => handleCreateSale()}>
+                  <RegisterButton onClick={() => handleCreateSale()}>
                     Registrar
-                  </RegisterButton> */}
+                  </RegisterButton>
                 </>
               )}
             </RegisterContainer>
@@ -368,7 +438,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                       <label>{currencyFormater(appSalesResult?.total)}R$</label>
                       <Button
                         type="primary"
-                        // onClick={() => handleUpdateProduct()}
+                         onClick={() => handleUpdateProduct()}
                       >
                         Integrar
                       </Button>
@@ -385,7 +455,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
             )}
           </>
         )}
-      </SalesContainer>
+      </SalesContainer> */}
     </Container>
   );
 };
