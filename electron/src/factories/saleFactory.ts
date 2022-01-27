@@ -23,4 +23,8 @@ export const saleFactory = {
   addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
     await saleModel.addItem(productToAdd, quantity, price),
   getSaleFromApp: async () => await saleModel.getSaleFromApp(),
+  createStepSale: async (name: string) => await saleModel.createStepSale(name),
+  getAllStepSales: async () => await saleModel.getAllStepSales(),
+  recouverStepSales: async (id: string): Promise<Entity> =>
+    await saleModel.recouverStepSales(id),
 };

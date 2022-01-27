@@ -97,7 +97,8 @@ export function SaleProvider({ children }) {
   };
 
   const onAddToQueue = async (name: string): Promise<void> => {
-    console.log(name);
+    const _newSale = await window.Main.sale.createStepSale(name);
+    setSale(_newSale);
   };
 
   const removePayment = async (id: string): Promise<void> => {

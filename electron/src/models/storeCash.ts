@@ -16,6 +16,7 @@ export type Entity = {
   amount_on_open: number;
   is_opened: boolean;
   is_online: boolean;
+  created_at?: string;
 };
 
 export const context = "StoreCash";

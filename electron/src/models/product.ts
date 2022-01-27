@@ -88,9 +88,9 @@ class Product extends BaseRepository<Entity> {
     super(storageName);
   }
 
-  async getProducts(): Promise<Entity[]> {
+  async getProducts(local = false): Promise<Entity[]> {
     const hasInternet = await checkInternet();
-    if (hasInternet) {
+    if (hasInternet && !local) {
       const store = await storeModel.getOne();
       const {
         data: { content },

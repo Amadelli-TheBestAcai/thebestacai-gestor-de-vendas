@@ -45,7 +45,7 @@ export class BaseRepository<T extends { id?: string | number }>
 
   async deleteById(id: string | number): Promise<void> {
     const data: T[] = await database.getConnection().getItem(this.storageName);
-    const response = data.filter((_entity) => _entity.id === id);
+    const response = data.filter((_entity) => _entity.id !== id);
     await database.getConnection().setItem(this.storageName, response);
   }
 

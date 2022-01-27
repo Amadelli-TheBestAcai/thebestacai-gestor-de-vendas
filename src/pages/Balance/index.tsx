@@ -42,7 +42,6 @@ const Balance: React.FC = () => {
     async function init() {
       const _storeCash = await window.Main.storeCash.getStoreCashBalance();
       const _isConnected = await window.Main.hasInternet();
-      console.log({ _isConnected, _storeCash });
       setBalance(_storeCash);
       setLoading(false);
       setIsConected(_isConnected);

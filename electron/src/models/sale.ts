@@ -3,6 +3,7 @@ import { IBaseRepository } from "../repository/baseRepository.interface";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
 import storeCashModel from "./storeCash";
+import productModel from "./product";
 import { v4 } from "uuid";
 import moment from "moment";
 import { checkInternet } from "../providers/internetConnection";
@@ -13,6 +14,7 @@ import { salesFormaterToIntegrate } from "../helpers/salesFormaterToIntegrate";
 
 export type Entity = {
   id: string;
+  name?: string;
   user_id?: number;
   quantity: number;
   change_amount: number;
@@ -107,6 +109,7 @@ export type Entity = {
 class Sale extends BaseRepository<Entity> {
   private notIntegratedQueueRepository: IBaseRepository<Entity>;
   private integrateQueueRepository: IBaseRepository<Entity>;
+  private stepSaleRepository: IBaseRepository<Entity>;
   constructor(storageName = "Sale") {
     super(storageName);
     this.notIntegratedQueueRepository = new BaseRepository<Entity>(
@@ -115,6 +118,7 @@ class Sale extends BaseRepository<Entity> {
     this.integrateQueueRepository = new BaseRepository<Entity>(
       "Integrated_Sale"
     );
+    this.stepSaleRepository = new BaseRepository<Entity>("Step_Sale");
   }
 
   async getCurrent(): Promise<Entity> {
@@ -181,6 +185,47 @@ class Sale extends BaseRepository<Entity> {
     return sales[saleIndex];
   }
 
+  async createStepSale(name: string): Promise<Entity> {
+    const currentSale = await this.getCurrent();
+
+    currentSale.name = name;
+    currentSale.is_current = false;
+
+    await this.deleteById(currentSale.id);
+    await this.stepSaleRepository.create(currentSale);
+
+    const newSale: Entity = await this.buildNewSale();
+    await this.create(newSale);
+
+    return newSale;
+  }
+
+  async getAllStepSales(): Promise<Entity[]> {
+    const stepSales = await this.stepSaleRepository.getAll();
+
+    return stepSales;
+  }
+
+  async recouverStepSales(id: string): Promise<Entity> {
+    const stepSale = (await this.stepSaleRepository.getById(id)) as Entity;
+
+    const transferItem = async (storeProductId: number, quantity: number) => {
+      const product = (await productModel.getById(
+        storeProductId
+      )) as ProductDto;
+      await this.addItem(product, quantity);
+    };
+
+    await stepSale.items.reduce(async (previousItem, nextItem) => {
+      await previousItem;
+      return transferItem(nextItem.store_product_id, nextItem.quantity);
+    }, Promise.resolve());
+
+    await this.stepSaleRepository.deleteById(id);
+
+    return await this.getCurrent();
+  }
+
   async addItem(
     productToAdd: ProductDto,
     quantity: number,
@@ -197,7 +242,8 @@ class Sale extends BaseRepository<Entity> {
       itemIndex >= 0 &&
       sales[saleIndex].items[itemIndex].product.category.id !== 1
     ) {
-      const newQuantity = +sales[saleIndex].items[itemIndex].quantity + 1;
+      const newQuantity =
+        +sales[saleIndex].items[itemIndex].quantity + quantity;
       sales[saleIndex].items[itemIndex].quantity = newQuantity;
       sales[saleIndex].items[itemIndex].total = +(
         newQuantity * +(productToAdd.price_unit || 0)
@@ -211,7 +257,7 @@ class Sale extends BaseRepository<Entity> {
         update_stock: true,
         product,
         storeProduct,
-        total: +(price || productToAdd.price_unit || 0),
+        total: +(price || productToAdd.price_unit || 0) * quantity,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
@@ -221,7 +267,8 @@ class Sale extends BaseRepository<Entity> {
       .toFixed(2);
 
     sales[saleIndex].quantity = sales[saleIndex].items.reduce(
-      (total, item) => item.quantity + total,
+      (total, item) =>
+        +item.product.category.id === 1 ? 1 : item.quantity + total,
       0
     );
 

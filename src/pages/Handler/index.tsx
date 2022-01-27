@@ -79,7 +79,6 @@ const Handler: React.FC = () => {
     });
     const url = window.URL.createObjectURL(new Blob([response]));
     const link = document.createElement("a");
-    console.log(url);
     link.href = url;
     link.setAttribute(
       "download",

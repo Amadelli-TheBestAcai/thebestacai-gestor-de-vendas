@@ -32,7 +32,6 @@ class User extends BaseRepository<Entity> {
       if (!access_token) {
         return undefined;
       }
-
       const hashedPassword = await criptography.hash(password);
       const userPayload = {
         ...jwt_decode<Entity>(access_token),

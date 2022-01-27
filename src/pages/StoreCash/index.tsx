@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-
+import moment from "moment";
 import RouterDescription from "../../components/RouterDescription";
 import Disconected from "../../components/Disconected";
 import Cash from "../../components/StoreCash";
 import Spinner from "../../components/Spinner";
 
 import PendingSaleForm from "../../containers/PendingSaleForm";
+import { StoreCashDto } from "../../models/dtos/storeCash";
 
 import { message as messageAnt, Modal } from "antd";
 
@@ -32,12 +33,11 @@ const { confirm } = Modal;
 type IProps = RouteComponentProps;
 
 const StoreCash: React.FC<IProps> = ({ history }) => {
-  const [loadingCashes, setLoadingCashes] = useState(true);
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [cashes, setCashes] = useState<
     { store_cash: string; available: boolean }[]
   >([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [amount, setAmount] = useState({
     twoHundred: null,
     oneHundred: null,
@@ -55,25 +55,22 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
     fullAmount: null,
   });
   const [cash, setCash] = useState<string>();
-  const [currentCash, setCurrentCash] = useState<string>();
-  const [step, setStep] = useState(1);
+  const [currentCash, setCurrentCash] = useState<StoreCashDto | null>(null);
   const [total, setTotal] = useState(0);
   const [pendingSale, setPendingSale] = useState<boolean>(false);
 
   useEffect(() => {
     async function init() {
       const isConnected = await window.Main.hasInternet();
-      setIsConnected(isConnected);
       const currentStoreCash = await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {
-        setCurrentCash(currentStoreCash?.code);
-        setStep(2);
+        setCurrentCash(currentStoreCash);
       }
       const availableStoreCashes =
         await window.Main.storeCash.getAvailableStoreCashes();
       setCashes(availableStoreCashes);
-      setLoadingCashes(isConnected);
-      setLoadingCashes(false);
+      setIsConnected(isConnected);
+      setLoading(false);
     }
     init();
   }, []);
@@ -112,7 +109,6 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
       return messageAnt.warning("Caixa não disponível");
     }
     setCash(store_cash);
-    setStep(2);
   };
 
   const onFinish = () => {
@@ -127,7 +123,10 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
       async onOk() {
         setLoading(true);
         if (currentCash) {
-          await window.Main.storeCash.closeStoreCash(currentCash, +total || 0);
+          await window.Main.storeCash.closeStoreCash(
+            currentCash.code,
+            +total || 0
+          );
           setLoading(false);
           return history.push("/home");
         } else {
@@ -141,46 +140,54 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
 
   return (
     <Container>
-      <PageContent>
-        <Header>
-          <h2>Gerenciamento de Caixa</h2>
-        </Header>
-        <CashContainer>
-          {cashes.map((cash) => (
-            <Cash
-              key={cash.store_cash}
-              cash={cash}
-              handleClick={selectCashier}
-            />
-          ))}
-        </CashContainer>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <PageContent>
+            <Header>
+              <h2>Gerenciamento de Caixa</h2>
+            </Header>
+            <CashContainer>
+              {cashes.map((cash) => (
+                <Cash
+                  key={cash.store_cash}
+                  cash={cash}
+                  handleClick={selectCashier}
+                />
+              ))}
+            </CashContainer>
 
-        <CashStatusContainer>
-          <HeaderStatus>
-            <h2>Status do Caixa</h2>
-            <StatusCash>
-              <Status>
-                <Left>Caixa</Left>
-                <Right>Fechado</Right>
-              </Status>
-              <span>18 de Janeiro de 2022 14:41</span>
-            </StatusCash>
-          </HeaderStatus>
+            <CashStatusContainer>
+              <HeaderStatus>
+                <h2>Status do Caixa</h2>
+                <StatusCash>
+                  <Status>
+                    <Left>Caixa</Left>
+                    <Right>
+                      {currentCash.is_opened ? "Aberto" : "Fechado"}
+                    </Right>
+                  </Status>
+                  <span>{currentCash?.created_at}</span>
+                </StatusCash>
+              </HeaderStatus>
 
-          <ContentStatusCash>
-            <CardStatus>R$ 200,00</CardStatus>
-            <CardStatus>R$ 200,00</CardStatus>
-            <CardStatus>R$ 200,00</CardStatus>
-            <CardStatus>R$ 200,00</CardStatus>
-            <CardStatus>R$ 200,00</CardStatus>
-            <CardStatus>R$ 200,00</CardStatus>
-          </ContentStatusCash>
+              <ContentStatusCash>
+                <CardStatus>R$ 200,00</CardStatus>
+                <CardStatus>R$ 200,00</CardStatus>
+                <CardStatus>R$ 200,00</CardStatus>
+                <CardStatus>R$ 200,00</CardStatus>
+                <CardStatus>R$ 200,00</CardStatus>
+                <CardStatus>R$ 200,00</CardStatus>
+              </ContentStatusCash>
 
-          <CloseCashContatiner>
-            <CloseButton>Fechar Caixa</CloseButton>
-          </CloseCashContatiner>
-        </CashStatusContainer>
-      </PageContent>
+              <CloseCashContatiner>
+                <CloseButton>Fechar Caixa</CloseButton>
+              </CloseCashContatiner>
+            </CashStatusContainer>
+          </PageContent>
+        </>
+      )}
       {/* 
       {loadingCashes ? (
         <Spinner />
