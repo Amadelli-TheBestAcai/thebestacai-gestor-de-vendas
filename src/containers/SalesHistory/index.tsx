@@ -40,6 +40,40 @@ const SalesHistory: React.FC = () => {
             </Col>
           )}
         </CardSale>
+        <CardSale>
+          {listView ? (
+            <>
+              <Col sm={5}>
+                <span>4178771</span>
+              </Col>
+              <Col sm={5}>R$ 67,50</Col>
+              <Col sm={5}>2</Col>
+              <Col sm={4}>08:36:10</Col>
+              <Col sm={5}>Loja</Col>
+            </>
+          ) : (
+            <Col sm={24}>
+              Horário:<span>08:36:10</span>
+            </Col>
+          )}
+        </CardSale>
+        <CardSale>
+          {listView ? (
+            <>
+              <Col sm={5}>
+                <span>4178771</span>
+              </Col>
+              <Col sm={5}>R$ 67,50</Col>
+              <Col sm={5}>2</Col>
+              <Col sm={4}>08:36:10</Col>
+              <Col sm={5}>Loja</Col>
+            </>
+          ) : (
+            <Col sm={24}>
+              Horário:<span>08:36:10</span>
+            </Col>
+          )}
+        </CardSale>
       </ListContainer>
     </Container>
   );

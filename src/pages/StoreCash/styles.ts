@@ -1,6 +1,10 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import vectorChart from "../../assets/svg/vectorChart.svg";
+
+interface ICardStatus {
+  id_card: number;
+}
 
 export const Container = styled.div`
   display: flex;
@@ -114,7 +118,8 @@ export const ContentStatusCash = styled.div`
   height: 55%;
 `;
 
-export const CardStatus = styled.div`
+export const CardStatus = styled.div<ICardStatus>`
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
@@ -130,6 +135,42 @@ export const CardStatus = styled.div`
   background-repeat: no-repeat;
   background-position: right;
   background-origin: content-box;
+
+  label {
+    position: absolute;
+    font-size: 0.9rem;
+    top: 1rem;
+    left: 1.9rem;
+    width: 100%;
+    height: 32px;
+    padding: 0;
+
+    ${({ id_card }) => {
+      if (id_card === 2) {
+        return css`
+          color: var(--green-400);
+        `;
+      }
+      if (id_card === 3) {
+        return css`
+          color: var(--blue-700);
+        `;
+      }
+      if (id_card === 5) {
+        return css`
+          color: var(--red-600);
+        `;
+      }
+      if (id_card === 6) {
+        return css`
+          color: var(--teal-400);
+        `;
+      }
+      return css`
+        color: var(--grey-100);
+      `;
+    }}
+  }
 `;
 
 export const CloseCashContatiner = styled.div`

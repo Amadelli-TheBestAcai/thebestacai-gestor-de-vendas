@@ -138,16 +138,25 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
     });
   };
 
+  const amoutStatusaCash = [
+    { id: 1, label: "Abertura", value: "0,00" },
+    { id: 2, label: "Entradas", value: "0,00" },
+    { id: 3, label: "Vendas - Débito", value: "0,00" },
+    { id: 4, label: "Fechamento", value: "0,00" },
+    { id: 5, label: "Saídas", value: "0,00" },
+    { id: 6, label: "Vendas - Crédito", value: "0,00" },
+  ];
+
   return (
     <Container>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <PageContent>
-            <Header>
-              <h2>Gerenciamento de Caixa</h2>
-            </Header>
+      <PageContent>
+        <Header>
+          <h2>Gerenciamento de Caixa</h2>
+        </Header>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
             <CashContainer>
               {cashes.map((cash) => (
                 <Cash
@@ -173,25 +182,23 @@ const StoreCash: React.FC<IProps> = ({ history }) => {
               </HeaderStatus>
 
               <ContentStatusCash>
-                <CardStatus>R$ 200,00</CardStatus>
-                <CardStatus>R$ 200,00</CardStatus>
-                <CardStatus>R$ 200,00</CardStatus>
-                <CardStatus>R$ 200,00</CardStatus>
-                <CardStatus>R$ 200,00</CardStatus>
-                <CardStatus>R$ 200,00</CardStatus>
+                {amoutStatusaCash.map((amoutStatus) => (
+                  <CardStatus id_card={amoutStatus.id} key={amoutStatus.id}>
+                    <label>{amoutStatus.label}</label>
+                    R$ {amoutStatus.value}
+                  </CardStatus>
+                ))}
               </ContentStatusCash>
 
               <CloseCashContatiner>
                 <CloseButton>Fechar Caixa</CloseButton>
               </CloseCashContatiner>
             </CashStatusContainer>
-          </PageContent>
-        </>
-      )}
+          </>
+        )}
+      </PageContent>
       {/* 
-      {loadingCashes ? (
-        <Spinner />
-      ) : (
+      
         <>
           <>
             {step === 1 && (
