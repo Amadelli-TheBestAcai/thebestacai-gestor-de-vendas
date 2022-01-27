@@ -1,7 +1,8 @@
 import styled, { css } from "styled-components";
 
 import MonetaryInput from "../../components/MonetaryInput";
-import { Modal as ModalAnt } from "antd";
+
+import { Modal as ModalAnt, Col } from "antd";
 
 import {
   MoneyBillAlt,
@@ -48,8 +49,25 @@ export const TypesPaymentsContainer = styled.div`
 
 export const PaymentsInfoContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
   width: 100%;
   height: 45%;
+`;
+
+export const Header = styled.header`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 30%;
+  font-weight: 600;
+  color: var(--black-opaco);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+`;
+
+export const Column = styled(Col)`
+  text-align: center;
 `;
 
 export const ValuesContainer = styled.div`

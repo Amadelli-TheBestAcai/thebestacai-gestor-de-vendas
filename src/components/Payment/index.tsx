@@ -7,7 +7,6 @@ import { Tooltip } from "antd";
 
 import {
   Container,
-  Header,
   Content,
   InfoPayment,
   Column,
@@ -23,14 +22,8 @@ type IProps = {
 const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
   return (
     <Container>
-      <Header>
-        <Column sm={8}>Forma de Pagamento</Column>
-        <Column sm={8}>Valor</Column>
-        <Column sm={8}>Ação</Column>
-      </Header>
-
       <Content>
-        <InfoPayment>
+        <InfoPayment key={payment.id}>
           <Column sm={8}>{PaymentType[payment.type]}</Column>
           <Column sm={8}>
             R$ {payment.amount?.toFixed(2).replace(".", ",")}

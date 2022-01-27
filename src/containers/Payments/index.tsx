@@ -24,6 +24,8 @@ import {
   Footer,
   ButtonCancel,
   ButtonSave,
+  Header,
+  Column,
 } from "./styles";
 
 interface IProps {
@@ -102,6 +104,11 @@ const PaymentsContainer: React.FC<IProps> = ({
       </TypesPaymentsContainer>
 
       <PaymentsInfoContainer>
+        <Header>
+          <Column sm={8}>Forma de Pagamento</Column>
+          <Column sm={8}>Valor</Column>
+          <Column sm={8}>Ação</Column>
+        </Header>
         {sale.payments?.map((payment, index) => (
           <Payment
             key={index}
