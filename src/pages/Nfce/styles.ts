@@ -83,9 +83,9 @@ export const HeaderContent = styled.header`
   width: 100%;
   height: 5%;
 
-  // h2 {
-  //   margin-bottom: 0px;
-  // }
+  h2 {
+    margin-bottom: 0px;
+  }
 `;
 
 export const PageContent = styled.div`

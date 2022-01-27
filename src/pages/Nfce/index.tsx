@@ -334,7 +334,7 @@ const Nfce: React.FC = () => {
         </HeaderContent>
         {!loading ? (
           <>
-            {cashIsOpen ? (
+            {!cashIsOpen ? (
               <>
                 <PageContent>
                   <LeftContainer>
