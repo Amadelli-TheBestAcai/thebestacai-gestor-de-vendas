@@ -69,7 +69,7 @@ const iconCSS = css`
 
 export const Content = styled.div`
   ${ContentCSS}
-  display: flex;
+  display: column;
   height: 100%;
   width: 100%;
   margin-bottom: 5px;
@@ -77,15 +77,22 @@ export const Content = styled.div`
   text-align: center;
 `;
 
-export const HeaderTitle = styled.header`
+export const HeaderContent = styled.header`
   display: flex;
   align-items: center;
   width: 100%;
   height: 5%;
 
-  h2 {
-    margin-bottom: 0px;
-  }
+  // h2 {
+  //   margin-bottom: 0px;
+  // }
+`;
+
+export const PageContent = styled.div`
+  display: flex;
+  height: 95%;
+  width: 100%;
+  margin-right: 1.2rem;
 `;
 
 export const LeftContainer = styled.div`
@@ -228,7 +235,7 @@ export const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 26.5rem;
+  height: 25rem;
   overflow-y: scroll;
 `;
 
@@ -337,6 +344,10 @@ export const FormContainer = styled.div`
   background: var(--mainBackground);
 `;
 
+export const FormItem = styled(FormAnt.Item)`
+  margin: 5px;
+`;
+
 export const Form = styled(FormAnt)``;
 
 export const Row = styled(RowAnt)`
@@ -345,196 +356,23 @@ export const Row = styled(RowAnt)`
 
 export const Col = styled(ColAnt)``;
 
-export const FormItem = styled(FormAnt.Item)`
-  margin: 5px;
-`;
-
 export const Input = styled(InputAnt)``;
 
-export const Text = styled.label`
-  font-size: 14px;
+export const Select = styled(SelectAnt)``;
 
-  text-align: end;
-`;
-
-export const DisabledInput = styled.input`
-  color: rgba(0, 0, 0, 0.25);
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-  opacity: 1;
-  caret-color: transparent;
-`;
-
-export const ProductsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  height: 75%;
-  width: 100%;
-  background: var(--mainBackground);
-  overflow-y: scroll;
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-  }
-`;
-
-// export const ProductContainer = styled.div`
-//   display: flex;
-//   justify-content: space-evenly;
-//   align-items: center;
-//   border-bottom: 1px solid;
-//   width: 100%;
-//   height: 8%;
-//   background: white;
-//   font-weight: bold;
-// `;
+export const Option = styled(SelectAnt.Option)``;
 
 export const InputMonetary = styled(MonetaryInput)`
   height: 100%;
 `;
 
-export const BottomContainer = styled.div`
-  width: 100%;
-  height: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const PriceContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  width: 100%;
-  height: 80%;
-  margin: 5px 0px;
-  color: #9a9a9a;
-`;
-
-export const WeightContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  width: 50%;
-  height: 80%;
-  margin: 5px 10px 5px 10px;
-  color: #9a9a9a;
-`;
-
-const BottomContainerCSS = css`
-  height: 100%;
-  color: #b0afae;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  font-size: 24px;
-  background: #eae8e8;
-`;
-
-export const Price = styled.div`
-  ${BottomContainerCSS};
-`;
-
-export const Weight = styled.div`
-  ${BottomContainerCSS};
-`;
-
-export const ProductListRow = styled(RowAnt)`
-  display: flex;
-  justify-content: space-evenly;
-  width: 100%;
-  height: 35px;
-  background: #1c1e23;
-  border-radius: 3px 3px 0px 0px;
-`;
+export const InputMask = styled(MaskInput)``;
 
 export const SpinContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-`;
-
-export const ProductsHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 15%;
-  width: 100%;
-  font-size: 22px;
-  font-weight: bold;
-`;
-
-export const InputTextArea = styled.input``;
-
-export const InputMask = styled(MaskInput)``;
-
-export const Select = styled(SelectAnt)``;
-
-export const Option = styled(SelectAnt.Option)``;
-
-export const RemoveIcon = styled(Trash)`
-  color: red;
-  ${iconCSS}
-`;
-
-// export const TabContainer = styled(TabsAnd)`
-//   width: 100%;
-//   height: 100%;
-//   line-height: 0.2;
-//   .ant-tabs-content {
-//     height: 100%;
-//   }
-//   div.ant-tabs-nav {
-//     background: var(--primary-orange);
-//     margin-bottom: 0px;
-//   }
-//   div.ant-tabs-nav-wrap {
-//     display: flex;
-//     justify-content: center;
-//   }
-//   .ant-tabs-tab-active {
-//     .ant-tabs-tab-btn {
-//       font-weight: bold !important;
-//       color: black !important;
-//     }
-//   }
-//   .ant-tabs-ink-bar {
-//     position: absolute;
-//     background: black;
-//     pointer-events: none;
-//   }
-// `;
-
-export const ProductHeader = styled(RowAnt)`
-  display: flex;
-  justify-content: space-evenly;
-  background: black;
-  padding: 2% 0;
-  width: 100%;
-`;
-
-export const ProductHeaderCol = styled(ColAnt)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const ProductHeaderDescription = styled.label`
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-`;
-
-export const ProductList = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow-y: scroll;
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-  }
 `;
 
 export const ActionContainer = styled.div`
@@ -549,7 +387,6 @@ export const ActionContainer = styled.div`
 export const PriceTotalNfce = styled.div`
   display: flex;
   width: 100%;
-  // background: var(--primary-orange);
   align-items: center;
   justify-content: center;
   color: black;
