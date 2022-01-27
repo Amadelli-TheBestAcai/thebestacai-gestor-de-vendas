@@ -1,14 +1,15 @@
 import { BaseRepository } from "../repository/baseRepository";
+import { IBaseRepository } from "../repository/baseRepository.interface";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
 import storeCashModel from "./storeCash";
-import integrationModel from "./integration";
 import { v4 } from "uuid";
 import moment from "moment";
 import { checkInternet } from "../providers/internetConnection";
 import midasApi from "../providers/midasApi";
 import odinApi from "../providers/odinApi";
 import { AppSaleDTO } from "./dtos/appSale";
+import { salesFormaterToIntegrate } from "../helpers/salesFormaterToIntegrate";
 
 export type Entity = {
   id: string;
@@ -104,9 +105,16 @@ export type Entity = {
 };
 
 class Sale extends BaseRepository<Entity> {
-  currentSale: Entity | null = null;
+  private notIntegratedQueueRepository: IBaseRepository<Entity>;
+  private integrateQueueRepository: IBaseRepository<Entity>;
   constructor(storageName = "Sale") {
     super(storageName);
+    this.notIntegratedQueueRepository = new BaseRepository<Entity>(
+      "Not_Integrated_Sale"
+    );
+    this.integrateQueueRepository = new BaseRepository<Entity>(
+      "Integrated_Sale"
+    );
   }
 
   async getCurrent(): Promise<Entity> {
@@ -129,9 +137,11 @@ class Sale extends BaseRepository<Entity> {
     sales[saleIndex].to_integrate = true;
 
     const newSale: Entity = await this.buildNewSale();
-    await this.createMany([...sales, newSale]);
 
-    await integrationModel.moveToPreIntegration();
+    await this.createMany([...sales.slice(saleIndex, 1), newSale]);
+    await this.notIntegratedQueueRepository.create(sales[saleIndex]);
+
+    await this.onlineIntegration();
 
     return newSale;
   }
@@ -210,6 +220,11 @@ class Sale extends BaseRepository<Entity> {
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
+    sales[saleIndex].quantity = sales[saleIndex].items.reduce(
+      (total, item) => item.quantity + total,
+      0
+    );
+
     await this.createMany(sales);
     return sales[saleIndex];
   }
@@ -241,6 +256,11 @@ class Sale extends BaseRepository<Entity> {
     sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
       (total, item) =>
         +(item.storeProduct?.price_unit || 0) * item.quantity + total,
+      0
+    );
+
+    sales[saleIndex].quantity = sales[saleIndex].items.reduce(
+      (total, item) => item.quantity + total,
       0
     );
 
@@ -335,6 +355,30 @@ class Sale extends BaseRepository<Entity> {
     } = await odinApi.get(`/app_sale/${store_id}/toIntegrate`);
 
     return content;
+  }
+
+  async onlineIntegration(): Promise<void> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return;
+    }
+    try {
+      const sales: Entity[] = await this.notIntegratedQueueRepository.getAll();
+
+      const salesOnline: Entity[] = sales.filter((_sale) => _sale.is_online);
+
+      const payload = salesFormaterToIntegrate(salesOnline);
+
+      if (payload.length) {
+        await midasApi.post("/sales", payload);
+      }
+
+      await this.notIntegratedQueueRepository.clear();
+
+      await this.integrateQueueRepository.createMany(salesOnline);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
