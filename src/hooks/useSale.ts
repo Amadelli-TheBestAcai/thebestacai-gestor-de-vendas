@@ -4,6 +4,7 @@ import { SaleContext } from "../context/saleContext";
 export function useSale() {
   const sale = useContextSelector(SaleContext, (sale) => sale.sale);
   const setSale = useContextSelector(SaleContext, (sale) => sale.setSale);
+  const storeCash = useContextSelector(SaleContext, (sale) => sale.storeCash);
   const loadingSale = useContextSelector(SaleContext, (sale) => sale.loading);
   const discountModalState = useContextSelector(
     SaleContext,
@@ -38,6 +39,7 @@ export function useSale() {
   return {
     sale,
     setSale,
+    storeCash,
     discountModalState,
     discountModalHandler,
     onAddItem,
