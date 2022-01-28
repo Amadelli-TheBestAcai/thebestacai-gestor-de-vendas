@@ -128,61 +128,58 @@ class Sale extends BaseRepository<Entity> {
       return currentSale;
     } else {
       const newSale: Entity = await this.buildNewSale();
-      await this.createMany([...sales, newSale]);
+      await this.create(newSale);
       return newSale;
     }
   }
 
   async finishSale(): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    sales[saleIndex].is_current = false;
-    sales[saleIndex].to_integrate = true;
+    sale.is_current = false;
+    sale.to_integrate = true;
 
     const newSale: Entity = await this.buildNewSale();
 
-    await this.createMany([...sales.slice(saleIndex, 1), newSale]);
-    await this.notIntegratedQueueRepository.create(sales[saleIndex]);
+    await this.deleteById(sale.id);
+    await this.notIntegratedQueueRepository.create(sale);
 
     await this.onlineIntegration();
+
+    await this.create(newSale);
 
     return newSale;
   }
 
   async addPayment(amount: number, type: number): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    sales[saleIndex].payments.push({
+    sale.payments.push({
       id: v4(),
       amount,
       type,
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     });
 
-    sales[saleIndex].total_paid = +sales[saleIndex].payments
+    sale.total_paid = +sale.payments
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    await this.update(sale.id, sale);
+    return sale;
   }
 
   async deletePayment(id: string): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    sales[saleIndex].payments = sales[saleIndex].payments.filter(
-      (_payment) => _payment.id !== id
-    );
+    sale.payments = sale.payments.filter((_payment) => _payment.id !== id);
 
-    sales[saleIndex].total_paid = +sales[saleIndex].payments
+    sale.total_paid = +sale.payments
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    await this.update(sale.id, sale);
+    return sale;
   }
 
   async createStepSale(name: string): Promise<Entity> {
@@ -231,26 +228,21 @@ class Sale extends BaseRepository<Entity> {
     quantity: number,
     price?: number
   ): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    const itemIndex = sales[saleIndex].items.findIndex(
+    const itemIndex = sale.items.findIndex(
       (_item) => _item.product.id === productToAdd.product.id
     );
 
-    if (
-      itemIndex >= 0 &&
-      sales[saleIndex].items[itemIndex].product.category.id !== 1
-    ) {
-      const newQuantity =
-        +sales[saleIndex].items[itemIndex].quantity + quantity;
-      sales[saleIndex].items[itemIndex].quantity = newQuantity;
-      sales[saleIndex].items[itemIndex].total = +(
+    if (itemIndex >= 0 && sale.items[itemIndex].product.category.id !== 1) {
+      const newQuantity = +sale.items[itemIndex].quantity + quantity;
+      sale.items[itemIndex].quantity = newQuantity;
+      sale.items[itemIndex].total = +(
         newQuantity * +(productToAdd.price_unit || 0)
       ).toFixed(2);
     } else {
       const { product, ...storeProduct } = productToAdd;
-      sales[saleIndex].items.push({
+      sale.items.push({
         id: v4(),
         store_product_id: storeProduct.id,
         quantity,
@@ -262,57 +254,48 @@ class Sale extends BaseRepository<Entity> {
       });
     }
 
-    sales[saleIndex].total_sold = +sales[saleIndex].items
+    sale.total_sold = +sale.items
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
-    sales[saleIndex].quantity = sales[saleIndex].items.reduce(
+    sale.quantity = sale.items.reduce(
       (total, item) =>
         +item.product.category.id === 1 ? 1 : item.quantity + total,
       0
     );
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    await this.update(sale.id, sale);
+    return sale;
   }
 
   async decressItem(id: string): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    const itemIndex = sales[saleIndex].items.findIndex(
-      (_item) => _item.id === id
-    );
+    const itemIndex = sale.items.findIndex((_item) => _item.id === id);
 
-    const newQuantity = +sales[saleIndex].items[itemIndex].quantity - 1;
+    const newQuantity = +sale.items[itemIndex].quantity - 1;
 
-    if (
-      sales[saleIndex].items[itemIndex].product.category.id === 1 ||
-      newQuantity <= 0
-    ) {
-      sales[saleIndex].items = sales[saleIndex].items.filter(
-        (_item) => _item.id !== id
-      );
+    if (sale.items[itemIndex].product.category.id === 1 || newQuantity <= 0) {
+      sale.items = sale.items.filter((_item) => _item.id !== id);
     } else {
-      sales[saleIndex].items[itemIndex].quantity = newQuantity;
-      sales[saleIndex].items[itemIndex].total =
-        newQuantity *
-        +(sales[saleIndex].items[itemIndex].storeProduct.price_unit || 0);
+      sale.items[itemIndex].quantity = newQuantity;
+      sale.items[itemIndex].total =
+        newQuantity * +(sale.items[itemIndex].storeProduct.price_unit || 0);
     }
 
-    sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
+    sale.total_sold = sale.items.reduce(
       (total, item) =>
         +(item.storeProduct?.price_unit || 0) * item.quantity + total,
       0
     );
 
-    sales[saleIndex].quantity = sales[saleIndex].items.reduce(
+    sale.quantity = sale.items.reduce(
       (total, item) => item.quantity + total,
       0
     );
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    await this.update(sale.id, sale);
+    return sale;
   }
 
   async buildNewSale(): Promise<Entity> {

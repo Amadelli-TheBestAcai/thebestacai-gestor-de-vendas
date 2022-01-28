@@ -93,8 +93,9 @@ const PaymentsContainer: React.FC<IProps> = ({
   return (
     <Container>
       <TypesPaymentsContainer>
-        {buttonsPaymentsStyle.map((buttonStyle) => (
+        {buttonsPaymentsStyle.map((buttonStyle, index) => (
           <Button
+            key={index}
             style={{ background: buttonStyle.background }}
             onClick={buttonStyle.action}
           >

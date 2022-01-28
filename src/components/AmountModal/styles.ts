@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Modal, Row as RowAnt, Col as ColAnt } from "antd";
 
@@ -27,10 +27,20 @@ export const Col = styled(ColAnt)`
   }
 `;
 
-export const ButtonRegister = styled.button`
+interface IButtonRegister {
+  isOpened: boolean;
+}
+export const ButtonRegister = styled.button<IButtonRegister>`
   width: 100%;
-  background: var(--green-400);
   color: white;
   border-radius: 4px;
   padding: 0.5rem;
+  ${({ isOpened }) =>
+    isOpened
+      ? css`
+          background: #c53030;
+        `
+      : css`
+          background: var(--green-400);
+        `}
 `;

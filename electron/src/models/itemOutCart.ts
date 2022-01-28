@@ -37,25 +37,14 @@ class ItemOutCart extends BaseRepository<Entity> {
     };
     await this.create(newItem);
 
+    await this.notIntegratedQueueRepository.create(newItem);
+
     await this.integration();
 
     return newItem;
   }
 
-  async moveToPreIntegration(): Promise<void> {
-    const items = await this.getAll();
-
-    const itemsToIntegrate = items.filter((_item) => _item.to_integrate);
-
-    await this.notIntegratedQueueRepository.createMany(itemsToIntegrate);
-
-    const itemsToNotIntegrate = items.filter((_item) => !_item.to_integrate);
-    await this.createMany(itemsToNotIntegrate);
-  }
-
   async integration(): Promise<void> {
-    await this.moveToPreIntegration();
-
     const hasInternet = await checkInternet();
     const storeCash = await storeCashModel.getCurrentCash();
     const store = await storeModel.hasRegistration();

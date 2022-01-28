@@ -4,12 +4,14 @@ import { createContext } from "use-context-selector";
 import { message } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
+import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 
 type SaleContextType = {
   sale: SaleDto;
   setSale: Dispatch<SetStateAction<SaleDto>>;
+  storeCash: StoreCashDto;
   loading: boolean;
   savingSale: boolean;
   discountModalState: boolean;
@@ -33,6 +35,7 @@ export const SaleContext = createContext<SaleContextType>(null);
 
 export function SaleProvider({ children }) {
   const [sale, setSale] = useState<SaleDto>();
+  const [storeCash, setStoreCash] = useState<StoreCashDto>();
   const [savingSale, setSavingSale] = useState(false);
   const [loading, setLoading] = useState(true);
   const [discountModalState, setDiscountModalState] = useState(false);
@@ -42,9 +45,11 @@ export function SaleProvider({ children }) {
     async function init() {
       setLoading(true);
       const _sale = await window.Main.sale.getCurrent();
+      const _storeCash = await window.Main.storeCash.getCurrent();
       const _user = await window.Main.user.getUser();
       setSale(_sale);
       setUser(_user);
+      setStoreCash(_storeCash);
       setLoading(false);
     }
     init();
@@ -111,11 +116,6 @@ export function SaleProvider({ children }) {
       message.warning("Desconto maior que o valor da venda.");
       return;
     }
-    // const _updatedSale = await window.Main.sale.update(sale.id, {
-    //   ...sale,
-    //   discount: +value,
-    // });
-    // setSale(_updatedSale);
   };
 
   return (
@@ -123,6 +123,7 @@ export function SaleProvider({ children }) {
       value={{
         sale,
         setSale,
+        storeCash,
         loading,
         savingSale,
         discountModalState,

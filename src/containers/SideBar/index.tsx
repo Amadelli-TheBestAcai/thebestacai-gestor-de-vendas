@@ -94,6 +94,7 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
       <Content>
         {menus.map((menu) => (
           <Tooltip
+            key={menu.id}
             placement="right"
             title={menu.label}
             color={"var(--orange-250)"}

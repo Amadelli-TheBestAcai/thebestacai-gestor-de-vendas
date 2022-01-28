@@ -5,6 +5,7 @@ import midasApi from "../providers/midasApi";
 import storeModel from "../models/store";
 import { v4 } from "uuid";
 import { BalanceDTO } from "./dtos/balance";
+import { StoreCashHistoryDTO } from "./dtos/storeCashHistory";
 import { getBalance } from "../helpers/BalanceFormater";
 
 export type Entity = {
@@ -47,7 +48,7 @@ class StoreCash extends BaseRepository<Entity> {
       } = await odinApi.put(
         `/store_cashes/${currentStore?.company_id}-${code}/open`,
         {
-          amount_on_open: amount_on_open.toString(),
+          amount_on_open: amount_on_open.toString() || "0",
         }
       );
       payload.cash_id = cash_id;
@@ -111,7 +112,7 @@ class StoreCash extends BaseRepository<Entity> {
       const currentStore = await storeModel.getOne();
       await odinApi.put(
         `/store_cashes/${currentStore?.company_id}-${code}/close`,
-        { amount_on_close: amount_on_close.toString() }
+        { amount_on_close: amount_on_close.toString() || "0" }
       );
     }
     const storeCash = await this.getOne();
@@ -149,6 +150,19 @@ class StoreCash extends BaseRepository<Entity> {
 
   async getCurrentCash(): Promise<Entity | undefined> {
     return await this.getOne();
+  }
+
+  async getStoreCashHistoryService(): Promise<StoreCashHistoryDTO | null> {
+    const cashier = await this.getCurrentCash();
+    if (cashier && cashier.history_id) {
+      const { code, store_id } = cashier;
+      const {
+        data: { history },
+      } = await odinApi.get(`/current_cash_history/${store_id}-${code}`);
+      return history;
+    } else {
+      return null;
+    }
   }
 }
 
