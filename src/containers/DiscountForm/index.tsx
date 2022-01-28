@@ -23,11 +23,6 @@ const DiscountForm: React.FC = () => {
     setValue(amount);
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-    }
-  };
-
   return (
     <Container
       title="Desconto"
@@ -35,7 +30,7 @@ const DiscountForm: React.FC = () => {
       onOk={handleSubmit}
       closable={true}
       onCancel={() => {
-        // document.getElementById("mainContainer").focus();
+        document.getElementById("mainContainer").focus();
         discountModalHandler.closeDiscoundModal();
       }}
       destroyOnClose={true}
@@ -44,12 +39,14 @@ const DiscountForm: React.FC = () => {
       footer={
         <Footer>
           <ButtonCancel>Cancelar</ButtonCancel>
-          <ButtonSave>Aplicar desconto</ButtonSave>
+          <ButtonSave onClick={() => handleSubmit()}>
+            Aplicar desconto
+          </ButtonSave>
         </Footer>
       }
     >
       <Input
-        //autoFocus={true}
+        autoFocus={true}
         getValue={getAmount}
         onEnterPress={handleSubmit}
       />

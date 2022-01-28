@@ -78,7 +78,7 @@ const PaymentsContainer: React.FC<IProps> = ({
     },
     {
       icon: <TicketIcon />,
-      label: "Ticket",
+      label: "Ticket [T]",
       background: "var(--purple-450)",
       action: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     },

@@ -12,7 +12,7 @@ import CashNotFound from "../../components/CashNotFound";
 import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
 
-import { message } from "antd";
+import { notification } from "antd";
 import {
   Container,
   LeftSide,
@@ -59,7 +59,11 @@ const Home: React.FC = () => {
 
   const addPayment = async () => {
     if (!currentPayment) {
-      return message.warning("Pagamento inválido");
+      return notification.warning({
+        message: "Pagamento inválido!",
+        description: `Valor incorreto para pagamento.`,
+        duration: 5,
+      });
     }
     const updatedSale = await window.Main.sale.addPayment(
       currentPayment,
@@ -134,7 +138,7 @@ const Home: React.FC = () => {
           <Spinner />
         ) : (
           <>
-            {storeCash?.is_opened ? (
+            {!storeCash?.is_opened ? (
               <>
                 <LeftSide>
                   <BalanceContainer>

@@ -97,6 +97,11 @@ export const GlobalStyle = createGlobalStyle`
       color: var(--black-opaco);
     }
 
+    .ant-notification-notice-error {
+      background: var(--error);
+      color: var(--black-opaco);
+    }
+
     .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
       border-radius: 0.7rem;
       outline: none;
