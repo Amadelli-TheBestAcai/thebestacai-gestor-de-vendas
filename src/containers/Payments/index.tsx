@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SaleDto } from "../../models/dtos/sale";
@@ -24,6 +24,8 @@ import {
   Footer,
   ButtonCancel,
   ButtonSave,
+  Header,
+  Column,
 } from "./styles";
 
 interface IProps {
@@ -88,6 +90,18 @@ const PaymentsContainer: React.FC<IProps> = ({
     },
   ];
 
+  const getChangeAmount = (total_sold: number, total_paid: number) => {
+    if (total_paid > total_sold) {
+      const result = (total_paid - total_sold).toFixed(2).replace(".", ",");
+      return result;
+    } else if (total_paid === total_sold) {
+      const result = (0).toFixed(2).replace(".", ",");
+      return result;
+    } else {
+      return "0,00";
+    }
+  };
+
   return (
     <Container>
       <TypesPaymentsContainer>
@@ -96,6 +110,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             key={index}
             style={{ background: buttonStyle.background }}
             onClick={buttonStyle.action}
+            disabled={!sale.items.length}
           >
             {buttonStyle.icon} {buttonStyle.label}
           </Button>
@@ -103,6 +118,11 @@ const PaymentsContainer: React.FC<IProps> = ({
       </TypesPaymentsContainer>
 
       <PaymentsInfoContainer>
+        <Header>
+          <Column sm={8}>Forma de Pagamento</Column>
+          <Column sm={8}>Valor</Column>
+          <Column sm={8}>Ação</Column>
+        </Header>
         {sale.payments?.map((payment, index) => (
           <Payment
             key={index}
@@ -116,13 +136,13 @@ const PaymentsContainer: React.FC<IProps> = ({
         <ValueInfo>
           R$ Troco <br />{" "}
           <strong style={{ color: "var(--red-600" }}>
-            {sale.change_amount.toFixed(2).replace(".", ",")}
+            {getChangeAmount(sale.total_sold, sale.total_paid)}
           </strong>
         </ValueInfo>
         <ValueInfo>
           R$ Desconto <br />{" "}
           <strong style={{ color: "var(--green-600" }}>
-            {sale.total_paid.toFixed(2).replace(".", ",")}
+            {sale.discount.toFixed(2).replace(".", ",")}
           </strong>
         </ValueInfo>
         <ValueInfo>

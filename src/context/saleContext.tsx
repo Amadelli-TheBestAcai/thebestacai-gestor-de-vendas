@@ -1,7 +1,7 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createContext } from "use-context-selector";
 
-import { message } from "antd";
+import { message, notification } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
 import { StoreCashDto } from "../models/dtos/storeCash";
@@ -76,6 +76,11 @@ export function SaleProvider({ children }) {
 
   const onDecressItem = async (id: string): Promise<void> => {
     const updatedSale = await window.Main.sale.decressItem(id);
+    notification.success({
+      message: "Item removido com sucesso!",
+      description: `O item selecionado foi retirado do carrinho.`,
+      duration: 3,
+    });
     setSale(updatedSale);
   };
 
@@ -85,20 +90,34 @@ export function SaleProvider({ children }) {
     }
 
     if (!sale.items.length) {
-      return message.warning("Nenhum item cadastrado para a venda");
+      notification.warning({
+        message: "Oops! Carrinho vazio.",
+        description: `Nenhum item selecionado para venda, selecione algum item
+                      ao carrinho para que seja possível finalizá-la.`,
+        duration: 5,
+      });
     }
 
     if (
       +(sale.total_sold.toFixed(2) || 0) >
       sale.total_paid + (sale.discount || 0) + 0.5
     ) {
-      return message.warning("Pagamento inválido");
+      return notification.warning({
+        message: "Pagamento inválido!",
+        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
+        duration: 5,
+      });
     }
 
     setSavingSale(true);
     const _newSale = await window.Main.sale.finishSale();
     setSale(_newSale);
     setSavingSale(false);
+    notification.success({
+      message: "Venda realizada com sucesso!",
+      description: `A venda foi registrada com sucesso.`,
+      duration: 3,
+    });
   };
 
   const onAddToQueue = async (name: string): Promise<void> => {

@@ -29,6 +29,7 @@ export const BalanceContainer = styled.div`
 `;
 
 export const ItemsContainer = styled.div`
+  display: flex;
   width: 100%;
   height: 85%;
 `;

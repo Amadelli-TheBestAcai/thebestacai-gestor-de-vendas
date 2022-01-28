@@ -151,7 +151,8 @@ export const ActionContent = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 10%;
+  height: 5%;
+  margin-bottom: 1rem;
 
   .ant-select-selector,
   .ant-input {

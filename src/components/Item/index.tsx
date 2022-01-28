@@ -4,9 +4,19 @@ import { ItemDto } from "../../models/dtos/item";
 
 import { useSale } from "../../hooks/useSale";
 
-import { Tooltip, message } from "antd";
+import { Tooltip, notification } from "antd";
 
-import { Container, Column, DeleteIcon, Button, Modal, Input } from "./styles";
+import {
+  Container,
+  Column,
+  DeleteIcon,
+  Button,
+  Modal,
+  Input,
+  Footer,
+  ButtonSave,
+  ButtonCancel,
+} from "./styles";
 
 type IProps = {
   item: ItemDto;
@@ -18,28 +28,18 @@ const Item: React.FC<IProps> = ({ item }) => {
   const [reasson, setReasson] = useState<string>("");
 
   const removeItem = async (): Promise<void> => {
+    setModalState(true);
     if (reasson.length < 3) {
-      message.warning("Digite um motivo válido");
+      notification.warning({
+        message: "Oops! ",
+        description:
+          "Digite um motivo válido para a remoção do item de seu carrinho.",
+        duration: 5,
+      });
       return;
     }
     await window.Main.itemOutCart.create(reasson, item.product.id);
     await onDecressItem(item.id);
-  };
-
-  const onDelete = () => {
-    Modal.confirm({
-      title: "Deseja remover este item?",
-      okText: "Remover",
-      okType: "default",
-      cancelText: "Cancelar",
-      content: (
-        <Input
-          placeholder="Digite o motivo"
-          onChange={({ target: { value } }) => setReasson(value)}
-        />
-      ),
-      onOk: async () => await removeItem(),
-    });
   };
 
   return (
@@ -52,11 +52,35 @@ const Item: React.FC<IProps> = ({ item }) => {
       <Column span={4}>R$ {item.total.toFixed(2).replace(".", ",")}</Column>
       <Column span={2}>
         <Tooltip title="Remover" placement="bottom">
-          <Button onClick={onDelete}>
+          <Button onClick={() => setModalState(true)}>
             <DeleteIcon />
           </Button>
         </Tooltip>
       </Column>
+
+      <Modal
+        title="Remover item"
+        visible={modalState}
+        onCancel={() => setModalState(false)}
+        destroyOnClose={true}
+        closable={true}
+        centered
+        afterClose={() => document.getElementById("mainContainer").focus()}
+        footer={
+          <Footer>
+            <ButtonCancel onClick={() => setModalState(false)}>
+              Cancelar
+            </ButtonCancel>
+            <ButtonSave onClick={removeItem}>Salvar Alteração</ButtonSave>
+          </Footer>
+        }
+      >
+        <Input
+          autoFocus={true}
+          placeholder="Digite o motivo"
+          onChange={({ target: { value } }) => setReasson(value)}
+        />
+      </Modal>
     </Container>
   );
 };

@@ -3,8 +3,8 @@ import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
   :root {
    --white: #FFFFFF;
-   --white-25: #F3F3F3;
    --white-30: #f7f7f7;
+   --white-25: #F3F3F3;
    --white-40: #f9f9f9;
    --white-70: #f5f5f5;
    --white-80: #f6f6f6;
@@ -20,6 +20,10 @@ export const GlobalStyle = createGlobalStyle`
    --grey-100: #666666;
    --grey-200: #4D4D4D;
 
+
+   --warning: #f8f2d1;
+   --success: #f6ffed;
+   --error: #fff2f0;
 
    --orange-200: #FFB956;
    --orange-250: #FF9D0A;
@@ -81,6 +85,16 @@ export const GlobalStyle = createGlobalStyle`
       :focus {
        color: white;
       }
+    }
+
+    .ant-notification-notice-warning {
+      background: var(--warning);
+      color: var(--black-opaco);
+    }
+
+    .ant-notification-notice-success {
+      background: var(--success);
+      color: var(--black-opaco);
     }
 
     .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
