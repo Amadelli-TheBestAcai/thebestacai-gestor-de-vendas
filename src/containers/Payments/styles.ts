@@ -97,6 +97,10 @@ export const ValueInfo = styled.div`
 
 export const Button = styled.button`
   ${ButtonCSS}
+
+  :disabled {
+    cursor: no-drop;
+  }
 `;
 
 export const Footer = styled.div`

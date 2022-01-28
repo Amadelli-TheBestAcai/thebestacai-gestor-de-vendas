@@ -37,6 +37,7 @@ export const ItemContainer = styled.div`
   flex-grow: 1;
   width: 100%;
   align-items: flex-start;
+  overflow-y: scroll;
 `;
 
 export const ItemContent = styled.div`

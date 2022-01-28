@@ -21,6 +21,10 @@ export const GlobalStyle = createGlobalStyle`
    --grey-200: #4D4D4D;
 
 
+   --warning: #f8f2d1;
+   --success: #f6ffed;
+   --error: #fff2f0;
+
    --orange-200: #FFB956;
    --orange-250: #FF9D0A;
    --orange-450: #f0ad4e;
@@ -81,6 +85,16 @@ export const GlobalStyle = createGlobalStyle`
       :focus {
        color: white;
       }
+    }
+
+    .ant-notification-notice-warning {
+      background: var(--warning);
+      color: var(--black-opaco);
+    }
+
+    .ant-notification-notice-success {
+      background: var(--success);
+      color: var(--black-opaco);
     }
 
     .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
