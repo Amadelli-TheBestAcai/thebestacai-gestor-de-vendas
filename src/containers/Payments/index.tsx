@@ -66,25 +66,25 @@ const PaymentsContainer: React.FC<IProps> = ({
       icon: <CreditIcon />,
       label: "Crédito [S]",
       background: "var(--blue-300)",
-      action: () => handleOpenPayment(PaymentType.DINHEIRO, "C. Crédito"),
+      action: () => handleOpenPayment(PaymentType.CREDITO, "C. Crédito"),
     },
     {
       icon: <DebitIcon />,
       label: "Débito [D]",
       background: "var(--blue-400)",
-      action: () => handleOpenPayment(PaymentType.DINHEIRO, "C. Débito"),
+      action: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito"),
     },
     {
       icon: <TicketIcon />,
       label: "Ticket",
       background: "var(--purple-450)",
-      action: () => handleOpenPayment(PaymentType.DINHEIRO, "Ticket"),
+      action: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     },
     {
       icon: <PixIcon src={PixLogo} />,
       label: "Pix [P]",
       background: "var(--teal-400)",
-      action: () => handleOpenPayment(PaymentType.DINHEIRO, "Pix"),
+      action: () => handleOpenPayment(PaymentType.PIX, "Pix"),
     },
   ];
 

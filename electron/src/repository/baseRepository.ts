@@ -77,6 +77,6 @@ export class BaseRepository<T extends { id?: string | number }>
   }
 
   async clear(): Promise<void> {
-    await database.getConnection().removeItem(this.storageName);
+    await database.getConnection().setItem(this.storageName, []);
   }
 }
