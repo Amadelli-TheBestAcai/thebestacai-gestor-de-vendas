@@ -122,7 +122,8 @@ class Sale extends BaseRepository<Entity> {
   }
 
   async getCurrent(): Promise<Entity> {
-    const currentSale = await this.getCurrent();
+    const sales = await this.getAll();
+    const currentSale = sales.find((_sale) => _sale.is_current);
     if (currentSale) {
       return currentSale;
     } else {
