@@ -3,6 +3,8 @@ import { Entity as ProductDto } from "../models/product";
 
 export const saleFactory = {
   getCurrent: async () => await saleModel.getCurrent(),
+  getAllIntegratedSales: async () =>
+    await saleModel.integrateQueueRepository.getAll(),
   deleteSaleFromApi: async (id: string) => {
     try {
       await saleModel.deleteSaleFromApi(id);

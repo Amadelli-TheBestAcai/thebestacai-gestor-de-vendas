@@ -38,7 +38,8 @@ const Sale: React.FC<IProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       setIsLoading(true);
-      const _sale = await window.Main.sale.getSaleFromApi();
+      const _sale = await window.Main.sale.getAllIntegratedSales();
+      console.log({ _sale });
       setSales(_sale);
       setIsLoading(false);
       // ipcRenderer.send('integrate:status')
@@ -128,7 +129,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
           </Collapse>
         </ListSaleContainer>
         <SalesHistoryContainer>
-          <SalesHistory />
+          <SalesHistory sales={sales} />
         </SalesHistoryContainer>
       </PageContent>
       {/* <RouterDescription description="Vendas" />

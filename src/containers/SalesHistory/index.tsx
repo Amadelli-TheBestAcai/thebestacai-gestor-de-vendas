@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import { SaleDto } from "../../models/dtos/sale";
+import { currencyFormater } from "../../helpers/currencyFormater";
 import {
   Container,
   ActionTypeList,
@@ -10,7 +11,10 @@ import {
   Col,
 } from "./styles";
 
-const SalesHistory: React.FC = () => {
+interface IProps {
+  sales: SaleDto[];
+}
+const SalesHistory: React.FC<IProps> = ({ sales }) => {
   const [listView, setListView] = useState<boolean>(false);
 
   return (
@@ -26,51 +30,25 @@ const SalesHistory: React.FC = () => {
         <CardSale>
           {listView ? (
             <>
-              <Col sm={5}>
-                <span>4178771</span>
-              </Col>
-              <Col sm={5}>R$ 67,50</Col>
-              <Col sm={5}>2</Col>
-              <Col sm={4}>08:36:10</Col>
-              <Col sm={5}>Loja</Col>
+              {sales.map((sale, index) => (
+                <React.Fragment key={index}>
+                  <Col sm={5}>
+                    <span>{index + 1}</span>
+                  </Col>
+                  <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
+                  <Col sm={5}>{sale.quantity}</Col>
+                  <Col sm={4}>{sale.created_at}</Col>
+                  <Col sm={5}>{sale.type}</Col>
+                </React.Fragment>
+              ))}
             </>
           ) : (
             <Col sm={24}>
-              Horário:<span>08:36:10</span>
-            </Col>
-          )}
-        </CardSale>
-        <CardSale>
-          {listView ? (
-            <>
-              <Col sm={5}>
-                <span>4178771</span>
-              </Col>
-              <Col sm={5}>R$ 67,50</Col>
-              <Col sm={5}>2</Col>
-              <Col sm={4}>08:36:10</Col>
-              <Col sm={5}>Loja</Col>
-            </>
-          ) : (
-            <Col sm={24}>
-              Horário:<span>08:36:10</span>
-            </Col>
-          )}
-        </CardSale>
-        <CardSale>
-          {listView ? (
-            <>
-              <Col sm={5}>
-                <span>4178771</span>
-              </Col>
-              <Col sm={5}>R$ 67,50</Col>
-              <Col sm={5}>2</Col>
-              <Col sm={4}>08:36:10</Col>
-              <Col sm={5}>Loja</Col>
-            </>
-          ) : (
-            <Col sm={24}>
-              Horário:<span>08:36:10</span>
+              {sales.map((sale, index) => (
+                <React.Fragment key={index}>
+                  Horário:<span>{sale.created_at.split(" ")[1]}</span>
+                </React.Fragment>
+              ))}
             </Col>
           )}
         </CardSale>

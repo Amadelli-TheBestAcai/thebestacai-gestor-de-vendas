@@ -108,8 +108,8 @@ export type Entity = {
 
 class Sale extends BaseRepository<Entity> {
   private notIntegratedQueueRepository: IBaseRepository<Entity>;
-  private integrateQueueRepository: IBaseRepository<Entity>;
-  private stepSaleRepository: IBaseRepository<Entity>;
+  public integrateQueueRepository: IBaseRepository<Entity>;
+  public stepSaleRepository: IBaseRepository<Entity>;
   constructor(storageName = "Sale") {
     super(storageName);
     this.notIntegratedQueueRepository = new BaseRepository<Entity>(
