@@ -1,14 +1,9 @@
-import React from 'react'
+import React from "react";
 
-import { Container, Icon, Description } from './styles'
+import { Container } from "./styles";
 
 const CashNotFound: React.FC = () => {
-  return (
-    <Container>
-      <Icon />
-      <Description>Nenhum caixa aberto</Description>
-    </Container>
-  )
-}
+  return <Container></Container>;
+};
 
-export default CashNotFound
+export default CashNotFound;

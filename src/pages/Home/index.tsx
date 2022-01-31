@@ -138,7 +138,7 @@ const Home: React.FC = () => {
           <Spinner />
         ) : (
           <>
-            {!storeCash?.is_opened ? (
+            {storeCash?.is_opened ? (
               <>
                 <LeftSide>
                   <BalanceContainer>

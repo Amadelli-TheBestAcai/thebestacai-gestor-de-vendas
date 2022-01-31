@@ -1,6 +1,4 @@
-import styled from 'styled-components'
-
-import { CashRegister } from '../../styles/Icons'
+import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
@@ -9,14 +7,5 @@ export const Container = styled.div`
   align-items: center;
   flex-grow: 1;
   width: 100%;
-`
-
-export const Description = styled.label`
-  font-size: 22px;
-  margin-top: 10px;
-`
-
-export const Icon = styled(CashRegister)`
-  width: 45px;
-  height: 45px;
-`
+  background: pink;
+`;

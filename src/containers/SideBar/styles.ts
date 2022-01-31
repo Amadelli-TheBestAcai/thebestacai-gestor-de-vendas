@@ -11,6 +11,7 @@ import {
   Coins,
   Scroll,
   ChartBar,
+  Settings,
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -20,11 +21,6 @@ export const Container = styled.div`
   height: 100%;
   width: 100%;
   background: var(--black-opaco);
-
-  
-  }
-
-  
 `;
 
 export const LogoContainer = styled.div`
@@ -74,10 +70,6 @@ export const HomeIcon = styled(Home)`
   ${IconCSS}
 `;
 
-export const Listicon = styled(ListAlt)`
-  ${IconCSS}
-`;
-
 export const CashRegisterIcon = styled(CashRegister)`
   ${IconCSS}
 `;
@@ -94,10 +86,6 @@ export const BoxIcon = styled(Box)`
   ${IconCSS}
 `;
 
-export const Graph = styled(BarChart)`
-  ${IconCSS}
-`;
-
 export const CoinsIcon = styled(Coins)`
   ${IconCSS}
 `;
@@ -107,5 +95,9 @@ export const ScrollIcon = styled(Scroll)`
 `;
 
 export const ChartIcon = styled(ChartBar)`
+  ${IconCSS}
+`;
+
+export const SettingsIcon = styled(Settings)`
   ${IconCSS}
 `;
