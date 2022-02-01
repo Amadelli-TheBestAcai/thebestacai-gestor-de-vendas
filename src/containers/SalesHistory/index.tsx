@@ -27,31 +27,31 @@ const SalesHistory: React.FC<IProps> = ({ sales }) => {
         </ActionTypeList>
       </header>
       <ListContainer listView={listView}>
-        <CardSale>
-          {listView ? (
-            <>
-              {sales.map((sale, index) => (
-                <React.Fragment key={index}>
-                  <Col sm={5}>
-                    <span>{index + 1}</span>
-                  </Col>
-                  <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
-                  <Col sm={5}>{sale.quantity}</Col>
-                  <Col sm={4}>{sale.created_at}</Col>
-                  <Col sm={5}>{sale.type}</Col>
-                </React.Fragment>
-              ))}
-            </>
-          ) : (
-            <Col sm={24}>
-              {sales.map((sale, index) => (
-                <React.Fragment key={index}>
+        {listView ? (
+          <>
+            {sales.map((sale, index) => (
+              <CardSale key={index}>
+                <Col sm={5}>
+                  <span>{index + 1}</span>
+                </Col>
+                <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
+                <Col sm={5}>{sale.quantity}</Col>
+                <Col sm={4}>{sale.created_at}</Col>
+                <Col sm={5}>{sale.type}</Col>
+              </CardSale>
+            ))}
+          </>
+        ) : (
+          <>
+            {sales.map((sale, index) => (
+              <CardSale key={index}>
+                <Col sm={24}>
                   Horário:<span>{sale.created_at.split(" ")[1]}</span>
-                </React.Fragment>
-              ))}
-            </Col>
-          )}
-        </CardSale>
+                </Col>
+              </CardSale>
+            ))}
+          </>
+        )}
       </ListContainer>
     </Container>
   );

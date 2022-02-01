@@ -150,11 +150,13 @@ const StoreCash: React.FC = () => {
                 )}
               </ContentStatusCash>
 
-              <CloseCashContatiner>
-                <CloseButton onClick={() => setAmountModal(true)}>
-                  Fechar Caixa
-                </CloseButton>
-              </CloseCashContatiner>
+              {storeCash?.is_opened && (
+                <CloseCashContatiner>
+                  <CloseButton onClick={() => setAmountModal(true)}>
+                    Fechar Caixa
+                  </CloseButton>
+                </CloseCashContatiner>
+              )}
             </CashStatusContainer>
           </>
         )}
