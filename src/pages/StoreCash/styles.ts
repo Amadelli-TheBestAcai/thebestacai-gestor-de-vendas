@@ -5,6 +5,9 @@ import vectorChart from "../../assets/svg/vectorChart.svg";
 interface ICardStatus {
   id_card: number;
 }
+interface IStatusCash {
+  is_opened: boolean;
+}
 
 export const Container = styled.div`
   display: flex;
@@ -97,15 +100,26 @@ export const Left = styled.label`
   border-radius: 5px 0px 0px 5px;
 `;
 
-export const Right = styled.label`
+export const Right = styled.label<IStatusCash>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 50%;
   height: 100%;
-  border: 1px solid #1c1e23;
+  border: 1px solid var(--black-opaco);
   border-radius: 0px 5px 5px 0px;
-  color: red;
+
+  ${({ is_opened }) => {
+    if (is_opened) {
+      return css`
+        color: var(--green-400);
+      `;
+    } else {
+      return css`
+        color: var(--red-600);
+      `;
+    }
+  }}
 `;
 
 export const ContentStatusCash = styled.div`

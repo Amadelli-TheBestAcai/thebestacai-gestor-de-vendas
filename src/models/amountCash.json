@@ -58,10 +58,5 @@
     "label": "0,05",
     "value": 0.05,
     "key": "fiveCents"
-  },
-  {
-    "label": "0,01",
-    "value": 0.01,
-    "key": "oneCents"
   }
 ]
