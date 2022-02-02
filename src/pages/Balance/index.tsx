@@ -4,7 +4,7 @@ import { PieChart } from "react-minimal-pie-chart";
 import DisconectedForm from "../../containers/DisconectedForm";
 
 import Spinner from "../../components/Spinner";
-import pixImg from "../../assets/svg/pixIcon.svg";
+// import pixImg from "../../assets/svg/pixIcon.svg";
 
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { Balance as BalanceModel } from "../../models/balance";
@@ -31,12 +31,14 @@ import {
   OnlineIcon,
   PixIcon,
   LegendDescription,
+  TicketIcon,
 } from "./styles";
 
 const Balance: React.FC = () => {
   const [isConected, setIsConected] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [balance, setBalance] = useState<BalanceModel | null>(null);
+  const [currentTab, setCurrentTab] = useState("delivery");
 
   useEffect(() => {
     async function init() {
@@ -111,56 +113,108 @@ const Balance: React.FC = () => {
         value: getPercent(payload[tab]?.debit, payload[tab]?.total),
         color: "var(--blue-500)",
       },
-
       {
         id: "Pix",
         value: getPercent(payload[tab]?.pix, payload[tab]?.total),
         color: "var(--orange-700)",
       },
       {
-        id: "Online",
+        id: tab === "store" ? "Ticket" : "Online",
         value: getPercent(
           tab === "store" ? payload[tab]?.ticket : payload[tab]?.online,
           payload[tab].total
         ),
-        color: "var(--orange-400)",
+        color: tab === "store" ? "var(--purple-450)" : "var(--orange-400)",
       },
     ];
   };
 
-  const createAmountTypePayments = (tab: string, payload?: BalanceModel) => {
-    return [
-      {
-        id: 1,
-        icon: <MoneyIcon />,
-        type: "DINHEIRO",
-        value: payload[tab].money,
-      },
-      {
-        id: 2,
-        icon: <CreditIcon />,
-        type: "CRÉDITO",
-        value: payload[tab]?.credit,
-      },
-      {
-        id: 3,
-        icon: <DebitIcon />,
-        type: "DÉBITO",
-        value: payload[tab]?.debit,
-      },
-      {
-        id: 4,
-        icon: <PixIcon src={pixImg} />,
-        type: "PIX",
-        value: payload[tab]?.pix,
-      },
-      {
+  const createAmountTypePayments = (tab: string, payload: BalanceModel) => {
+    const response = [];
+
+    if (tab === "store" || tab === "delivery") {
+      response.push(
+        {
+          id: 1,
+          icon: <MoneyIcon />,
+          type: "DINHEIRO",
+          value: payload[tab].money,
+        },
+        {
+          id: 2,
+          icon: <CreditIcon />,
+          type: "CRÉDITO",
+          value: payload[tab].credit,
+        },
+        {
+          id: 3,
+          icon: <DebitIcon />,
+          type: "DÉBITO",
+          value: payload[tab].debit,
+        },
+        {
+          id: 4,
+          // icon: <PixIcon src={pixImg} />,
+          type: "PIX",
+          value: payload[tab].pix,
+        }
+      );
+    }
+
+    if (tab === "store") {
+      response.push({
         id: 5,
+        icon: <TicketIcon />,
+        type: "TICKET",
+        value: payload[tab].ticket,
+      });
+    }
+
+    if (tab === "delivery") {
+      response.push({
+        id: 6,
         icon: <OnlineIcon />,
         type: "ONLINE",
-        value: payload[tab]?.online,
-      },
-    ];
+        value: payload[tab].online,
+      });
+    }
+
+    if (tab === "billing") {
+      response.push(
+        {
+          id: 7,
+          icon: <OnlineIcon />,
+          type: "VENDAS",
+          value: payload[tab].sales,
+        },
+        {
+          id: 8,
+          icon: <OnlineIcon />,
+          type: "VENDAS DELIVERY",
+          value: payload[tab].delivery_sales,
+        },
+        {
+          id: 9,
+          icon: <OnlineIcon />,
+          type: "VENDAS LOJA",
+          value: payload[tab].store_sales,
+        },
+        {
+          id: 10,
+          icon: <OnlineIcon />,
+          type: "TICKET MÉDIO DELIVERY",
+          value: payload[tab].delivery_ticket,
+        },
+        {
+          id: 11,
+          icon: <OnlineIcon />,
+          type: "TICKET MÉDIO LOJA",
+          value: payload[tab].store_ticket,
+        }
+      );
+    }
+
+    return response;
   };
 
   const legendGraph = [
@@ -175,6 +229,10 @@ const Balance: React.FC = () => {
     {
       label: "Débito",
       color: "var(--blue-500)",
+    },
+    {
+      label: "Ticket",
+      color: "var(--purple-450)",
     },
     {
       label: "Pix",
@@ -197,7 +255,10 @@ const Balance: React.FC = () => {
           </Header>
 
           <TabContainer>
-            <Tabs defaultActiveKey="1">
+            <Tabs
+              defaultActiveKey="1"
+              onChange={(id_tab) => setCurrentTab(id_tab)}
+            >
               {createTabPanes(balance).map((_tab) => (
                 <TabPane tab={_tab.label} key={_tab.id}>
                   <Content>

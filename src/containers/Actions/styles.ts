@@ -19,7 +19,7 @@ const ButtonCSS = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 9.8rem;
+  width: 11rem;
   height: 4.4rem;
   border: 1px solid var(--gray-50);
   box-sizing: border-box;

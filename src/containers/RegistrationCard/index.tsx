@@ -1,8 +1,11 @@
 import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
-
-import { message } from "antd";
+import { useSale } from "../../hooks/useSale";
 import { SaleDto } from "../../models/dtos/sale";
+
 import Spinner from "../../components/Spinner";
+
+import { message, notification } from "antd";
+
 import {
   Container,
   AddContainer,
@@ -15,7 +18,6 @@ import {
   Card,
   RestoreIcon,
 } from "./styles";
-import { useSale } from "../../hooks/useSale";
 interface IProps {
   modalState: boolean;
   setModalState: Dispatch<SetStateAction<boolean>>;
@@ -40,12 +42,20 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
   }, [modalState]);
 
   const handleSubmit = async () => {
-    if (!name) {
-      return message.warning("Preencha o campo");
+    if (name.length < 3) {
+      return notification.warning({
+        message: "Oops! Nome inválido",
+        description: `Informe um nome válido para salvar a comanda.`,
+        duration: 5,
+      });
     }
 
     if (!sale.quantity) {
-      return message.warning("A venda atual não possui nenhum produto");
+      return notification.warning({
+        message: "O carrinho está vazio",
+        description: `Não é possível salvar esta comanda, pois, não existe nenhum item selecionado para venda.`,
+        duration: 5,
+      });
     }
     setLoading(true);
     await onAddToQueue(name);
@@ -59,6 +69,12 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
     setSale(_updatedSale);
     setLoading(false);
     setModalState(false);
+    return notification.success({
+      message: "Comanda restaurada com sucesso!",
+      description:
+        "Todos os itens retornaram para o carrinho. Conclua a venda!",
+      duration: 5,
+    });
   };
 
   return (

@@ -131,7 +131,9 @@ const StoreCash: React.FC = () => {
                 <StatusCash>
                   <Status>
                     <Left>Caixa</Left>
-                    <Right>{storeCash?.is_opened ? "Aberto" : "Fechado"}</Right>
+                    <Right is_opened={storeCash?.is_opened}>
+                      {storeCash?.is_opened ? "Aberto" : "Fechado"}
+                    </Right>
                   </Status>
                   <span>{storeCash?.created_at}</span>
                 </StatusCash>
@@ -148,11 +150,13 @@ const StoreCash: React.FC = () => {
                 )}
               </ContentStatusCash>
 
-              <CloseCashContatiner>
-                <CloseButton onClick={() => setAmountModal(true)}>
-                  Fechar Caixa
-                </CloseButton>
-              </CloseCashContatiner>
+              {storeCash?.is_opened && (
+                <CloseCashContatiner>
+                  <CloseButton onClick={() => setAmountModal(true)}>
+                    Fechar Caixa
+                  </CloseButton>
+                </CloseCashContatiner>
+              )}
             </CashStatusContainer>
           </>
         )}

@@ -11,16 +11,15 @@ import {
   Content,
   Logo,
   HomeIcon,
-  Listicon,
   CashRegisterIcon,
   RetweetIcon,
   BoxIcon,
-  Graph,
   CoinsIcon,
   DeliveryIcon,
   ScrollIcon,
   CardIcon,
   ChartIcon,
+  SettingsIcon,
 } from "./styles";
 
 type IProps = RouteComponentProps;
@@ -77,12 +76,17 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
       label: "Vendas",
       router: "/sale",
     },
-
     {
       id: 8,
       icon: <ScrollIcon />,
       label: "NFC-e",
-      router: "nfce",
+      router: "/nfce",
+    },
+    {
+      id: 9,
+      icon: <SettingsIcon />,
+      label: "Configuração",
+      router: "/settings",
     },
   ];
 

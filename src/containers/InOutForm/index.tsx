@@ -6,7 +6,7 @@ import { ReasonOutValue } from "../../models/enums/reasonSangria";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import { message, Form } from "antd";
+import { message, Form, notification } from "antd";
 
 import {
   Container,
@@ -130,7 +130,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     if (!value && !shopOrder.total) {
       return message.warning("Informe um valor");
     } else if (!reasson && !reasontype) {
-      return message.warning("Informe a razão");
+      return notification.warning({
+        message: "O motivo não foi informado",
+        description: `Selecione um motivo para a movimentação.`,
+        duration: 5,
+      });
     }
     const payload = {
       handler: {
@@ -165,7 +169,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
   };
 
   const handleClose = (): void => {
-    //document.getElementById("mainContainer").focus();
+    document.getElementById("mainContainer").focus();
     setModalState(false);
     setValue(null);
     setReasson(null);

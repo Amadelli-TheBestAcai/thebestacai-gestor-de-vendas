@@ -1,7 +1,7 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createContext } from "use-context-selector";
 
-import { message, notification } from "antd";
+import { notification } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
 import { StoreCashDto } from "../models/dtos/storeCash";
@@ -124,6 +124,11 @@ export function SaleProvider({ children }) {
   const onAddToQueue = async (name: string): Promise<void> => {
     const _newSale = await window.Main.sale.createStepSale(name);
     setSale(_newSale);
+    notification.success({
+      message: "Comanda salva com sucesso!",
+      description: `Para que a venda retorne ao carrinho, clique na ação de restaurar a comanda[🔁] do modal anterior.`,
+      duration: 8,
+    });
   };
 
   const removePayment = async (id: string): Promise<void> => {
@@ -133,8 +138,11 @@ export function SaleProvider({ children }) {
 
   const onAddDiscount = async (value: number): Promise<void> => {
     if (value > sale.total_sold) {
-      message.warning("Desconto maior que o valor da venda.");
-      return;
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `O valor informado é maior que o valor total da venda.`,
+        duration: 5,
+      });
     }
   };
 

@@ -93,7 +93,10 @@ const AmountModal: React.FC<IProp> = ({
       width={800}
       onCancel={() => setVisible(false)}
       footer={
-        <span>Valor Total de Abertura: R$ {currencyFormater(total)}</span>
+        <span>
+          Valor Total de {storeCash?.is_opened ? "Fechamento" : "Abertura"}: R${" "}
+          {currencyFormater(total)}
+        </span>
       }
     >
       <Row>
@@ -115,7 +118,7 @@ const AmountModal: React.FC<IProp> = ({
 
       <Row>
         <ButtonRegister onClick={onFinish} isOpened={storeCash?.is_opened}>
-          {storeCash?.is_opened ? "FECHAR CAIXA" : "ABRIR CAIXA"}
+          {storeCash?.is_opened ? "REGISTRAR" : "ABRIR CAIXA"}
         </ButtonRegister>
       </Row>
     </Container>
