@@ -16,7 +16,8 @@ import { currencyFormater } from "../../helpers/currencyFormater";
 import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
 
-import { Modal, message as messageAnt } from "antd";
+import { Modal, notification } from "antd";
+
 import {
   Container,
   PageContent,
@@ -136,18 +137,29 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
   const handleCreateSale = async () => {
     if (!sale.payments.length) {
-      messageAnt.warning("Nenhum pagamento adicionado");
+      notification.warning({
+        message: "Oops! Nenhum valor informado",
+        description: `Selecione o tipo de pagamento com o valor da venda.`,
+        duration: 5,
+      });
       return;
     }
+
     if (!sale.name) {
-      messageAnt.warning("Informe o nome do cliente");
+      notification.warning({
+        message: "Nome não informado",
+        description: "Informe o nome do cliente referente à venda atual.",
+        duration: 5,
+      });
       return;
     }
+
     Modal.confirm({
       content: "Tem certeza que gostaria de prosseguir?",
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
+      centered: true,
       async onOk() {
         const payload = sale;
         payload.quantity = 1;
@@ -157,7 +169,12 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         setSale(newSale);
         const _newDeliveries = await window.Main.sale.getAllDelivery();
         setDeliveries(_newDeliveries);
-        messageAnt.success("Venda salva com sucesso");
+        notification.success({
+          message: "Venda salva com sucesso!",
+          description: `A venda de [${payload.name}] foi salva com sucesso. 
+                        Não esqueça de confirmar a venda em andamento, após ser finalizada.`,
+          duration: 5,
+        });
       },
     });
   };
@@ -168,12 +185,17 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
+      centered: true,
       async onOk() {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
         await window.Main.sale.finishSale(payload, true);
         const _newDeliveries = await window.Main.sale.getAllDelivery();
         setDeliveries(_newDeliveries);
-        messageAnt.success("Venda salva com sucesso");
+        notification.success({
+          message: "Venda confirmada!",
+          description: `A venda selecionada foi finalizada, e não será mais exibida na lista de delivery em andamento.`,
+          duration: 5,
+        });
       },
     });
   };
@@ -328,6 +350,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                           0
                         )
                       )}
+                      <span>Valor do Delivery</span>
                     </InputValue>
                     <PaymentsContainer>
                       <Payments

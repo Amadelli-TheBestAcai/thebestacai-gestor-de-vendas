@@ -5,7 +5,7 @@ import { SaleDto } from "../../models/dtos/sale";
 
 import Payment from "../../components/Payment";
 
-// import PixLogo from "../../assets/svg/pix.svg";
+import PixLogo from "../../assets/svg/pix.svg";
 
 import {
   Container,
@@ -37,6 +37,8 @@ interface IProps {
   setModalState: Dispatch<SetStateAction<boolean>>;
   modalState: boolean;
   modalTitle: string;
+  shouldViewValues?: boolean;
+  shouldDisableButtons?: boolean;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -48,6 +50,8 @@ const PaymentsContainer: React.FC<IProps> = ({
   handleOpenPayment,
   setCurrentPayment,
   modalTitle,
+  shouldViewValues,
+  shouldDisableButtons,
 }) => {
   const onModalCancel = (): void => {
     setModalState(false);
@@ -83,7 +87,7 @@ const PaymentsContainer: React.FC<IProps> = ({
       action: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     },
     {
-      // icon: <PixIcon src={PixLogo} />,
+      icon: <PixIcon src={PixLogo} />,
       label: "Pix [P]",
       background: "var(--teal-400)",
       action: () => handleOpenPayment(PaymentType.PIX, "Pix"),
@@ -110,6 +114,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             key={index}
             style={{ background: buttonStyle.background }}
             onClick={buttonStyle.action}
+            disabled={shouldDisableButtons && !sale.items.length}
           >
             {buttonStyle.icon} {buttonStyle.label}
           </Button>
@@ -131,32 +136,35 @@ const PaymentsContainer: React.FC<IProps> = ({
         ))}
       </PaymentsInfoContainer>
 
-      <ValuesContainer>
-        <ValueInfo>
-          R$ Troco <br />{" "}
-          <strong style={{ color: "var(--red-600" }}>
-            {getChangeAmount(sale.total_sold, sale.total_paid)}
-          </strong>
-        </ValueInfo>
-        <ValueInfo>
-          R$ Desconto <br />{" "}
-          <strong style={{ color: "var(--green-600" }}>
-            {sale.discount.toFixed(2).replace(".", ",")}
-          </strong>
-        </ValueInfo>
-        <ValueInfo>
-          R$ Valor Pago <br />{" "}
-          <strong style={{ color: "var(--green-600" }}>
-            {sale.total_paid.toFixed(2).replace(".", ",")}
-          </strong>
-        </ValueInfo>
-        <ValueInfo>
-          Quantidade Itens <br />{" "}
-          <strong style={{ color: "var(--grey-80" }}>
-            {sale.quantity || 0}
-          </strong>
-        </ValueInfo>
-      </ValuesContainer>
+      {shouldViewValues && (
+        <ValuesContainer>
+          <ValueInfo>
+            R$ Troco <br />{" "}
+            <strong style={{ color: "var(--red-600" }}>
+              {getChangeAmount(sale.total_sold, sale.total_paid)}
+            </strong>
+          </ValueInfo>
+          <ValueInfo>
+            R$ Desconto <br />{" "}
+            <strong style={{ color: "var(--green-600" }}>
+              {sale.discount.toFixed(2).replace(".", ",")}
+            </strong>
+          </ValueInfo>
+          <ValueInfo>
+            R$ Valor Pago <br />{" "}
+            <strong style={{ color: "var(--green-600" }}>
+              {sale.total_paid.toFixed(2).replace(".", ",")}
+            </strong>
+          </ValueInfo>
+          <ValueInfo>
+            Quantidade Itens <br />{" "}
+            <strong style={{ color: "var(--grey-80" }}>
+              {sale.quantity || 0}
+            </strong>
+          </ValueInfo>
+        </ValuesContainer>
+      )}
+
       <Modal
         title={`Pagamento em ${modalTitle}`}
         visible={modalState}

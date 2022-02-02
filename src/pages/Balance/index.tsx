@@ -4,7 +4,7 @@ import { PieChart } from "react-minimal-pie-chart";
 import DisconectedForm from "../../containers/DisconectedForm";
 
 import Spinner from "../../components/Spinner";
-// import pixImg from "../../assets/svg/pixIcon.svg";
+import pixImg from "../../assets/svg/pixIcon.svg";
 
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { Balance as BalanceModel } from "../../models/balance";
@@ -154,7 +154,7 @@ const Balance: React.FC = () => {
         },
         {
           id: 4,
-          // icon: <PixIcon src={pixImg} />,
+          icon: <PixIcon src={pixImg} />,
           type: "PIX",
           value: payload[tab].pix,
         }

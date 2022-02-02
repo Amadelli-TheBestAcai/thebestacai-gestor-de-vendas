@@ -174,6 +174,8 @@ const Home: React.FC = () => {
                           modalTitle={paymentModalTitle}
                           setModalState={setPaymentModal}
                           handleOpenPayment={handleOpenPayment}
+                          shouldViewValues={true}
+                          shouldDisableButtons={true}
                         />
                       </PaymentsContent>
 

@@ -188,13 +188,26 @@ export const Select = styled(SelectAnt)`
 export const Option = styled(SelectAnt.Option)``;
 
 export const InputValue = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 3%;
   width: 100%;
   height: 15%;
-  border: 1px solid #bebebe !important;
+  border: 1px solid var(--grey-70) !important;
   background: white !important;
   font-size: 2.5rem;
   text-align: end;
   font-weight: 500;
+
+  span {
+    position: absolute;
+    font-size: 0.9rem;
+    color: var(--grey-80);
+    top: 2%;
+    left: 2%;
+  }
 `;
 
 export const PaymentsContainer = styled.div`
@@ -208,7 +221,6 @@ export const ButtonsContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 22%;
-  margin-top: 2rem;
 `;
 
 const ButtonCSS = css`

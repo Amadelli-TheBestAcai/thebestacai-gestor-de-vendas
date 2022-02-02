@@ -14,7 +14,7 @@ export const CardOrder = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 195px;
+  height: 12rem;
   background: var(--white);
   border: 1px solid var(--grey-70);
 `;
@@ -30,6 +30,27 @@ export const HeaderCard = styled.div`
   font-size: 1rem;
   color: var(--grey-100);
   padding: 0 1rem;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+  width: 100%;
+  height: 80%;
+
+  label {
+    text-transform: uppercase;
+    font-weight: normal;
+    font-size: 1rem;
+    color: var(--grey-100);
+  }
+
+  span {
+    color: var(--green-400);
+    margin-top: 1rem;
+  }
 `;
 
 const IconCSS = css`

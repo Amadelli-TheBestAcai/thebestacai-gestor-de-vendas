@@ -1,8 +1,15 @@
 import React from "react";
-
-import { Container, CardOrder, HeaderCard, CheckboxIcon } from "./styles";
-
+import { currencyFormater } from "../../helpers/currencyFormater";
 import { SaleDto } from "../../models/dtos/sale";
+
+import {
+  Container,
+  CardOrder,
+  HeaderCard,
+  CheckboxIcon,
+  Content,
+} from "./styles";
+
 interface IProps {
   deliveries: SaleDto[];
   finishSale: (id: string) => Promise<void>;
@@ -16,7 +23,18 @@ const OrderProgressList: React.FC<IProps> = ({ deliveries, finishSale }) => {
             <span>{_delivery.created_at.split(" ")[1]}</span>
             <CheckboxIcon />
           </HeaderCard>
-          {_delivery.name}
+          <Content>
+            <label> {_delivery.name}</label>
+            <span>
+              R${" "}
+              {currencyFormater(
+                _delivery.payments.reduce(
+                  (total, _payment) => +_payment.amount + total,
+                  0
+                )
+              )}
+            </span>
+          </Content>
         </CardOrder>
       ))}
     </Container>
