@@ -100,6 +100,7 @@ export const TabPaneContainer = styled.div<ITabPaneContainer>`
   background: var(--white-30);
   border: 1px solid var(--grey-60);
   color: var(--grey-90);
+  transition: 0.2s;
 
   label {
     position: absolute;
@@ -108,12 +109,19 @@ export const TabPaneContainer = styled.div<ITabPaneContainer>`
     width: 32px;
     height: 32px;
     padding: 0;
-    ${({ isSelected }) =>
-      isSelected &&
-      css`
-        color: orange;
-      `}
   }
+
+  ${({ isSelected }) =>
+    isSelected &&
+    css`
+      color: var(--orange-250);
+      border: 1px solid var(--orange-250);
+      border-top: 5px solid var(--orange-250);
+
+      svg {
+        color: var(--orange-250);
+      }
+    `}
 `;
 
 export const LabelCardTab = styled.div`
@@ -127,7 +135,7 @@ export const LabelCardTab = styled.div`
 
   span {
     font-size: 1.4rem;
-    font-weight: normal;
+    font-weight: 500;
   }
 `;
 
@@ -238,7 +246,7 @@ export const OrdersListContainer = styled.div`
 const IconCSS = css`
   width: 1.5rem;
   height: 1.5rem;
-  margin-right: 5px;
+  margin-right: 0.6rem;
   color: var(--grey-90);
 `;
 
