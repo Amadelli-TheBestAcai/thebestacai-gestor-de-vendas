@@ -37,7 +37,7 @@ import {
 const Balance: React.FC = () => {
   const [isConected, setIsConected] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [balance, setBalance] = useState<BalanceModel>();
+  const [balance, setBalance] = useState<BalanceModel | null>(null);
   const [currentTab, setCurrentTab] = useState("delivery");
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const Balance: React.FC = () => {
     init();
   }, []);
 
-  const createTabPanes = (payload: BalanceModel) => {
+  const createTabPanes = (payload?: BalanceModel) => {
     return [
       {
         id: "delivery",
@@ -59,7 +59,7 @@ const Balance: React.FC = () => {
           <TabPaneContainer tab_id={1}>
             <LabelCardTab>
               <p>Delivery</p>
-              <span>R$ {currencyFormater(+payload.delivery.total)}</span>
+              <span>R$ {currencyFormater(+payload?.delivery?.total)}</span>
             </LabelCardTab>
           </TabPaneContainer>
         ),
@@ -70,7 +70,7 @@ const Balance: React.FC = () => {
           <TabPaneContainer tab_id={2}>
             <LabelCardTab>
               <p>Loja</p>
-              <span>R$ {currencyFormater(+payload.store.total)}</span>
+              <span>R$ {currencyFormater(+payload?.store?.total)}</span>
             </LabelCardTab>
           </TabPaneContainer>
         ),
@@ -81,7 +81,7 @@ const Balance: React.FC = () => {
           <TabPaneContainer tab_id={3}>
             <LabelCardTab>
               <p>Faturamento</p>
-              <span>R$ {currencyFormater(+payload.billing.total)}</span>
+              <span>R$ {currencyFormater(+payload?.billing?.total)}</span>
             </LabelCardTab>
           </TabPaneContainer>
         ),
@@ -96,32 +96,32 @@ const Balance: React.FC = () => {
     return +((+number * 100) / total).toFixed(2);
   };
 
-  const createPaymentsPie = (tab: string, payload: BalanceModel) => {
+  const createPaymentsPie = (tab: string, payload?: BalanceModel) => {
     return [
       {
         id: "Dinheiro",
-        value: getPercent(payload[tab].money, payload[tab].total),
+        value: getPercent(payload[tab]?.money, payload[tab]?.total),
         color: "var(--blue-700)",
       },
       {
         id: "Crédito",
-        value: getPercent(payload[tab].credit, payload[tab].total),
+        value: getPercent(payload[tab]?.credit, payload[tab]?.total),
         color: "var(--blue-350)",
       },
       {
         id: "Débito",
-        value: getPercent(payload[tab].debit, payload[tab].total),
+        value: getPercent(payload[tab]?.debit, payload[tab]?.total),
         color: "var(--blue-500)",
       },
       {
         id: "Pix",
-        value: getPercent(payload[tab].pix, payload[tab].total),
+        value: getPercent(payload[tab]?.pix, payload[tab]?.total),
         color: "var(--orange-700)",
       },
       {
         id: tab === "store" ? "Ticket" : "Online",
         value: getPercent(
-          tab === "store" ? payload[tab].ticket : payload[tab].online,
+          tab === "store" ? payload[tab]?.ticket : payload[tab]?.online,
           payload[tab].total
         ),
         color: tab === "store" ? "var(--purple-450)" : "var(--orange-400)",

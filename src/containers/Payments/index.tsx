@@ -110,7 +110,6 @@ const PaymentsContainer: React.FC<IProps> = ({
             key={index}
             style={{ background: buttonStyle.background }}
             onClick={buttonStyle.action}
-            disabled={!sale.items.length}
           >
             {buttonStyle.icon} {buttonStyle.label}
           </Button>
@@ -123,9 +122,9 @@ const PaymentsContainer: React.FC<IProps> = ({
           <Column sm={8}>Valor</Column>
           <Column sm={8}>Ação</Column>
         </Header>
-        {sale.payments?.map((payment, index) => (
+        {sale.payments?.map((payment) => (
           <Payment
-            key={index}
+            key={payment.id}
             payment={payment}
             removePayment={removePayment}
           />

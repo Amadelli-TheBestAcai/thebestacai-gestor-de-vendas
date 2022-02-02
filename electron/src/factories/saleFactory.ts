@@ -15,7 +15,8 @@ export const saleFactory = {
   },
   getSaleFromApi: async (withClosedCash = false) =>
     await saleModel.getSaleFromApi(withClosedCash),
-  finishSale: async () => await saleModel.finishSale(),
+  finishSale: async (payload: Entity, fromDelivery?: boolean) =>
+    await saleModel.finishSale(payload, fromDelivery),
   update: async (id: string | number, payload: Entity) =>
     await saleModel.update(id, payload),
   addPayment: async (amount: number, type: number) =>
@@ -29,4 +30,9 @@ export const saleFactory = {
   getAllStepSales: async () => await saleModel.getAllStepSales(),
   recouverStepSales: async (id: string): Promise<Entity> =>
     await saleModel.recouverStepSales(id),
+  buildNewSale: async (withPersistence = true): Promise<Entity> =>
+    await saleModel.buildNewSale(withPersistence),
+  getAllDelivery: async () => await saleModel.deliverySaleRepository.getAll(),
+  createDelivery: async (payload: Entity) =>
+    await saleModel.deliverySaleRepository.create(payload),
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import { SaleDto } from "../../models/dtos/sale";
 import { currencyFormater } from "../../helpers/currencyFormater";
 import {
@@ -13,8 +13,9 @@ import {
 
 interface IProps {
   sales: SaleDto[];
+  setSelectedSale: Dispatch<SetStateAction<SaleDto | null>>;
 }
-const SalesHistory: React.FC<IProps> = ({ sales }) => {
+const SalesHistory: React.FC<IProps> = ({ sales, setSelectedSale }) => {
   const [listView, setListView] = useState<boolean>(false);
 
   return (
@@ -30,7 +31,7 @@ const SalesHistory: React.FC<IProps> = ({ sales }) => {
         {listView ? (
           <>
             {sales.map((sale, index) => (
-              <CardSale key={index}>
+              <CardSale key={index} onClick={() => setSelectedSale(sale)}>
                 <Col sm={5}>
                   <span>{index + 1}</span>
                 </Col>
@@ -44,7 +45,7 @@ const SalesHistory: React.FC<IProps> = ({ sales }) => {
         ) : (
           <>
             {sales.map((sale, index) => (
-              <CardSale key={index}>
+              <CardSale key={index} onClick={() => setSelectedSale(sale)}>
                 <Col sm={24}>
                   Horário:<span>{sale.created_at.split(" ")[1]}</span>
                 </Col>
