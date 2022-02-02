@@ -1,0 +1,20 @@
+export type ProductNfeDTO = {
+  id: string;
+  idItem?: number;
+  codigo: number | string;
+  descricao?: string;
+  ncm?: string;
+  cfop?: number;
+  unidadeComercial?: string;
+  quantidadeComercial: number;
+  valorUnitarioComercial?: number;
+  unidadeTributaria?: string;
+  quantidadeTributavel?: number;
+  valorUnitarioTributario?: number;
+  origem?: number;
+  informacoesAdicionais?: string;
+  PISCOFINSST?: boolean;
+  csosn?: number;
+  cEAN?: string;
+  cEANTrib?: string;
+};

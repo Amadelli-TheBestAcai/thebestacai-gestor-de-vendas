@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { onlyNumbers } from "../../helpers/onlyNumber";
 import { cleanObject } from "../../helpers/cleanObject";
 import { v4 } from "uuid";
 
@@ -56,7 +54,6 @@ import {
   Input,
   Select,
   Option,
-  InputMask,
   SpinContainer,
   PriceTotalNfce,
   Button,
@@ -74,7 +71,7 @@ const Nfce: React.FC = () => {
 
   useEffect(() => {
     async function init() {
-      const _productsNfce = await window.Main.product.getAllProductStore();
+      const _productsNfce = await window.Main.product.getProducts();
       if (!_productsNfce) {
         messageAnt.error("Falha ao obter produtos para NFe");
       }
@@ -104,30 +101,6 @@ const Nfce: React.FC = () => {
 
   const handleUpdateNfe = (name, value) => {
     setNfe((oldValues) => ({ ...oldValues, [name]: value }));
-  };
-
-  const handleCep = async (cep: string) => {
-    if (cep.length === 8) {
-      const {
-        data: { logradouro, bairro, localidade, uf },
-      } = await axios({
-        method: "GET",
-        url: `https://viacep.com.br/ws/${cep}/json/`,
-      });
-      setNfe((oldValues) => ({
-        ...oldValues,
-        municipioDestinatario: localidade,
-        logradouroDestinatario: logradouro,
-        bairroDestinatario: bairro,
-        UFDestinatario: uf,
-      }));
-      form.setFieldsValue({
-        municipioDestinatario: localidade,
-        logradouroDestinatario: logradouro,
-        bairroDestinatario: bairro,
-        UFDestinatario: uf,
-      });
-    }
   };
 
   const calculateTotal = (productsNfe: ProductNfe[]): string => {
@@ -229,35 +202,33 @@ const Nfce: React.FC = () => {
     setProductsNfe(updatedProducts);
   };
 
-  // const handleEmit = () => {
-  //   if (!productsNfe.length) {
-  //     messageAnt.warning("Adicione pelo menos um produto");
-  //     return;
-  //   }
-  //   const nfcePayload = {
-  //     ...cleanObject(nfe),
-  //     informacoesAdicionaisFisco:
-  //       nfe.informacoesAdicionaisFisco || "Sem informacoes adicionais",
-  //     valorPagamento: +calculateTotal(productsNfe).replace(",", "."),
-  //     produtos: productsNfe.map(({ id, ...props }, index) => ({
-  //       ...props,
-  //       idItem: index + 1,
-  //       quantidadeTributavel: props.quantidadeComercial,
-  //     })),
-  //   };
+  const handleEmit = () => {
+    if (!productsNfe.length) {
+      messageAnt.warning("Adicione pelo menos um produto");
+      return;
+    }
+    const nfcePayload = {
+      ...cleanObject(nfe),
+      informacoesAdicionaisFisco:
+        nfe.informacoesAdicionaisFisco || "Sem informacoes adicionais",
+      valorPagamento: +calculateTotal(productsNfe).replace(",", "."),
+      produtos: productsNfe.map(({ id, ...props }, index) => ({
+        ...props,
+        idItem: index + 1,
+        quantidadeTributavel: props.quantidadeComercial,
+      })),
+    };
 
-  //   console.log(JSON.stringify(nfcePayload));
-  //   setEmitingNfe(true);
-  //   ipcRenderer.send("sale:nfe", { nfce: nfcePayload });
-  //   ipcRenderer.once("sale:nfe:response", (event, { error, message }) => {
-  //     setEmitingNfe(false);
-  //     if (error) {
-  //       messageAnt.error(message || "Falha ao emitir NFCe, contate o suporte.");
-  //     } else {
-  //       messageAnt.success(message || "NFCe emitida com sucesso");
-  //     }
-  //   });
-  // };
+    console.log(JSON.stringify(nfcePayload));
+    setEmitingNfe(true);
+    const nfce = window.Main.sale.emitNfce(nfcePayload);
+    setEmitingNfe(false);
+    if (!nfce) {
+      messageAnt.error("Falha ao emitir NFCe, contate o suporte.");
+    } else {
+      messageAnt.success("NFCe emitida com sucesso");
+    }
+  };
 
   const handleUpdateProduct = (id: string, value: number) => {
     if (value <= 0) {
@@ -334,7 +305,7 @@ const Nfce: React.FC = () => {
         </HeaderContent>
         {!loading ? (
           <>
-            {!cashIsOpen ? (
+            {cashIsOpen ? (
               <>
                 <PageContent>
                   <LeftContainer>
@@ -503,15 +474,7 @@ const Nfce: React.FC = () => {
                         <Row>
                           <Col span={24}>
                             <FormItem name="totalProdutos">
-                              <Input
-                                disabled
-                                style={{
-                                  backgroundColor: "var(--white)",
-                                  border: "1px solid var(--grey-70)",
-                                  boxSizing: "border-box",
-                                  borderRadius: "3px 3px 0px 0px",
-                                }}
-                              />
+                              <Input disabled />
                             </FormItem>
                           </Col>
                           <Col span={0}>
@@ -529,30 +492,19 @@ const Nfce: React.FC = () => {
                           <Col span={8}>
                             <FormItem
                               label="Operação"
-                              name="indicadorFormaPagamento"
+                              name="formaPagamento"
                               rules={[{ required: true }]}
                             >
                               <Select
-                                style={{
-                                  background: "var(--white-30)",
-                                  border: "1px solid var(--grey-70)",
-                                  boxSizing: "border-box",
-                                  borderRadius: "3px",
-                                }}
                                 onChange={(value) =>
-                                  handleUpdateNfe(
-                                    "indicadorFormaPagamento",
-                                    +value
-                                  )
+                                  handleUpdateNfe("formaPagamento", value)
                                 }
                               >
-                                {indicadoresFormaPagamento.map(
-                                  (indicadorFormaPagamento) => (
-                                    <Option key={indicadorFormaPagamento.id}>
-                                      {indicadorFormaPagamento.value}
-                                    </Option>
-                                  )
-                                )}
+                                {formasPagamento.map((formaPagamento) => (
+                                  <Option key={formaPagamento.id}>
+                                    {formaPagamento.value}
+                                  </Option>
+                                ))}
                               </Select>
                             </FormItem>
                           </Col>
@@ -563,12 +515,6 @@ const Nfce: React.FC = () => {
                               rules={[{ required: true }]}
                             >
                               <Select
-                                style={{
-                                  background: "var(--white-30)",
-                                  border: "1px solid var(--grey-70)",
-                                  boxSizing: "border-box",
-                                  borderRadius: "3px",
-                                }}
                                 onChange={(value) =>
                                   handleUpdateNfe(
                                     "indicadorFormaPagamento",
@@ -588,14 +534,7 @@ const Nfce: React.FC = () => {
                           </Col>
                           <Col span={8}>
                             <FormItem label="CPF / CNPJ" name="CPFDestinatario">
-                              <InputMask
-                                style={{
-                                  background: "var(--white-30)",
-                                  border: "1px solid var(--grey-70)",
-                                  boxSizing: "border-box",
-                                  borderRadius: "3px",
-                                }}
-                                mask="999.999.999-99"
+                              <Input
                                 className="ant-input"
                                 onChange={({ target: { value } }) =>
                                   handleUpdateNfe("CPFDestinatario", value)
@@ -612,12 +551,6 @@ const Nfce: React.FC = () => {
                               name="informacoesAdicionaisFisco"
                             >
                               <Input.TextArea
-                                style={{
-                                  background: "var(--white-30)",
-                                  border: "1px solid var(--grey-70)",
-                                  boxSizing: "border-box",
-                                  borderRadius: "3px",
-                                }}
                                 rows={4}
                                 onChange={({ target: { value } }) =>
                                   handleUpdateNfe(
@@ -639,7 +572,12 @@ const Nfce: React.FC = () => {
                               </Col>
                             ) : (
                               <Col span={24}>
-                                <Button type="primary">Emitir Nota [F1]</Button>
+                                <Button
+                                  type="primary"
+                                  onClick={() => handleEmit()}
+                                >
+                                  Emitir Nota [F1]
+                                </Button>
                               </Col>
                             )}
                           </Row>

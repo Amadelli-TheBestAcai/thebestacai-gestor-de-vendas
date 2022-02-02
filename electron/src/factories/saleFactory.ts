@@ -1,5 +1,6 @@
 import saleModel, { Entity } from "../models/sale";
 import { Entity as ProductDto } from "../models/product";
+import { NfeDTO } from "../models/dtos/nfe";
 
 export const saleFactory = {
   getCurrent: async () => await saleModel.getCurrent(),
@@ -35,4 +36,9 @@ export const saleFactory = {
   getAllDelivery: async () => await saleModel.deliverySaleRepository.getAll(),
   createDelivery: async (payload: Entity) =>
     await saleModel.deliverySaleRepository.create(payload),
+  emitNfce: async (
+    nfe: NfeDTO,
+    saleIdToUpdate?: number
+  ): Promise<{ error: boolean; message: string }> =>
+    await saleModel.emitNfce(nfe, saleIdToUpdate),
 };
