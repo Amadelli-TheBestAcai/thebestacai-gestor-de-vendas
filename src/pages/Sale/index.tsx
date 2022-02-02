@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-
+import { currencyFormater } from "../../helpers/currencyFormater";
 import DisconectedForm from "../../containers/DisconectedForm";
 import SalesHistory from "../../containers/SalesHistory";
 import Centralizer from "../../containers/Centralizer";
@@ -8,6 +8,8 @@ import RouterDescription from "../../components/RouterDescription";
 import Spinner from "../../components/Spinner";
 import SaleItem from "../../components/Sale";
 
+import { PaymentType } from "../../models/enums/paymentType";
+import { SalesTypes } from "../../models/enums/salesTypes";
 import { SaleDto } from "../../models/dtos/sale";
 
 import {
@@ -29,6 +31,7 @@ type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = ({ history }) => {
   const [shouldSearch, setShouldSearch] = useState(true);
+  const [selectedSale, setSelectedSale] = useState<SaleDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingSales, setPendingSales] = useState<number>(0);
   const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
@@ -39,7 +42,9 @@ const Sale: React.FC<IProps> = ({ history }) => {
     async function init() {
       setIsLoading(true);
       const _sale = await window.Main.sale.getAllIntegratedSales();
-      console.log({ _sale });
+      if (_sale.length) {
+        setSelectedSale(_sale[0]);
+      }
       setSales(_sale);
       setIsLoading(false);
       // ipcRenderer.send('integrate:status')
@@ -113,75 +118,60 @@ const Sale: React.FC<IProps> = ({ history }) => {
             <Col sm={4}>TIPO</Col>
             <Col sm={4}>AÇÕES</Col>
           </HeaderTable>
-          <Collapse defaultActiveKey={["1"]} collapsible="disabled">
-            <Panel header="This is panel header 1" key="1">
-              <Collapse defaultActiveKey={["2"]}>
-                <Panel header="Pagamentos" key="2">
-                  <p>2</p>
-                </Panel>
-              </Collapse>
-              <Collapse defaultActiveKey={["3"]}>
-                <Panel header="Itens" key="2">
-                  <p>2</p>
-                </Panel>
-              </Collapse>
-            </Panel>
-          </Collapse>
+          {selectedSale && (
+            <Collapse defaultActiveKey={["1"]} collapsible="disabled">
+              <Panel
+                header={
+                  <>
+                    <Col sm={4}>{selectedSale.id}</Col>
+                    <Col sm={4}>{selectedSale.total_sold}</Col>
+                    <Col sm={4}>{selectedSale.quantity}</Col>
+                    <Col sm={4}>{selectedSale.created_at.split(" ")[1]}</Col>
+                    <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
+                    <Col sm={4}>AÇÕES</Col>
+                  </>
+                }
+                key="1"
+              >
+                <Collapse defaultActiveKey={["2"]}>
+                  <Panel header="Pagamentos" key="2">
+                    {selectedSale.payments.map((_payment) => (
+                      <React.Fragment key={_payment.id}>
+                        <p>{PaymentType[_payment.type]}</p>
+                        <p>{_payment.amount}</p>
+                      </React.Fragment>
+                    ))}
+                  </Panel>
+                </Collapse>
+                {selectedSale.items.length ? (
+                  <Collapse defaultActiveKey={["3"]}>
+                    <Panel header="Itens" key="2">
+                      {selectedSale.items.map((_item) => (
+                        <React.Fragment key={_item.id}>
+                          <p>{_item.product.name}</p>
+                          <p>{_item.quantity}</p>
+                          <p>
+                            R${" "}
+                            {currencyFormater(
+                              +_item.quantity * +_item.storeProduct.price_unit
+                            )}
+                          </p>
+                        </React.Fragment>
+                      ))}
+                      <p>2</p>
+                    </Panel>
+                  </Collapse>
+                ) : (
+                  <p>*Vendas em delivery não possuem itens*</p>
+                )}
+              </Panel>
+            </Collapse>
+          )}
         </ListSaleContainer>
         <SalesHistoryContainer>
-          <SalesHistory sales={sales} />
+          <SalesHistory sales={sales} setSelectedSale={setSelectedSale} />
         </SalesHistoryContainer>
       </PageContent>
-      {/* <RouterDescription description="Vendas" />
-      {isLoading ? (
-        <Spinner />
-      ) : isConected ? (
-        <>
-          {pendingSales !== 0 && (
-            <Row
-              justify="center"
-              align="middle"
-              style={{ width: "100%", margin: "10px 0" }}
-            >
-              <Title style={{ color: "#969696" }}>
-                Há vendas que ainda não foram integradas. Clique em Enviar para
-                integrar.
-              </Title>
-              <Button
-                type="primary"
-                style={{ marginLeft: 10 }}
-                loading={isIntegrating}
-                // onClick={() => handleIntegrate()}
-              >
-                Enviar
-              </Button>
-            </Row>
-          )}
-          <>
-            {sales?.length ? (
-              <SalesContainer>
-               
-                <SalesList>
-                  {sales.map((sale) => (
-                    <SaleItem
-                      key={sale.id}
-                      sale={sale}
-                      onDelete={onDelete}
-                      setShouldSearch={setShouldSearch}
-                    />
-                  ))}
-                </SalesList>
-              </SalesContainer>
-            ) : (
-              <Centralizer>
-                <Empty description="Nenhuma venda encontrada" />
-              </Centralizer>
-            )}
-          </>
-        </>
-      ) : (
-        <DisconectedForm />
-      )} */}
     </Container>
   );
 };
