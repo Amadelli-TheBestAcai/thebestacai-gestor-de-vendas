@@ -7,4 +7,5 @@ export type StoreCashDto = {
   amount_on_open: number;
   is_opened: boolean;
   is_online: boolean;
+  created_at?: string;
 };

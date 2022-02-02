@@ -3,7 +3,7 @@ import database from "../../src/providers/database";
 import moment from "moment";
 import { v4 } from "uuid";
 
-export abstract class BaseRepository<T extends { id?: string | number }>
+export class BaseRepository<T extends { id?: string | number }>
   implements IBaseRepository<T>
 {
   private storageName: string;
@@ -25,11 +25,15 @@ export abstract class BaseRepository<T extends { id?: string | number }>
   }
 
   async createMany(payload: T[]): Promise<void> {
+    const oldEntities =
+      (await database.getConnection().getItem(this.storageName)) || [];
     const response = payload.map((_payload) => ({
       ..._payload,
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     }));
-    await database.getConnection().setItem(this.storageName, response);
+    await database
+      .getConnection()
+      .setItem(this.storageName, [...response, ...oldEntities]);
   }
 
   async getById(id: string | number): Promise<T | undefined> {
@@ -41,13 +45,13 @@ export abstract class BaseRepository<T extends { id?: string | number }>
 
   async deleteById(id: string | number): Promise<void> {
     const data: T[] = await database.getConnection().getItem(this.storageName);
-    const response = data.filter((_entity) => _entity.id === id);
+    const response = data.filter((_entity) => _entity.id !== id);
     await database.getConnection().setItem(this.storageName, response);
   }
 
   async update(
     id: string | number | undefined,
-    payload
+    payload: Partial<T>
   ): Promise<T | undefined> {
     if (!id) {
       return;
@@ -73,6 +77,6 @@ export abstract class BaseRepository<T extends { id?: string | number }>
   }
 
   async clear(): Promise<void> {
-    await database.getConnection().removeItem(this.storageName);
+    await database.getConnection().setItem(this.storageName, []);
   }
 }

@@ -1,0 +1,62 @@
+[
+  {
+    "label": "200,00",
+    "value": 200,
+    "key": "twoHundred"
+  },
+  {
+    "label": "100,00",
+    "value": 100,
+    "key": "oneHundred"
+  },
+  {
+    "label": "50,00",
+    "value": 50,
+    "key": "fifty"
+  },
+  {
+    "label": "20,00",
+    "value": 20,
+    "key": "twenty"
+  },
+  {
+    "label": "10,00",
+    "value": 10,
+    "key": "ten"
+  },
+  {
+    "label": "5,00",
+    "value": 5,
+    "key": "five"
+  },
+  {
+    "label": "2,00",
+    "value": 2,
+    "key": "two"
+  },
+  {
+    "label": "1,00",
+    "value": 1,
+    "key": "one"
+  },
+  {
+    "label": "0,50",
+    "value": 0.5,
+    "key": "fiftyCents"
+  },
+  {
+    "label": "0,25",
+    "value": 0.25,
+    "key": "twentyFiveCents"
+  },
+  {
+    "label": "0,10",
+    "value": 0.1,
+    "key": "tenCents"
+  },
+  {
+    "label": "0,05",
+    "value": 0.05,
+    "key": "fiveCents"
+  }
+]

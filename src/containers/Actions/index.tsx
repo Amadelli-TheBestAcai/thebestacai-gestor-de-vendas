@@ -107,8 +107,6 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <DiscountForm />
 
       <RegistrationCard
-        placeHolder="Digite o nome do cliente"
-        onFinish={onAddToQueue}
         modalState={commandState}
         setModalState={setCommandState}
       />

@@ -46,9 +46,6 @@ const Login: React.FC<IProps> = ({ history }) => {
     setRememberUser(!rememberUser);
 
     const _user = await window.Main.user.getUser();
-    if (rememberUser) {
-      console.log(_user.username);
-    }
   };
 
   const onLogin = async () => {
@@ -57,7 +54,6 @@ const Login: React.FC<IProps> = ({ history }) => {
       user.username,
       user.password
     );
-
     if (loggedUser) {
       const registredStore = await window.Main.store.hasRegistration();
       if (registredStore) {

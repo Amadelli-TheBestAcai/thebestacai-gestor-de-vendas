@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-// import { ipcRenderer } from "electron";
 import axios from "axios";
 import DisconectedForm from "../../containers/DisconectedForm";
 import Centralizer from "../../containers/Centralizer";
-import currentUser from "../../helpers/currentUser";
-import RouterDescription from "../../components/RouterDescription";
 import Spinner from "../../components/Spinner";
 import HandlerItem from "../../components/HandlerItem";
 
@@ -14,6 +11,8 @@ import { Empty, message, Modal } from "antd";
 import moment from "moment";
 import {
   Container,
+  Content,
+  Name,
   HandlersContainer,
   HandlersHeader,
   Column,
@@ -42,33 +41,30 @@ const Handler: React.FC = () => {
     init();
   }, []);
 
-  // const onDelete = (id: number): void => {
-  //   confirm({
-  //     title: "Remoção de Movimentação",
-  //     content: "Tem certeza que gostaria de prosseguir?",
-  //     okText: "Sim",
-  //     okType: "default",
-  //     cancelText: "Não",
-  //     onOk() {
-  //       setIsLoading(true);
-  //       ipcRenderer.send("handler:delete", id);
-  //       ipcRenderer.once(
-  //         "handler:delete:response",
-  //         (event, { success, data }) => {
-  //           setIsLoading(false);
-  //           if (!success) {
-  //             message.warning("Falha ao remover movimentação");
-  //           }
-  //           setHandlers(data);
-  //           message.success("Movimentação removida com sucesso");
-  //         }
-  //       );
-  //     },
-  //   });
-  // };
+  const onDelete = (id: number): void => {
+    confirm({
+      title: "Remoção de Movimentação",
+      content: "Tem certeza que gostaria de prosseguir?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      async onOk() {
+        setIsLoading(true);
+        const success =
+          await window.Main.handler.deleteCashHandlerFromApiService(id);
+        const data = await window.Main.handler.getCashHandlersByStoreCash();
+        setIsLoading(false);
+        if (!success) {
+          message.warning("Falha ao remover movimentação");
+        }
+        setHandlers(data.handlers);
+        message.success("Movimentação removida com sucesso");
+      },
+    });
+  };
 
   const onPdf = async () => {
-    if (!currentUser.getUser().token) {
+    if ((await window.Main.user.getUser()).token) {
       return message.warning(
         "Usuário em modo offline. Refaça o login com conexão à internet"
       );
@@ -77,13 +73,12 @@ const Handler: React.FC = () => {
       method: "GET",
       responseType: "blob",
       headers: {
-        Authorization: `Bearer ${currentUser.getUser().token}`,
+        Authorization: `Bearer ${(await window.Main.user.getUser()).token}`,
       },
       url: `${window.Main.env.API_DASH}/cash_handler/pdf/${historyId}`,
     });
     const url = window.URL.createObjectURL(new Blob([response]));
     const link = document.createElement("a");
-    console.log(url);
     link.href = url;
     link.setAttribute(
       "download",
@@ -96,55 +91,57 @@ const Handler: React.FC = () => {
 
   return (
     <Container>
-      <RouterDescription description="Movimentações" />
-      {isLoading ? (
-        <Spinner />
-      ) : isConected ? (
-        handlers?.length ? (
-          <>
-            <Button onClick={() => onPdf()} type="primary">
-              Baixar PDF
-            </Button>
-            <HandlersContainer>
-              <HandlersHeader>
-                <Column span={4}>
-                  <Title>ID</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Tipo</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Valor</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Hora</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Razão</Title>
-                </Column>
-                <Column span={4}>
-                  <Title>Ações</Title>
-                </Column>
-              </HandlersHeader>
-              <HandlersList>
-                {handlers.map((handler) => (
-                  <HandlerItem
-                    key={handler.id}
-                    handler={handler}
-                    // onDelete={onDelete}
-                  />
-                ))}
-              </HandlersList>
-            </HandlersContainer>
-          </>
+      <Content>
+        <Name>Movimentações</Name>
+        {isLoading ? (
+          <Spinner />
+        ) : isConected ? (
+          handlers?.length ? (
+            <>
+              <Button onClick={() => onPdf()} type="primary">
+                Baixar PDF
+              </Button>
+              <HandlersContainer>
+                <HandlersHeader>
+                  <Column span={4}>
+                    <Title>ID</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Tipo</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Valor</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Hora</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Razão</Title>
+                  </Column>
+                  <Column span={4}>
+                    <Title>Ações</Title>
+                  </Column>
+                </HandlersHeader>
+                <HandlersList>
+                  {handlers.map((handler) => (
+                    <HandlerItem
+                      key={handler.id}
+                      handler={handler}
+                      onDelete={onDelete}
+                    />
+                  ))}
+                </HandlersList>
+              </HandlersContainer>
+            </>
+          ) : (
+            <Centralizer>
+              <Empty description="Nenhuma movimentação encontrada" />
+            </Centralizer>
+          )
         ) : (
-          <Centralizer>
-            <Empty description="Nenhuma movimentação encontrada" />
-          </Centralizer>
-        )
-      ) : (
-        <DisconectedForm />
-      )}
+          <DisconectedForm />
+        )}
+      </Content>
     </Container>
   );
 };

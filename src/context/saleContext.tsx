@@ -1,15 +1,17 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createContext } from "use-context-selector";
 
-import { message } from "antd";
+import { notification } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
+import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 
 type SaleContextType = {
   sale: SaleDto;
   setSale: Dispatch<SetStateAction<SaleDto>>;
+  storeCash: StoreCashDto;
   loading: boolean;
   savingSale: boolean;
   discountModalState: boolean;
@@ -33,6 +35,7 @@ export const SaleContext = createContext<SaleContextType>(null);
 
 export function SaleProvider({ children }) {
   const [sale, setSale] = useState<SaleDto>();
+  const [storeCash, setStoreCash] = useState<StoreCashDto>();
   const [savingSale, setSavingSale] = useState(false);
   const [loading, setLoading] = useState(true);
   const [discountModalState, setDiscountModalState] = useState(false);
@@ -42,9 +45,11 @@ export function SaleProvider({ children }) {
     async function init() {
       setLoading(true);
       const _sale = await window.Main.sale.getCurrent();
+      const _storeCash = await window.Main.storeCash.getCurrent();
       const _user = await window.Main.user.getUser();
       setSale(_sale);
       setUser(_user);
+      setStoreCash(_storeCash);
       setLoading(false);
     }
     init();
@@ -71,6 +76,11 @@ export function SaleProvider({ children }) {
 
   const onDecressItem = async (id: string): Promise<void> => {
     const updatedSale = await window.Main.sale.decressItem(id);
+    notification.success({
+      message: "Item removido com sucesso!",
+      description: `O item selecionado foi retirado do carrinho.`,
+      duration: 3,
+    });
     setSale(updatedSale);
   };
 
@@ -80,24 +90,45 @@ export function SaleProvider({ children }) {
     }
 
     if (!sale.items.length) {
-      return message.warning("Nenhum item cadastrado para a venda");
+      notification.warning({
+        message: "Oops! Carrinho vazio.",
+        description: `Nenhum item selecionado para venda, selecione algum item
+                      ao carrinho para que seja possível finalizá-la.`,
+        duration: 5,
+      });
     }
 
     if (
       +(sale.total_sold.toFixed(2) || 0) >
       sale.total_paid + (sale.discount || 0) + 0.5
     ) {
-      return message.warning("Pagamento inválido");
+      return notification.warning({
+        message: "Pagamento inválido!",
+        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
+        duration: 5,
+      });
     }
 
     setSavingSale(true);
-    const _newSale = await window.Main.sale.finishSale();
+    await window.Main.sale.finishSale(sale);
+    const _newSale = await window.Main.sale.buildNewSale();
     setSale(_newSale);
     setSavingSale(false);
+    notification.success({
+      message: "Venda realizada com sucesso!",
+      description: `A venda foi registrada com sucesso.`,
+      duration: 3,
+    });
   };
 
   const onAddToQueue = async (name: string): Promise<void> => {
-    console.log(name);
+    const _newSale = await window.Main.sale.createStepSale(name);
+    setSale(_newSale);
+    notification.success({
+      message: "Comanda salva com sucesso!",
+      description: `Para que a venda retorne ao carrinho, clique na ação de restaurar a comanda[🔁] do modal anterior.`,
+      duration: 8,
+    });
   };
 
   const removePayment = async (id: string): Promise<void> => {
@@ -107,14 +138,12 @@ export function SaleProvider({ children }) {
 
   const onAddDiscount = async (value: number): Promise<void> => {
     if (value > sale.total_sold) {
-      message.warning("Desconto maior que o valor da venda.");
-      return;
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `O valor informado é maior que o valor total da venda.`,
+        duration: 5,
+      });
     }
-    // const _updatedSale = await window.Main.sale.update(sale.id, {
-    //   ...sale,
-    //   discount: +value,
-    // });
-    // setSale(_updatedSale);
   };
 
   return (
@@ -122,6 +151,7 @@ export function SaleProvider({ children }) {
       value={{
         sale,
         setSale,
+        storeCash,
         loading,
         savingSale,
         discountModalState,

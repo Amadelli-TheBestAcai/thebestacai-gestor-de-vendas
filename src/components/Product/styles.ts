@@ -6,7 +6,7 @@ import { AddCircle } from "../../styles/Icons";
 
 export const Container = styled(Row)`
   width: 100%;
-  height: 45px;
+  padding: 3%;
   background: var(--white-40);
   margin-top: 9px;
 `;

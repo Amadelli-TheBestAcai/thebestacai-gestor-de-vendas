@@ -32,7 +32,6 @@ class User extends BaseRepository<Entity> {
       if (!access_token) {
         return undefined;
       }
-
       const hashedPassword = await criptography.hash(password);
       const userPayload = {
         ...jwt_decode<Entity>(access_token),
@@ -55,8 +54,10 @@ class User extends BaseRepository<Entity> {
 
       if (userIndex >= 0) {
         users[userIndex] = userPayload;
+        await this.clear();
         await this.createMany(users);
       } else {
+        await this.clear();
         await this.createMany([...users, userPayload]);
       }
 
@@ -84,6 +85,7 @@ class User extends BaseRepository<Entity> {
 
       users[userIndex].is_actived = true;
       this.loggedUser = users[userIndex];
+      await this.clear();
       await this.createMany(users);
 
       return users[userIndex];

@@ -29,6 +29,7 @@ export const BalanceContainer = styled.div`
 `;
 
 export const ItemsContainer = styled.div`
+  display: flex;
   width: 100%;
   height: 85%;
 `;
@@ -41,13 +42,13 @@ export const RightSide = styled.div`
 
 export const TopActions = styled.div`
   width: 100%;
-  height: 10%;
+  height: 8%;
 `;
 
 export const Content = styled.div`
   flex-direction: column;
   width: 100%;
-  height: 90%;
+  height: 92%;
   ${ContentCSS}
 `;
 

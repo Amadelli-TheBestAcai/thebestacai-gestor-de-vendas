@@ -1,5 +1,4 @@
 import React from "react";
-// import { ipcRenderer } from "electron";
 
 import {
   Container,
@@ -9,13 +8,11 @@ import {
   PrinterIcon,
 } from "./styles";
 
-import currentUser from "../../helpers/currentUser";
-
 import { Handler as HandlerModel } from "../../models/dtos/handler";
 
 type IProps = {
   handler: HandlerModel;
-  onDelete?: (id: number) => void;
+  onDelete: (id: number) => void;
 };
 
 const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
@@ -44,7 +41,7 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
       </Column>
       <>
         <Column span={4}>
-          {currentUser.hasPermission("handler.delete_handler") && (
+          {window.Main.user.hasPermission("handler.delete_handler") && (
             <RemoveIcon onClick={() => onDelete(id)} />
           )}
           {/* <PrinterIcon onClick={() => onPrint(handler)} /> */}

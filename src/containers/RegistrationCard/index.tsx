@@ -1,6 +1,10 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { useSale } from "../../hooks/useSale";
+import { SaleDto } from "../../models/dtos/sale";
 
-import { message } from "antd";
+import Spinner from "../../components/Spinner";
+
+import { message, notification } from "antd";
 
 import {
   Container,
@@ -14,33 +18,69 @@ import {
   Card,
   RestoreIcon,
 } from "./styles";
-
 interface IProps {
   modalState: boolean;
   setModalState: Dispatch<SetStateAction<boolean>>;
-  placeHolder: string;
-  onFinish: (name: string) => void;
 }
 
-const RegistrationCard: React.FC<IProps> = ({
-  onFinish,
-  placeHolder,
-  modalState,
-  setModalState,
-}) => {
+const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
+  const { onAddToQueue, setSale, sale } = useSale();
+  const [stepSales, setStepSales] = useState<SaleDto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [name, setName] = useState<string>();
-  const handleSubmit = () => {
-    if (!name) {
-      return message.warning("Preencha o campo");
+
+  useEffect(() => {
+    async function init() {
+      const _stepSales = await window.Main.sale.getAllStepSales();
+      setStepSales(_stepSales);
+      setName("");
+      setLoading(false);
     }
+    if (modalState) {
+      init();
+    }
+  }, [modalState]);
+
+  const handleSubmit = async () => {
+    if (name.length < 3) {
+      return notification.warning({
+        message: "Oops! Nome inválido",
+        description: `Informe um nome válido para salvar a comanda.`,
+        duration: 5,
+      });
+    }
+
+    if (!sale.quantity) {
+      return notification.warning({
+        message: "O carrinho está vazio",
+        description: `Não é possível salvar esta comanda, pois, não existe nenhum item selecionado para venda.`,
+        duration: 5,
+      });
+    }
+    setLoading(true);
+    await onAddToQueue(name);
+    setLoading(false);
     setModalState(false);
-    onFinish(name);
   };
+
+  const handleRestore = async (id: string) => {
+    setLoading(true);
+    const _updatedSale = await window.Main.sale.recouverStepSales(id);
+    setSale(_updatedSale);
+    setLoading(false);
+    setModalState(false);
+    return notification.success({
+      message: "Comanda restaurada com sucesso!",
+      description:
+        "Todos os itens retornaram para o carrinho. Conclua a venda!",
+      duration: 5,
+    });
+  };
+
   return (
     <Container
       title="Comandas"
       visible={modalState}
-      onOk={handleSubmit}
       centered
       closable={true}
       onCancel={() => setModalState(false)}
@@ -48,35 +88,47 @@ const RegistrationCard: React.FC<IProps> = ({
       destroyOnClose={true}
       footer={null}
     >
-      <AddContainer>
-        <Input
-          placeholder="Digite o nome do cliente"
-          autoFocus={true}
-          onPressEnter={handleSubmit}
-          onChange={({ target: { value } }) => setName(value)}
-          value={name}
-        />
-        <ButtonAdd>Adicionar</ButtonAdd>
-      </AddContainer>
-      <ListContainer>
-        <Header>
-          <Col sm={8}>Nome Cliente</Col>
-          <Col sm={6}>Nº Comanda</Col>
-          <Col sm={6}>Qtd. itens</Col>
-          <Col sm={4}>Ação</Col>
-        </Header>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <AddContainer>
+            <Input
+              placeholder="Digite o nome do cliente"
+              autoFocus={true}
+              onPressEnter={handleSubmit}
+              onChange={({ target: { value } }) => setName(value)}
+              value={name}
+            />
+            <ButtonAdd onClick={handleSubmit}>Adicionar</ButtonAdd>
+          </AddContainer>
+          <ListContainer>
+            <Header>
+              <Col sm={8}>Nome Cliente</Col>
+              <Col sm={6}>Nº Comanda</Col>
+              <Col sm={6}>Qtd. itens</Col>
+              <Col sm={4}>Ação</Col>
+            </Header>
 
-        <Content>
-          <Card>
-            <Col sm={8}>Mayshara</Col>
-            <Col sm={6}>1</Col>
-            <Col sm={6}>3</Col>
-            <Col sm={4}>
-              <RestoreIcon />
-            </Col>
-          </Card>
-        </Content>
-      </ListContainer>
+            <Content>
+              {stepSales.map((_stepSale, index) => (
+                <React.Fragment key={_stepSale.id}>
+                  <Card>
+                    <Col sm={8}>{_stepSale.name}</Col>
+                    <Col sm={6}>{index + 1}</Col>
+                    <Col sm={6}>{_stepSale.quantity}</Col>
+                    <Col sm={4}>
+                      <RestoreIcon
+                        onClick={() => handleRestore(_stepSale.id)}
+                      />
+                    </Col>
+                  </Card>
+                </React.Fragment>
+              ))}
+            </Content>
+          </ListContainer>
+        </>
+      )}
     </Container>
   );
 };

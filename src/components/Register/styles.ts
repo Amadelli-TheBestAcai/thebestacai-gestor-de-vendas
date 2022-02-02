@@ -35,7 +35,7 @@ export const ButtonFinisher = styled.button`
   justify-content: center;
   width: 100%;
   height: 25%;
-  background: #f0ad4e;
+  background: var(--orange-450);
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   font-size: 1.3rem;

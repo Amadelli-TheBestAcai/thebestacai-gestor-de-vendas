@@ -7,8 +7,11 @@ import {
   Motorcycle,
   Retweet,
   Box,
+  BarChart,
   Coins,
   Scroll,
+  ChartBar,
+  Settings,
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -18,11 +21,6 @@ export const Container = styled.div`
   height: 100%;
   width: 100%;
   background: var(--black-opaco);
-
-  
-  }
-
-  
 `;
 
 export const LogoContainer = styled.div`
@@ -72,10 +70,6 @@ export const HomeIcon = styled(Home)`
   ${IconCSS}
 `;
 
-export const Listicon = styled(ListAlt)`
-  ${IconCSS}
-`;
-
 export const CashRegisterIcon = styled(CashRegister)`
   ${IconCSS}
 `;
@@ -97,5 +91,13 @@ export const CoinsIcon = styled(Coins)`
 `;
 
 export const ScrollIcon = styled(Scroll)`
+  ${IconCSS}
+`;
+
+export const ChartIcon = styled(ChartBar)`
+  ${IconCSS}
+`;
+
+export const SettingsIcon = styled(Settings)`
   ${IconCSS}
 `;

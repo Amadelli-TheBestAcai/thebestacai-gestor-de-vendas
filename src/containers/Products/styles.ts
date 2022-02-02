@@ -11,6 +11,19 @@ export const Container = styled.div`
 
 export const TabContainer = styled(TabsAnd)`
   width: 100%;
+
+  .ant-tabs-nav {
+    background: var(--black-opaco);
+    color: white;
+    border-radius: 6px 6px 0px 0px;
+    padding: 1%;
+    margin: 0px;
+  }
+
+  .ant-tabs-ink-bar {
+    position: absolute;
+    background: white;
+  }
 `;
 
 export const ProductSearch = styled.div`
@@ -70,7 +83,7 @@ export const ProductsContent = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: 65vh;
   overflow-y: scroll;
 `;
 

@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SaleDto } from "../../models/dtos/sale";
@@ -24,6 +24,8 @@ import {
   Footer,
   ButtonCancel,
   ButtonSave,
+  Header,
+  Column,
 } from "./styles";
 
 interface IProps {
@@ -60,41 +62,54 @@ const PaymentsContainer: React.FC<IProps> = ({
       icon: <MoneyIcon />,
       label: "Dinheiro [A]",
       background: "var(--green-400)",
-      action: `${console.log("teste")}`,
+      action: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
     },
     {
       icon: <CreditIcon />,
       label: "Crédito [S]",
       background: "var(--blue-300)",
-      action: "",
+      action: () => handleOpenPayment(PaymentType.CREDITO, "C. Crédito"),
     },
     {
       icon: <DebitIcon />,
       label: "Débito [D]",
       background: "var(--blue-400)",
-      action: "",
+      action: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito"),
     },
     {
       icon: <TicketIcon />,
-      label: "Ticket",
+      label: "Ticket [T]",
       background: "var(--purple-450)",
-      action: "",
+      action: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     },
     {
       icon: <PixIcon src={PixLogo} />,
       label: "Pix [P]",
       background: "var(--teal-400)",
-      action: "",
+      action: () => handleOpenPayment(PaymentType.PIX, "Pix"),
     },
   ];
+
+  const getChangeAmount = (total_sold: number, total_paid: number) => {
+    if (total_paid > total_sold) {
+      const result = (total_paid - total_sold).toFixed(2).replace(".", ",");
+      return result;
+    } else if (total_paid === total_sold) {
+      const result = (0).toFixed(2).replace(".", ",");
+      return result;
+    } else {
+      return "0,00";
+    }
+  };
 
   return (
     <Container>
       <TypesPaymentsContainer>
-        {buttonsPaymentsStyle.map((buttonStyle) => (
+        {buttonsPaymentsStyle.map((buttonStyle, index) => (
           <Button
+            key={index}
             style={{ background: buttonStyle.background }}
-            onClick={() => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro")}
+            onClick={buttonStyle.action}
           >
             {buttonStyle.icon} {buttonStyle.label}
           </Button>
@@ -102,9 +117,14 @@ const PaymentsContainer: React.FC<IProps> = ({
       </TypesPaymentsContainer>
 
       <PaymentsInfoContainer>
-        {sale.payments?.map((payment, index) => (
+        <Header>
+          <Column sm={8}>Forma de Pagamento</Column>
+          <Column sm={8}>Valor</Column>
+          <Column sm={8}>Ação</Column>
+        </Header>
+        {sale.payments?.map((payment) => (
           <Payment
-            key={index}
+            key={payment.id}
             payment={payment}
             removePayment={removePayment}
           />
@@ -115,13 +135,13 @@ const PaymentsContainer: React.FC<IProps> = ({
         <ValueInfo>
           R$ Troco <br />{" "}
           <strong style={{ color: "var(--red-600" }}>
-            {sale.change_amount.toFixed(2).replace(".", ",")}
+            {getChangeAmount(sale.total_sold, sale.total_paid)}
           </strong>
         </ValueInfo>
         <ValueInfo>
           R$ Desconto <br />{" "}
           <strong style={{ color: "var(--green-600" }}>
-            {sale.total_paid.toFixed(2).replace(".", ",")}
+            {sale.discount.toFixed(2).replace(".", ",")}
           </strong>
         </ValueInfo>
         <ValueInfo>
@@ -137,73 +157,18 @@ const PaymentsContainer: React.FC<IProps> = ({
           </strong>
         </ValueInfo>
       </ValuesContainer>
-      {/* <Header>
-        <Button
-          className="ant-btn"
-          onClick={() => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro")}
-        >
-          [A] DINHEIRO
-          <MoneyIcon />
-        </Button>
-        <Button
-          className="ant-btn"
-          onClick={() => handleOpenPayment(PaymentType.CREDITO, "Crédito")}
-        >
-          [S] CRÉDITO
-          <CreditIcon />
-        </Button>
-        <Button
-          className="ant-btn"
-          onClick={() => handleOpenPayment(PaymentType.DEBITO, "Débito")}
-        >
-          [D] DÉBITO
-          <DebitIcon />
-        </Button>
-        <Button
-          className="ant-btn"
-          onClick={() => handleOpenPayment(PaymentType.TICKET, "Ticket")}
-        >
-          [T] TICKET
-          <TicketIcon />
-        </Button>
-
-        <Button
-          className="ant-btn"
-          onClick={() => handleOpenPayment(PaymentType.PIX, "PIX")}
-        >
-          [P] PIX
-          <img
-            src={PixLogo}
-            style={{
-              width: "25px",
-              height: "25px",
-            }}
-          />
-        </Button>
-      </Header>
-      <Footer>
-        <AmountContainer span={6}>
-          <AmountDescription>Desconto:</AmountDescription>
-          <AmountValue>
-            R$ {sale.discount.toFixed(2).replace(".", ",")}
-          </AmountValue>
-        </AmountContainer>
-      </Footer>
-     */}
-
       <Modal
         title={`Pagamento em ${modalTitle}`}
         visible={modalState}
         onCancel={onModalCancel}
-        onOk={() => addPayment()}
         destroyOnClose={true}
         closable={true}
         centered
         afterClose={() => document.getElementById("mainContainer").focus()}
         footer={
           <Footer>
-            <ButtonCancel>Cancelar</ButtonCancel>
-            <ButtonSave>Salvar Alteração</ButtonSave>
+            <ButtonCancel onClick={onModalCancel}>Cancelar</ButtonCancel>
+            <ButtonSave onClick={addPayment}>Salvar Alteração</ButtonSave>
           </Footer>
         }
       >
@@ -212,7 +177,9 @@ const PaymentsContainer: React.FC<IProps> = ({
           autoFocus={true}
           getValue={getAmount}
           onEnterPress={addPayment}
-          defaultValue={sale.total_sold - sale.total_paid}
+          defaultValue={
+            modalTitle !== "Dinheiro" ? sale.total_sold - sale.total_paid : 0
+          }
         />
       </Modal>
     </Container>

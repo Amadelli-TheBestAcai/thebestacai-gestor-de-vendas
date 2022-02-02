@@ -2,31 +2,45 @@ import React from "react";
 
 import {
   Container,
-  Description,
+  CardCashContainer,
+  ButtonStatusContainer,
+  CardCash,
   CashIcon,
-  IconContainer,
-  Status,
+  Icon,
+  InfoCash,
+  StatusButton,
 } from "./styles";
 
 type IProps = {
   cash: { store_cash: string; available: boolean };
-  handleClick: any;
+  handleCash: (cash: string) => void;
 };
 
-const StoreCash: React.FC<IProps> = ({ cash, handleClick }) => {
+const StoreCash: React.FC<IProps> = ({ cash, handleCash }) => {
   const { store_cash, available } = cash;
+
   return (
     <Container>
-      <Description>Caixa {store_cash}</Description>
-      <IconContainer
-        onClick={() => handleClick(cash)}
-        style={{ background: available ? "#FFB13D" : "#989898" }}
-      >
-        <CashIcon />
-      </IconContainer>
-      <Status style={{ color: available ? "#3CD223" : "#FF2E2E" }}>
-        {available ? "HABILITADO" : "DESABILITADO"}
-      </Status>
+      <CardCashContainer>
+        <CardCash
+          onClick={() => handleCash(cash.store_cash)}
+          disabled={!available}
+        >
+          <Icon>
+            <CashIcon />
+          </Icon>
+          <InfoCash>
+            <p>CAIXA</p>
+            <span>{store_cash}</span>
+          </InfoCash>
+        </CardCash>
+      </CardCashContainer>
+
+      <ButtonStatusContainer>
+        <StatusButton available={available}>
+          {available && "HABILITADO"}
+        </StatusButton>
+      </ButtonStatusContainer>
     </Container>
   );
 };

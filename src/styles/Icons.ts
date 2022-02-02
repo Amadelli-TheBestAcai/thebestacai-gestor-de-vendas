@@ -13,16 +13,30 @@ export {
   TicketAlt,
   Search,
   TrashRestoreAlt,
+  ChartBar,
 } from "@styled-icons/fa-solid";
 
-export { Offer } from "@styled-icons/boxicons-solid/Offer";
+export { Offer, CheckboxChecked } from "@styled-icons/boxicons-solid";
 export { LogInCircle, LogOutCircle } from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
-export { Chatbubbles } from "@styled-icons/ionicons-sharp/Chatbubbles";
-export { CreditCard2BackFill } from "@styled-icons/bootstrap";
+export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
+export { CreditCard2BackFill, TelephoneFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
+export { AttachMoney } from "@styled-icons/material/AttachMoney";
+export { Grid3x2GapFill } from "@styled-icons/bootstrap/Grid3x2GapFill";
+export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
+export { PhoneIphone } from "@styled-icons/material-outlined";
+export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
+export { CheckboxBlankCircle, CheckboxCircle } from "@styled-icons/remix-fill";
 
 //---------------------------------------------------///
+
+export {
+  AddShoppingCart,
+  RemoveShoppingCart,
+  Payments,
+  MoreHoriz,
+} from "@styled-icons/material-outlined";
 
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export { Trash } from "@styled-icons/fa-solid";
@@ -30,10 +44,9 @@ export {
   ArrowLeftRight,
   CreditCard2Back,
   CheckCircleFill,
-  TelephoneFill,
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
-export { Cashapp, Ifood, Ubereats } from "@styled-icons/simple-icons";
+export { Cashapp, Ubereats } from "@styled-icons/simple-icons";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
 export { AddToQueue, User } from "@styled-icons/boxicons-solid";
 export {
@@ -46,7 +59,7 @@ export { CloseOutline, SettingsOutline } from "@styled-icons/evaicons-outline";
 export { Repeat } from "@styled-icons/evaicons-solid/Repeat";
 export { Receipt } from "@styled-icons/ionicons-solid/Receipt";
 export { StatusOffline } from "@styled-icons/heroicons-solid/StatusOffline";
-export { AttachMoney } from "@styled-icons/material/AttachMoney";
+
 export { Ticket } from "@styled-icons/entypo/Ticket";
 export { UserCircle } from "@styled-icons/fa-solid/UserCircle";
 export { WhatsappSquare } from "@styled-icons/boxicons-logos";

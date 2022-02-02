@@ -5,4 +5,12 @@ export const handlerFactory = {
     await handlerModel.insert(payload),
   getCashHandlersByStoreCash: async () =>
     await handlerModel.getCashHandlersByStoreCash(),
+  deleteCashHandlerFromApiService: async (id: number) => {
+    try {
+      await handlerModel.deleteCashHandlerFromApiService(id);
+      return true;
+    } catch {
+      return false;
+    }
+  },
 };

@@ -12,7 +12,7 @@ import CashNotFound from "../../components/CashNotFound";
 import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
 
-import { message } from "antd";
+import { notification } from "antd";
 import {
   Container,
   LeftSide,
@@ -59,7 +59,11 @@ const Home: React.FC = () => {
 
   const addPayment = async () => {
     if (!currentPayment) {
-      return message.warning("Pagamento inválido");
+      return notification.warning({
+        message: "Pagamento inválido!",
+        description: `Valor incorreto para pagamento.`,
+        duration: 5,
+      });
     }
     const updatedSale = await window.Main.sale.addPayment(
       currentPayment,
@@ -129,55 +133,63 @@ const Home: React.FC = () => {
       keyMap={keyMap}
       allowChanges={true}
     >
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <LeftSide>
-            <BalanceContainer>
-              <Balance
-                addItem={onAddItem}
-                handleOpenPayment={handleOpenPayment}
-                openDiscoundModal={discountModalHandler.openDiscoundModal}
-              />
-            </BalanceContainer>
+      <>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            {storeCash?.is_opened ? (
+              <>
+                <LeftSide>
+                  <BalanceContainer>
+                    <Balance
+                      addItem={onAddItem}
+                      handleOpenPayment={handleOpenPayment}
+                      openDiscoundModal={discountModalHandler.openDiscoundModal}
+                    />
+                  </BalanceContainer>
 
-            <ItemsContainer>
-              <Products />
-            </ItemsContainer>
-          </LeftSide>
+                  <ItemsContainer>
+                    <Products />
+                  </ItemsContainer>
+                </LeftSide>
 
-          <RightSide>
-            <TopActions>
-              <Actions />
-            </TopActions>
-            <Content>
-              <ItemsCardContainer>
-                <Items />
-              </ItemsCardContainer>
+                <RightSide>
+                  <TopActions>
+                    <Actions />
+                  </TopActions>
+                  <Content>
+                    <ItemsCardContainer>
+                      <Items />
+                    </ItemsCardContainer>
 
-              <PaymentsContainer>
-                <PaymentsContent>
-                  <Payments
-                    sale={sale}
-                    addPayment={addPayment}
-                    removePayment={removePayment}
-                    setCurrentPayment={setCurrentPayment}
-                    modalState={paymentModal}
-                    modalTitle={paymentModalTitle}
-                    setModalState={setPaymentModal}
-                    handleOpenPayment={handleOpenPayment}
-                  />
-                </PaymentsContent>
+                    <PaymentsContainer>
+                      <PaymentsContent>
+                        <Payments
+                          sale={sale}
+                          addPayment={addPayment}
+                          removePayment={removePayment}
+                          setCurrentPayment={setCurrentPayment}
+                          modalState={paymentModal}
+                          modalTitle={paymentModalTitle}
+                          setModalState={setPaymentModal}
+                          handleOpenPayment={handleOpenPayment}
+                        />
+                      </PaymentsContent>
 
-                <RegisterContent>
-                  <Register />
-                </RegisterContent>
-              </PaymentsContainer>
-            </Content>
-          </RightSide>
-        </>
-      )}
+                      <RegisterContent>
+                        <Register />
+                      </RegisterContent>
+                    </PaymentsContainer>
+                  </Content>
+                </RightSide>
+              </>
+            ) : (
+              <CashNotFound />
+            )}
+          </>
+        )}
+      </>
     </Container>
   );
 };

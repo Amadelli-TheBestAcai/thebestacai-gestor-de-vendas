@@ -11,7 +11,6 @@ import {
   Content,
   Logo,
   HomeIcon,
-  Listicon,
   CashRegisterIcon,
   RetweetIcon,
   BoxIcon,
@@ -19,6 +18,8 @@ import {
   DeliveryIcon,
   ScrollIcon,
   CardIcon,
+  ChartIcon,
+  SettingsIcon,
 } from "./styles";
 
 type IProps = RouteComponentProps;
@@ -65,15 +66,27 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
     },
     {
       id: 6,
+      icon: <ChartIcon />,
+      label: "Balanço",
+      router: "/balance",
+    },
+    {
+      id: 7,
       icon: <CoinsIcon />,
       label: "Vendas",
       router: "/sale",
     },
     {
-      id: 7,
+      id: 8,
       icon: <ScrollIcon />,
       label: "NFC-e",
       router: "/nfce",
+    },
+    {
+      id: 9,
+      icon: <SettingsIcon />,
+      label: "Configuração",
+      router: "/settings",
     },
   ];
 
@@ -85,6 +98,7 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
       <Content>
         {menus.map((menu) => (
           <Tooltip
+            key={menu.id}
             placement="right"
             title={menu.label}
             color={"var(--orange-250)"}

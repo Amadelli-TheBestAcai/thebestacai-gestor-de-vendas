@@ -1,16 +1,20 @@
 import { BaseRepository } from "../repository/baseRepository";
+import { IBaseRepository } from "../repository/baseRepository.interface";
 import { Entity as ProductDto } from "./product";
 import userModel from "./user";
 import storeCashModel from "./storeCash";
-import integrationModel from "./integration";
+import productModel from "./product";
 import { v4 } from "uuid";
 import moment from "moment";
 import { checkInternet } from "../providers/internetConnection";
 import midasApi from "../providers/midasApi";
-import { SaleDto } from "./dtos/sale";
+import odinApi from "../providers/odinApi";
+import { AppSaleDTO } from "./dtos/appSale";
+import { salesFormaterToIntegrate } from "../helpers/salesFormaterToIntegrate";
 
 export type Entity = {
   id: string;
+  name?: string;
   user_id?: number;
   quantity: number;
   change_amount: number;
@@ -103,9 +107,20 @@ export type Entity = {
 };
 
 class Sale extends BaseRepository<Entity> {
-  currentSale: Entity | null = null;
+  private notIntegratedQueueRepository: IBaseRepository<Entity>;
+  public integrateQueueRepository: IBaseRepository<Entity>;
+  public stepSaleRepository: IBaseRepository<Entity>;
+  public deliverySaleRepository: IBaseRepository<Entity>;
   constructor(storageName = "Sale") {
     super(storageName);
+    this.notIntegratedQueueRepository = new BaseRepository<Entity>(
+      "Not_Integrated_Sale"
+    );
+    this.integrateQueueRepository = new BaseRepository<Entity>(
+      "Integrated_Sale"
+    );
+    this.stepSaleRepository = new BaseRepository<Entity>("Step_Sale");
+    this.deliverySaleRepository = new BaseRepository<Entity>("Delivery_Sale");
   }
 
   async getCurrent(): Promise<Entity> {
@@ -115,59 +130,95 @@ class Sale extends BaseRepository<Entity> {
       return currentSale;
     } else {
       const newSale: Entity = await this.buildNewSale();
-      await this.createMany([...sales, newSale]);
+      await this.create(newSale);
       return newSale;
     }
   }
 
-  async finishSale(): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+  async finishSale(payload: Entity, fromDelivery?: boolean): Promise<void> {
+    payload.is_current = false;
+    payload.to_integrate = true;
 
-    sales[saleIndex].is_current = false;
-    sales[saleIndex].to_integrate = true;
+    if (fromDelivery) {
+      await this.deliverySaleRepository.deleteById(payload.id);
+    } else {
+      await this.deleteById(payload.id);
+    }
+    await this.notIntegratedQueueRepository.create(payload);
 
-    const newSale: Entity = await this.buildNewSale();
-    await this.createMany([...sales, newSale]);
-
-    await integrationModel.moveToPreIntegration();
-
-    return newSale;
+    await this.onlineIntegration();
   }
 
   async addPayment(amount: number, type: number): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    sales[saleIndex].payments.push({
+    sale.payments.push({
       id: v4(),
       amount,
       type,
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     });
 
-    sales[saleIndex].total_paid = +sales[saleIndex].payments
+    sale.total_paid = +sale.payments
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    await this.update(sale.id, sale);
+    return sale;
   }
 
   async deletePayment(id: string): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    sales[saleIndex].payments = sales[saleIndex].payments.filter(
-      (_payment) => _payment.id !== id
-    );
+    sale.payments = sale.payments.filter((_payment) => _payment.id !== id);
 
-    sales[saleIndex].total_paid = +sales[saleIndex].payments
+    sale.total_paid = +sale.payments
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    await this.update(sale.id, sale);
+    return sale;
+  }
+
+  async createStepSale(name: string): Promise<Entity> {
+    const currentSale = await this.getCurrent();
+
+    currentSale.name = name;
+    currentSale.is_current = false;
+
+    await this.deleteById(currentSale.id);
+    await this.stepSaleRepository.create(currentSale);
+
+    const newSale: Entity = await this.buildNewSale();
+    await this.create(newSale);
+
+    return newSale;
+  }
+
+  async getAllStepSales(): Promise<Entity[]> {
+    const stepSales = await this.stepSaleRepository.getAll();
+
+    return stepSales;
+  }
+
+  async recouverStepSales(id: string): Promise<Entity> {
+    const stepSale = (await this.stepSaleRepository.getById(id)) as Entity;
+
+    const transferItem = async (storeProductId: number, quantity: number) => {
+      const product = (await productModel.getById(
+        storeProductId
+      )) as ProductDto;
+      await this.addItem(product, quantity);
+    };
+
+    await stepSale.items.reduce(async (previousItem, nextItem) => {
+      await previousItem;
+      return transferItem(nextItem.store_product_id, nextItem.quantity);
+    }, Promise.resolve());
+
+    await this.stepSaleRepository.deleteById(id);
+
+    return await this.getCurrent();
   }
 
   async addItem(
@@ -175,82 +226,81 @@ class Sale extends BaseRepository<Entity> {
     quantity: number,
     price?: number
   ): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    const itemIndex = sales[saleIndex].items.findIndex(
+    const itemIndex = sale.items.findIndex(
       (_item) => _item.product.id === productToAdd.product.id
     );
 
-    if (
-      itemIndex >= 0 &&
-      sales[saleIndex].items[itemIndex].product.category.id !== 1
-    ) {
-      const newQuantity = +sales[saleIndex].items[itemIndex].quantity + 1;
-      sales[saleIndex].items[itemIndex].quantity = newQuantity;
-      sales[saleIndex].items[itemIndex].total = +(
+    if (itemIndex >= 0 && sale.items[itemIndex].product.category.id !== 1) {
+      const newQuantity = +sale.items[itemIndex].quantity + quantity;
+      sale.items[itemIndex].quantity = newQuantity;
+      sale.items[itemIndex].total = +(
         newQuantity * +(productToAdd.price_unit || 0)
       ).toFixed(2);
     } else {
       const { product, ...storeProduct } = productToAdd;
-      sales[saleIndex].items.push({
+      sale.items.push({
         id: v4(),
         store_product_id: storeProduct.id,
         quantity,
         update_stock: true,
         product,
         storeProduct,
-        total: +(price || productToAdd.price_unit || 0),
+        total: +(price || productToAdd.price_unit || 0) * quantity,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
 
-    sales[saleIndex].total_sold = +sales[saleIndex].items
+    sale.total_sold = +sale.items
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    sale.quantity = sale.items.reduce(
+      (total, item) =>
+        +item.product.category.id === 1 ? 1 : item.quantity + total,
+      0
+    );
+
+    await this.update(sale.id, sale);
+    return sale;
   }
 
   async decressItem(id: string): Promise<Entity> {
-    const sales = await this.getAll();
-    const saleIndex = sales.findIndex((_sale) => _sale.is_current);
+    const sale = await this.getCurrent();
 
-    const itemIndex = sales[saleIndex].items.findIndex(
-      (_item) => _item.id === id
-    );
+    const itemIndex = sale.items.findIndex((_item) => _item.id === id);
 
-    const newQuantity = +sales[saleIndex].items[itemIndex].quantity - 1;
+    const newQuantity = +sale.items[itemIndex].quantity - 1;
 
-    if (
-      sales[saleIndex].items[itemIndex].product.category.id === 1 ||
-      newQuantity <= 0
-    ) {
-      sales[saleIndex].items = sales[saleIndex].items.filter(
-        (_item) => _item.id !== id
-      );
+    if (sale.items[itemIndex].product.category.id === 1 || newQuantity <= 0) {
+      sale.items = sale.items.filter((_item) => _item.id !== id);
     } else {
-      sales[saleIndex].items[itemIndex].quantity = newQuantity;
-      sales[saleIndex].items[itemIndex].total =
-        newQuantity *
-        +(sales[saleIndex].items[itemIndex].storeProduct.price_unit || 0);
+      sale.items[itemIndex].quantity = newQuantity;
+      sale.items[itemIndex].total =
+        newQuantity * +(sale.items[itemIndex].storeProduct.price_unit || 0);
     }
 
-    sales[saleIndex].total_sold = sales[saleIndex].items.reduce(
+    sale.total_sold = sale.items.reduce(
       (total, item) =>
         +(item.storeProduct?.price_unit || 0) * item.quantity + total,
       0
     );
 
-    await this.createMany(sales);
-    return sales[saleIndex];
+    sale.quantity = sale.items.reduce(
+      (total, item) => item.quantity + total,
+      0
+    );
+
+    await this.update(sale.id, sale);
+    return sale;
   }
 
-  async buildNewSale(): Promise<Entity> {
+  async buildNewSale(withPersistence = true): Promise<Entity> {
     const user = await userModel.get();
     const storeCash = await storeCashModel.getOne();
-    return {
+
+    const newSale = {
       id: v4(),
       user_id: user?.id,
       quantity: 0,
@@ -268,9 +318,13 @@ class Sale extends BaseRepository<Entity> {
       items: [],
       payments: [],
     };
+    if (withPersistence) {
+      await this.create(newSale);
+    }
+    return newSale;
   }
 
-  async getSaleFromApi(withClosedCash = false): Promise<SaleDto[]> {
+  async getSaleFromApi(withClosedCash = false): Promise<Entity[]> {
     const is_online = await checkInternet();
     if (!is_online) {
       return [];
@@ -311,6 +365,53 @@ class Sale extends BaseRepository<Entity> {
     }
 
     await midasApi.delete(`/sales/${id}`);
+  }
+
+  async getSaleFromApp(): Promise<AppSaleDTO[]> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return [];
+    }
+
+    const currentCash = await storeCashModel.getOne();
+    if (!currentCash || !currentCash?.is_opened) {
+      throw new Error("Caixa fechado");
+    }
+
+    const { store_id } = currentCash;
+    if (!store_id) {
+      throw new Error("Id da loja não encontrado");
+    }
+
+    const {
+      data: { content },
+    } = await odinApi.get(`/app_sale/${store_id}/toIntegrate`);
+
+    return content;
+  }
+
+  async onlineIntegration(): Promise<void> {
+    const is_online = await checkInternet();
+    if (!is_online) {
+      return;
+    }
+    try {
+      const sales: Entity[] = await this.notIntegratedQueueRepository.getAll();
+
+      const salesOnline: Entity[] = sales.filter((_sale) => _sale.is_online);
+
+      const payload = salesFormaterToIntegrate(salesOnline);
+
+      if (payload.length) {
+        await midasApi.post("/sales", payload);
+      }
+
+      await this.notIntegratedQueueRepository.clear();
+
+      await this.integrateQueueRepository.createMany(salesOnline);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 

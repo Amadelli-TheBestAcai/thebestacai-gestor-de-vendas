@@ -1,6 +1,4 @@
 import React, { SetStateAction, Dispatch, useState } from "react";
-// import { ipcRenderer } from "electron";
-import currentUser from "../../helpers/currentUser";
 
 import { SaleDto } from "../../models/dtos/sale";
 import { PaymentType } from "../../models/enums/paymentType";
@@ -21,7 +19,7 @@ import moment from "moment";
 
 type IProps = {
   sale: SaleDto;
-  onDelete?: (id: string) => void;
+  onDelete: (id: string) => void;
   setShouldSearch: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -38,7 +36,7 @@ const Sale: React.FC<IProps> = ({ sale, onDelete, setShouldSearch }) => {
     items,
     payments,
   } = sale;
-  const time = moment(created_at).format("HH:mm:ss");
+  const time = moment(created_at).utc(false).format("HH:mm:ss");
   const getType = (type: number): string => {
     if (type === 0) return "Loja";
     if (type === 1) return "IFOOD";
@@ -101,10 +99,10 @@ const Sale: React.FC<IProps> = ({ sale, onDelete, setShouldSearch }) => {
             <ColHeader span={4}>{getType(type)}</ColHeader>
             <ColHeader span={4}>
               <PrinterIcon onClick={() => onPrinter()} />
-              {currentUser.hasPermission("sales.remove_sale") && (
+              {window.Main.user.hasPermission("sales.remove_sale") && (
                 <RemoveIcon onClick={() => onDelete(id)} />
               )}
-              {currentUser.hasPermission("sales.emit_nfce") &&
+              {window.Main.user.hasPermission("sales.emit_nfce") &&
                 !sale.nfce_id && (
                   <NfceIcon onClick={() => setNfceModal(true)} />
                 )}
