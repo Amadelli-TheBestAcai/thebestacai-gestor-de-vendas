@@ -16,7 +16,11 @@ export {
   ChartBar,
 } from "@styled-icons/fa-solid";
 
-export { Offer, CheckboxChecked } from "@styled-icons/boxicons-solid";
+export {
+  Offer,
+  CheckboxChecked,
+  BookmarkMinus,
+} from "@styled-icons/boxicons-solid";
 export { LogInCircle, LogOutCircle } from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";

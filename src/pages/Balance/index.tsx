@@ -32,6 +32,7 @@ import {
   PixIcon,
   LegendDescription,
   TicketIcon,
+  MinusIcon,
 } from "./styles";
 
 const Balance: React.FC = () => {
@@ -183,31 +184,31 @@ const Balance: React.FC = () => {
       response.push(
         {
           id: 7,
-          icon: <OnlineIcon />,
+          icon: <MinusIcon />,
           type: "VENDAS",
           value: payload[tab].sales,
         },
         {
           id: 8,
-          icon: <OnlineIcon />,
+          icon: <MinusIcon />,
           type: "VENDAS DELIVERY",
           value: payload[tab].delivery_sales,
         },
         {
           id: 9,
-          icon: <OnlineIcon />,
+          icon: <MinusIcon />,
           type: "VENDAS LOJA",
           value: payload[tab].store_sales,
         },
         {
           id: 10,
-          icon: <OnlineIcon />,
+          icon: <MinusIcon />,
           type: "TICKET MÉDIO DELIVERY",
           value: payload[tab].delivery_ticket,
         },
         {
           id: 11,
-          icon: <OnlineIcon />,
+          icon: <MinusIcon />,
           type: "TICKET MÉDIO LOJA",
           value: payload[tab].store_ticket,
         }
@@ -270,9 +271,23 @@ const Balance: React.FC = () => {
                             <CardType>
                               <IconContainer>{typePayment.icon}</IconContainer>
                               <p>{typePayment.type}</p>
-                              <span>
-                                R$ {currencyFormater(+typePayment.value)}
-                              </span>
+
+                              {_tab.id !== "billing" ? (
+                                <span>
+                                  R$ {currencyFormater(+typePayment.value)}
+                                </span>
+                              ) : (
+                                <>
+                                  {typePayment.id === 10 ||
+                                  typePayment.id === 11 ? (
+                                    <span>
+                                      R$ {currencyFormater(+typePayment.value)}
+                                    </span>
+                                  ) : (
+                                    <span>{+typePayment.value}</span>
+                                  )}
+                                </>
+                              )}
                             </CardType>
                           )
                         )}

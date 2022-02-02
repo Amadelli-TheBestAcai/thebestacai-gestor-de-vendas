@@ -8,6 +8,7 @@ import {
   CreditCard2BackFill,
   CheckboxChecked,
   TicketAlt,
+  BookmarkMinus,
 } from "../../styles/Icons";
 
 import deliveryIcon from "../../assets/svg/deliveryIcon.svg";
@@ -244,6 +245,11 @@ export const DebitIcon = styled(CreditCard2BackFill)`
 export const TicketIcon = styled(TicketAlt)`
   ${IconCSS}
   color: var(--purple-450);
+`;
+
+export const MinusIcon = styled(BookmarkMinus)`
+  ${IconCSS}
+  color: var(--grey-80);
 `;
 
 export const OnlineIcon = styled(CheckboxChecked)`

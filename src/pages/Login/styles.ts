@@ -1,5 +1,5 @@
 import styled from "styled-components";
-// import BackgroundImg from "../../assets/svg/backgroundLogin.svg";
+import BackgroundImg from "../../assets/svg/backgroundLogin.svg";
 
 import { Button, Input as InputAnt } from "antd";
 
@@ -12,7 +12,7 @@ export const Container = styled.div`
 export const LeftContent = styled.div`
   width: 60%;
   height: 100%;
-
+  background-image: url(${BackgroundImg});
   background-repeat: no-repeat;
   background-size: content;
   object-fit: cover;
