@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import amountCash from "../../models/amountCash.json";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
-import { Input, Modal, message as messageAnt } from "antd";
+import { Input, Modal, message as messageAnt, notification } from "antd";
 
 import { Container, Row, Col, ButtonRegister } from "./styles";
 import { useSale } from "../../hooks/useSale";
@@ -64,22 +64,22 @@ const AmountModal: React.FC<IProp> = ({
 
   const onFinish = () => {
     Modal.confirm({
-      title: `${storeCash?.code ? "Fechamento" : "Abertura"} de caixa`,
+      title: `${storeCash?.code ? "Abertura" : "Fechamento"} de caixa`,
       content: `Tem certeza que gostaria de ${
-        storeCash?.code ? "fechar" : "abrir"
+        storeCash?.code ? "abrir" : "fechar"
       } este caixa?`,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
+      centered: true,
       async onOk() {
         if (storeCash?.is_opened) {
           await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
 
-          messageAnt.success("Caixa fechado com sucesso");
           return history.push("/home");
         } else {
           await window.Main.storeCash.openStoreCash(storeCashToOpen, total);
-          messageAnt.success("Caixa aberto com sucesso");
+
           return history.push("/home");
         }
       },
@@ -94,8 +94,8 @@ const AmountModal: React.FC<IProp> = ({
       onCancel={() => setVisible(false)}
       footer={
         <span>
-          Valor Total de {storeCash?.is_opened ? "Fechamento" : "Abertura"}: R${" "}
-          {currencyFormater(total)}
+          Valor Total de {storeCash?.is_opened ? "Fechamento" : "Abertura"}:{" "}
+          <span className="value">R$ {currencyFormater(total)}</span>
         </span>
       }
     >
@@ -104,6 +104,8 @@ const AmountModal: React.FC<IProp> = ({
           <Col sm={12} key={_amount.key}>
             <span>R$ {_amount.label}</span>{" "}
             <Input
+              type="number"
+              min={0}
               placeholder={_amount.label}
               onChange={({ target: { value } }) =>
                 setAmount((oldValue) => ({

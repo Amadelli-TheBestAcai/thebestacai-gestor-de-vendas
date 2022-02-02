@@ -5,7 +5,7 @@ import { SaleDto } from "../../models/dtos/sale";
 
 import Payment from "../../components/Payment";
 
-import PixLogo from "../../assets/svg/pix.svg";
+// import PixLogo from "../../assets/svg/pix.svg";
 
 import {
   Container,
@@ -83,7 +83,7 @@ const PaymentsContainer: React.FC<IProps> = ({
       action: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     },
     {
-      icon: <PixIcon src={PixLogo} />,
+      // icon: <PixIcon src={PixLogo} />,
       label: "Pix [P]",
       background: "var(--teal-400)",
       action: () => handleOpenPayment(PaymentType.PIX, "Pix"),

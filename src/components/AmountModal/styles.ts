@@ -10,6 +10,10 @@ export const Container = styled(Modal)`
   .ant-modal-footer {
     background: var(--white-80);
     color: var(--grey-100);
+
+    span.value {
+      color: var(--green-400);
+    }
   }
 `;
 
