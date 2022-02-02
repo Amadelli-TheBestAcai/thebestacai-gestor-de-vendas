@@ -4,13 +4,19 @@ import { Entity as ProductDto } from "./product";
 import userModel from "./user";
 import storeCashModel from "./storeCash";
 import productModel from "./product";
+import storeModel from "./store";
 import { v4 } from "uuid";
 import moment from "moment";
 import { checkInternet } from "../providers/internetConnection";
 import midasApi from "../providers/midasApi";
 import odinApi from "../providers/odinApi";
+import apiNfce from "../providers/apiNfe";
 import { AppSaleDTO } from "./dtos/appSale";
 import { salesFormaterToIntegrate } from "../helpers/salesFormaterToIntegrate";
+import { NfeDTO } from "./dtos/nfe";
+
+import env from "../providers/env.json";
+const ambiente = env.NFCe_AMBIENTE;
 
 export type Entity = {
   id: string;
@@ -412,6 +418,149 @@ class Sale extends BaseRepository<Entity> {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async emitNfce(
+    nfe: NfeDTO,
+    saleIdToUpdate?: number
+  ): Promise<{ error: boolean; message: string }> {
+    const hasInternet = await checkInternet();
+    if (!hasInternet) {
+      return {
+        error: true,
+        message: "Dispositivo sem conexão",
+      };
+    }
+
+    const store = await storeModel.getOne();
+
+    const storeCash = await storeCashModel.getOne();
+
+    if (!storeCash || !storeCash.is_opened) {
+      return {
+        error: true,
+        message:
+          "Caixa atualmente fechado. Abra o caixa para realizar a emissão",
+      };
+    }
+
+    let sale = {
+      cash_code: storeCash.code,
+      store_id: store?.company_id,
+      cash_id: storeCash.cash_id,
+      cash_history_id: storeCash.history_id,
+      type: "STORE",
+      discount: 0,
+      total: 0,
+      quantity: nfe.produtos.length,
+      to_integrate: false,
+      is_current: false,
+      nfce_id: null,
+      nfce_url: null,
+    };
+
+    try {
+      console.log({
+        nfce_payload: {
+          ambiente,
+          idEmpresa: store?.company_id,
+          ...nfe,
+        },
+      });
+      const {
+        data: {
+          erro: nfe_erro,
+          url: nfce_url,
+          id: nfce_id,
+          message: nfe_message,
+          erros: nfe_erros,
+        },
+      } = await apiNfce.post("/emitirNFCe", {
+        ambiente,
+        idEmpresa: store?.company_id,
+        ...nfe,
+      });
+
+      console.log({ nfe_erro });
+      if (nfe_erro || nfe_erros?.length) {
+        return {
+          error: true,
+          message: nfe_message || nfe_erros.join(", "),
+        };
+      }
+      if (!nfce_url || !nfce_id) {
+        return {
+          error: true,
+          message:
+            "Serviço temporariamente indisponível. Tente novamente mais tarde",
+        };
+      }
+      sale = {
+        ...sale,
+        nfce_id,
+        nfce_url,
+      };
+    } catch (error) {
+      return {
+        error: true,
+        message: "",
+        // message: error?.response?.data?.mensagem.includes("XML")
+        //   ? "Produtos com dados tributários inválidos ou serviço indisponível. Contate o suporte"
+        //   : error?.response?.data?.mensagem
+        //   ? error.response.data.mensagem
+        //   : "Serviço temporariamente indisponível. Tente novamente mais tarde",
+      };
+    }
+
+    const saleResponse = await this.buildNewSale();
+    if (!saleIdToUpdate) {
+      try {
+        await Promise.all(
+          nfe.produtos.map(async (produto) => {
+            const product = await productModel.getById(produto.codigo);
+
+            const payload = {
+              name: product?.product.name,
+              price_unit: product?.product?.price_sell,
+              product_id: product?.product_id,
+              product_store_id: product?.store_id,
+              category_id: product?.product.category_id,
+              quantity: produto.quantidadeComercial,
+              sale_id: v4(),
+              items: product?.product,
+              // total: produto.quantidadeComercial * +product?.product.price_sell,
+            };
+
+            // await this.addItem(payload.items, payload.quantity);
+          })
+        );
+
+        await this.update(saleResponse.id, {
+          to_integrate: true,
+        });
+
+        await this.onlineIntegration();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        await midasApi.put(`/sales/${saleIdToUpdate}`, {
+          nfce_id: sale.nfce_id,
+          nfce_url: sale.nfce_url,
+        });
+      } catch {
+        return {
+          error: true,
+          message: `Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${sale.nfce_id}`,
+        };
+      }
+    }
+
+    return {
+      error: false,
+      message: "NFCe emitida com sucesso",
+    };
   }
 }
 

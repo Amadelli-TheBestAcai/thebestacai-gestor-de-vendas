@@ -202,33 +202,33 @@ const Nfce: React.FC = () => {
     setProductsNfe(updatedProducts);
   };
 
-  // const handleEmit = () => {
-  //   if (!productsNfe.length) {
-  //     messageAnt.warning("Adicione pelo menos um produto");
-  //     return;
-  //   }
-  //   const nfcePayload = {
-  //     ...cleanObject(nfe),
-  //     informacoesAdicionaisFisco:
-  //       nfe.informacoesAdicionaisFisco || "Sem informacoes adicionais",
-  //     valorPagamento: +calculateTotal(productsNfe).replace(",", "."),
-  //     produtos: productsNfe.map(({ id, ...props }, index) => ({
-  //       ...props,
-  //       idItem: index + 1,
-  //       quantidadeTributavel: props.quantidadeComercial,
-  //     })),
-  //   };
+  const handleEmit = () => {
+    if (!productsNfe.length) {
+      messageAnt.warning("Adicione pelo menos um produto");
+      return;
+    }
+    const nfcePayload = {
+      ...cleanObject(nfe),
+      informacoesAdicionaisFisco:
+        nfe.informacoesAdicionaisFisco || "Sem informacoes adicionais",
+      valorPagamento: +calculateTotal(productsNfe).replace(",", "."),
+      produtos: productsNfe.map(({ id, ...props }, index) => ({
+        ...props,
+        idItem: index + 1,
+        quantidadeTributavel: props.quantidadeComercial,
+      })),
+    };
 
-  //   console.log(JSON.stringify(nfcePayload));
-  //   setEmitingNfe(true);
-  //   const nfce = window.Main.sale.emitNfce(nfcePayload);
-  //   setEmitingNfe(false);
-  //   if (!nfce) {
-  //     messageAnt.error("Falha ao emitir NFCe, contate o suporte.");
-  //   } else {
-  //     messageAnt.success("NFCe emitida com sucesso");
-  //   }
-  // };
+    console.log(JSON.stringify(nfcePayload));
+    setEmitingNfe(true);
+    const nfce = window.Main.sale.emitNfce(nfcePayload);
+    setEmitingNfe(false);
+    if (!nfce) {
+      messageAnt.error("Falha ao emitir NFCe, contate o suporte.");
+    } else {
+      messageAnt.success("NFCe emitida com sucesso");
+    }
+  };
 
   const handleUpdateProduct = (id: string, value: number) => {
     if (value <= 0) {
@@ -574,7 +574,7 @@ const Nfce: React.FC = () => {
                               <Col span={24}>
                                 <Button
                                   type="primary"
-                                  // onClick={() => handleEmit()}
+                                  onClick={() => handleEmit()}
                                 >
                                   Emitir Nota [F1]
                                 </Button>
