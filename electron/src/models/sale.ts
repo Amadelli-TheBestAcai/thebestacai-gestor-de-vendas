@@ -110,6 +110,7 @@ class Sale extends BaseRepository<Entity> {
   private notIntegratedQueueRepository: IBaseRepository<Entity>;
   public integrateQueueRepository: IBaseRepository<Entity>;
   public stepSaleRepository: IBaseRepository<Entity>;
+  public deliverySaleRepository: IBaseRepository<Entity>;
   constructor(storageName = "Sale") {
     super(storageName);
     this.notIntegratedQueueRepository = new BaseRepository<Entity>(
@@ -119,6 +120,7 @@ class Sale extends BaseRepository<Entity> {
       "Integrated_Sale"
     );
     this.stepSaleRepository = new BaseRepository<Entity>("Step_Sale");
+    this.deliverySaleRepository = new BaseRepository<Entity>("Delivery_Sale");
   }
 
   async getCurrent(): Promise<Entity> {
@@ -133,22 +135,18 @@ class Sale extends BaseRepository<Entity> {
     }
   }
 
-  async finishSale(): Promise<Entity> {
-    const sale = await this.getCurrent();
+  async finishSale(payload: Entity, fromDelivery?: boolean): Promise<void> {
+    payload.is_current = false;
+    payload.to_integrate = true;
 
-    sale.is_current = false;
-    sale.to_integrate = true;
-
-    const newSale: Entity = await this.buildNewSale();
-
-    await this.deleteById(sale.id);
-    await this.notIntegratedQueueRepository.create(sale);
+    if (fromDelivery) {
+      await this.deliverySaleRepository.deleteById(payload.id);
+    } else {
+      await this.deleteById(payload.id);
+    }
+    await this.notIntegratedQueueRepository.create(payload);
 
     await this.onlineIntegration();
-
-    await this.create(newSale);
-
-    return newSale;
   }
 
   async addPayment(amount: number, type: number): Promise<Entity> {
@@ -298,10 +296,11 @@ class Sale extends BaseRepository<Entity> {
     return sale;
   }
 
-  async buildNewSale(): Promise<Entity> {
+  async buildNewSale(withPersistence = true): Promise<Entity> {
     const user = await userModel.get();
     const storeCash = await storeCashModel.getOne();
-    return {
+
+    const newSale = {
       id: v4(),
       user_id: user?.id,
       quantity: 0,
@@ -319,6 +318,10 @@ class Sale extends BaseRepository<Entity> {
       items: [],
       payments: [],
     };
+    if (withPersistence) {
+      await this.create(newSale);
+    }
+    return newSale;
   }
 
   async getSaleFromApi(withClosedCash = false): Promise<Entity[]> {

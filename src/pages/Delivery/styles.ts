@@ -86,7 +86,10 @@ export const Tabs = styled(TabsAnt)`
 
 export const TabPane = styled(TabsAnt.TabPane)``;
 
-export const TabPaneContainer = styled.div`
+interface ITabPaneContainer {
+  isSelected: boolean;
+}
+export const TabPaneContainer = styled.div<ITabPaneContainer>`
   position: relative;
   display: flex;
   align-items: center;
@@ -105,6 +108,11 @@ export const TabPaneContainer = styled.div`
     width: 32px;
     height: 32px;
     padding: 0;
+    ${({ isSelected }) =>
+      isSelected &&
+      css`
+        color: orange;
+      `}
   }
 `;
 
@@ -171,7 +179,7 @@ export const Select = styled(SelectAnt)`
 
 export const Option = styled(SelectAnt.Option)``;
 
-export const InputValue = styled(InputAnt)`
+export const InputValue = styled.div`
   width: 100%;
   height: 15%;
   border: 1px solid #bebebe !important;

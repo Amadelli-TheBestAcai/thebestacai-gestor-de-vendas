@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-// import { ipcRenderer } from "electron";
+import { v4 } from "uuid";
+import moment from "moment";
 
 import { AppSale as AppSaleModel } from "../../models/appSales";
 import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
 import { PaymentType } from "../../models/enums/paymentType";
 import Payments from "../../containers/Payments";
 import OrderProgressList from "../../containers/OrderProgressList";
+import Spinner from "../../components/Spinner";
 
-import { Sale } from "../../models/sale";
+import { SaleDto } from "../../models/dtos/sale";
+import { currencyFormater } from "../../helpers/currencyFormater";
 
 import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
 
+import { Modal, message as messageAnt } from "antd";
 import {
   Container,
   PageContent,
@@ -44,37 +48,25 @@ import {
 type ComponentProps = RouteComponentProps;
 
 const Delivery: React.FC<ComponentProps> = ({ history }) => {
-  const { sale, setSale } = useSale();
-  //const [sale, setSale] = useState<Sale | null>(null);
-  const [cashier, setCashier] = useState<StoreCashDto>();
-  const [sales, setSales] = useState<AppSaleModel[]>([]);
+  const { storeCash } = useSale();
+  const [sale, setSale] = useState<SaleDto | null>(null);
+  const [deliveries, setDeliveries] = useState<SaleDto[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [hasConnection, setHasConnection] = useState<boolean>(false);
   const [appSalesResult, setAppSalesResult] =
     useState<IntegrateAppSalesDTO | null>(null);
-  const [loadingSales, setLoadingSales] = useState(false);
-  const [isLoading, setLoading] = useState<boolean>(true);
   const [paymentType, setPaymentType] = useState<number>(0);
-  const [amount, setAmount] = useState<number>();
+  const [deliveryType, setDeliveryType] = useState<number>(5);
+  const [amount, setAmount] = useState<number>(0);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
-  const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentModal, setPaymentModal] = useState(false);
 
   useEffect(() => {
     async function init() {
-      const _storeCash = await window.Main.storeCash.getCurrent();
-      setCashier(_storeCash);
-      // setSale((oldValues) => ({
-      //   ...oldValues,
-      //   store_id: _storeCash?.store_id,
-      //   cash_id: _storeCash?.cash_id,
-      //   cash_code: _storeCash?.code,
-      //   cash_history_id: _storeCash?.history_id,
-      //   change_amount: 0,
-      //   type: "APP",
-      //   discount: 0,
-      //   to_integrate: true,
-      //   is_current: false,
-      // }));
+      const _newSale = await window.Main.sale.buildNewSale();
+      setSale(_newSale);
+      const _deliveries = await window.Main.sale.getAllDelivery();
+      setDeliveries(_deliveries);
       setLoading(false);
     }
     init();
@@ -82,13 +74,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      setLoadingSales(true);
       const _sale = await window.Main.sale.getSaleFromApp();
       const inConnected = await window.Main.hasInternet();
-      console.log(_sale);
       setHasConnection(inConnected);
-      setSales(_sale);
-      setLoadingSales(false);
       const salesResult: IntegrateAppSalesDTO = {
         sales_in_delivery: _sale.length,
         total: _sale.reduce((total, sale) => total + +sale.valor_pedido, 0),
@@ -104,31 +92,40 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         salesIds: _sale.map((sale) => sale.id),
       };
       setAppSalesResult(salesResult);
+      setLoading(false);
     }
     init();
   }, []);
 
-  const handlePlatform = (value: string) => {
-    //setSale((oldValues) => ({ ...oldValues, type: value }));
-  };
-
   const addPayment = async () => {
-    if (!currentPayment) {
+    if (!amount) {
+      //TODO: ADICIONAR VALIDAÇÃO
+      return;
     }
 
-    const updatedSale = await window.Main.sale.addPayment(
-      currentPayment,
-      paymentType
-    );
-    //setSale(updatedSale);
+    const newPayment = {
+      id: v4(),
+      amount,
+      type: paymentType,
+      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+    };
 
-    setCurrentPayment(0);
+    const updatedSale = sale;
+    updatedSale.payments.push(newPayment);
+
+    setSale(updatedSale);
+
+    setAmount(0);
     setPaymentModal(false);
   };
 
   const removePayment = async (id: string) => {
-    const updatedSale = await window.Main.sale.deletePayment(id);
-    //setSale(updatedSale);
+    const payments = sale.payments.filter((_payment) => _payment.id !== id);
+    setSale((oldValues) => ({
+      ...oldValues,
+      payments,
+    }));
+    setPaymentModal(false);
   };
 
   const handleOpenPayment = (type: number, title: string): void => {
@@ -137,70 +134,64 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
     setPaymentModalTitle(title);
   };
 
-  // const handleCreateSale = async () => {
-  //   if (isLoading) {
-  //     return;
-  //   }
-  //   if (!amount) {
-  //     return;
-  //   }
-  //   confirm({
-  //     content: "Tem certeza que gostaria de prosseguir?",
-  //     okText: "Sim",
-  //     okType: "default",
-  //     cancelText: "Não",
-  //     onOk() {
-  //       setLoading(true);
-  //       ipcRenderer.send("sale:addDelivery", {
-  //         sale: {
-  //           ...sale,
-  //           quantity: 1,
-  //           total: amount,
-  //         },
-  //         payment: {
-  //           type: paymentType,
-  //           amount,
-  //         },
-  //       });
-  //       ipcRenderer.once("sale:addDelivery:response", (event, status) => {
-  //         setAmount(0);
-  //         if (status) {
-  //           message.success("Venda salva com sucesso");
-  //           setSale((oldValues) => ({
-  //             ...oldValues,
-  //             store_id: cashier?.store_id,
-  //             cash_id: cashier?.cash_id,
-  //             cash_code: cashier?.code,
-  //             cash_history_id: cashier?.history_id,
-  //             change_amount: 0,
-  //             type: "APP",
-  //             discount: 0,
-  //             to_integrate: true,
-  //             is_current: false,
-  //           }));
-  //         } else {
-  //           message.error("Falha ao salvar venda");
-  //         }
-  //         setLoading(false);
-  //       });
-  //     },
-  //   });
-  // };
+  const handleCreateSale = async () => {
+    if (!sale.payments.length) {
+      messageAnt.warning("Nenhum pagamento adicionado");
+      return;
+    }
+    if (!sale.name) {
+      messageAnt.warning("Informe o nome do cliente");
+      return;
+    }
+    Modal.confirm({
+      content: "Tem certeza que gostaria de prosseguir?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      async onOk() {
+        const payload = sale;
+        payload.quantity = 1;
+        payload.type = deliveryType;
+        await window.Main.sale.createDelivery(payload);
+        const newSale = await window.Main.sale.buildNewSale(false);
+        setSale(newSale);
+        const _newDeliveries = await window.Main.sale.getAllDelivery();
+        setDeliveries(_newDeliveries);
+        messageAnt.success("Venda salva com sucesso");
+      },
+    });
+  };
+
+  const finishSale = async (id: string): Promise<void> => {
+    Modal.confirm({
+      content: "Gostaria de prosseguir e finalizar esta venda?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      async onOk() {
+        const payload = deliveries.find((_delivery) => _delivery.id === id);
+        await window.Main.sale.finishSale(payload, true);
+        const _newDeliveries = await window.Main.sale.getAllDelivery();
+        setDeliveries(_newDeliveries);
+        messageAnt.success("Venda salva com sucesso");
+      },
+    });
+  };
 
   const formatAppSaleToSales = () => {
-    const listOfSales = sales.map((appSale) => ({
+    const listOfSales = [].map((appSale) => ({
       change_amount: 0,
       type: 5,
       discount: 0,
-      cash_id: +cashier?.cash_id,
-      cash_history_id: cashier?.history_id,
+      cash_id: +storeCash?.cash_id,
+      cash_history_id: storeCash?.history_id,
       quantity: 1,
       items: [],
       payments: [
         { amount: +appSale.valor_pedido, type: +appSale.tipo_pagamento },
       ],
     }));
-    const listOfIds = sales.map((sale) => sale.id);
+    const listOfIds = [].map((sale) => sale.id);
     return {
       sales: listOfSales,
       appSalesIds: listOfIds,
@@ -234,9 +225,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
   const tabPanes = [
     {
-      id: 1,
+      id: 5,
       label: (
-        <TabPaneContainer>
+        <TabPaneContainer isSelected={deliveryType === 5}>
           <label>[F2]</label>
           <LabelCardTab>
             <AppIcon />
@@ -246,9 +237,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       ),
     },
     {
-      id: 2,
+      id: 1,
       label: (
-        <TabPaneContainer>
+        <TabPaneContainer isSelected={deliveryType === 1}>
           <label>[F3]</label>
           <LabelCardTab>
             <IfoodIcon />
@@ -258,9 +249,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       ),
     },
     {
-      id: 3,
+      id: 6,
       label: (
-        <TabPaneContainer>
+        <TabPaneContainer isSelected={deliveryType === 6}>
           <label>[F4]</label>
           <LabelCardTab>
             <AiqfomeIcon />
@@ -270,10 +261,10 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       ),
     },
     {
-      id: 4,
+      id: 3,
       label: (
-        <TabPaneContainer>
-          <label>[F5</label>
+        <TabPaneContainer isSelected={deliveryType === 3}>
+          <label>[F5]</label>
           <LabelCardTab>
             <WhatsappIcon />
             <span>Whatsapp</span>
@@ -282,9 +273,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       ),
     },
     {
-      id: 5,
+      id: 4,
       label: (
-        <TabPaneContainer>
+        <TabPaneContainer isSelected={deliveryType === 4}>
           <label>[F6]</label>
           <LabelCardTab>
             <TelephoneIcon />
@@ -296,171 +287,86 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   ];
 
   return (
-    <Container>
+    <Container id="mainContainer">
       <PageContent>
         <Header>
           <h2>Delivery</h2>
         </Header>
-        <Tabs defaultActiveKey="1" centered>
-          {tabPanes.map((_tab) => (
-            <TabPane key={_tab.id} tab={_tab.label}>
-              <Content>
-                <LeftContainer>
-                  <h2>Adicionar Pedidos</h2>
-                  <ActionContent>
-                    <Input placeholder="Nome do cliente" />
-                    <Select placeholder="Escolha a opção">
-                      <Option>Entrega</Option>
-                    </Select>
-                  </ActionContent>
-                  <InputValue />
-                  <PaymentsContainer>
-                    <Payments
-                      sale={sale}
-                      addPayment={addPayment}
-                      removePayment={removePayment}
-                      setCurrentPayment={setCurrentPayment}
-                      modalState={paymentModal}
-                      modalTitle={paymentModalTitle}
-                      setModalState={setPaymentModal}
-                      handleOpenPayment={handleOpenPayment}
-                    />
-                  </PaymentsContainer>
-
-                  <ButtonsContainer>
-                    <ButtonCancel>CANCELAR [C]</ButtonCancel>
-                    <ButtonConfirm>ADICIONAR [F]</ButtonConfirm>
-                  </ButtonsContainer>
-                </LeftContainer>
-
-                <RightContainer>
-                  <h2>Delivery em Andamento</h2>
-                  <OrdersListContainer>
-                    <OrderProgressList />
-                  </OrdersListContainer>
-                </RightContainer>
-              </Content>
-            </TabPane>
-          ))}
-        </Tabs>
-      </PageContent>
-
-      {/* <RouterDescription description="Delivery" />
-      {cashier && cashier.is_opened ? (
-        <>
-          <PlatformContainer>
-            <Radio.Group
-              onChange={({ target: { value } }) => handlePlatform(value)}
-              value={sale?.type}
-            >
-            </Radio.Group>
-          </PlatformContainer>
-          <MainContainer>
-           
-                </PaymentItem>
-              </Radio.Group>
-            </PaymentContainer>
-
-            <RegisterContainer>
-              {isLoading ? (
-                <Spin />
-              ) : (
-                <>
-                  <InputGroup>
-                    <InputDescription>Valor do Delivery</InputDescription>
-
-                    <InputPrice
-                      autoFocus={true}
-                      getValue={(value) => setAmount(value)}
-                       onEnterPress={handleCreateSale}
-                    />
-                  </InputGroup>
-
-                  <RegisterButton>Registrar</RegisterButton>
-
-                  <RegisterButton onClick={() => handleCreateSale()}>
-                    Registrar
-                  </RegisterButton>
-                </>
-              )}
-            </RegisterContainer>
-          </MainContainer>
-        </>
-      ) : (
-        <CashNotFound />
-      )}
-      <SalesContainer>
-        {loadingSales ? (
-          <Centralizer>
-            <Spin />
-          </Centralizer>
+        {loading ? (
+          <Spinner />
         ) : (
-          <>
-            {hasConnection ? (
-              <>
-                {sales.length ? (
-                  <>
-                    <SalesTable>
-                      <SalesListHeader>
-                        <Column sm={2}>
-                          <Title>Código</Title>
-                        </Column>
-                        <Column sm={4}>
-                          <Title>Valor Pedido</Title>
-                        </Column>
-                        <Column sm={4}>
-                          <Title>Valor Produtos</Title>
-                        </Column>
-                        <Column sm={4}>
-                          <Title>Valor Entrega</Title>
-                        </Column>
-                        <Column sm={5}>
-                          <Title>Data Pedido</Title>
-                        </Column>
-                        <Column sm={5}>
-                          <Title>Data Conclusão</Title>
-                        </Column>
-                      </SalesListHeader>
-                      <SalesList>
-                        {sales.map((sale) => (
-                          <AppSale key={sale.id} {...sale} />
-                        ))}
-                      </SalesList>
-                    </SalesTable>
+          <Tabs
+            defaultActiveKey="1"
+            centered
+            onChange={(type) => setDeliveryType(+type)}
+          >
+            {tabPanes.map((_tab) => (
+              <TabPane key={_tab.id} tab={_tab.label}>
+                <Content>
+                  <LeftContainer>
+                    <h2>Adicionar Pedidos</h2>
+                    <ActionContent>
+                      <Input
+                        placeholder="Nome do cliente"
+                        value={sale.name}
+                        onChange={({ target: { value } }) =>
+                          setSale((oldValues) => ({
+                            ...oldValues,
+                            name: value,
+                          }))
+                        }
+                      />
+                      <Select placeholder="Escolha a opção">
+                        <Option>Entrega</Option>
+                      </Select>
+                    </ActionContent>
+                    <InputValue>
+                      R${" "}
+                      {currencyFormater(
+                        sale.payments.reduce(
+                          (total, _payment) => +_payment.amount + total,
+                          0
+                        )
+                      )}
+                    </InputValue>
+                    <PaymentsContainer>
+                      <Payments
+                        sale={sale}
+                        addPayment={addPayment}
+                        removePayment={removePayment}
+                        setCurrentPayment={setAmount}
+                        modalState={paymentModal}
+                        modalTitle={paymentModalTitle}
+                        setModalState={setPaymentModal}
+                        handleOpenPayment={handleOpenPayment}
+                      />
+                    </PaymentsContainer>
 
-                    <SalesDescription>
-                      <span>Total em Dinheiro</span>
-                      <label>{currencyFormater(appSalesResult?.money)}R$</label>
-                      <span>Total em Débito</span>
-                      <label>
-                        {currencyFormater(appSalesResult?.debit_card)}R$
-                      </label>
-                      <span>Total em Crédito</span>
-                      <label>
-                        {currencyFormater(appSalesResult?.credit_card)}R$
-                      </label>
-                      <span>Total:</span>
-                      <label>{currencyFormater(appSalesResult?.total)}R$</label>
-                      <Button
-                        type="primary"
-                         onClick={() => handleUpdateProduct()}
-                      >
-                        Integrar
-                      </Button>
-                    </SalesDescription>
-                  </>
-                ) : (
-                  <Centralizer>
-                    <Empty description="Nenhuma venda localizada" />
-                  </Centralizer>
-                )}
-              </>
-            ) : (
-              <DisconectedForm />
-            )}
-          </>
+                    <ButtonsContainer>
+                      <ButtonCancel>CANCELAR [C]</ButtonCancel>
+                      <ButtonConfirm onClick={handleCreateSale}>
+                        ADICIONAR [F]
+                      </ButtonConfirm>
+                    </ButtonsContainer>
+                  </LeftContainer>
+
+                  <RightContainer>
+                    <h2>Delivery em Andamento</h2>
+                    <OrdersListContainer>
+                      <OrderProgressList
+                        finishSale={finishSale}
+                        deliveries={deliveries.filter(
+                          (_delivery) => _delivery.type === deliveryType
+                        )}
+                      />
+                    </OrdersListContainer>
+                  </RightContainer>
+                </Content>
+              </TabPane>
+            ))}
+          </Tabs>
         )}
-      </SalesContainer> */}
+      </PageContent>
     </Container>
   );
 };

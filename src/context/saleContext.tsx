@@ -110,7 +110,8 @@ export function SaleProvider({ children }) {
     }
 
     setSavingSale(true);
-    const _newSale = await window.Main.sale.finishSale();
+    await window.Main.sale.finishSale(sale);
+    const _newSale = await window.Main.sale.buildNewSale();
     setSale(_newSale);
     setSavingSale(false);
     notification.success({
