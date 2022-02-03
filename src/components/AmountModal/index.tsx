@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import amountCash from "../../models/amountCash.json";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
-import { Input, Modal, message as messageAnt, notification } from "antd";
+import { Input, Modal } from "antd";
 
 import { Container, Row, Col, ButtonRegister } from "./styles";
 import { useSale } from "../../hooks/useSale";
@@ -21,7 +21,7 @@ const AmountModal: React.FC<IProp> = ({
   storeCashToOpen,
   history,
 }) => {
-  const { storeCash } = useSale();
+  const { storeCash, setStoreCash } = useSale();
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState({
     twoHundred: null,
@@ -74,12 +74,18 @@ const AmountModal: React.FC<IProp> = ({
       centered: true,
       async onOk() {
         if (storeCash?.is_opened) {
-          await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
-
+          const _storeCash = await window.Main.storeCash.closeStoreCash(
+            storeCash?.code,
+            total
+          );
+          setStoreCash(_storeCash);
           return history.push("/home");
         } else {
-          await window.Main.storeCash.openStoreCash(storeCashToOpen, total);
-
+          const _storeCash = await window.Main.storeCash.openStoreCash(
+            storeCashToOpen,
+            total
+          );
+          setStoreCash(_storeCash);
           return history.push("/home");
         }
       },

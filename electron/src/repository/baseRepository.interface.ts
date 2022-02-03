@@ -1,6 +1,7 @@
 export interface IBaseRepository<T> {
   create(payload: T): Promise<void>;
   createMany(payload: T[]): Promise<void>;
+  createManyAndReplace(payload: T[]): Promise<void>;
   getById(id: string | number): Promise<T | undefined>;
   deleteById(id: string | number): Promise<void>;
   update(

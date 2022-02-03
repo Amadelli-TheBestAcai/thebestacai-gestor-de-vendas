@@ -106,7 +106,10 @@ class StoreCash extends BaseRepository<Entity> {
     }
   }
 
-  async closeStoreCash(code: string, amount_on_close: number): Promise<void> {
+  async closeStoreCash(
+    code: string,
+    amount_on_close: number
+  ): Promise<Entity | undefined> {
     const isConnected = await checkInternet();
     if (isConnected) {
       const currentStore = await storeModel.getOne();
@@ -116,9 +119,10 @@ class StoreCash extends BaseRepository<Entity> {
       );
     }
     const storeCash = await this.getOne();
-    await this.update(storeCash?.id, {
+    const updatedStoreCash = await this.update(storeCash?.id, {
       is_opened: false,
     });
+    return updatedStoreCash;
   }
 
   async getStoreCashBalance(
