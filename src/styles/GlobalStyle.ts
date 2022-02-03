@@ -69,11 +69,11 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html, body, #root {
-    max-height: 100%;
-    max-width: 100%;
+    max-height: 100vh;
+    max-width: 100vw;
 
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     font: 500 1rem "Roboto", sans-serif;
     -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;
