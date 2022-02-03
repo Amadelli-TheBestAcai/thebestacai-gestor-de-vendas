@@ -32,6 +32,8 @@ export const GlobalStyle = createGlobalStyle`
    --orange-700: #DD610A;
    --brown-500: #aa6600;
 
+   
+   --green-200: #29ff6f;
    --green-400: #47BC47;
    --green-600: #3A7538;
    --teal-400: #4BB8A9;

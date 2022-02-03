@@ -31,7 +31,12 @@ export { Grid3x2GapFill } from "@styled-icons/bootstrap/Grid3x2GapFill";
 export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
 export { PhoneIphone } from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
-export { CheckboxBlankCircle, CheckboxCircle } from "@styled-icons/remix-fill";
+export { Attachment } from "@styled-icons/material-sharp/Attachment";
+export {
+  CheckboxBlankCircle,
+  CheckboxCircle,
+  SendPlane,
+} from "@styled-icons/remix-fill";
 
 //---------------------------------------------------///
 

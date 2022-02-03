@@ -6,6 +6,8 @@ import RegistrationCard from "../RegistrationCard";
 import DiscountForm from "../DiscountForm";
 import InOutForm from "../InOutForm";
 
+import ChatForm from "../ChatForm";
+
 import { message } from "antd";
 
 import {
@@ -92,7 +94,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
           </InfoStore>
 
           <ChatContainer>
-            <ChatIcon />
+            <ChatIcon onClick={() => setOpenChat(true)} />
             <UserPhoto
               src={
                 user?.image
@@ -122,6 +124,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         modalState={handlerOutState}
         setModalState={setHandlerOutState}
       />
+
+      <ChatForm isVisible={openChat} setIsVisible={setOpenChat} />
     </Container>
   );
 };
