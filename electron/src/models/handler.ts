@@ -1,22 +1,25 @@
 import { BaseRepository } from "../repository/baseRepository";
+import { IBaseRepository } from "../repository/baseRepository.interface";
 import { CashHandlerDTO } from "./dtos/cashHandler";
 import storeCashModel from "./storeCash";
 import { checkInternet } from "../providers/internetConnection";
+import { formatHandlesToIntegrate } from "../helpers/handlersFormaterToIntegrate";
 import odinApi from "../providers/odinApi";
 import { v4 } from "uuid";
 
 export type Entity = {
   id: string;
   cashHandler: {
-    cash_id: number;
-    cash_code: string;
-    store_id: number;
-    cash_history_id: number;
+    id?: string;
+    cash_id?: number;
+    cash_code?: string;
+    store_id?: number;
+    cash_history_id?: number;
     type: string;
     reason: string;
     amount: number;
-    to_integrate: boolean;
-    order_id: number;
+    to_integrate?: boolean;
+    order_id?: number;
   };
   sendToShop: boolean;
   shopOrder: {
@@ -37,14 +40,78 @@ export type Entity = {
 };
 
 class Handler extends BaseRepository<Entity> {
+  private integrateQueueRepository: IBaseRepository<Entity>;
   constructor(storageName = "Handler") {
     super(storageName);
+    this.integrateQueueRepository = new BaseRepository<Entity>(
+      "Integrated_Handler"
+    );
   }
 
   async insert(payload: Omit<Entity, "id">): Promise<Entity> {
-    const newHandler: Entity = { id: v4(), ...payload };
+    const currentCash = await storeCashModel.getCurrentCash();
+    const hasInternet = await checkInternet();
+
+    let order_id = undefined;
+    if (hasInternet && payload.sendToShop) {
+      const {
+        data: { id: orderId },
+      } = await odinApi.post("/purchases", payload.shopOrder);
+      order_id = orderId;
+    }
+
+    const newHandler: Entity = {
+      id: v4(),
+      ...payload,
+    };
+
+    newHandler.cashHandler = {
+      ...newHandler.cashHandler,
+      id: v4(),
+      cash_id: currentCash?.cash_id,
+      cash_code: currentCash?.code,
+      store_id: currentCash?.store_id,
+      cash_history_id: currentCash?.history_id,
+      to_integrate: true,
+      order_id,
+    };
+
     await this.create(newHandler);
+
+    await this.integrateOnline();
+
     return newHandler;
+  }
+
+  async integrateOnline(): Promise<void> {
+    const currentCash = await storeCashModel.getCurrentCash();
+    const handlers = await this.getAll();
+
+    const handlersToIntegrate = handlers.filter(
+      (_handler) => _handler.cashHandler.to_integrate
+    );
+
+    const unformatedHandlers = handlersToIntegrate.map(
+      (_handler) => _handler.cashHandler
+    );
+
+    const formatedHandlers = formatHandlesToIntegrate(unformatedHandlers);
+
+    try {
+      await odinApi.post(
+        `/cash_handler/${currentCash?.store_id}-${currentCash?.code}`,
+        formatedHandlers
+      );
+
+      const handlersToNotIntegrate = handlers.filter(
+        (_handler) => !_handler.cashHandler.to_integrate
+      );
+
+      await this.createManyAndReplace(handlersToNotIntegrate);
+      await this.integrateQueueRepository.createMany(handlersToIntegrate);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getCashHandlersByStoreCash(): Promise<CashHandlerDTO> {

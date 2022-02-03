@@ -1,6 +1,7 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { IBaseRepository } from "../repository/baseRepository.interface";
 import { Entity as ProductDto } from "./product";
+import { SaleFromApiDTO } from "./dtos/salesFromApi";
 import userModel from "./user";
 import storeCashModel from "./storeCash";
 import productModel from "./product";
@@ -136,7 +137,6 @@ class Sale extends BaseRepository<Entity> {
       return currentSale;
     } else {
       const newSale: Entity = await this.buildNewSale();
-      await this.create(newSale);
       return newSale;
     }
   }
@@ -250,10 +250,13 @@ class Sale extends BaseRepository<Entity> {
         id: v4(),
         store_product_id: storeProduct.id,
         quantity,
-        update_stock: true,
+        update_stock: product.category.id !== 1 ? true : false,
         product,
         storeProduct,
-        total: +(price || productToAdd.price_unit || 0) * quantity,
+        total:
+          product.category.id === 1
+            ? +(price || 0)
+            : +(productToAdd.price_unit || 0) * quantity,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
@@ -330,7 +333,7 @@ class Sale extends BaseRepository<Entity> {
     return newSale;
   }
 
-  async getSaleFromApi(withClosedCash = false): Promise<Entity[]> {
+  async getSaleFromApi(withClosedCash = false): Promise<SaleFromApiDTO[]> {
     const is_online = await checkInternet();
     if (!is_online) {
       return [];

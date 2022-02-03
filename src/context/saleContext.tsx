@@ -12,6 +12,7 @@ type SaleContextType = {
   sale: SaleDto;
   setSale: Dispatch<SetStateAction<SaleDto>>;
   storeCash: StoreCashDto;
+  setStoreCash: Dispatch<SetStateAction<StoreCashDto>>;
   loading: boolean;
   savingSale: boolean;
   discountModalState: boolean;
@@ -152,6 +153,7 @@ export function SaleProvider({ children }) {
         sale,
         setSale,
         storeCash,
+        setStoreCash,
         loading,
         savingSale,
         discountModalState,

@@ -36,6 +36,14 @@ export class BaseRepository<T extends { id?: string | number }>
       .setItem(this.storageName, [...response, ...oldEntities]);
   }
 
+  async createManyAndReplace(payload: T[]): Promise<void> {
+    const response = payload.map((_payload) => ({
+      ..._payload,
+      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+    }));
+    await database.getConnection().setItem(this.storageName, response);
+  }
+
   async getById(id: string | number): Promise<T | undefined> {
     const response: T[] = await database
       .getConnection()

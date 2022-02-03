@@ -5,6 +5,10 @@ export function useSale() {
   const sale = useContextSelector(SaleContext, (sale) => sale.sale);
   const setSale = useContextSelector(SaleContext, (sale) => sale.setSale);
   const storeCash = useContextSelector(SaleContext, (sale) => sale.storeCash);
+  const setStoreCash = useContextSelector(
+    SaleContext,
+    (sale) => sale.setStoreCash
+  );
   const loadingSale = useContextSelector(SaleContext, (sale) => sale.loading);
   const discountModalState = useContextSelector(
     SaleContext,
@@ -40,6 +44,7 @@ export function useSale() {
     sale,
     setSale,
     storeCash,
+    setStoreCash,
     discountModalState,
     discountModalHandler,
     onAddItem,

@@ -1,8 +1,7 @@
-export interface SaleFromApi {
+export interface SaleFromApiDTO {
   id: number;
   client_id?: number;
   quantity: number;
-  total_sold: number;
   items: {
     name: string;
     product_id: number;

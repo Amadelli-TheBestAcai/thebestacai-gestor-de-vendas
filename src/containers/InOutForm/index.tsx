@@ -61,7 +61,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (loading) {
       return;
     }
@@ -146,22 +146,19 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       sendToShop,
     };
 
-    console.log(JSON.stringify(payload));
     setLoading(true);
-    // ipcRenderer.send("handler:create", payload);
-    // ipcRenderer.once("handler:create:response", (event, { success }) => {
-    //   if (success) {
-    //     setValue(null);
-    //     setReasson(null);
-    //     setReasonType(null);
-    //     message.success("Movimentação cadastrada com sucesso");
-    //     setLoading(false);
-    //     setModalState(false);
-    //     return document.getElementById("mainContainer").focus();
-    //   }
-    //   message.warning("Erro ao cadastrar movimentação");
-    //   document.getElementById("mainContainer").focus();
-    // });
+    await window.Main.handler.create({
+      cashHandler: payload.handler,
+      sendToShop: payload.sendToShop,
+      shopOrder: payload.shopOrder,
+    });
+    setValue(null);
+    setReasson(null);
+    setReasonType(null);
+    message.success("Movimentação cadastrada com sucesso");
+    setLoading(false);
+    setModalState(false);
+    return document.getElementById("mainContainer").focus();
   };
 
   const handleSelect = (value) => {
