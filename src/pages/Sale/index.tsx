@@ -124,7 +124,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
                 header={
                   <>
                     <Col sm={4}>{selectedSale.id}</Col>
-                    <Col sm={4}>{selectedSale.total_sold}</Col>
+                    <Col sm={4}> R$ {selectedSale.total_sold}</Col>
                     <Col sm={4}>{selectedSale.quantity}</Col>
                     <Col sm={4}>{selectedSale.created_at.split(" ")[1]}</Col>
                     <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
@@ -162,7 +162,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
                     </Panel>
                   </Collapse>
                 ) : (
-                  <p>*Vendas em delivery não possuem itens*</p>
+                  <p>📌Vendas em delivery não possuem itens</p>
                 )}
               </Panel>
             </Collapse>

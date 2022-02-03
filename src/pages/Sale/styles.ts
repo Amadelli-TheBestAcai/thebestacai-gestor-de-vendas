@@ -75,7 +75,13 @@ export const HeaderTable = styled(RowAnt)`
 
 export const Row = styled(RowAnt)``;
 
-export const Collapse = styled(CollapseAnt)``;
+export const Collapse = styled(CollapseAnt)`
+  .ant-collapse-item-disabled {
+    .ant-col {
+      color: var(--black-opaco);
+    }
+  }
+`;
 
 export const Panel = styled(CollapseAnt.Panel)``;
 
