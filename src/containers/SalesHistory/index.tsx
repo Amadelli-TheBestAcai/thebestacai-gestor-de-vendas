@@ -1,6 +1,7 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
-import { SaleDto } from "../../models/dtos/sale";
+import { SaleFromApi } from "../../models/dtos/salesFromApi";
 import { currencyFormater } from "../../helpers/currencyFormater";
+import moment from "moment";
 import {
   Container,
   ActionTypeList,
@@ -12,8 +13,8 @@ import {
 } from "./styles";
 
 interface IProps {
-  sales: SaleDto[];
-  setSelectedSale: Dispatch<SetStateAction<SaleDto | null>>;
+  sales: SaleFromApi[];
+  setSelectedSale: Dispatch<SetStateAction<SaleFromApi | null>>;
 }
 const SalesHistory: React.FC<IProps> = ({ sales, setSelectedSale }) => {
   const [listView, setListView] = useState<boolean>(false);
@@ -37,7 +38,11 @@ const SalesHistory: React.FC<IProps> = ({ sales, setSelectedSale }) => {
                 </Col>
                 <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
                 <Col sm={5}>{sale.quantity}</Col>
-                <Col sm={4}>{sale.created_at}</Col>
+                <Col sm={4}>
+                  {moment(sale.created_at)
+                    .add(3, "hours")
+                    .format("DD/MM/YYYY HH:mm:ss")}
+                </Col>
                 <Col sm={5}>{sale.type}</Col>
               </CardSale>
             ))}
@@ -47,7 +52,10 @@ const SalesHistory: React.FC<IProps> = ({ sales, setSelectedSale }) => {
             {sales.map((sale, index) => (
               <CardSale key={index} onClick={() => setSelectedSale(sale)}>
                 <Col sm={24}>
-                  Horário:<span>{sale.created_at.split(" ")[1]}</span>
+                  Horário:
+                  <span>
+                    {moment(sale.created_at).add(3, "hours").format("HH:mm:ss")}
+                  </span>
                 </Col>
               </CardSale>
             ))}

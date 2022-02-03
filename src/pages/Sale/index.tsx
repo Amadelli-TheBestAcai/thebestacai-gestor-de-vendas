@@ -10,8 +10,8 @@ import SaleItem from "../../components/Sale";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SalesTypes } from "../../models/enums/salesTypes";
-import { SaleDto } from "../../models/dtos/sale";
-
+import { SaleFromApi } from "../../models/dtos/salesFromApi";
+import moment from "moment";
 import {
   Container,
   PageContent,
@@ -31,21 +31,30 @@ type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = ({ history }) => {
   const [shouldSearch, setShouldSearch] = useState(true);
-  const [selectedSale, setSelectedSale] = useState<SaleDto | null>(null);
+  const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingSales, setPendingSales] = useState<number>(0);
   const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
-  const [sales, setSales] = useState<SaleDto[]>([]);
+  const [sales, setSales] = useState<SaleFromApi[]>([]);
   const [isConected, setIsConected] = useState<boolean>(true);
 
   useEffect(() => {
     async function init() {
       setIsLoading(true);
-      const _sale = await window.Main.sale.getAllIntegratedSales();
-      if (_sale.length) {
-        setSelectedSale(_sale[0]);
+      const _sales = await window.Main.sale.getSaleFromApi();
+
+      const payload = _sales.map((_sale) => ({
+        ..._sale,
+        total_sold: _sale.items.reduce(
+          (total, _item) => total + _item.total,
+          0
+        ),
+      }));
+
+      if (_sales.length) {
+        setSelectedSale(payload[0]);
       }
-      setSales(_sale);
+      setSales(payload);
       setIsLoading(false);
       // ipcRenderer.send('integrate:status')
       // ipcRenderer.once('integrate:status:response', (event, { sales }) => {
@@ -126,7 +135,11 @@ const Sale: React.FC<IProps> = ({ history }) => {
                     <Col sm={4}>{selectedSale.id}</Col>
                     <Col sm={4}>{selectedSale.total_sold}</Col>
                     <Col sm={4}>{selectedSale.quantity}</Col>
-                    <Col sm={4}>{selectedSale.created_at.split(" ")[1]}</Col>
+                    <Col sm={4}>
+                      {moment(selectedSale.created_at)
+                        .add(3, "hours")
+                        .format("HH:mm:ss")}
+                    </Col>
                     <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
                     <Col sm={4}>AÇÕES</Col>
                   </>
@@ -135,8 +148,8 @@ const Sale: React.FC<IProps> = ({ history }) => {
               >
                 <Collapse defaultActiveKey={["2"]}>
                   <Panel header="Pagamentos" key="2">
-                    {selectedSale.payments.map((_payment) => (
-                      <React.Fragment key={_payment.id}>
+                    {selectedSale.payments.map((_payment, index) => (
+                      <React.Fragment key={index}>
                         <p>{PaymentType[_payment.type]}</p>
                         <p>{_payment.amount}</p>
                       </React.Fragment>
@@ -146,8 +159,8 @@ const Sale: React.FC<IProps> = ({ history }) => {
                 {selectedSale.items.length ? (
                   <Collapse defaultActiveKey={["3"]}>
                     <Panel header="Itens" key="2">
-                      {selectedSale.items.map((_item) => (
-                        <React.Fragment key={_item.id}>
+                      {selectedSale.items.map((_item, index) => (
+                        <React.Fragment key={index}>
                           <p>{_item.product.name}</p>
                           <p>{_item.quantity}</p>
                           <p>
