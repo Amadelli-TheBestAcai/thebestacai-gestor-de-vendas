@@ -7,5 +7,15 @@ export const Container = styled.div`
   align-items: center;
   flex-grow: 1;
   width: 100%;
-  background: pink;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-empty-image {
+      height: 250px !important;
+    }
+
+    .ant-empty-description {
+      font-size: 0.8rem;
+    }
+  }
 `;
