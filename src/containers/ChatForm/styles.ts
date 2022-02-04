@@ -8,13 +8,33 @@ export const Modal = styled(ModalAnt)`
   .ant-modal-body {
     background: var(--white-25);
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 430px !important;
+
+    .ant-modal-body {
+      input {
+        height: 3rem;
+        font-size: 0.8rem;
+      }
+      max-height: 400px;
+    }
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    .ant-modal-body {
+      max-height: 530px;
+    }
+  }
 `;
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 500px;
+  height: 50vh;
 `;
 
 export const ChatContainer = styled.div`
@@ -95,11 +115,22 @@ const IconCSS = css`
   height: 1.5rem;
   width: 1.5rem;
   color: white;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 1.1rem;
+    width: 1.1rem;
+  }
 `;
 
 const ButtonCSS = css`
   height: 70%;
   width: 10%;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+  }
 `;
 
 export const ButtonSend = styled.button`

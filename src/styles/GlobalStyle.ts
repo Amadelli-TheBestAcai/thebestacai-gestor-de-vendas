@@ -106,6 +106,20 @@ export const GlobalStyle = createGlobalStyle`
       color: var(--black-opaco);
     }
 
+    /*Responsive 1366px*/
+    @media (max-width: 1366px) {
+      .ant-notification-notice-with-icon, 
+      .ant-notification-notice-message, 
+      .ant-notification-notice-description {
+        font-size: 12px !important;
+      }
+
+      .ant-notification-notice {
+        padding: 0.8rem 1.2rem;
+        max-width: 310px; 
+      }
+    }
+
     .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
       border-radius: 0.7rem;
       outline: none;
@@ -121,7 +135,25 @@ export const GlobalStyle = createGlobalStyle`
         box-shadow: 0 0 0 0;
       }
     }
-    
+
+    /*Responsive 1366px*/
+    @media (max-width: 1366px) {
+      .ant-modal-body {
+        padding: 4%;
+        input {
+          height: 3rem !important;
+          font-size: 0.8rem;
+        }
+      }
+
+      .ant-modal-title {
+        font-size: 0.8rem;
+      }
+
+      .ant-modal-close-x {
+       font-size: 0.8rem;
+      }
+    }
   }
 
   *, button, input{

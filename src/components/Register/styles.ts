@@ -50,6 +50,16 @@ export const ContentValue = styled.div`
       }
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    span {
+      font-size: 0.7rem;
+      strong {
+        font-size: 2.1rem;
+      }
+    }
+  }
 `;
 
 export const ButtonFinisher = styled.button`
@@ -75,5 +85,10 @@ export const ButtonFinisher = styled.button`
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
     font-size: 1rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
   }
 `;

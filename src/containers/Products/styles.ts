@@ -24,6 +24,13 @@ export const TabContainer = styled(TabsAnd)`
     position: absolute;
     background: white;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-tabs-tab {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
 export const ProductSearch = styled.div`
@@ -43,6 +50,11 @@ export const InputSearchProduct = styled.input`
   background: var(--white);
   border-radius: 0px 7px 7px 0px;
   padding: 5px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const IconContainer = styled.div`
@@ -60,6 +72,12 @@ export const SearchIcon = styled(Search)`
   width: 1rem;
   height: 1rem;
   color: var(--grey-80);
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
 `;
 
 export const Header = styled.header`
@@ -72,6 +90,11 @@ export const Header = styled.header`
   /* Responsive 1600 */
   @media (max-width: 1600px) {
     font-size: 0.8rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
   }
 `;
 

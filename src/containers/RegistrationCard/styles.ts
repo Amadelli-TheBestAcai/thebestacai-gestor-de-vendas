@@ -19,6 +19,15 @@ export const Container = styled(ModalAnt)`
       width: 700px !important;
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 550px !important;
+
+    .ant-modal-content {
+      height: 350px;
+    }
+  }
 `;
 
 export const AddContainer = styled.div`
@@ -27,6 +36,11 @@ export const AddContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 5rem;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 4rem;
+  }
 `;
 
 export const ListContainer = styled.div`
@@ -70,6 +84,13 @@ export const ButtonAdd = styled.button`
       height: 3.5rem;
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+    font-size: 0.7rem;
+    width: 180px;
+  }
 `;
 
 export const Header = styled.header`
@@ -81,6 +102,11 @@ export const Header = styled.header`
   border-radius: 3px;
   color: white;
   text-transform: uppercase;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.8rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -103,6 +129,11 @@ export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const RestoreIcon = styled(RepeatOutline)`
@@ -110,4 +141,10 @@ export const RestoreIcon = styled(RepeatOutline)`
   width: 1.2rem;
   height: 1.2rem;
   color: var(--green-600);
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1rem;
+    height: 1rem;
+  }
 `;

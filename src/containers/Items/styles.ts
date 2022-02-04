@@ -30,6 +30,11 @@ export const Header = styled(Row)`
   @media (max-width: 1440px) {
     font-size: 0.8rem;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.7rem;
+  }
 `;
 
 export const Column = styled(Col)`
@@ -59,4 +64,15 @@ export const EmptyContainer = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-empty-image {
+      height: 230px !important;
+    }
+
+    .ant-empty-description {
+      font-size: 0.8rem;
+    }
+  }
 `;

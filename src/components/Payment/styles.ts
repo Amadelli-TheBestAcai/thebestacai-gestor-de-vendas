@@ -33,6 +33,16 @@ export const InfoPayment = styled(Row)`
   @media (max-width: 1440px) {
     font-size: 0.8rem;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const Column = styled(Col)`
@@ -52,5 +62,11 @@ export const DeleteIcon = styled(TrashRestoreAlt)`
   @media (max-width: 1440px) {
     width: 0.9rem;
     height: 0.9rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 0.8rem;
+    height: 0.8rem;
   }
 `;

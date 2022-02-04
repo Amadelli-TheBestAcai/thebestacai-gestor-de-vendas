@@ -59,6 +59,11 @@ export const Modal = styled(ModalAnt)`
   @media (max-width: 1440px) {
     width: 450px !important;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 350px !important;
+  }
 `;
 
 export const Input = styled(InputAnt)`
@@ -77,6 +82,11 @@ export const ButtonCancel = styled.button`
   font-size: 0.9rem;
   color: var(--orange-250);
   font-weight: 500;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const ButtonSave = styled.button`
@@ -90,5 +100,10 @@ export const ButtonSave = styled.button`
 
   :hover {
     background: var(--orange-200);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
   }
 `;

@@ -53,6 +53,17 @@ export const RightSide = styled.div`
       font-size: 0.8rem;
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    input {
+      font-size: 1.6rem;
+    }
+
+    span {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const LefttSide = styled.div`
@@ -65,6 +76,14 @@ export const LefttSide = styled.div`
     font-size: 12px;
     line-height: 14px;
     color: var(--grey-80);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    span {
+      font-size: 0.7rem;
+      line-height: 1rem;
+    }
   }
 `;
 
@@ -81,6 +100,11 @@ export const InfoWeight = styled.div`
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
     font-size: 0.9rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
   }
 `;
 

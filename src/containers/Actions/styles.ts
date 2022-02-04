@@ -58,6 +58,24 @@ const ButtonCSS = css`
     width: 8.8rem;
     height: 3.6rem;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 8.3rem;
+    height: 3.2rem;
+    font-size: 0.8rem;
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    width: 8rem;
+    height: 3.7rem;
+
+    @media (max-height: 800px) {
+      height: 3.2rem;
+      font-size: 0.75rem;
+    }
+  }
 `;
 
 const IconCSS = css`
@@ -66,6 +84,12 @@ const IconCSS = css`
   color: black;
   margin-right: 7px;
   transition: 0.5s;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
 `;
 
 export const Container = styled.div`
@@ -120,6 +144,24 @@ export const ContentHeaderInfos = styled.div`
     height: 3.6rem;
     font-size: 0.8rem;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 18rem;
+    height: 3.2rem;
+    font-size: 0.7rem;
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    width: 16rem;
+    height: 3.7rem;
+    font-size: 0.7rem;
+
+    @media (max-height: 800px) {
+      height: 3.2rem;
+    }
+  }
 `;
 
 export const InfoStore = styled.div`
@@ -139,6 +181,12 @@ export const UserPhoto = styled.img`
   @media (max-width: 1440px) {
     width: 2.2rem;
     height: 2.2rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 2rem;
+    height: 2rem;
   }
 `;
 
@@ -186,5 +234,11 @@ export const ChatIcon = styled(Chatbubbles)`
   @media (max-width: 1440px) {
     width: 1.6rem;
     height: 1.6rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1.4rem;
+    height: 1.4rem;
   }
 `;
