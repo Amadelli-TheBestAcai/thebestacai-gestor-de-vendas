@@ -1,6 +1,6 @@
 ## Ferramentas necessárias
 
-Antes da inicialização e instação do projeto, é necessário instalar as ferramentas na platarforma **Windows** em ordem:
+Antes da inicialização e instação do projeto, é necessário instalar as ferramentas na platarforma **Windows**, no **Power Shell** em modo Administrador e em ordem:
 
 **1-**
 
