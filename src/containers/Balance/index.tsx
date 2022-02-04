@@ -33,6 +33,7 @@ const BalanceContainer: React.FC<IProps> = ({
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
     useState<boolean>(false);
   const [balanceAmount, setBalanceAmount] = useState<number>();
+
   useEffect(() => {
     async function init() {
       setLoading(true);

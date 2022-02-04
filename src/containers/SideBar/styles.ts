@@ -34,6 +34,14 @@ export const LogoContainer = styled.div`
 export const Logo = styled.img`
   width: 5.5rem;
   height: 5.5rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 5rem;
+      height: 5rem;
+    }
+  }
 `;
 
 export const Content = styled.div`
@@ -59,11 +67,27 @@ export const CardIcon = styled.button`
     background: #ff9d0a;
     color: var(--black-opaco);
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 2.8rem;
+      margin-bottom: 1.5rem;
+    }
+  }
 `;
 
 const IconCSS = css`
   height: 1.8rem;
   width: 1.8rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 1.5rem;
+      width: 1.5rem;
+    }
+  }
 `;
 
 export const HomeIcon = styled(Home)`

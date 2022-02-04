@@ -19,16 +19,35 @@ const ButtonCSS = css`
   border-radius: 10px;
   width: 8.5rem;
   height: 3.7rem;
-  font-size: 13px;
+  font-size: 0.8rem;
   text-transform: uppercase;
   font-weight: 500;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+
+  /* Responsive 1600 */
+  @media (max-width: 1600px) {
+    width: 8.3rem;
+    height: 3.4rem;
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 7.3rem;
+    height: 3.2rem;
+    font-size: 0.7rem;
+  }
 `;
 
 const IconCSS = css`
-  width: 24px;
-  height: 24px;
+  width: 1.2rem;
+  height: 1.2rem;
   color: white;
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
 `;
 
 export const Container = styled.div`
@@ -64,6 +83,11 @@ export const Header = styled.header`
   color: var(--black-opaco);
   text-transform: uppercase;
   font-size: 0.9rem;
+
+  /* Responsive 1600 */
+  @media (max-width: 1600px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const Column = styled(Col)`
@@ -92,6 +116,22 @@ export const ValueInfo = styled.div`
 
   strong {
     font-size: 1.5rem;
+  }
+
+  /* Responsive 1600 */
+  @media (max-width: 1600px) {
+    font-size: 0.9rem;
+    strong {
+      font-size: 1.3rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    font-size: 0.8rem;
+    strong {
+      font-size: 1.1rem;
+    }
   }
 `;
 
@@ -133,6 +173,13 @@ export const Modal = styled(ModalAnt)`
   .ant-modal-body {
     input {
       height: 3.7rem;
+    }
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 450px !important;
     }
   }
 `;

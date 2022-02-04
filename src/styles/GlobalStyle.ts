@@ -68,6 +68,8 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+ 
+
   html, body, #root {
     max-height: 100vh;
     max-width: 100vw;

@@ -20,6 +20,12 @@ export const LeftSide = styled.div`
   height: 100%;
   width: 25%;
   margin-right: 1.2rem;
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 28%;
+    margin-right: 0.5rem;
+  }
 `;
 
 export const BalanceContainer = styled.div`
@@ -38,6 +44,11 @@ export const RightSide = styled.div`
   flex-direction: column;
   width: 75%;
   height: 100%;
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 72%;
+  }
 `;
 
 export const TopActions = styled.div`

@@ -19,7 +19,6 @@ const InputCSS = css`
   border: 1px solid var(--grey-70) !important;
   box-sizing: border-box;
   border-radius: 9px;
-
   font-size: 2.2rem;
 
   :hover,
@@ -40,8 +39,19 @@ export const RightSide = styled.div`
   }
 
   input {
-    ${InputCSS} !important;
+    ${InputCSS};
     height: 100%;
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    input {
+      font-size: 2rem;
+    }
+
+    span {
+      font-size: 0.8rem;
+    }
   }
 `;
 
@@ -67,6 +77,11 @@ export const InfoWeight = styled.div`
   font-size: 1rem;
 
   color: var(--grey-80);
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    font-size: 0.9rem;
+  }
 `;
 
 export const InputPrice = styled(MonetaryInput)`

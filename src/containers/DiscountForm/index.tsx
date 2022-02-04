@@ -38,7 +38,11 @@ const DiscountForm: React.FC = () => {
       width={400}
       footer={
         <Footer>
-          <ButtonCancel>Cancelar</ButtonCancel>
+          <ButtonCancel
+            onClick={() => discountModalHandler.closeDiscoundModal()}
+          >
+            Cancelar
+          </ButtonCancel>
           <ButtonSave onClick={() => handleSubmit()}>
             Aplicar desconto
           </ButtonSave>

@@ -67,7 +67,12 @@ export const Header = styled.header`
   align-items: center;
   width: 100%;
   height: 2.9rem;
-  background: #f9f9f9;
+  background: var(--white-40);
+
+  /* Responsive 1600 */
+  @media (max-width: 1600px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const TabItem = styled(TabsAnd.TabPane)``;

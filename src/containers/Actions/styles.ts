@@ -36,6 +36,28 @@ const ButtonCSS = css`
       color: var(--orange-250);
     }
   }
+
+  /* Responsive 1680 */
+  @media (max-width: 1680px) {
+    width: 10rem;
+  }
+
+  /* Responsive 1600 */
+  @media (max-width: 1600px) {
+    width: 9.5rem;
+    height: 4rem;
+
+    @media (max-height: 900px) {
+      height: 3.7rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 8.8rem;
+    height: 3.6rem;
+  }
 `;
 
 const IconCSS = css`
@@ -74,13 +96,36 @@ export const ContentHeaderInfos = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
+  font-size: 1rem;
+
+  /* Responsive 1680 */
+  @media (max-width: 1680px) {
+    width: 23rem;
+  }
+
+  /* Responsive 1600 */
+  @media (max-width: 1680px) {
+    width: 22rem;
+    height: 4rem;
+
+    @media (max-height: 900px) {
+      height: 3.7rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 19rem;
+    height: 3.6rem;
+    font-size: 0.8rem;
+  }
 `;
 
 export const InfoStore = styled.div`
   ${BasicCSS}
   flex-direction: column;
   width: 50%;
-  font-size: 15px;
   justify-content: center;
   border-right: 1px solid var(--gray-25);
 `;
@@ -89,6 +134,12 @@ export const UserPhoto = styled.img`
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50px;
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
 `;
 
 export const ChatContainer = styled.div`
@@ -122,4 +173,18 @@ export const ChatIcon = styled(Chatbubbles)`
   width: 2rem;
   height: 2rem;
   cursor: pointer;
+
+  /* Responsive 1600px */
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
 `;
