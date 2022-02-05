@@ -106,6 +106,25 @@ export const GlobalStyle = createGlobalStyle`
       color: var(--black-opaco);
     }
 
+    .ant-modal-confirm-btns {
+        margin-top: 0.8rem;
+          .ant-btn {
+            border: none;
+
+            :last-child {
+              background: var(--green-200);
+              border-radius: 20px;
+              color: white;
+            }
+
+            :hover,
+            :active,
+            :focus {
+              border: none;
+            }
+          }
+        }
+
     /*Responsive 1366px*/
     @media (max-width: 1366px) {
       .ant-notification-notice-with-icon, 
@@ -117,6 +136,44 @@ export const GlobalStyle = createGlobalStyle`
       .ant-notification-notice {
         padding: 0.8rem 1.2rem;
         max-width: 310px; 
+      }
+
+      .ant-modal-confirm {
+        width: 350px;
+        padding: 24px 24px 20px;
+
+        .ant-modal-confirm-title {
+          font-size: 0.8rem;
+        }
+
+        .ant-modal-confirm-content {
+          font-size: 0.8rem;
+        }
+
+        .ant-modal-confirm-btns {
+          margin-top: 0.8rem;
+
+          .ant-btn {
+            border: none;
+
+            :last-child {
+              background: var(--green-200);
+              border-radius: 20px;
+              color: white;
+            }
+
+            span {
+              font-size: 0.7rem;
+            }
+
+            :hover,
+            :active,
+            :focus {
+              border: none;
+            }
+          }
+        }
+
       }
     }
 

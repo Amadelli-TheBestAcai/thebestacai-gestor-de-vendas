@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import amountCash from "../../models/amountCash.json";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
-import { Input, Modal } from "antd";
+import { Input, Modal, notification } from "antd";
 
 import { Container, Row, Col, ButtonRegister } from "./styles";
 import { useSale } from "../../hooks/useSale";
@@ -64,9 +64,9 @@ const AmountModal: React.FC<IProp> = ({
 
   const onFinish = () => {
     Modal.confirm({
-      title: `${storeCash?.code ? "Abertura" : "Fechamento"} de caixa`,
+      title: `${storeCash?.is_opened ? "Fechamento" : "Abertura"} de caixa`,
       content: `Tem certeza que gostaria de ${
-        storeCash?.code ? "abrir" : "fechar"
+        storeCash?.is_opened ? "fechar" : "abrir"
       } este caixa?`,
       okText: "Sim",
       okType: "default",
@@ -79,6 +79,15 @@ const AmountModal: React.FC<IProp> = ({
             total
           );
           setStoreCash(_storeCash);
+          notification.success({
+            message: `Caixa ${
+              storeCash?.is_opened ? "fechado" : "aberto"
+            } com sucesso!`,
+            description: `O caixa foi ${
+              storeCash?.is_opened ? "fechado" : "aberto"
+            } com sucesso.`,
+            duration: 5,
+          });
           return history.push("/home");
         } else {
           const _storeCash = await window.Main.storeCash.openStoreCash(
@@ -86,6 +95,15 @@ const AmountModal: React.FC<IProp> = ({
             total
           );
           setStoreCash(_storeCash);
+          notification.success({
+            message: `Caixa ${
+              storeCash?.is_opened ? "fechado" : "aberto"
+            } com sucesso!`,
+            description: `O caixa foi ${
+              storeCash?.is_opened ? "fechado" : "aberto"
+            } com sucesso.`,
+            duration: 5,
+          });
           return history.push("/home");
         }
       },
