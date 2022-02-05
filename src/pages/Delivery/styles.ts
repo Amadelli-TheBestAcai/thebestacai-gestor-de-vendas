@@ -1,7 +1,5 @@
 import styled, { css } from "styled-components";
 
-import MonetaryInput from "../../components/MonetaryInput";
-
 import { Tabs as TabsAnt, Input as InputAnt, Select as SelectAnt } from "antd";
 
 import {
@@ -10,6 +8,7 @@ import {
   Aiqfome,
   PhoneIphone,
   TelephoneFill,
+  UiChecks,
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -250,6 +249,12 @@ export const RightContainer = styled.div`
   margin-left: 1rem;
 `;
 
+export const HeaderRight = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 export const OrdersListContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -280,4 +285,10 @@ export const AppIcon = styled(PhoneIphone)`
 
 export const TelephoneIcon = styled(TelephoneFill)`
   ${IconCSS}
+`;
+
+export const CheckAll = styled(UiChecks)`
+  ${IconCSS}
+  cursor: pointer;
+  color: var(--green-400);
 `;

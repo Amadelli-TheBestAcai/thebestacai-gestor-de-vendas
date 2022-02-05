@@ -1,7 +1,5 @@
 import styled, { css } from "styled-components";
 
-import { CheckboxBlankCircle, CheckboxCircle } from "../../styles/Icons";
-
 export const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -51,18 +49,4 @@ export const Content = styled.div`
     color: var(--green-400);
     margin-top: 1rem;
   }
-`;
-
-const IconCSS = css`
-  width: 1.5rem;
-  height: 1.5rem;
-  color: white;
-
-  circle {
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  }
-`;
-
-export const CheckboxIcon = styled(CheckboxBlankCircle)`
-  ${IconCSS}
 `;

@@ -13,10 +13,9 @@ import Spinner from "../../components/Spinner";
 import { SaleDto } from "../../models/dtos/sale";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
-import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
 
-import { Modal, notification } from "antd";
+import { Modal, notification, Tooltip } from "antd";
 
 import {
   Container,
@@ -44,6 +43,8 @@ import {
   ButtonConfirm,
   ButtonCancel,
   OrdersListContainer,
+  CheckAll,
+  HeaderRight,
 } from "./styles";
 
 type ComponentProps = RouteComponentProps;
@@ -61,6 +62,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   const [amount, setAmount] = useState<number>(0);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [paymentModal, setPaymentModal] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -186,6 +188,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       okType: "default",
       cancelText: "Não",
       centered: true,
+      async onCancel() {
+        setIsChecked(!isChecked);
+      },
       async onOk() {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
         await window.Main.sale.finishSale(payload, true);
@@ -374,9 +379,20 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                   </LeftContainer>
 
                   <RightContainer>
-                    <h2>Delivery em Andamento</h2>
+                    <HeaderRight>
+                      <h2>Delivery em Andamento</h2>
+                      <Tooltip
+                        placement="right"
+                        title="Confirmar todas as vendas"
+                      >
+                        <CheckAll />
+                      </Tooltip>
+                    </HeaderRight>
+
                     <OrdersListContainer>
                       <OrderProgressList
+                        isChecked={isChecked}
+                        setIsChecked={setIsChecked}
                         finishSale={finishSale}
                         deliveries={deliveries.filter(
                           (_delivery) => _delivery.type === deliveryType

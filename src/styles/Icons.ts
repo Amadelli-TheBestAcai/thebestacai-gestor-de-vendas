@@ -27,7 +27,7 @@ export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
 export { CreditCard2BackFill, TelephoneFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
-export { Grid3x2GapFill } from "@styled-icons/bootstrap/Grid3x2GapFill";
+export { Grid3x2GapFill, UiChecks } from "@styled-icons/bootstrap";
 export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
 export { PhoneIphone } from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
