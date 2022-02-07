@@ -40,6 +40,20 @@ export const Header = styled.header`
   h2 {
     margin-bottom: 0px;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    h2 {
+      font-size: 1rem;
+    }
+  }
 `;
 
 export const Tabs = styled(TabsAnt)`
@@ -121,6 +135,43 @@ export const TabPaneContainer = styled.div<ITabPaneContainer>`
         color: var(--orange-250);
       }
     `}
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    width: 300px;
+    height: 113px;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    width: 284px;
+    height: 100px;
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 250px;
+    height: 90px;
+
+    label {
+      font-size: 0.7rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 241px;
+    height: 80px;
+
+    label {
+      font-size: 0.6rem;
+    }
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    width: 220px;
+  }
 `;
 
 export const LabelCardTab = styled.div`
@@ -135,6 +186,27 @@ export const LabelCardTab = styled.div`
   span {
     font-size: 1.4rem;
     font-weight: 500;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    span {
+      font-size: 1.2rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    span {
+      font-size: 1rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    span {
+      font-size: 0.8rem;
+    }
   }
 `;
 
@@ -153,6 +225,20 @@ const ContentCSS = css`
 
   h2 {
     color: var(--grey-90);
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    h2 {
+      font-size: 1rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    h2 {
+      font-size: 0.8rem;
+    }
   }
 `;
 
@@ -173,6 +259,24 @@ export const ActionContent = styled.div`
   .ant-input {
     height: 3.7rem !important;
     align-items: center;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-select-selector,
+    .ant-input {
+      height: 3rem !important;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    .ant-select-selector,
+    .ant-input {
+      font-size: 0.7rem;
+    }
   }
 `;
 
@@ -207,6 +311,26 @@ export const InputValue = styled.div`
     top: 2%;
     left: 2%;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 2rem;
+
+      span {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 1.7rem;
+
+    span {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const PaymentsContainer = styled.div`
@@ -228,6 +352,24 @@ const ButtonCSS = css`
   height: 70px;
   font-weight: bold;
   font-size: 1.2rem;
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    height: 60px;
+    font-size: 1rem;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    height: 55px;
+    font-size: 0.9rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 45px;
+    font-size: 0.8rem;
+  }
 `;
 
 export const ButtonCancel = styled.button`
@@ -265,6 +407,18 @@ const IconCSS = css`
   height: 1.5rem;
   margin-right: 0.6rem;
   color: var(--grey-90);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
 `;
 
 export const IfoodIcon = styled(Ifood)`

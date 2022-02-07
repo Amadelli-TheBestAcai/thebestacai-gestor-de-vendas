@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { SaleDto } from "../../models/dtos/sale";
 
@@ -9,17 +9,8 @@ import { Container, CardOrder, HeaderCard, Content } from "./styles";
 interface IProps {
   deliveries: SaleDto[];
   finishSale: (id: string) => Promise<void>;
-  isChecked: boolean;
-  setIsChecked: Dispatch<SetStateAction<boolean>>;
 }
-const OrderProgressList: React.FC<IProps> = ({
-  deliveries,
-  finishSale,
-  isChecked,
-  setIsChecked,
-}) => {
-  const FinisheSaleCheck = () => {};
-
+const OrderProgressList: React.FC<IProps> = ({ deliveries, finishSale }) => {
   return (
     <Container>
       {deliveries.map((_delivery) => (
@@ -31,7 +22,7 @@ const OrderProgressList: React.FC<IProps> = ({
               key={_delivery.id}
               placement="bottom"
             >
-              <Checkbox onClick={() => FinisheSaleCheck()} />
+              <Checkbox />
             </Tooltip>
           </HeaderCard>
           <Content>

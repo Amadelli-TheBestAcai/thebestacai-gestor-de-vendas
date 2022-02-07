@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { currencyFormater } from "../../helpers/currencyFormater";
 import { v4 } from "uuid";
 import moment from "moment";
 
-import { AppSale as AppSaleModel } from "../../models/appSales";
-import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
-import { PaymentType } from "../../models/enums/paymentType";
 import Payments from "../../containers/Payments";
 import OrderProgressList from "../../containers/OrderProgressList";
+import { useSale } from "../../hooks/useSale";
 import Spinner from "../../components/Spinner";
 
 import { SaleDto } from "../../models/dtos/sale";
-import { currencyFormater } from "../../helpers/currencyFormater";
-
-import { useSale } from "../../hooks/useSale";
+import { PaymentType } from "../../models/enums/paymentType";
+import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
 
 import { Modal, notification, Tooltip } from "antd";
 
@@ -62,7 +60,6 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   const [amount, setAmount] = useState<number>(0);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [paymentModal, setPaymentModal] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -188,9 +185,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       okType: "default",
       cancelText: "Não",
       centered: true,
-      async onCancel() {
-        setIsChecked(!isChecked);
-      },
+
       async onOk() {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
         await window.Main.sale.finishSale(payload, true);
@@ -391,8 +386,6 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
                     <OrdersListContainer>
                       <OrderProgressList
-                        isChecked={isChecked}
-                        setIsChecked={setIsChecked}
                         finishSale={finishSale}
                         deliveries={deliveries.filter(
                           (_delivery) => _delivery.type === deliveryType
