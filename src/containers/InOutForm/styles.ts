@@ -32,6 +32,29 @@ export const Container = styled(ModalAnt)`
       }
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 430px !important;
+
+    .ant-modal-body {
+      max-height: 400px;
+
+      .ant-select-selector,
+      .ant-form-item-control-input {
+        height: 3rem;
+        font-size: 0.8rem;
+      }
+
+      .ant-form-item-label > label {
+        font-size: 0.8rem;
+      }
+
+      .ant-select-selection-item {
+        font-size: 0.8rem;
+      }
+    }
+  }
 `;
 
 export const Content = styled.div`
@@ -59,6 +82,11 @@ export const ButtonCancel = styled.button`
   font-size: 0.9rem;
   color: var(--orange-250);
   font-weight: 500;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const ButtonSave = styled.button`
@@ -72,6 +100,11 @@ export const ButtonSave = styled.button`
 
   :hover {
     background: var(--orange-200);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
   }
 `;
 

@@ -39,7 +39,6 @@ const StoreCash: React.FC = () => {
   >([]);
   const [loading, setLoading] = useState(true);
   const [storeCashToOpen, setStoreCashToOpen] = useState<string>();
-  const [pendingSale, setPendingSale] = useState<boolean>(false);
 
   useEffect(() => {
     async function init() {
@@ -130,7 +129,7 @@ const StoreCash: React.FC = () => {
                 <h2>Status do Caixa</h2>
                 <StatusCash>
                   <Status>
-                    <Left>Caixa</Left>
+                    <Left>Caixa {storeCash.code}</Left>
                     <Right is_opened={storeCash?.is_opened}>
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>

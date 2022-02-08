@@ -36,6 +36,19 @@ const ButtonCSS = css`
     height: 3.2rem;
     font-size: 0.7rem;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 6.8rem;
+    height: 3rem;
+    font-size: 0.65rem;
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    width: 6.4rem;
+    height: 3rem;
+  }
 `;
 
 const IconCSS = css`
@@ -47,6 +60,12 @@ const IconCSS = css`
   @media (max-width: 1440px) {
     width: 1.1rem;
     height: 1.1rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1rem;
+    height: 1rem;
   }
 `;
 
@@ -87,6 +106,11 @@ export const Header = styled.header`
   /* Responsive 1600 */
   @media (max-width: 1600px) {
     font-size: 0.8rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
   }
 `;
 
@@ -133,6 +157,22 @@ export const ValueInfo = styled.div`
       font-size: 1.1rem;
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+    strong {
+      font-size: 1rem;
+    }
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    font-size: 0.8rem;
+    strong {
+      font-size: 1.1rem;
+    }
+  }
 `;
 
 export const Button = styled.button`
@@ -153,6 +193,11 @@ export const ButtonCancel = styled.button`
   font-size: 0.9rem;
   color: var(--orange-250);
   font-weight: 500;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const ButtonSave = styled.button`
@@ -166,6 +211,11 @@ export const ButtonSave = styled.button`
 
   :hover {
     background: var(--orange-200);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
   }
 `;
 
@@ -181,6 +231,11 @@ export const Modal = styled(ModalAnt)`
     @media (max-height: 900px) {
       width: 450px !important;
     }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 350px !important;
   }
 `;
 

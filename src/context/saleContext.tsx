@@ -128,7 +128,7 @@ export function SaleProvider({ children }) {
     notification.success({
       message: "Comanda salva com sucesso!",
       description: `Para que a venda retorne ao carrinho, clique na ação de restaurar a comanda[🔁] do modal anterior.`,
-      duration: 8,
+      duration: 5,
     });
   };
 

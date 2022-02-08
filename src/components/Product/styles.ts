@@ -20,6 +20,11 @@ export const Column = styled(Col)`
   @media (max-width: 1600px) {
     font-size: 0.8rem;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
 `;
 
 export const AddIcon = styled(AddCircle)`

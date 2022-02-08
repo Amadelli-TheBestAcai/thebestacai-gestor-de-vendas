@@ -38,6 +38,24 @@ export const Header = styled.header`
   h2 {
     margin-bottom: 0px;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      h2 {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+  }
 `;
 
 export const CashContainer = styled.div`
@@ -64,6 +82,13 @@ export const HeaderStatus = styled.header`
     margin-bottom: 0px;
     font-size: 1.3rem;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    h2 {
+      font-size: 1rem;
+    }
+  }
 `;
 
 export const StatusCash = styled.div`
@@ -81,6 +106,18 @@ export const StatusCash = styled.div`
     color: #707171;
     text-transform: uppercase;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
 `;
 
 export const Status = styled.div`
@@ -95,9 +132,14 @@ export const Left = styled.label`
   justify-content: center;
   width: 50%;
   height: 100%;
-  background: #1c1e23;
+  background: var(--black-opaco);
   color: white;
   border-radius: 5px 0px 0px 5px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    padding: 3px;
+  }
 `;
 
 export const Right = styled.label<IStatusCash>`
@@ -120,6 +162,11 @@ export const Right = styled.label<IStatusCash>`
       `;
     }
   }}
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    padding: 3px;
+  }
 `;
 
 export const ContentStatusCash = styled.div`
@@ -185,6 +232,34 @@ export const CardStatus = styled.div<ICardStatus>`
       `;
     }}
   }
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    height: 165px;
+    font-size: 2rem;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 150px;
+      font-size: 1.8rem;
+
+      label {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 135px;
+    font-size: 1.6rem;
+
+    label {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const CloseCashContatiner = styled.div`
@@ -206,4 +281,10 @@ export const CloseButton = styled.button`
   border-radius: 4px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 60%;
+    font-size: 0.8rem;
+  }
 `;

@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { currencyFormater } from "../../helpers/currencyFormater";
 import { v4 } from "uuid";
 import moment from "moment";
 
-import { AppSale as AppSaleModel } from "../../models/appSales";
-import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
-import { PaymentType } from "../../models/enums/paymentType";
 import Payments from "../../containers/Payments";
 import OrderProgressList from "../../containers/OrderProgressList";
+import { useSale } from "../../hooks/useSale";
 import Spinner from "../../components/Spinner";
 
 import { SaleDto } from "../../models/dtos/sale";
-import { currencyFormater } from "../../helpers/currencyFormater";
+import { PaymentType } from "../../models/enums/paymentType";
+import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
 
-import { StoreCashDto } from "../../models/dtos/storeCash";
-import { useSale } from "../../hooks/useSale";
-
-import { Modal, notification } from "antd";
+import { Modal, notification, Tooltip } from "antd";
 
 import {
   Container,
@@ -44,6 +41,8 @@ import {
   ButtonConfirm,
   ButtonCancel,
   OrdersListContainer,
+  CheckAll,
+  HeaderRight,
 } from "./styles";
 
 type ComponentProps = RouteComponentProps;
@@ -186,6 +185,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       okType: "default",
       cancelText: "Não",
       centered: true,
+
       async onOk() {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
         await window.Main.sale.finishSale(payload, true);
@@ -374,7 +374,16 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                   </LeftContainer>
 
                   <RightContainer>
-                    <h2>Delivery em Andamento</h2>
+                    <HeaderRight>
+                      <h2>Delivery em Andamento</h2>
+                      <Tooltip
+                        placement="right"
+                        title="Confirmar todas as vendas"
+                      >
+                        <CheckAll />
+                      </Tooltip>
+                    </HeaderRight>
+
                     <OrdersListContainer>
                       <OrderProgressList
                         finishSale={finishSale}

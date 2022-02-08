@@ -2,12 +2,10 @@ import styled, { css } from "styled-components";
 
 import {
   Home,
-  ListAlt,
   CashRegister,
   Motorcycle,
   Retweet,
   Box,
-  BarChart,
   Coins,
   Scroll,
   ChartBar,
@@ -42,6 +40,12 @@ export const Logo = styled.img`
       height: 5rem;
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 4.3rem;
+    height: 4.3rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -75,6 +79,12 @@ export const CardIcon = styled.button`
       margin-bottom: 1.5rem;
     }
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.4rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const IconCSS = css`
@@ -87,6 +97,12 @@ const IconCSS = css`
       height: 1.5rem;
       width: 1.5rem;
     }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 1.2rem;
+    width: 1.2rem;
   }
 `;
 

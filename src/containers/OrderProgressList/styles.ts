@@ -1,7 +1,5 @@
 import styled, { css } from "styled-components";
 
-import { CheckboxBlankCircle, CheckboxCircle } from "../../styles/Icons";
-
 export const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -17,6 +15,23 @@ export const CardOrder = styled.div`
   height: 12rem;
   background: var(--white);
   border: 1px solid var(--grey-70);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    height: 10.5rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 9.5rem;
+  }
 `;
 
 export const HeaderCard = styled.div`
@@ -30,6 +45,18 @@ export const HeaderCard = styled.div`
   font-size: 1rem;
   color: var(--grey-100);
   padding: 0 1rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -51,18 +78,27 @@ export const Content = styled.div`
     color: var(--green-400);
     margin-top: 1rem;
   }
-`;
 
-const IconCSS = css`
-  width: 1.5rem;
-  height: 1.5rem;
-  color: white;
-
-  circle {
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      label {
+        font-size: 0.9rem;
+      }
+    }
   }
-`;
 
-export const CheckboxIcon = styled(CheckboxBlankCircle)`
-  ${IconCSS}
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    label {
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    label {
+      font-size: 0.7rem;
+    }
+  }
 `;

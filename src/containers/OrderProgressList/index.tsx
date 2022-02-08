@@ -2,13 +2,9 @@ import React from "react";
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { SaleDto } from "../../models/dtos/sale";
 
-import {
-  Container,
-  CardOrder,
-  HeaderCard,
-  CheckboxIcon,
-  Content,
-} from "./styles";
+import { Checkbox, Tooltip } from "antd";
+
+import { Container, CardOrder, HeaderCard, Content } from "./styles";
 
 interface IProps {
   deliveries: SaleDto[];
@@ -21,7 +17,13 @@ const OrderProgressList: React.FC<IProps> = ({ deliveries, finishSale }) => {
         <CardOrder onClick={() => finishSale(_delivery.id)} key={_delivery.id}>
           <HeaderCard>
             <span>{_delivery.created_at.split(" ")[1]}</span>
-            <CheckboxIcon />
+            <Tooltip
+              title="Confirmar venda"
+              key={_delivery.id}
+              placement="bottom"
+            >
+              <Checkbox />
+            </Tooltip>
           </HeaderCard>
           <Content>
             <label> {_delivery.name}</label>
