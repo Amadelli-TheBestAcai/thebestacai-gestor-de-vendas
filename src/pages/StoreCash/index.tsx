@@ -129,7 +129,7 @@ const StoreCash: React.FC = () => {
                 <h2>Status do Caixa</h2>
                 <StatusCash>
                   <Status>
-                    <Left>Caixa {storeCash.code}</Left>
+                    <Left>Caixa {storeCash?.code}</Left>
                     <Right is_opened={storeCash?.is_opened}>
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>

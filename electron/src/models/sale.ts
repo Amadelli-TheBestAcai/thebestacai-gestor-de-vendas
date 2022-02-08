@@ -155,6 +155,24 @@ class Sale extends BaseRepository<Entity> {
     await this.onlineIntegration();
   }
 
+  async integrateAllSalesFromType(type: number): Promise<void> {
+    const deliverySales = await this.deliverySaleRepository.getAll();
+
+    const deliveryNotToIntegrate = deliverySales.filter(
+      (_deliverySale) => _deliverySale.type !== type
+    );
+    await this.deliverySaleRepository.createManyAndReplace(
+      deliveryNotToIntegrate
+    );
+
+    const deliveryToIntegrate = deliverySales.filter(
+      (_deliverySale) => _deliverySale.type === type
+    );
+    await this.notIntegratedQueueRepository.createMany(deliveryToIntegrate);
+
+    await this.onlineIntegration();
+  }
+
   async addPayment(amount: number, type: number): Promise<Entity> {
     const sale = await this.getCurrent();
 
@@ -503,15 +521,14 @@ class Sale extends BaseRepository<Entity> {
         nfce_id,
         nfce_url,
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         error: true,
-        message: "",
-        // message: error?.response?.data?.mensagem.includes("XML")
-        //   ? "Produtos com dados tributários inválidos ou serviço indisponível. Contate o suporte"
-        //   : error?.response?.data?.mensagem
-        //   ? error.response.data.mensagem
-        //   : "Serviço temporariamente indisponível. Tente novamente mais tarde",
+        message: error?.response?.data?.mensagem.includes("XML")
+          ? "Produtos com dados tributários inválidos ou serviço indisponível. Contate o suporte"
+          : error?.response?.data?.mensagem
+          ? error.response.data.mensagem
+          : "Serviço temporariamente indisponível. Tente novamente mais tarde",
       };
     }
 

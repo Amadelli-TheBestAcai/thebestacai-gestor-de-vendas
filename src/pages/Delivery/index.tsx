@@ -8,8 +8,10 @@ import Payments from "../../containers/Payments";
 import OrderProgressList from "../../containers/OrderProgressList";
 import { useSale } from "../../hooks/useSale";
 import Spinner from "../../components/Spinner";
+import CashNotFound from "../../components/CashNotFound";
 
 import { SaleDto } from "../../models/dtos/sale";
+import { SalesTypes } from "../../models/enums/salesTypes";
 import { PaymentType } from "../../models/enums/paymentType";
 import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
 
@@ -245,6 +247,27 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   //   });
   // };
 
+  const integrateAllSalesFromType = async (type: number) => {
+    Modal.confirm({
+      content: "Tem certeza que gostaria de prosseguir?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+      async onOk() {
+        await window.Main.sale.integrateAllSalesFromType(type);
+        const _updatedDeliverySales = await window.Main.sale.getAllDelivery();
+        setDeliveries(_updatedDeliverySales);
+        notification.success({
+          message: "Vendas integradas com sucesso!",
+          description: `A venda do tipo [${SalesTypes[deliveryType]}] foram integradas com sucesso. 
+                        Não esqueça que após a integração das vendas, pode levar uns minutos até serem processadas pelo servidor.`,
+          duration: 5,
+        });
+      },
+    });
+  };
+
   const tabPanes = [
     {
       id: 5,
@@ -311,92 +334,102 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   return (
     <Container id="mainContainer">
       <PageContent>
-        <Header>
-          <h2>Delivery</h2>
-        </Header>
-        {loading ? (
-          <Spinner />
+        {storeCash?.is_opened ? (
+          <>
+            <Header>
+              <h2>Delivery</h2>
+            </Header>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <Tabs
+                defaultActiveKey="1"
+                centered
+                onChange={(type) => setDeliveryType(+type)}
+              >
+                {tabPanes.map((_tab) => (
+                  <TabPane key={_tab.id} tab={_tab.label}>
+                    <Content>
+                      <LeftContainer>
+                        <h2>Adicionar Pedidos</h2>
+                        <ActionContent>
+                          <Input
+                            placeholder="Nome do cliente"
+                            value={sale.name}
+                            onChange={({ target: { value } }) =>
+                              setSale((oldValues) => ({
+                                ...oldValues,
+                                name: value,
+                              }))
+                            }
+                          />
+                          <Select placeholder="Escolha a opção">
+                            <Option>Entrega</Option>
+                          </Select>
+                        </ActionContent>
+                        <InputValue>
+                          R${" "}
+                          {currencyFormater(
+                            sale.payments.reduce(
+                              (total, _payment) => +_payment.amount + total,
+                              0
+                            )
+                          )}
+                          <span>Valor do Delivery</span>
+                        </InputValue>
+                        <PaymentsContainer>
+                          <Payments
+                            sale={sale}
+                            addPayment={addPayment}
+                            removePayment={removePayment}
+                            setCurrentPayment={setAmount}
+                            modalState={paymentModal}
+                            modalTitle={paymentModalTitle}
+                            setModalState={setPaymentModal}
+                            handleOpenPayment={handleOpenPayment}
+                          />
+                        </PaymentsContainer>
+
+                        <ButtonsContainer>
+                          <ButtonCancel>CANCELAR [C]</ButtonCancel>
+                          <ButtonConfirm onClick={handleCreateSale}>
+                            ADICIONAR [F]
+                          </ButtonConfirm>
+                        </ButtonsContainer>
+                      </LeftContainer>
+
+                      <RightContainer>
+                        <HeaderRight>
+                          <h2>Delivery em Andamento</h2>
+                          <Tooltip
+                            placement="right"
+                            title="Confirmar todas as vendas"
+                          >
+                            <CheckAll
+                              onClick={() =>
+                                integrateAllSalesFromType(deliveryType)
+                              }
+                            />
+                          </Tooltip>
+                        </HeaderRight>
+
+                        <OrdersListContainer>
+                          <OrderProgressList
+                            finishSale={finishSale}
+                            deliveries={deliveries.filter(
+                              (_delivery) => _delivery.type === deliveryType
+                            )}
+                          />
+                        </OrdersListContainer>
+                      </RightContainer>
+                    </Content>
+                  </TabPane>
+                ))}
+              </Tabs>
+            )}
+          </>
         ) : (
-          <Tabs
-            defaultActiveKey="1"
-            centered
-            onChange={(type) => setDeliveryType(+type)}
-          >
-            {tabPanes.map((_tab) => (
-              <TabPane key={_tab.id} tab={_tab.label}>
-                <Content>
-                  <LeftContainer>
-                    <h2>Adicionar Pedidos</h2>
-                    <ActionContent>
-                      <Input
-                        placeholder="Nome do cliente"
-                        value={sale.name}
-                        onChange={({ target: { value } }) =>
-                          setSale((oldValues) => ({
-                            ...oldValues,
-                            name: value,
-                          }))
-                        }
-                      />
-                      <Select placeholder="Escolha a opção">
-                        <Option>Entrega</Option>
-                      </Select>
-                    </ActionContent>
-                    <InputValue>
-                      R${" "}
-                      {currencyFormater(
-                        sale.payments.reduce(
-                          (total, _payment) => +_payment.amount + total,
-                          0
-                        )
-                      )}
-                      <span>Valor do Delivery</span>
-                    </InputValue>
-                    <PaymentsContainer>
-                      <Payments
-                        sale={sale}
-                        addPayment={addPayment}
-                        removePayment={removePayment}
-                        setCurrentPayment={setAmount}
-                        modalState={paymentModal}
-                        modalTitle={paymentModalTitle}
-                        setModalState={setPaymentModal}
-                        handleOpenPayment={handleOpenPayment}
-                      />
-                    </PaymentsContainer>
-
-                    <ButtonsContainer>
-                      <ButtonCancel>CANCELAR [C]</ButtonCancel>
-                      <ButtonConfirm onClick={handleCreateSale}>
-                        ADICIONAR [F]
-                      </ButtonConfirm>
-                    </ButtonsContainer>
-                  </LeftContainer>
-
-                  <RightContainer>
-                    <HeaderRight>
-                      <h2>Delivery em Andamento</h2>
-                      <Tooltip
-                        placement="right"
-                        title="Confirmar todas as vendas"
-                      >
-                        <CheckAll />
-                      </Tooltip>
-                    </HeaderRight>
-
-                    <OrdersListContainer>
-                      <OrderProgressList
-                        finishSale={finishSale}
-                        deliveries={deliveries.filter(
-                          (_delivery) => _delivery.type === deliveryType
-                        )}
-                      />
-                    </OrdersListContainer>
-                  </RightContainer>
-                </Content>
-              </TabPane>
-            ))}
-          </Tabs>
+          <CashNotFound />
         )}
       </PageContent>
     </Container>
