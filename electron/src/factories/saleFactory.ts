@@ -34,6 +34,8 @@ export const saleFactory = {
   buildNewSale: async (withPersistence = true): Promise<Entity> =>
     await saleModel.buildNewSale(withPersistence),
   getAllDelivery: async () => await saleModel.deliverySaleRepository.getAll(),
+  integrateAllSalesFromType: async (type: number): Promise<void> =>
+    await saleModel.integrateAllSalesFromType(type),
   createDelivery: async (payload: Entity) =>
     await saleModel.deliverySaleRepository.create(payload),
   emitNfce: async (
