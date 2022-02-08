@@ -50,10 +50,15 @@ const Login: React.FC<IProps> = ({ history }) => {
 
   const onLogin = async () => {
     setLoading(true);
-    const loggedUser = await window.Main.user.login(
+    const { user: loggedUser, error } = await window.Main.user.login(
       user.username,
       user.password
     );
+    if (error) {
+      message.error(error);
+      setLoading(false);
+      return;
+    }
     if (loggedUser) {
       const registredStore = await window.Main.store.hasRegistration();
       if (registredStore) {
