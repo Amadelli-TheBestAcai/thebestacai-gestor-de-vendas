@@ -1,14 +1,10 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
-import { StatusOffline } from '../../styles/Icons'
-
-export const OfflineIcon = styled(StatusOffline)`
-  width: 45px;
-  height: 45px;
-`
-
-export const Description = styled.label`
-  font-size: 28px;
-  font-weight: bold;
-  padding-top: 15px;
-`
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;

@@ -1,16 +1,22 @@
-import React from 'react'
+import React from "react";
 
-import Centralizer from '../Centralizer'
+import notConnection from "../../assets/svg/notConnection.svg";
 
-import { OfflineIcon, Description } from './styles'
+import { Empty } from "antd";
+import { Container } from "./styles";
 
 const DisconectedForm: React.FC = () => {
   return (
-    <Centralizer>
-      <OfflineIcon />
-      <Description>Sem conexão</Description>
-    </Centralizer>
-  )
-}
+    <Container>
+      <Empty
+        description="Oops! Você está sem conexão."
+        image={notConnection}
+        imageStyle={{
+          height: 350,
+        }}
+      />
+    </Container>
+  );
+};
 
-export default DisconectedForm
+export default DisconectedForm;

@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import moment from "moment";
+
 import DisconectedForm from "../../containers/DisconectedForm";
 import Centralizer from "../../containers/Centralizer";
 import Spinner from "../../components/Spinner";
 import HandlerItem from "../../components/HandlerItem";
 
 import { Handler as HandlerModel } from "../../models/dtos/handler";
+import notHandler from "../../assets/svg/notHandler.svg";
 
 import { Empty, message, Modal } from "antd";
-import moment from "moment";
+
 import {
   Container,
+  PageContent,
+  Header,
+  ButtonDownloader,
   Content,
-  Name,
-  HandlersContainer,
-  HandlersHeader,
-  Column,
-  Title,
-  HandlersList,
-  Button,
+  HeaderList,
+  Col,
+  HandlerContentList,
 } from "./styles";
 
 const { confirm } = Modal;
@@ -91,57 +93,55 @@ const Handler: React.FC = () => {
 
   return (
     <Container>
-      <Content>
-        <Name>Movimentações</Name>
+      <PageContent>
         {isLoading ? (
           <Spinner />
         ) : isConected ? (
-          handlers?.length ? (
-            <>
-              <Button onClick={() => onPdf()} type="primary">
-                Baixar PDF
-              </Button>
-              <HandlersContainer>
-                <HandlersHeader>
-                  <Column span={4}>
-                    <Title>ID</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Tipo</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Valor</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Hora</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Razão</Title>
-                  </Column>
-                  <Column span={4}>
-                    <Title>Ações</Title>
-                  </Column>
-                </HandlersHeader>
-                <HandlersList>
-                  {handlers.map((handler) => (
-                    <HandlerItem
-                      key={handler.id}
-                      handler={handler}
-                      onDelete={onDelete}
-                    />
-                  ))}
-                </HandlersList>
-              </HandlersContainer>
-            </>
-          ) : (
-            <Centralizer>
-              <Empty description="Nenhuma movimentação encontrada" />
-            </Centralizer>
-          )
+          <>
+            {handlers.length !== 0 ? (
+              <>
+                <Header>
+                  <h2>Movimentações</h2>
+                  <ButtonDownloader onClick={() => onPdf()}>
+                    BAIXAR PDF
+                  </ButtonDownloader>
+                </Header>
+                <Content>
+                  <HeaderList>
+                    <Col span={4}>ID</Col>
+                    <Col span={4}>Tipo</Col>
+                    <Col span={4}>Valor</Col>
+                    <Col span={4}>Hora</Col>
+                    <Col span={4}>Razão</Col>
+                    <Col span={4}>Ações</Col>
+                  </HeaderList>
+                  <HandlerContentList>
+                    {handlers.map((handler) => (
+                      <HandlerItem
+                        key={handler.id}
+                        handler={handler}
+                        onDelete={onDelete}
+                      />
+                    ))}
+                  </HandlerContentList>
+                </Content>
+              </>
+            ) : (
+              <Centralizer>
+                <Empty
+                  description="Nenhuma movimentação encontrada."
+                  image={notHandler}
+                  imageStyle={{
+                    height: 350,
+                  }}
+                />
+              </Centralizer>
+            )}
+          </>
         ) : (
           <DisconectedForm />
         )}
-      </Content>
+      </PageContent>
     </Container>
   );
 };
