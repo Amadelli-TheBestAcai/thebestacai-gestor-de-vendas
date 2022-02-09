@@ -1,47 +1,65 @@
 import styled, { css } from "styled-components";
 
-import { Row as RowAnt, Col as ColAnt, Input as InputAnt } from "antd";
+import { Row, Col as ColAnt, Input as InputAnt } from "antd";
 import { MoreHoriz } from "../../styles/Icons";
-
-export const Container = styled.div`
-  height: 100%;
-  width: 100%;
-  margin-top: 15px;
-`;
-
-export const Tupla = styled(RowAnt)`
-  width: 100%;
-  min-height: 100px;
-  border-bottom: 1px solid #f7f7f7;
-  margin-top: 8px;
-  background: #f7f7f7;
-  border-radius: 3px;
-  :hover {
-    border-left: 5px solid #f7f7f7;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    background: #f7f7f7;
-    padding: 10px;
-  }
-`;
-export const Col = styled(ColAnt)``;
-
-export const LabelName = styled.label`
-  text-transform: capitalize;
-  font-weight: bold;
-  @media only screen and (max-width: 578px) {
-    margin-left: 5px;
-  }
-`;
 
 interface IStatus {
   quantity?: number;
 }
 
+export const Container = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+`;
+
+export const Header = styled.header`
+  display: flex;
+  width: 100%;
+  height: 5%;
+  background: var(--black-opaco);
+  color: white;
+  border-radius: 3px;
+  text-transform: uppercase;
+`;
+
+export const Col = styled(ColAnt)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100px;
+    height: 75px;
+  }
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  width: 100%;
+  height: 95%;
+`;
+
+export const Tupla = styled(Row)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 12%;
+  background: var(--white-30);
+  margin-top: 8px;
+  border-radius: 3px 3px 0 0;
+`;
+
 export const Status = styled.label<IStatus>`
   color: white;
   padding: 5px;
   border-radius: 3px;
+  font-size: 0.8rem;
 
   ${({ quantity }) => {
     if (quantity <= 0 || !quantity) {
@@ -54,44 +72,24 @@ export const Status = styled.label<IStatus>`
         background: #f49345;
       `;
     }
-  }}
-`;
-
-export const Actions = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  }};
 `;
 
 export const MoreInfo = styled(MoreHoriz)`
-  width: 23px;
-  height: 23px;
-  :hover,
-  :active,
-  :focus {
-    fill: #f49345;
-  }
-  @media only screen and (max-width: 578px) {
-    width: 18px;
-    height: 18px;
-  }
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  color: var(--grey-100);
 `;
 
 export const UpdateContainer = styled.div`
   display: flex;
   justify-content: center;
-  @media only screen and (max-width: 578px) {
-    flex-direction: column;
-  }
 `;
 
 export const QtdCurrent = styled.div``;
 
-export const QtdChange = styled.div`
-  @media only screen and (max-width: 578px) {
-    margin-top: 10px;
-  }
-`;
+export const QtdChange = styled.div``;
 
 export const EditInfo = styled.label`
   font-size: 12px;
@@ -104,9 +102,6 @@ export const InputChange = styled(InputAnt)`
   width: 40%;
   border-radius: 8px;
   text-align: center;
-  @media only screen and (max-width: 578px) {
-    margin-left: 9%;
-  }
 `;
 export const Input = styled(InputAnt)`
   width: 40%;

@@ -177,7 +177,11 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
 
-    .ant-input, .ant-input-password, .ant-select-selector, .ant-picker, .ant-form-item-control-input {
+    .ant-input, .ant-input-password,
+    .ant-select-selector,
+    .ant-picker,
+    .ant-form-item-control-input,
+    .ant-input-affix-wrapper {
       border-radius: 0.7rem;
       outline: none;
       border: none;
