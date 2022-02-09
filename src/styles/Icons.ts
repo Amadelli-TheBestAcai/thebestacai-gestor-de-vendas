@@ -27,7 +27,7 @@ export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
 export { CreditCard2BackFill, TelephoneFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
-export { Grid3x2GapFill, UiChecks } from "@styled-icons/bootstrap";
+export { Grid3x2GapFill, UiChecks, Trash } from "@styled-icons/bootstrap";
 export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
 export { PhoneIphone } from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
@@ -48,7 +48,6 @@ export {
 } from "@styled-icons/material-outlined";
 
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
-export { Trash } from "@styled-icons/fa-solid";
 export {
   ArrowLeftRight,
   CreditCard2Back,

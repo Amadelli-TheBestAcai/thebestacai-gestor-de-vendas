@@ -48,6 +48,7 @@ const IconCSS = css`
 
 export const RemoveIcon = styled(Trash)`
   ${IconCSS}
+  margin-right: 1rem;
 `;
 
 export const PrinterIcon = styled(Printer)`

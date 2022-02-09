@@ -16,6 +16,7 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
   // const onPrint = (_handler: HandlerModel) => {
   //   ipcRenderer.send("handler:print", _handler);
   // };
+
   return (
     <Container>
       <Column span={4}>{id}</Column>
