@@ -9,7 +9,7 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 
-type SaleContextType = {
+type GlobalContextType = {
   sale: SaleDto;
   setSale: Dispatch<SetStateAction<SaleDto>>;
   settings: SettingsDto;
@@ -35,9 +35,9 @@ type SaleContextType = {
   user: UserDto | null;
 };
 
-export const SaleContext = createContext<SaleContextType>(null);
+export const GlobalContext = createContext<GlobalContextType>(null);
 
-export function SaleProvider({ children }) {
+export function GlobalProvider({ children }) {
   const [sale, setSale] = useState<SaleDto>();
   const [storeCash, setStoreCash] = useState<StoreCashDto>();
   const [settings, setSettings] = useState<SettingsDto>();
@@ -138,11 +138,6 @@ export function SaleProvider({ children }) {
     });
   };
 
-  const removePayment = async (id: string): Promise<void> => {
-    const updatedSale = await window.Main.sale.deletePayment(id);
-    setSale(updatedSale);
-  };
-
   const onAddDiscount = async (value: number): Promise<void> => {
     if (value > sale.total_sold) {
       return notification.warning({
@@ -154,7 +149,7 @@ export function SaleProvider({ children }) {
   };
 
   return (
-    <SaleContext.Provider
+    <GlobalContext.Provider
       value={{
         sale,
         setSale,
@@ -175,6 +170,6 @@ export function SaleProvider({ children }) {
       }}
     >
       {children}
-    </SaleContext.Provider>
+    </GlobalContext.Provider>
   );
 }

@@ -1,17 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import Routes from "./routes";
 import { GlobalStyle } from "./styles/GlobalStyle";
-import { SaleProvider } from "./context/saleContext";
+import { GlobalProvider } from "./context/globalContext";
 import "antd/dist/antd.css";
 
 function App() {
   return (
     <BrowserRouter>
       <GlobalStyle />
-      <SaleProvider>
+      <GlobalProvider>
         <Routes />
-      </SaleProvider>
+      </GlobalProvider>
     </BrowserRouter>
   );
 }
