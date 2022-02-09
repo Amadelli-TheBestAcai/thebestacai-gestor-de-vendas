@@ -18,4 +18,6 @@ export const storeCashFactory = {
     await storeCashModel.getStoreCashBalance(withClosedCash),
   getStoreCashHistoryService: async () =>
     await storeCashModel.getStoreCashHistoryService(),
+  updateStoreCashObservation: async (observation: string) =>
+    await storeCashModel.updateStoreCashObservation(observation),
 };
