@@ -10,7 +10,7 @@ import HandlerItem from "../../components/HandlerItem";
 import { Handler as HandlerModel } from "../../models/dtos/handler";
 import notHandler from "../../assets/svg/notHandler.svg";
 
-import { Empty, message, Modal } from "antd";
+import { Empty, message, Modal, notification } from "antd";
 
 import {
   Container,
@@ -50,6 +50,7 @@ const Handler: React.FC = () => {
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
+      centered: true,
       async onOk() {
         setIsLoading(true);
         const success =
@@ -57,20 +58,24 @@ const Handler: React.FC = () => {
         const data = await window.Main.handler.getCashHandlersByStoreCash();
         setIsLoading(false);
         if (!success) {
-          message.warning("Falha ao remover movimentação");
+          return notification.error({
+            message: "Falha ao remover movimentação!",
+            description: `A movimentação selecionada [${id}] não pode ser excluída.
+            Tente novamente. Caso o erro persista, entre em contato através do chat de suporte.`,
+            duration: 5,
+          });
         }
         setHandlers(data.handlers);
-        message.success("Movimentação removida com sucesso");
+        return notification.success({
+          message: "Movimentação removida com sucesso!",
+          description: `A movimentação selecionada [${id}] foi excluída com sucesso.`,
+          duration: 5,
+        });
       },
     });
   };
 
   const onPdf = async () => {
-    if ((await window.Main.user.getUser()).token) {
-      return message.warning(
-        "Usuário em modo offline. Refaça o login com conexão à internet"
-      );
-    }
     const { data: response } = await axios({
       method: "GET",
       responseType: "blob",
@@ -98,7 +103,7 @@ const Handler: React.FC = () => {
           <Spinner />
         ) : isConected ? (
           <>
-            {handlers.length !== 0 ? (
+            {handlers?.length ? (
               <>
                 <Header>
                   <h2>Movimentações</h2>
