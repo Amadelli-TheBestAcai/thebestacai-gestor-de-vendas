@@ -32,6 +32,7 @@ const ProductsContainer: React.FC = () => {
       setLoading(true);
       const products = await window.Main.product.getProducts();
       const categories = products
+        .filter((_product) => _product.product.category.id !== 1)
         .map((_product) => _product.product.category.name)
         .filter((item, pos, self) => self.indexOf(item) == pos);
 
