@@ -41,7 +41,6 @@ const Login: React.FC<IProps> = ({ history }) => {
   const [stores, setStores] = useState<StoreDto[]>([]);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [typeInput, setTypeInput] = useState<string>("password");
-  const [rememberUser, setRememberUser] = useState<boolean>(false);
 
   const handleState = ({ target: { name, value } }: any) =>
     setUser((oldValues) => ({ ...oldValues, [name]: value }));
@@ -201,7 +200,7 @@ const Login: React.FC<IProps> = ({ history }) => {
                             checked={settings.should_remember_user}
                             onChange={rememberUserHandler}
                           />
-                          Lembra usuário
+                          Lembrar usuário
                         </div>
 
                         <button onClick={() => viewPassword()}>

@@ -32,6 +32,13 @@ export const Header = styled.header`
   h2 {
     margin-bottom: 0px;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    h2 {
+      font-size: 1.1rem;
+    }
+  }
 `;
 
 export const ButtonDownloader = styled.button`
@@ -41,6 +48,17 @@ export const ButtonDownloader = styled.button`
   border-radius: 5px;
   font-size: 0.9rem;
   color: var(--brown-500);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    font-size: 0.8rem;
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    height: 80%;
+    font-size: 0.7rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -60,6 +78,11 @@ export const HeaderList = styled.header`
   border-radius: 3px;
   color: white;
   text-transform: uppercase;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    font-size: 0.9rem;
+  }
 `;
 
 export const Col = styled(ColAnt)`

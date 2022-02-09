@@ -7,10 +7,15 @@ import { Row, Col } from "antd";
 export const Container = styled(Row)`
   width: 100%;
   height: 46px;
-  background: #f9f9f9;
+  background: var(--white-40);
   margin-top: 8px;
   border-radius: 3px;
-  color: #4d4d4d;
+  color: var(--grey-200);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    font-size: 0.85rem;
+  }
 `;
 
 export const Column = styled(Col)`
@@ -23,6 +28,12 @@ const IconCSS = css`
   width: 1.3rem;
   height: 1.3rem;
   cursor: pointer;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
 `;
 
 export const RemoveIcon = styled(Trash)`
