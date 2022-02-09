@@ -83,6 +83,16 @@ export const HeaderList = styled.header`
   @media (max-width: 1600px) {
     font-size: 0.9rem;
   }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    font-size: 0.8rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
 `;
 
 export const Col = styled(ColAnt)`
