@@ -1,7 +1,11 @@
 import styled from "styled-components";
 
 import { Settings } from "../../styles/Icons";
-import { Select as SelectAnt, Switch as SwitchAnt } from "antd";
+import {
+  Select as SelectAnt,
+  Switch as SwitchAnt,
+  Button as ButtonAnt,
+} from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -44,7 +48,7 @@ export const Footer = styled.footer`
   right: 0;
 `;
 
-export const ButtonSave = styled.button`
+export const ButtonSave = styled(ButtonAnt)`
   width: 113px;
   height: 50px;
   background: var(--orange-250);

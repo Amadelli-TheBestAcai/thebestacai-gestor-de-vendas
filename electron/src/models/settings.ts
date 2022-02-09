@@ -1,9 +1,10 @@
 import { BaseRepository } from "../repository/baseRepository";
 import { v4 } from "uuid";
+import Printer from "printer";
 
 export type Entity = {
   id: string;
-  disabled_balance?: boolean;
+  should_use_balance?: boolean;
   should_remember_user?: boolean;
   rememberd_user?: string;
   balance_port?: string;
@@ -25,6 +26,10 @@ class ItemOutCart extends BaseRepository<Entity> {
       await this.create(payload);
       return payload;
     }
+  }
+
+  getPrinters(): string[] {
+    return Printer.getPrinters().map((printer) => printer.name) || [];
   }
 }
 
