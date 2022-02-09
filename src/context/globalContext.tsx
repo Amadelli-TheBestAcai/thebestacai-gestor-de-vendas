@@ -146,6 +146,11 @@ export function GlobalProvider({ children }) {
         duration: 5,
       });
     }
+    const _updatedSale = await window.Main.sale.update(sale.id, {
+      ...sale,
+      discount: value,
+    });
+    setSale(_updatedSale);
   };
 
   return (
