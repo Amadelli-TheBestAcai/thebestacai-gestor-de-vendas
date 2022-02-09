@@ -168,6 +168,13 @@ class StoreCash extends BaseRepository<Entity> {
       return null;
     }
   }
+
+  async updateStoreCashObservation(observation: string): Promise<void> {
+    const _storeCash = await this.getCurrentCash();
+    await odinApi.put(`/cash_history/${_storeCash?.history_id}`, {
+      observation,
+    });
+  }
 }
 
 export default new StoreCash();
