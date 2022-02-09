@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import LogoImg from "../../assets/img/logo-login.png";
@@ -32,7 +32,7 @@ type IProps = RouteComponentProps;
 const Login: React.FC<IProps> = ({ history }) => {
   const { settings, setSettings } = useSettings();
   const [user, setUser] = useState({
-    username: "",
+    username: settings.should_remember_user ? settings.rememberd_user : "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -41,6 +41,13 @@ const Login: React.FC<IProps> = ({ history }) => {
   const [stores, setStores] = useState<StoreDto[]>([]);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [typeInput, setTypeInput] = useState<string>("password");
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldsValue({
+      username: settings.should_remember_user ? settings.rememberd_user : "",
+    });
+  }, []);
 
   const handleState = ({ target: { name, value } }: any) =>
     setUser((oldValues) => ({ ...oldValues, [name]: value }));
@@ -58,13 +65,13 @@ const Login: React.FC<IProps> = ({ history }) => {
     }
     if (loggedUser) {
       const registredStore = await window.Main.store.hasRegistration();
-      if (settings.should_remember_user) {
-        const updatedSettings = await window.Main.settings.update(settings.id, {
-          ...settings,
-          rememberd_user: user.username,
-        });
-        setSettings(updatedSettings);
-      }
+
+      const updatedSettings = await window.Main.settings.update(settings.id, {
+        ...settings,
+        rememberd_user: settings.should_remember_user ? user.username : "",
+      });
+      setSettings(updatedSettings);
+
       if (registredStore) {
         setLoading(false);
         return history.push("/home");
@@ -128,6 +135,7 @@ const Login: React.FC<IProps> = ({ history }) => {
                     : "Selecione uma loja para continuar o login"}
                 </p>
                 <Form
+                  form={form}
                   onFinish={step === 1 ? onLogin : registerStore}
                   layout="vertical"
                 >
@@ -142,11 +150,6 @@ const Login: React.FC<IProps> = ({ history }) => {
                       >
                         <Input
                           name="username"
-                          defaultValue={
-                            settings.should_remember_user
-                              ? settings.rememberd_user
-                              : ""
-                          }
                           placeholder="Digite seu usuário"
                           onChange={(event) => handleState(event)}
                         />

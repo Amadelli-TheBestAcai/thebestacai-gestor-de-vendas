@@ -24,6 +24,7 @@ type ProductByCategory = {
 };
 
 const ProductsContainer: React.FC = () => {
+  const [searchByName, setSearchByName] = useState<string>("");
   const [products, setProducts] = useState<ProductByCategory[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -32,6 +33,7 @@ const ProductsContainer: React.FC = () => {
       setLoading(true);
       const products = await window.Main.product.getProducts();
       const categories = products
+        .filter((_product) => _product.product.category.id !== 1)
         .map((_product) => _product.product.category.name)
         .filter((item, pos, self) => self.indexOf(item) == pos);
 
@@ -47,6 +49,22 @@ const ProductsContainer: React.FC = () => {
     init();
   }, []);
 
+  const handleFilter = (
+    payload: ProductByCategory,
+    pattern?: string
+  ): ProductByCategory => {
+    if (pattern && pattern.length) {
+      const products = payload.products.filter((_product) =>
+        _product.product.name.toLowerCase().includes(pattern.toLowerCase())
+      );
+      return {
+        category: payload.category,
+        products,
+      };
+    }
+    return payload;
+  };
+
   return (
     <Container>
       {loading ? (
@@ -54,14 +72,20 @@ const ProductsContainer: React.FC = () => {
           <Spinner />
         </LoadingContainer>
       ) : (
-        <TabContainer defaultActiveKey="1">
+        <TabContainer defaultActiveKey="1" onChange={() => setSearchByName("")}>
           {products?.map((productCategory, index) => (
             <TabItem tab={productCategory.category} key={index + 1}>
               <ProductSearch>
                 <IconContainer>
                   <SearchIcon />
                 </IconContainer>
-                <InputSearchProduct placeholder="Procurar item" />
+                <InputSearchProduct
+                  placeholder="Procurar item"
+                  value={searchByName}
+                  onChange={({ target: { value } }) =>
+                    setSearchByName(value || "")
+                  }
+                />
               </ProductSearch>
 
               <Header>
@@ -71,9 +95,11 @@ const ProductsContainer: React.FC = () => {
               </Header>
 
               <ProductsContent>
-                {productCategory.products.map((product) => (
-                  <Product key={product.product_id} product={product} />
-                ))}
+                {handleFilter(productCategory, searchByName).products.map(
+                  (product) => (
+                    <Product key={product.product_id} product={product} />
+                  )
+                )}
               </ProductsContent>
             </TabItem>
           ))}

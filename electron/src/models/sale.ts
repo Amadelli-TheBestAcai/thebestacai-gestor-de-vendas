@@ -228,16 +228,24 @@ class Sale extends BaseRepository<Entity> {
   async recouverStepSales(id: string): Promise<Entity> {
     const stepSale = (await this.stepSaleRepository.getById(id)) as Entity;
 
-    const transferItem = async (storeProductId: number, quantity: number) => {
+    const transferItem = async (
+      storeProductId: number,
+      quantity: number,
+      total: number
+    ) => {
       const product = (await productModel.getById(
         storeProductId
       )) as ProductDto;
-      await this.addItem(product, quantity);
+      await this.addItem(product, quantity, total);
     };
 
     await stepSale.items.reduce(async (previousItem, nextItem) => {
       await previousItem;
-      return transferItem(nextItem.store_product_id, nextItem.quantity);
+      return transferItem(
+        nextItem.store_product_id,
+        nextItem.quantity,
+        nextItem.total
+      );
     }, Promise.resolve());
 
     await this.stepSaleRepository.deleteById(id);
@@ -285,7 +293,7 @@ class Sale extends BaseRepository<Entity> {
 
     sale.quantity = sale.items.reduce(
       (total, item) =>
-        +item.product.category.id === 1 ? 1 : item.quantity + total,
+        +item.product.category.id === 1 ? 1 + total : item.quantity + total,
       0
     );
 

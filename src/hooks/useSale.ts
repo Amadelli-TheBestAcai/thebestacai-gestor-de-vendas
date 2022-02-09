@@ -1,43 +1,58 @@
 import { useContextSelector } from "use-context-selector";
-import { SaleContext } from "../context/saleContext";
+import { GlobalContext } from "../context/globalContext";
 
 export function useSale() {
-  const sale = useContextSelector(SaleContext, (sale) => sale.sale);
-  const setSale = useContextSelector(SaleContext, (sale) => sale.setSale);
-  const storeCash = useContextSelector(SaleContext, (sale) => sale.storeCash);
-  const setStoreCash = useContextSelector(
-    SaleContext,
-    (sale) => sale.setStoreCash
+  const sale = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.sale
   );
-  const loadingSale = useContextSelector(SaleContext, (sale) => sale.loading);
+  const setSale = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.setSale
+  );
+  const storeCash = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.storeCash
+  );
+  const setStoreCash = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.setStoreCash
+  );
+  const loadingSale = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.loading
+  );
   const discountModalState = useContextSelector(
-    SaleContext,
-    (sale) => sale.discountModalState
+    GlobalContext,
+    (globalContext) => globalContext.discountModalState
   );
   const discountModalHandler = useContextSelector(
-    SaleContext,
-    (sale) => sale.discountModalHandler
+    GlobalContext,
+    (globalContext) => globalContext.discountModalHandler
   );
   const isSavingSale = useContextSelector(
-    SaleContext,
-    (sale) => sale.savingSale
+    GlobalContext,
+    (globalContext) => globalContext.savingSale
   );
   const onRegisterSale = useContextSelector(
-    SaleContext,
-    (sale) => sale.onRegisterSale
+    GlobalContext,
+    (globalContext) => globalContext.onRegisterSale
   );
-  const onAddItem = useContextSelector(SaleContext, (sale) => sale.onAddItem);
+  const onAddItem = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.onAddItem
+  );
   const onAddToQueue = useContextSelector(
-    SaleContext,
-    (sale) => sale.onAddToQueue
+    GlobalContext,
+    (globalContext) => globalContext.onAddToQueue
   );
   const onAddDiscount = useContextSelector(
-    SaleContext,
-    (sale) => sale.onAddDiscount
+    GlobalContext,
+    (globalContext) => globalContext.onAddDiscount
   );
   const onDecressItem = useContextSelector(
-    SaleContext,
-    (sale) => sale.onDecressItem
+    GlobalContext,
+    (globalContext) => globalContext.onDecressItem
   );
 
   return {

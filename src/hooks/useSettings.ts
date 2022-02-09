@@ -1,11 +1,14 @@
 import { useContextSelector } from "use-context-selector";
-import { SaleContext } from "../context/saleContext";
+import { GlobalContext } from "../context/globalContext";
 
 export function useSettings() {
-  const settings = useContextSelector(SaleContext, (sale) => sale.settings);
+  const settings = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.settings
+  );
   const setSettings = useContextSelector(
-    SaleContext,
-    (sale) => sale.setSettings
+    GlobalContext,
+    (globalContext) => globalContext.setSettings
   );
 
   return { settings, setSettings };
