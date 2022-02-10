@@ -10,8 +10,9 @@ import {
   TelephoneFill,
   UiChecks,
 } from "../../styles/Icons";
+import { HotKeys } from "react-hotkeys";
 
-export const Container = styled.div`
+export const Container = styled(HotKeys)`
   display: flex;
   align-items: center;
   justify-content: center;
