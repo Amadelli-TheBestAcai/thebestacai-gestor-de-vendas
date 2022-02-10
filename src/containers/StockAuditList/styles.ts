@@ -1,9 +1,9 @@
-import styled from 'styled-components'
-import { Modal as ModalAnt } from 'antd'
+import styled from "styled-components";
+import { Modal as ModalAnt } from "antd";
 
 export const Container = styled.div`
   height: 100%;
-`
+`;
 
 export const Modal = styled(ModalAnt)`
   .ant-btn-primary {
@@ -15,8 +15,10 @@ export const Modal = styled(ModalAnt)`
   .ant-modal-body {
     max-height: 300px;
     overflow-y: scroll;
-    @media only screen and (max-width: 578px) {
-      height: 350px;
-    }
   }
-`
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 700px !important;
+  }
+`;

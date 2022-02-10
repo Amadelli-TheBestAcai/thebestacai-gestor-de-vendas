@@ -106,6 +106,12 @@ export const GlobalStyle = createGlobalStyle`
       color: var(--black-opaco);
     }
 
+    .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
+      @media (max-width: 1366px) {
+        font-size: 0.8rem;
+      }
+    }
+
     .ant-modal-confirm-btns {
         margin-top: 0.8rem;
           .ant-btn {

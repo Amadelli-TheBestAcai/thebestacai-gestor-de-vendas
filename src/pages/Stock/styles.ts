@@ -32,6 +32,13 @@ export const Header = styled.header`
   h2 {
     margin-bottom: 0px;
   }
+
+  /*Responsive 1366*/
+  @media (max-width: 1366px) {
+    h2 {
+      font-size: 1.2rem;
+    }
+  }
 `;
 
 export const SearchContainer = styled.div`
@@ -45,6 +52,33 @@ export const SearchContainer = styled.div`
 export const Input = styled(InputAnt)`
   height: 3.7rem;
   width: 15%;
+
+  /*Responsive 1600*/
+  @media (max-width: 1600px) {
+    height: 3.4rem;
+  }
+
+  /*Responsive 1600*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.2rem;
+      width: 18%;
+    }
+  }
+
+  /*Responsive 1440*/
+  @media (max-width: 1440px) {
+    width: 20%;
+  }
+
+  /*Responsive 1366*/
+  @media (max-width: 1366px) {
+    height: 2.8rem;
+    width: 17%;
+    input {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const Content = styled.section`
@@ -58,4 +92,10 @@ export const SearchIcon = styled(Search)`
   height: 0.9rem;
   width: 0.9rem;
   color: var(--grey-60);
+
+  /*Responsive 1366*/
+  @media (max-width: 1366px) {
+    height: 0.8rem;
+    width: 0.8rem;
+  }
 `;

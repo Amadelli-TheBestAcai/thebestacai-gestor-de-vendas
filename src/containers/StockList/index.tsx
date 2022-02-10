@@ -7,7 +7,7 @@ import notImage from "../../assets/svg/notImage.svg";
 import { Page } from "../../models/dtos/page";
 import { ProductDto } from "../../models/dtos/product";
 
-import { Modal, notification, Dropdown, Menu } from "antd";
+import { notification, Dropdown, Menu } from "antd";
 
 import {
   Container,
@@ -21,11 +21,11 @@ import {
   ButtonSave,
   EditInfo,
   Footer,
-  Input,
   InputChange,
   QtdChange,
   QtdCurrent,
   UpdateContainer,
+  Modal,
 } from "./styles";
 
 const { confirm } = Modal;
@@ -205,7 +205,11 @@ const StockList: React.FC<IProps> = ({
         <UpdateContainer>
           <QtdCurrent>
             <EditInfo>Quantidade atual:</EditInfo>
-            <Input type="number" disabled value={selectedProduct?.quantity} />
+            <InputChange
+              type="number"
+              disabled
+              value={selectedProduct?.quantity}
+            />
           </QtdCurrent>
           <QtdChange>
             <EditInfo>Retirar:</EditInfo>
