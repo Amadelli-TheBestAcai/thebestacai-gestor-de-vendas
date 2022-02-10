@@ -268,6 +268,46 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
     });
   };
 
+  const keyMap = {
+    money: "a",
+    MONEY: "A",
+    c_credit: "s",
+    C_CREDIT: "S",
+    c_debit: "d",
+    C_DEBIT: "D",
+    ticket: "t",
+    TICKET: "T",
+    pix: "p",
+    PIX: "P",
+    adicionar: "f",
+    ADICIONAR: "F",
+    aplicativo: "f2",
+    ifood: "f3",
+    outros: "f4",
+    whatsapp: "f5",
+    telefone: "f6",
+  };
+
+  const handlers = {
+    money: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
+    MONEY: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
+    c_credit: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
+    C_CREDIT: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
+    c_debit: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    C_DEBIT: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    ticket: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+    TICKET: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+    pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),
+    PIX: () => handleOpenPayment(PaymentType.PIX, "PIX"),
+    adicionar: () => handleCreateSale(),
+    ADICIONAR: () => handleCreateSale(),
+    aplicativo: () => setDeliveryType(5),
+    ifood: () => setDeliveryType(1),
+    outros: () => setDeliveryType(6),
+    whatsapp: () => setDeliveryType(3),
+    telefone: () => setDeliveryType(4),
+  };
+
   const tabPanes = [
     {
       id: 5,
@@ -332,7 +372,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   ];
 
   return (
-    <Container id="mainContainer">
+    <Container id="mainContainer" handlers={handlers} keyMap={keyMap}>
       <PageContent>
         {storeCash?.is_opened ? (
           <>
