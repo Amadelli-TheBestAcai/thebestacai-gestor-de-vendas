@@ -20,6 +20,7 @@ import {
   CardIcon,
   ChartIcon,
   SettingsIcon,
+  LogOutIcon,
 } from "./styles";
 
 type IProps = RouteComponentProps;
@@ -87,6 +88,12 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
       icon: <SettingsIcon />,
       label: "Configuração",
       router: "/settings",
+    },
+    {
+      id: 10,
+      icon: <LogOutIcon />,
+      label: "Sair",
+      router: "/login",
     },
   ];
 

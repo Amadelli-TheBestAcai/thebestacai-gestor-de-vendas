@@ -10,6 +10,7 @@ import {
   Scroll,
   ChartBar,
   Settings,
+  LogOut,
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -49,6 +50,7 @@ export const Logo = styled.img`
 `;
 
 export const Content = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -84,6 +86,11 @@ export const CardIcon = styled.button`
   @media (max-width: 1366px) {
     height: 2.4rem;
     margin-bottom: 1rem;
+  }
+
+  :last-child {
+    position: absolute;
+    bottom: 0;
   }
 `;
 
@@ -139,5 +146,9 @@ export const ChartIcon = styled(ChartBar)`
 `;
 
 export const SettingsIcon = styled(Settings)`
+  ${IconCSS}
+`;
+
+export const LogOutIcon = styled(LogOut)`
   ${IconCSS}
 `;

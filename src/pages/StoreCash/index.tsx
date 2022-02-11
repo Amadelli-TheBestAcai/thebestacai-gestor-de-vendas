@@ -8,7 +8,7 @@ import Spinner from "../../components/Spinner";
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
 import { Balance as BalanceModel } from "../../models/balance";
 
-import { Modal, Input, message as messageAnt } from "antd";
+import { Modal, message as messageAnt } from "antd";
 
 import {
   Container,
@@ -25,6 +25,7 @@ import {
   CardStatus,
   CloseCashContatiner,
   CloseButton,
+  Input,
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 

@@ -2,6 +2,8 @@ import styled, { css } from "styled-components";
 
 import vectorChart from "../../assets/svg/vectorChart.svg";
 
+import { Input as InputAnt } from "antd";
+
 interface ICardStatus {
   id_card: number;
 }
@@ -287,4 +289,8 @@ export const CloseButton = styled.button`
     height: 60%;
     font-size: 0.8rem;
   }
+`;
+
+export const Input = styled(InputAnt)`
+  height: 3.7rem;
 `;
