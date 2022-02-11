@@ -74,6 +74,9 @@ class Handler extends BaseRepository<Entity> {
       cash_history_id: currentCash?.history_id,
       to_integrate: true,
       order_id,
+      reason: !payload.cashHandler.reason
+        ? "Sem obeservação"
+        : payload.cashHandler.reason,
     };
 
     await this.create(newHandler);
