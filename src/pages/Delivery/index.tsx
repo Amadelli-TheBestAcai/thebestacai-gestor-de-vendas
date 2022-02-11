@@ -222,6 +222,18 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
     };
   };
 
+  const handleCancel = () => {
+    const payments = sale.payments;
+    while (payments.length) {
+      payments.pop();
+    }
+    setSale((oldValues) => ({
+      ...oldValues,
+      payments,
+      name: "",
+    }));
+  };
+
   // const handleUpdateProduct = async () => {
   //   confirm({
   //     title: "Integrar Vendas",
@@ -431,7 +443,9 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                         </PaymentsContainer>
 
                         <ButtonsContainer>
-                          <ButtonCancel>CANCELAR [C]</ButtonCancel>
+                          <ButtonCancel onClick={() => handleCancel()}>
+                            CANCELAR [C]
+                          </ButtonCancel>
                           <ButtonConfirm onClick={handleCreateSale}>
                             ADICIONAR [F]
                           </ButtonConfirm>
