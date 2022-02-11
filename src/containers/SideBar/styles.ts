@@ -70,7 +70,7 @@ export const CardIcon = styled.button`
   margin-bottom: 2rem;
 
   :hover {
-    background: #ff9d0a;
+    background: var(--orange-250);
     color: var(--black-opaco);
   }
 
