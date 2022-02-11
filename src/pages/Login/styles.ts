@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import BackgroundImg from "../../assets/svg/backgroundLogin.svg";
 
 import { Button, Input as InputAnt } from "antd";
@@ -31,12 +31,34 @@ export const LogoContainer = styled.div`
   justify-content: center;
   width: 100%;
   height: 30%;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 25%;
+  }
 `;
 
 export const Logo = styled.img`
   width: 12rem;
   height: 12rem;
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    width: 10rem;
+    height: 10rem;
+
+    @media (max-height: 900px) {
+      width: 9rem;
+      height: 9rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 8rem;
+    height: 8rem;
+  }
 `;
 
 export const FormContainer = styled.div`
@@ -44,6 +66,11 @@ export const FormContainer = styled.div`
   justify-content: center;
   width: 100%;
   height: 65%;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 70%;
+  }
 `;
 
 export const FormContent = styled.div`
@@ -69,6 +96,43 @@ export const FormContent = styled.div`
   .ant-select-selector {
     height: 3.7rem;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 55%;
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+
+      .ant-form-item-label > label {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+    }
+
+    .ant-form-item {
+      margin-bottom: 1rem;
+
+      .ant-form-item-control {
+        height: 3.4rem;
+      }
+    }
+  }
 `;
 
 export const Footer = styled.footer`
@@ -82,10 +146,23 @@ export const Footer = styled.footer`
     margin-right: 1.9rem;
     font-size: 12px;
     color: var(--grey-80);
+
+    @media (max-width: 1600px) {
+      @media (max-height: 900px) {
+        font-size: 0.6rem;
+      }
+    }
   }
 `;
 
-export const Input = styled(InputAnt)``;
+export const Input = styled(InputAnt)`
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
+`;
 
 export const ActionsContainer = styled.div`
   display: flex;
@@ -94,7 +171,7 @@ export const ActionsContainer = styled.div`
   width: 100%;
   height: 5%;
 
-  button {
+  a {
     display: flex;
     align-items: center;
     font-size: 0.85rem;
@@ -109,9 +186,22 @@ export const ActionsContainer = styled.div`
   input[type="checkbox"] {
     margin-right: 8px;
   }
+
+  div.remember_user {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    a {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
-export const LoginButton = styled(Button)`
+const ButtonCSS = css`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,11 +209,21 @@ export const LoginButton = styled(Button)`
   height: 3.3rem;
   margin-top: 1.5rem;
   border-radius: 8px;
+  transition: 0.5s;
+  font-weight: 500;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    margin-top: 1rem;
+    height: 3rem;
+  }
+`;
+
+export const LoginButton = styled(Button)`
+  ${ButtonCSS}
   background: var(--orange-250);
   color: white;
-  font-weight: 500;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  transition: 0.5s;
 
   :hover,
   :active,
@@ -135,17 +235,9 @@ export const LoginButton = styled(Button)`
 `;
 
 export const BackButton = styled(Button)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 3.3rem;
-  margin-top: 1.5rem;
-  border-radius: 8px;
+  ${ButtonCSS}
   border: 1px solid var(--orange-250);
   color: var(--orange-250);
-  font-weight: 500;
-  transition: 0.5s;
 
   :hover,
   :active,
@@ -164,5 +256,23 @@ export const ContactInfo = styled.div`
 
   span {
     color: var(--purple-450);
+  }
+
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 15%;
+      p {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 16%;
+
+    p {
+      font-size: 0.7rem;
+    }
   }
 `;
