@@ -39,6 +39,11 @@ export const Container = styled(RowAnt)<IProps>`
       background: #fff1f0;
     `;
   }}
+
+  /*Responsive 1366px*/
+   @media (max-width: 1366px) {
+    padding: 1 5px;
+  }
 `;
 
 export const Information = styled.label``;
@@ -52,16 +57,17 @@ export const Divider = styled(DividerAnt)`
 `;
 
 export const ArrowRightIcon = styled(ArrowRight)`
-  width: 16px;
-  height: 16px;
-  @media only screen and (max-width: 578px) {
-    width: 14px;
-    height: 14px;
+  width: 1rem;
+  height: 1rem;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 0.7rem;
+    height: 0.7rem;
   }
 `;
 
 export const Action = styled.div<IProps>`
-  margin-left: 5px;
   color: white;
   border-radius: 4px;
   padding: 2px;
@@ -85,13 +91,21 @@ export const Action = styled.div<IProps>`
       background: #a43c3f;
     `;
   }};
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.6rem;
+    padding: 1px;
+  }
 `;
 
 export const Col = styled(ColAnt)`
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
-  @media only screen and (max-width: 578px) {
-    font-size: 14px;
-  }
   text-align: center;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
 `;

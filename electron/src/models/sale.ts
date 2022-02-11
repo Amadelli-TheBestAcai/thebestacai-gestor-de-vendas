@@ -155,6 +155,24 @@ class Sale extends BaseRepository<Entity> {
     await this.onlineIntegration();
   }
 
+  async integrateAllSalesFromType(type: number): Promise<void> {
+    const deliverySales = await this.deliverySaleRepository.getAll();
+
+    const deliveryNotToIntegrate = deliverySales.filter(
+      (_deliverySale) => _deliverySale.type !== type
+    );
+    await this.deliverySaleRepository.createManyAndReplace(
+      deliveryNotToIntegrate
+    );
+
+    const deliveryToIntegrate = deliverySales.filter(
+      (_deliverySale) => _deliverySale.type === type
+    );
+    await this.notIntegratedQueueRepository.createMany(deliveryToIntegrate);
+
+    await this.onlineIntegration();
+  }
+
   async addPayment(amount: number, type: number): Promise<Entity> {
     const sale = await this.getCurrent();
 
@@ -210,16 +228,24 @@ class Sale extends BaseRepository<Entity> {
   async recouverStepSales(id: string): Promise<Entity> {
     const stepSale = (await this.stepSaleRepository.getById(id)) as Entity;
 
-    const transferItem = async (storeProductId: number, quantity: number) => {
+    const transferItem = async (
+      storeProductId: number,
+      quantity: number,
+      total: number
+    ) => {
       const product = (await productModel.getById(
         storeProductId
       )) as ProductDto;
-      await this.addItem(product, quantity);
+      await this.addItem(product, quantity, total);
     };
 
     await stepSale.items.reduce(async (previousItem, nextItem) => {
       await previousItem;
-      return transferItem(nextItem.store_product_id, nextItem.quantity);
+      return transferItem(
+        nextItem.store_product_id,
+        nextItem.quantity,
+        nextItem.total
+      );
     }, Promise.resolve());
 
     await this.stepSaleRepository.deleteById(id);
@@ -267,7 +293,7 @@ class Sale extends BaseRepository<Entity> {
 
     sale.quantity = sale.items.reduce(
       (total, item) =>
-        +item.product.category.id === 1 ? 1 : item.quantity + total,
+        +item.product.category.id === 1 ? 1 + total : item.quantity + total,
       0
     );
 
@@ -503,15 +529,14 @@ class Sale extends BaseRepository<Entity> {
         nfce_id,
         nfce_url,
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         error: true,
-        message: "",
-        // message: error?.response?.data?.mensagem.includes("XML")
-        //   ? "Produtos com dados tributários inválidos ou serviço indisponível. Contate o suporte"
-        //   : error?.response?.data?.mensagem
-        //   ? error.response.data.mensagem
-        //   : "Serviço temporariamente indisponível. Tente novamente mais tarde",
+        message: error?.response?.data?.mensagem.includes("XML")
+          ? "Produtos com dados tributários inválidos ou serviço indisponível. Contate o suporte"
+          : error?.response?.data?.mensagem
+          ? error.response.data.mensagem
+          : "Serviço temporariamente indisponível. Tente novamente mais tarde",
       };
     }
 

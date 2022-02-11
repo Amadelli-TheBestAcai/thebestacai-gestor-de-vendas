@@ -4,13 +4,16 @@ import { createContext } from "use-context-selector";
 import { notification } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
+import { SettingsDto } from "../models/dtos/settings";
 import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 
-type SaleContextType = {
+type GlobalContextType = {
   sale: SaleDto;
   setSale: Dispatch<SetStateAction<SaleDto>>;
+  settings: SettingsDto;
+  setSettings: Dispatch<SetStateAction<SettingsDto>>;
   storeCash: StoreCashDto;
   setStoreCash: Dispatch<SetStateAction<StoreCashDto>>;
   loading: boolean;
@@ -32,11 +35,12 @@ type SaleContextType = {
   user: UserDto | null;
 };
 
-export const SaleContext = createContext<SaleContextType>(null);
+export const GlobalContext = createContext<GlobalContextType>(null);
 
-export function SaleProvider({ children }) {
+export function GlobalProvider({ children }) {
   const [sale, setSale] = useState<SaleDto>();
   const [storeCash, setStoreCash] = useState<StoreCashDto>();
+  const [settings, setSettings] = useState<SettingsDto>();
   const [savingSale, setSavingSale] = useState(false);
   const [loading, setLoading] = useState(true);
   const [discountModalState, setDiscountModalState] = useState(false);
@@ -48,6 +52,8 @@ export function SaleProvider({ children }) {
       const _sale = await window.Main.sale.getCurrent();
       const _storeCash = await window.Main.storeCash.getCurrent();
       const _user = await window.Main.user.getUser();
+      const _settings = await window.Main.settings.getSettings();
+      setSettings(_settings);
       setSale(_sale);
       setUser(_user);
       setStoreCash(_storeCash);
@@ -128,13 +134,8 @@ export function SaleProvider({ children }) {
     notification.success({
       message: "Comanda salva com sucesso!",
       description: `Para que a venda retorne ao carrinho, clique na ação de restaurar a comanda[🔁] do modal anterior.`,
-      duration: 8,
+      duration: 5,
     });
-  };
-
-  const removePayment = async (id: string): Promise<void> => {
-    const updatedSale = await window.Main.sale.deletePayment(id);
-    setSale(updatedSale);
   };
 
   const onAddDiscount = async (value: number): Promise<void> => {
@@ -145,13 +146,20 @@ export function SaleProvider({ children }) {
         duration: 5,
       });
     }
+    const _updatedSale = await window.Main.sale.update(sale.id, {
+      ...sale,
+      discount: value,
+    });
+    setSale(_updatedSale);
   };
 
   return (
-    <SaleContext.Provider
+    <GlobalContext.Provider
       value={{
         sale,
         setSale,
+        settings,
+        setSettings,
         storeCash,
         setStoreCash,
         loading,
@@ -167,6 +175,6 @@ export function SaleProvider({ children }) {
       }}
     >
       {children}
-    </SaleContext.Provider>
+    </GlobalContext.Provider>
   );
 }

@@ -22,9 +22,42 @@ export const ContentValue = styled.div`
 
   span {
     color: var(--grey-100);
+    font-size: 1rem;
     strong {
       font-size: 3rem;
       color: var(--black-opaco);
+    }
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      span {
+        font-size: 0.9rem;
+        strong {
+          font-size: 2.8rem;
+        }
+      }
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    span {
+      font-size: 0.8rem;
+      strong {
+        font-size: 2.5rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    span {
+      font-size: 0.7rem;
+      strong {
+        font-size: 2.1rem;
+      }
     }
   }
 `;
@@ -41,4 +74,21 @@ export const ButtonFinisher = styled.button`
   font-size: 1.3rem;
   color: var(--black-opaco);
   font-weight: bold;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 1.1rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    font-size: 1rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;

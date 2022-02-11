@@ -23,6 +23,18 @@ export const CardCashContainer = styled.div`
   height: 75%;
   justify-content: space-between;
   padding: 0 1rem;
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    height: 70%;
+    padding: 0 0.7rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 75%;
+    padding: 0 0.5rem;
+  }
 `;
 
 export const CardCash = styled.button`
@@ -62,6 +74,26 @@ export const Icon = styled.div`
 export const CashIcon = styled(CashRegister)`
   width: 5.5rem;
   height: 5.5rem;
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 4.3rem;
+      height: 4.3rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3.5rem;
+    width: 3.5rem;
+  }
 `;
 
 export const InfoCash = styled.div`
@@ -80,6 +112,29 @@ export const InfoCash = styled.div`
 
   p {
     margin-bottom: 0px;
+  }
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    span {
+      font-size: 65px;
+    }
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      span {
+        font-size: 55px;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    span {
+      font-size: 48px;
+    }
   }
 `;
 
@@ -103,4 +158,16 @@ export const StatusButton = styled.div<IStatusButton>`
       `;
     }
   }}
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.7rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.6rem;
+  }
 `;

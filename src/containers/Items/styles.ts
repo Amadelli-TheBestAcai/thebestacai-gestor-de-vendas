@@ -16,19 +16,31 @@ export const Header = styled(Row)`
   height: 3rem;
   background: var(--black-opaco);
   border-radius: 3px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  /* Responsive 1600 */
+  @media (max-width: 1600px) {
+    font-size: 0.9rem;
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    font-size: 0.8rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.7rem;
+  }
 `;
 
 export const Column = styled(Col)`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-export const Description = styled.label`
-  color: white;
-  font-size: 1.1rem;
-  font-weight: bold;
-  text-transform: uppercase;
 `;
 
 export const ItemContainer = styled.div`
@@ -52,4 +64,15 @@ export const EmptyContainer = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-empty-image {
+      height: 230px !important;
+    }
+
+    .ant-empty-description {
+      font-size: 0.8rem;
+    }
+  }
 `;

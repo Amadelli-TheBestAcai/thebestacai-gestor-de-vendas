@@ -1,30 +1,31 @@
 import React, { SetStateAction, Dispatch, useState } from "react";
 
 import StockAuditList from "../../containers/StockAuditList";
+import Spinner from "../../components/Spinner";
+import notImage from "../../assets/svg/notImage.svg";
 
 import { Page } from "../../models/dtos/page";
 import { ProductDto } from "../../models/dtos/product";
 
-import Table from "../Table";
-import { Modal, message, Dropdown, Menu } from "antd";
+import { notification, Dropdown, Menu } from "antd";
 
 import {
   Container,
-  Tupla,
+  Header,
   Col,
-  LabelName,
-  Actions,
-  MoreInfo,
+  Tupla,
+  Content,
   Status,
-  EditInfo,
-  Input,
-  UpdateContainer,
-  QtdCurrent,
-  QtdChange,
-  InputChange,
-  Footer,
+  MoreInfo,
   ButtonCancel,
   ButtonSave,
+  EditInfo,
+  Footer,
+  InputChange,
+  QtdChange,
+  QtdCurrent,
+  UpdateContainer,
+  Modal,
 } from "./styles";
 
 const { confirm } = Modal;
@@ -56,38 +57,9 @@ const StockList: React.FC<IProps> = ({
     totalElements: 0,
   });
 
-  const header = [
-    {
-      sm: 5,
-      xs: 0,
-      description: "Imagem",
-    },
-    {
-      sm: 5,
-      xs: 12,
-      description: "Produto",
-    },
-    {
-      sm: 5,
-      xs: 6,
-      description: "Qtd.",
-    },
-
-    {
-      sm: 5,
-      xs: 0,
-      description: "Status",
-    },
-    {
-      sm: 4,
-      xs: 6,
-      description: "Ações",
-    },
-  ];
-
   const getQuatity = (quantity?: number): string => {
     if (quantity <= 0 || !quantity) {
-      return "Esgotado";
+      return "Negativo";
     }
     if (quantity <= 3) {
       return "Estoque baixo";
@@ -102,6 +74,7 @@ const StockList: React.FC<IProps> = ({
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
+      centered: true,
       async onOk() {
         setLoading(true);
         setIsModalVisible(false);
@@ -120,9 +93,18 @@ const StockList: React.FC<IProps> = ({
           setProductsStock([...newProduct]);
           setSelectedProduct(null);
           setLoading(false);
-          message.success("Produto atualizado com sucesso!");
+          return notification.success({
+            message: "Produto atualizado com sucesso!",
+            description: `O produto selecionado foi atualizado com sucesso.`,
+            duration: 5,
+          });
         } else {
-          message.error("Erro ao atualizar produto!");
+          return notification.error({
+            message: "Oops! Não foi possível atualizar este produto!",
+            description: `O produto selecionado não foi atualizado. 
+            Tente novamente, se o erro persistir entre em contato através do chat de suporte.`,
+            duration: 5,
+          });
         }
       },
       onCancel() {
@@ -133,25 +115,31 @@ const StockList: React.FC<IProps> = ({
 
   return (
     <Container>
-      <Table header={header} loading={loading}>
-        {(filteredProducts || products).map((storeProduct) => (
-          <Tupla align="middle" key={`${storeProduct.id}`}>
-            <Col sm={5} xs={0}>
-              <LabelName>Imagem</LabelName>
-            </Col>
-            <Col sm={5} xs={12}>
-              <LabelName>{storeProduct.product?.name}</LabelName>
-            </Col>
-            <Col sm={5} xs={6} style={{ textAlign: "center" }}>
-              <LabelName>{storeProduct.quantity}</LabelName>
-            </Col>
-            <Col sm={5} xs={0}>
-              <Status quantity={storeProduct?.quantity}>
-                {getQuatity(storeProduct?.quantity)}
-              </Status>
-            </Col>
-            <Col sm={4} xs={6}>
-              <Actions>
+      <Header>
+        <Col sm={6}>Imagem</Col>
+        <Col sm={6}>Produto</Col>
+        <Col sm={4}>Quantidade</Col>
+        <Col sm={4}>Status</Col>
+        <Col sm={4}>Ações</Col>
+      </Header>
+
+      {loading ? (
+        <Spinner />
+      ) : (
+        <Content>
+          {(filteredProducts || products).map((storeProduct) => (
+            <Tupla key={storeProduct.id}>
+              <Col sm={6}>
+                <img src={notImage} alt="Imagem não encontrada" />
+              </Col>
+              <Col sm={6}>{storeProduct.product?.name}</Col>
+              <Col sm={4}>{storeProduct.quantity}</Col>
+              <Col sm={4}>
+                <Status quantity={storeProduct?.quantity}>
+                  {getQuatity(storeProduct?.quantity)}
+                </Status>
+              </Col>
+              <Col sm={4}>
                 <Dropdown
                   overlay={
                     <Menu>
@@ -184,11 +172,20 @@ const StockList: React.FC<IProps> = ({
                 >
                   <MoreInfo />
                 </Dropdown>
-              </Actions>
-            </Col>
-          </Tupla>
-        ))}
-      </Table>
+              </Col>
+            </Tupla>
+          ))}
+
+          <StockAuditList
+            visible={visible}
+            setVisible={setVisible}
+            id={selectedProduct?.id}
+            paginate={paginate}
+            setPaginate={setPaginate}
+          />
+        </Content>
+      )}
+
       <Modal
         title="Editar"
         visible={isModalVisible}
@@ -208,7 +205,11 @@ const StockList: React.FC<IProps> = ({
         <UpdateContainer>
           <QtdCurrent>
             <EditInfo>Quantidade atual:</EditInfo>
-            <Input type="number" disabled value={selectedProduct?.quantity} />
+            <InputChange
+              type="number"
+              disabled
+              value={selectedProduct?.quantity}
+            />
           </QtdCurrent>
           <QtdChange>
             <EditInfo>Retirar:</EditInfo>
@@ -220,14 +221,6 @@ const StockList: React.FC<IProps> = ({
           </QtdChange>
         </UpdateContainer>
       </Modal>
-
-      <StockAuditList
-        visible={visible}
-        setVisible={setVisible}
-        id={selectedProduct?.id}
-        paginate={paginate}
-        setPaginate={setPaginate}
-      />
     </Container>
   );
 };

@@ -14,6 +14,9 @@ import Balance from "../pages/Balance";
 import Nfce from "../pages/Nfce";
 import Settings from "../pages/Settings";
 
+import { useConfigs } from "../hooks/useConfigs";
+import Spinner from "../components/Spinner";
+
 interface RouteWithLayoutProps extends RouteProps {
   component: any;
 }
@@ -32,19 +35,28 @@ const RouteWithLayout = (props: RouteWithLayoutProps) => {
   );
 };
 
-const Routes = () => (
-  <Switch>
-    <RouteWithLayout exact path="/home" component={Home} />
-    <RouteWithLayout exact path="/store-cash" component={StoreCash} />
-    <RouteWithLayout exact path="/sale" component={Sale} />
-    <RouteWithLayout exact path="/stock" component={Stock} />
-    <RouteWithLayout exact path="/handler" component={Handler} />
-    <RouteWithLayout exact path="/delivery" component={Delivery} />
-    <RouteWithLayout exact path="/balance" component={Balance} />
-    <RouteWithLayout exact path="/nfce" component={Nfce} />
-    <RouteWithLayout exact path="/settings" component={Settings} />
-    <Route path="*" component={Login} />
-  </Switch>
-);
+const Routes = () => {
+  const { isInitializing } = useConfigs();
+  return (
+    <>
+      {isInitializing ? (
+        <Spinner />
+      ) : (
+        <Switch>
+          <RouteWithLayout exact path="/home" component={Home} />
+          <RouteWithLayout exact path="/store-cash" component={StoreCash} />
+          <RouteWithLayout exact path="/sale" component={Sale} />
+          <RouteWithLayout exact path="/stock" component={Stock} />
+          <RouteWithLayout exact path="/handler" component={Handler} />
+          <RouteWithLayout exact path="/delivery" component={Delivery} />
+          <RouteWithLayout exact path="/balance" component={Balance} />
+          <RouteWithLayout exact path="/nfce" component={Nfce} />
+          <RouteWithLayout exact path="/settings" component={Settings} />
+          <Route path="*" component={Login} />
+        </Switch>
+      )}
+    </>
+  );
+};
 
 export default Routes;

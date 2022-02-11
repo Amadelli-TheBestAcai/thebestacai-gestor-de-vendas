@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
 import AmountModal from "../../components/AmountModal";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
@@ -8,6 +7,8 @@ import Spinner from "../../components/Spinner";
 
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
 import { Balance as BalanceModel } from "../../models/balance";
+
+import { Modal, message as messageAnt } from "antd";
 
 import {
   Container,
@@ -24,6 +25,7 @@ import {
   CardStatus,
   CloseCashContatiner,
   CloseButton,
+  Input,
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 
@@ -39,7 +41,10 @@ const StoreCash: React.FC = () => {
   >([]);
   const [loading, setLoading] = useState(true);
   const [storeCashToOpen, setStoreCashToOpen] = useState<string>();
-  const [pendingSale, setPendingSale] = useState<boolean>(false);
+
+  const [modalJustify, setModalJustify] = useState(false);
+  const [UpdatingCashObservation, setUpdatingCashObservation] = useState(false);
+  const [justify, setJustify] = useState<string>("");
 
   useEffect(() => {
     async function init() {
@@ -54,6 +59,12 @@ const StoreCash: React.FC = () => {
       setCashes(availableStoreCashes);
       setIsConnected(isConnected);
       setLoading(false);
+      if (
+        +_storeCashHistory.result_cash !== 0 &&
+        !_storeCashHistory.observation
+      ) {
+        setModalJustify(true);
+      }
     }
     init();
   }, []);
@@ -97,7 +108,24 @@ const StoreCash: React.FC = () => {
           _balance?.store?.credit + _balance?.delivery?.credit
         ),
       },
+      {
+        id: 7,
+        label: "Balanço",
+        value: currencyFormater(+_storeCashHistory.result_cash),
+      },
     ];
+  };
+
+  const updateStoreCashObservation = async () => {
+    if (justify.length < 3) {
+      messageAnt.warning("Digite uma justificativa válida");
+      return;
+    }
+
+    setUpdatingCashObservation(true);
+    await window.Main.storeCash.updateStoreCashObservation(justify);
+    setUpdatingCashObservation(false);
+    setModalJustify(false);
   };
 
   return (
@@ -130,7 +158,7 @@ const StoreCash: React.FC = () => {
                 <h2>Status do Caixa</h2>
                 <StatusCash>
                   <Status>
-                    <Left>Caixa</Left>
+                    <Left>Caixa {storeCash?.code}</Left>
                     <Right is_opened={storeCash?.is_opened}>
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>
@@ -166,6 +194,24 @@ const StoreCash: React.FC = () => {
         setVisible={setAmountModal}
         storeCashToOpen={storeCashToOpen}
       />
+      <Modal
+        title={`Caixa anterior fechado com um valor incorreto. [${currencyFormater(
+          +storeCashHistory?.result_cash
+        )}]`}
+        visible={modalJustify}
+        onCancel={() => setModalJustify(false)}
+        confirmLoading={UpdatingCashObservation}
+        onOk={updateStoreCashObservation}
+        destroyOnClose={true}
+        closable={true}
+        centered
+      >
+        <Input
+          autoFocus={true}
+          placeholder="Digite o motivo"
+          onChange={({ target: { value } }) => setJustify(value)}
+        />
+      </Modal>
     </Container>
   );
 };

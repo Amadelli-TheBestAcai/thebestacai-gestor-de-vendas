@@ -2,16 +2,15 @@ import styled, { css } from "styled-components";
 
 import {
   Home,
-  ListAlt,
   CashRegister,
   Motorcycle,
   Retweet,
   Box,
-  BarChart,
   Coins,
   Scroll,
   ChartBar,
   Settings,
+  LogOut,
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -34,9 +33,24 @@ export const LogoContainer = styled.div`
 export const Logo = styled.img`
   width: 5.5rem;
   height: 5.5rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 5rem;
+      height: 5rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 4.3rem;
+    height: 4.3rem;
+  }
 `;
 
 export const Content = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -56,14 +70,47 @@ export const CardIcon = styled.button`
   margin-bottom: 2rem;
 
   :hover {
-    background: #ff9d0a;
+    background: var(--orange-250);
     color: var(--black-opaco);
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 2.8rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.4rem;
+    margin-bottom: 1rem;
+  }
+
+  :last-child {
+    position: absolute;
+    bottom: 0;
   }
 `;
 
 const IconCSS = css`
   height: 1.8rem;
   width: 1.8rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 1.5rem;
+      width: 1.5rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 1.2rem;
+    width: 1.2rem;
+  }
 `;
 
 export const HomeIcon = styled(Home)`
@@ -99,5 +146,9 @@ export const ChartIcon = styled(ChartBar)`
 `;
 
 export const SettingsIcon = styled(Settings)`
+  ${IconCSS}
+`;
+
+export const LogOutIcon = styled(LogOut)`
   ${IconCSS}
 `;

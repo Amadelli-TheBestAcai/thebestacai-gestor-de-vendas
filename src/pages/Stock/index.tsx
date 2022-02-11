@@ -5,7 +5,15 @@ import StockList from "../../containers/StockList";
 import { ProductDto } from "../../models/dtos/product";
 import { RestrictedProducts } from "../../models/enums/restrictedProducts";
 
-import { Container, Content, Name, SearchBar } from "./styles";
+import {
+  Container,
+  PageContent,
+  Header,
+  SearchContainer,
+  Input,
+  Content,
+  SearchIcon,
+} from "./styles";
 
 const Stock: React.FC = () => {
   const [productsStock, setProductsStock] = useState<ProductDto[]>([]);
@@ -38,20 +46,27 @@ const Stock: React.FC = () => {
 
   return (
     <Container>
-      <Content>
-        <Name>Estoque</Name>
-        <SearchBar
-          placeholder="Digite o nome do produtos"
-          onChange={findProduct}
-        ></SearchBar>
-        <StockList
-          loading={loading}
-          setLoading={setLoading}
-          filteredProducts={filteredProducts}
-          products={productsStock}
-          setProductsStock={setProductsStock}
-        />
-      </Content>
+      <PageContent>
+        <Header>
+          <h2>Estoque</h2>
+        </Header>
+        <SearchContainer>
+          <Input
+            placeholder="Digite o nome do produto"
+            onChange={findProduct}
+            prefix={<SearchIcon />}
+          />
+        </SearchContainer>
+        <Content>
+          <StockList
+            loading={loading}
+            setLoading={setLoading}
+            filteredProducts={filteredProducts}
+            products={productsStock}
+            setProductsStock={setProductsStock}
+          />
+        </Content>
+      </PageContent>
     </Container>
   );
 };

@@ -12,6 +12,22 @@ import {
 export const Container = styled(ModalAnt)`
   display: flex;
   flex-direction: column;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 700px !important;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 550px !important;
+
+    .ant-modal-content {
+      height: 350px;
+    }
+  }
 `;
 
 export const AddContainer = styled.div`
@@ -19,7 +35,12 @@ export const AddContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 100px;
+  height: 5rem;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 4rem;
+  }
 `;
 
 export const ListContainer = styled.div`
@@ -27,10 +48,24 @@ export const ListContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: 300px;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 280px;
+    }
+  }
 `;
 
 export const Input = styled(InputAnt)`
   height: 3.7rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.5rem;
+    }
+  }
 `;
 
 export const ButtonAdd = styled.button`
@@ -42,6 +77,20 @@ export const ButtonAdd = styled.button`
   background: var(--orange-200);
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   border-radius: 0.7rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.5rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+    font-size: 0.7rem;
+    width: 180px;
+  }
 `;
 
 export const Header = styled.header`
@@ -49,10 +98,15 @@ export const Header = styled.header`
   align-items: center;
   width: 100%;
   height: 3.5rem;
-  background: #1c1e23;
+  background: var(--black-opaco);
   border-radius: 3px;
   color: white;
   text-transform: uppercase;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.8rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -65,8 +119,8 @@ export const Card = styled(RowAnt)`
   width: 100%;
   height: 50px;
   margin-top: 8px;
-  background: #f9f9f9;
-  color: #4d4d4d;
+  background: var(--white-40);
+  color: var(--grey-200);
   font-weight: 500;
   font-size: 1rem;
 `;
@@ -75,6 +129,11 @@ export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const RestoreIcon = styled(RepeatOutline)`
@@ -82,4 +141,10 @@ export const RestoreIcon = styled(RepeatOutline)`
   width: 1.2rem;
   height: 1.2rem;
   color: var(--green-600);
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1rem;
+    height: 1rem;
+  }
 `;

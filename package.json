@@ -1,7 +1,7 @@
 {
   "name": "gestor-de-vendas",
-  "version": "0.0.5",
-  "author": "Wirlley Delfino",
+  "version": "0.0.6",
+  "author": "Amabest",
   "description": "Desktop app to manage a store",
   "homepage": ".",
   "main": "build/electron/main.js",

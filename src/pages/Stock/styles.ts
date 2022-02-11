@@ -1,65 +1,101 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-import { Col as ColAnt, Row as RowAnt, Input } from "antd";
+import { Input as InputAnt } from "antd";
+import { Search } from "../../styles/Icons";
 
 export const Container = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100%;
+  justify-content: center;
   width: 100%;
-  padding: 0.8rem;
+  height: 100%;
+  padding: 1rem;
 `;
 
-const ContentCSS = css`
+export const PageContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   background: var(--white);
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
   padding: 1rem;
 `;
 
-export const Content = styled.div`
-  ${ContentCSS}
-  height: 100%;
-  width: 100%;
-  margin-bottom: 5px;
-  overflow: hidden;
-  text-align: center;
-`;
-
-export const Name = styled.h1`
-  position: absolute;
-
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 36px;
-  line-height: 42px;
-
-  color: #000000;
-`;
-
-export const SearchBar = styled(Input)`
-  width: 294px;
-  height: 42px;
-  margin-left: 78%;
-
-  background: #f7f7f7;
-  border: 1px solid #bebebe;
-  box-sizing: border-box;
-  border-radius: 5px;
-`;
-
-export const Row = styled(RowAnt)`
+export const Header = styled.header`
   display: flex;
   align-items: center;
   width: 100%;
+  height: 5%;
+
+  h2 {
+    margin-bottom: 0px;
+  }
+
+  /*Responsive 1366*/
+  @media (max-width: 1366px) {
+    h2 {
+      font-size: 1.2rem;
+    }
+  }
 `;
 
-export const Col = styled(ColAnt)`
-  margin: 0 10px;
-  @media only screen and (max-width: 578px) {
-    margin: 5px 0;
+export const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 5%;
+`;
+
+export const Input = styled(InputAnt)`
+  height: 3.7rem;
+  width: 15%;
+
+  /*Responsive 1600*/
+  @media (max-width: 1600px) {
+    height: 3.4rem;
+  }
+
+  /*Responsive 1600*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.2rem;
+      width: 18%;
+    }
+  }
+
+  /*Responsive 1440*/
+  @media (max-width: 1440px) {
+    width: 20%;
+  }
+
+  /*Responsive 1366*/
+  @media (max-width: 1366px) {
+    height: 2.8rem;
+    width: 17%;
+    input {
+      font-size: 0.7rem;
+    }
+  }
+`;
+
+export const Content = styled.section`
+  display: flex;
+  width: 100%;
+  height: 90%;
+  margin-top: 1rem;
+`;
+
+export const SearchIcon = styled(Search)`
+  height: 0.9rem;
+  width: 0.9rem;
+  color: var(--grey-60);
+
+  /*Responsive 1366*/
+  @media (max-width: 1366px) {
+    height: 0.8rem;
+    width: 0.8rem;
   }
 `;

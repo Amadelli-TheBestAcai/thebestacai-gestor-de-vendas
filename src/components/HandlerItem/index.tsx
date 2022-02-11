@@ -1,12 +1,6 @@
 import React from "react";
 
-import {
-  Container,
-  Column,
-  Description,
-  RemoveIcon,
-  PrinterIcon,
-} from "./styles";
+import { Container, Column, RemoveIcon, PrinterIcon } from "./styles";
 
 import { Handler as HandlerModel } from "../../models/dtos/handler";
 
@@ -22,29 +16,20 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
   // const onPrint = (_handler: HandlerModel) => {
   //   ipcRenderer.send("handler:print", _handler);
   // };
+
   return (
     <Container>
-      <Column span={4}>
-        <Description>{id}</Description>
-      </Column>
-      <Column span={4}>
-        <Description>{type === 0 ? "Entrada" : "Saída"}</Description>
-      </Column>
-      <Column span={4}>
-        <Description>{(+amount).toFixed(2).replace(".", ",")}R$</Description>
-      </Column>
-      <Column span={4}>
-        <Description>{time}</Description>
-      </Column>
-      <Column span={4}>
-        <Description>{reason}</Description>
-      </Column>
+      <Column span={4}>{id}</Column>
+      <Column span={4}>{type === 0 ? "Entrada" : "Saída"}</Column>
+      <Column span={4}>R$ {(+amount).toFixed(2).replace(".", ",")}</Column>
+      <Column span={4}>{time}</Column>
+      <Column span={4}>{reason}</Column>
       <>
         <Column span={4}>
           {window.Main.user.hasPermission("handler.delete_handler") && (
             <RemoveIcon onClick={() => onDelete(id)} />
           )}
-          {/* <PrinterIcon onClick={() => onPrint(handler)} /> */}
+          <PrinterIcon />
         </Column>
       </>
     </Container>

@@ -21,15 +21,19 @@ export {
   CheckboxChecked,
   BookmarkMinus,
 } from "@styled-icons/boxicons-solid";
-export { LogInCircle, LogOutCircle } from "@styled-icons/boxicons-regular";
+export {
+  LogInCircle,
+  LogOutCircle,
+  LogOut,
+} from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
 export { CreditCard2BackFill, TelephoneFill } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
-export { Grid3x2GapFill } from "@styled-icons/bootstrap/Grid3x2GapFill";
+export { Grid3x2GapFill, UiChecks, Trash } from "@styled-icons/bootstrap";
 export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
-export { PhoneIphone } from "@styled-icons/material-outlined";
+export { PhoneIphone, MoreHoriz } from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
 export { Attachment } from "@styled-icons/material-sharp/Attachment";
 export {
@@ -44,18 +48,15 @@ export {
   AddShoppingCart,
   RemoveShoppingCart,
   Payments,
-  MoreHoriz,
 } from "@styled-icons/material-outlined";
 
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
-export { Trash } from "@styled-icons/fa-solid";
 export {
   ArrowLeftRight,
   CreditCard2Back,
   CheckCircleFill,
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
-export { Cashapp, Ubereats } from "@styled-icons/simple-icons";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
 export { AddToQueue, User } from "@styled-icons/boxicons-solid";
 export {
@@ -82,4 +83,3 @@ export { RemoveCircleOutline } from "@styled-icons/material/RemoveCircleOutline"
 export { ClipboardNotes } from "@styled-icons/foundation/ClipboardNotes";
 export { InfoCircle } from "@styled-icons/boxicons-regular/InfoCircle";
 export { FileInvoice } from "@styled-icons/fa-solid/FileInvoice";
-export { Chat } from "@styled-icons/bootstrap/Chat";

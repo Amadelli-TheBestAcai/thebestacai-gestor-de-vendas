@@ -186,7 +186,9 @@ const PaymentsContainer: React.FC<IProps> = ({
           getValue={getAmount}
           onEnterPress={addPayment}
           defaultValue={
-            modalTitle !== "Dinheiro" ? sale.total_sold - sale.total_paid : 0
+            modalTitle !== "Dinheiro"
+              ? sale.total_sold - sale.total_paid - sale.discount
+              : 0
           }
         />
       </Modal>

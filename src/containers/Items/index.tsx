@@ -11,7 +11,6 @@ import {
   Container,
   Header,
   Column,
-  Description,
   ItemContainer,
   ItemContent,
   EmptyContainer,
@@ -22,21 +21,11 @@ const Items: React.FC = () => {
   return (
     <Container>
       <Header>
-        <Column span={10}>
-          <Description>Produto</Description>
-        </Column>
-        <Column span={4}>
-          <Description>Quantidade</Description>
-        </Column>
-        <Column span={4}>
-          <Description>Valor Unitário</Description>
-        </Column>
-        <Column span={4}>
-          <Description>Valor Total</Description>
-        </Column>
-        <Column span={2}>
-          <Description>Ação</Description>
-        </Column>
+        <Column span={10}>Produto</Column>
+        <Column span={4}>Quantidade</Column>
+        <Column span={4}>Valor Unitário</Column>
+        <Column span={4}>Valor Total</Column>
+        <Column span={2}>Ação</Column>
       </Header>
       {sale.items.length !== 0 ? (
         <>

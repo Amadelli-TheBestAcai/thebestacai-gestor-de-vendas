@@ -28,6 +28,21 @@ export const InfoPayment = styled(Row)`
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--black-opaco);
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    font-size: 0.8rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
+
+  /*Responsive 1280px*/
+  @media (max-width: 1280px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export const Column = styled(Col)`
@@ -42,4 +57,16 @@ export const DeleteIcon = styled(TrashRestoreAlt)`
   width: 1rem;
   height: 1rem;
   color: var(--red-600);
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
 `;
