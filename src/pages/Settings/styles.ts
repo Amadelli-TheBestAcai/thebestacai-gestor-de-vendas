@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-import { Settings } from "../../styles/Icons";
 import {
   Select as SelectAnt,
   Switch as SwitchAnt,
@@ -55,30 +54,16 @@ export const ButtonSave = styled(ButtonAnt)`
   color: var(--brown-500);
   border-radius: 5px;
   font-weight: 500;
+  border: none;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-`;
 
-export const HeaderCard = styled.div`
-  display: flex;
-  align-items: center;
-  color: white;
-  margin-top: 1rem;
-  width: 100%;
-  height: 5%;
-  background: var(--black-opaco);
-  box-shadow: 0px 4px 6px rgba(163, 163, 163, 0.28);
-  padding: 1rem;
-
-  span {
-    font-size: 1.2rem;
+  :active,
+  :hover,
+  :focus {
+    background: var(--orange-250);
+    color: var(--brown-500);
+    border: none;
   }
-`;
-
-export const SettingsIcon = styled(Settings)`
-  color: white;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 1rem;
 `;
 
 export const ContentCard = styled.div`
@@ -108,9 +93,7 @@ export const SelectsContainer = styled.div`
 `;
 
 export const Select = styled(SelectAnt)`
-  :last-child {
-    margin-left: 1rem;
-  }
+  width: 100%;
 `;
 
 export const Option = styled(SelectAnt.Option)``;
@@ -131,5 +114,5 @@ export const ActionContainer = styled.div`
 `;
 
 export const Switch = styled(SwitchAnt)`
-  zoom: 1.3;
+  zoom: 1.1;
 `;

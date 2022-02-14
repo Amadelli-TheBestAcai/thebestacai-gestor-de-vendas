@@ -80,6 +80,10 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;
 
+    .ant-switch-checked {
+      background-color: var(--orange-250);
+    }
+
     .ant-tabs-tab.ant-tabs-tab-active,
     .ant-tabs-tab-btn {
       color: white;
