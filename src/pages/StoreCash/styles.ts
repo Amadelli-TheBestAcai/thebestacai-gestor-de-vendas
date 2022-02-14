@@ -198,6 +198,7 @@ export const CardStatus = styled.div<ICardStatus>`
   background-repeat: no-repeat;
   background-position: right;
   background-origin: content-box;
+  background-size: 30%;
 
   label {
     position: absolute;
@@ -255,7 +256,7 @@ export const CardStatus = styled.div<ICardStatus>`
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
-    height: 135px;
+    height: 115px;
     font-size: 1.6rem;
 
     label {
