@@ -60,8 +60,8 @@ const StoreCash: React.FC = () => {
       setIsConnected(isConnected);
       setLoading(false);
       if (
-        +_storeCashHistory.result_cash !== 0 &&
-        !_storeCashHistory.observation
+        +_storeCashHistory?.result_cash !== 0 &&
+        !_storeCashHistory?.observation
       ) {
         setModalJustify(true);
       }
@@ -111,7 +111,7 @@ const StoreCash: React.FC = () => {
       {
         id: 7,
         label: "Balanço",
-        value: currencyFormater(+_storeCashHistory.result_cash),
+        value: currencyFormater(+_storeCashHistory?.result_cash),
       },
     ];
   };
