@@ -84,6 +84,7 @@ export const TypesPaymentsContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 30%;
+  margin-bottom: 1rem;
 `;
 
 export const PaymentsInfoContainer = styled.div`
