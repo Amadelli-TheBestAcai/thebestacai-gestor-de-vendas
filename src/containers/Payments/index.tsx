@@ -26,6 +26,7 @@ import {
   ButtonSave,
   Header,
   Column,
+  OnlineIcon,
 } from "./styles";
 
 interface IProps {
@@ -39,6 +40,7 @@ interface IProps {
   modalTitle: string;
   shouldViewValues?: boolean;
   shouldDisableButtons?: boolean;
+  usingDelivery?: boolean;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -52,6 +54,7 @@ const PaymentsContainer: React.FC<IProps> = ({
   modalTitle,
   shouldViewValues,
   shouldDisableButtons,
+  usingDelivery,
 }) => {
   const onModalCancel = (): void => {
     setModalState(false);
@@ -81,10 +84,12 @@ const PaymentsContainer: React.FC<IProps> = ({
       action: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito"),
     },
     {
-      icon: <TicketIcon />,
-      label: "Ticket [T]",
-      background: "var(--purple-450)",
-      action: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+      icon: usingDelivery ? <OnlineIcon /> : <TicketIcon />,
+      label: usingDelivery ? "Online [T]" : "Ticket [T]",
+      background: usingDelivery ? "var(--orange-400)" : "var(--purple-450)",
+      action: usingDelivery
+        ? () => handleOpenPayment(PaymentType.ONLINE, "Online")
+        : () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     },
     {
       icon: <PixIcon src={PixLogo} />,

@@ -9,6 +9,7 @@ import {
   CreditCard,
   TicketAlt,
   CreditCard2BackFill,
+  CheckboxChecked,
 } from "../../styles/Icons";
 
 const ButtonCSS = css`
@@ -259,4 +260,9 @@ export const DebitIcon = styled(CreditCard2BackFill)`
 
 export const PixIcon = styled.img`
   ${IconCSS}
+`;
+
+export const OnlineIcon = styled(CheckboxChecked)`
+  ${IconCSS}
+  zoom: 1.3;
 `;
