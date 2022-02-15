@@ -99,12 +99,18 @@ const PaymentsContainer: React.FC<IProps> = ({
     },
   ];
 
-  const getChangeAmount = (total_sold: number, total_paid: number) => {
+  const getChangeAmount = (
+    total_sold: number,
+    total_paid: number,
+    discount: number
+  ) => {
     if (total_paid > total_sold) {
-      const result = (total_paid - total_sold).toFixed(2).replace(".", ",");
+      const result = (total_paid - total_sold + discount)
+        .toFixed(2)
+        .replace(".", ",");
       return result;
     } else if (total_paid === total_sold) {
-      const result = (0).toFixed(2).replace(".", ",");
+      const result = (discount + 0).toFixed(2).replace(".", ",");
       return result;
     } else {
       return "0,00";
@@ -146,7 +152,7 @@ const PaymentsContainer: React.FC<IProps> = ({
           <ValueInfo>
             R$ Troco <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
-              {getChangeAmount(sale.total_sold, sale.total_paid)}
+              {getChangeAmount(sale.total_sold, sale.total_paid, sale.discount)}
             </strong>
           </ValueInfo>
           <ValueInfo>
