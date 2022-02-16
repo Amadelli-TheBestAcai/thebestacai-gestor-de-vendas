@@ -135,30 +135,30 @@ export const Tabs = styled(TabsAnt)`
 
   .ant-tabs-content {
     width: 100%;
-    height: 69vh;
+    height: 65vh;
     background: var(--white-30);
 
     /*Responsive 1366px*/
     @media (max-width: 1366px) {
-      height: 65vh;
+      height: 62vh;
     }
 
     /*Responsive 1280px*/
     @media (max-width: 1280px) {
       @media (max-height: 1024px) {
-        height: 69vh;
-      }
-
-      @media (max-height: 960px) {
-        height: 68vh;
-      }
-
-      @media (max-height: 800px) {
         height: 67vh;
       }
 
-      @media (max-height: 768px) {
+      @media (max-height: 960px) {
+        height: 66vh;
+      }
+
+      @media (max-height: 800px) {
         height: 65vh;
+      }
+
+      @media (max-height: 768px) {
+        height: 64vh;
       }
     }
   }
