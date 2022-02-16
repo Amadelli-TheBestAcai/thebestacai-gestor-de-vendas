@@ -32,6 +32,13 @@ export const Header = styled.header`
   align-items: center;
   width: 100%;
   height: 5%;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
 export const Footer = styled.footer`
@@ -64,22 +71,20 @@ export const ButtonSave = styled(ButtonAnt)`
     color: var(--brown-500);
     border: none;
   }
-`;
 
-export const ContentCard = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 10%;
-  background: var(--white);
-  box-shadow: 0px 4px 6px rgba(163, 163, 163, 0.28);
-  border-radius: 0px;
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 105px;
+      height: 40px;
+    }
+  }
 
-  .ant-select-selector,
-  .ant-input {
-    height: 3.7rem !important;
-    align-items: center;
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 100px;
+    height: 35px;
+    font-size: 0.8rem;
   }
 `;
 
@@ -111,8 +116,40 @@ export const ActionContainer = styled.div`
     font-size: 0.9rem;
     margin-top: 3%;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    span {
+      font-size: 0.8rem;
+
+      @media (max-height: 900px) {
+        font-size: 0.75rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    span {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const Switch = styled(SwitchAnt)`
   zoom: 1.1;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    zoom: 1;
+
+    @media (max-height: 900px) {
+      zoom: 0.9;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    zoom: 0.8;
+  }
 `;

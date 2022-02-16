@@ -9,6 +9,13 @@ export const Container = styled.div`
   height: 15%;
   margin-top: 1rem;
   box-shadow: 0px 4px 6px rgba(163, 163, 163, 0.28);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 20%;
+    }
+  }
 `;
 
 export const HeaderCard = styled.div`
@@ -20,6 +27,11 @@ export const HeaderCard = styled.div`
   background: var(--black-opaco);
   padding: 1rem;
   font-size: 1rem;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.9rem;
+  }
 `;
 
 export const SettingsIcon = styled(Settings)`
@@ -27,6 +39,12 @@ export const SettingsIcon = styled(Settings)`
   width: 1.2rem;
   height: 1.2rem;
   margin-right: 1rem;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
 `;
 
 export const ContentCard = styled.div`
@@ -42,5 +60,13 @@ export const ContentCard = styled.div`
   .ant-input {
     height: 3.7rem !important;
     align-items: center;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-select-selector {
+      height: 3.2rem !important;
+      font-size: 0.8rem;
+    }
   }
 `;
