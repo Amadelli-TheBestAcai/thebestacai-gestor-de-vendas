@@ -1,10 +1,10 @@
 import React from "react";
 
-import { Spin } from "antd";
+import { useSale } from "../../hooks/useSale";
 
+import { Spin } from "antd";
 import { Container, ContentValue, ButtonFinisher } from "./styles";
 
-import { useSale } from "../../hooks/useSale";
 const Register: React.FC = () => {
   const { sale, onRegisterSale, isSavingSale } = useSale();
   const monetaryFormat = (value: number): string => {

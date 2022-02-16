@@ -105,27 +105,29 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    if (
-      +(sale.total_sold.toFixed(2) || 0) >
-      sale.total_paid + (sale.discount || 0) + 0.5
-    ) {
-      return notification.warning({
-        message: "Pagamento inválido!",
-        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
-        duration: 5,
+    if (sale.items.length) {
+      if (
+        +(sale.total_sold.toFixed(2) || 0) >
+        sale.total_paid + (sale.discount || 0) + 0.5
+      ) {
+        return notification.warning({
+          message: "Pagamento inválido!",
+          description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
+          duration: 5,
+        });
+      }
+
+      setSavingSale(true);
+      await window.Main.sale.finishSale(sale);
+      const _newSale = await window.Main.sale.buildNewSale();
+      setSale(_newSale);
+      setSavingSale(false);
+      notification.success({
+        message: "Venda realizada com sucesso!",
+        description: `A venda foi registrada com sucesso.`,
+        duration: 3,
       });
     }
-
-    setSavingSale(true);
-    await window.Main.sale.finishSale(sale);
-    const _newSale = await window.Main.sale.buildNewSale();
-    setSale(_newSale);
-    setSavingSale(false);
-    notification.success({
-      message: "Venda realizada com sucesso!",
-      description: `A venda foi registrada com sucesso.`,
-      duration: 3,
-    });
   };
 
   const onAddToQueue = async (name: string): Promise<void> => {
