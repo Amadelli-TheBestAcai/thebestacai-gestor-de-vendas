@@ -111,6 +111,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           payment_method: 0,
           total: +shopInfo.quantity * +shopInfo.unitary_value,
           name: "Salarios/Comissões",
+          observation: shopInfo.observation,
           purchasesItems: [
             {
               product_id: +product.id,
@@ -127,7 +128,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       }
     }
 
-    if (!value && !shopOrder.total) {
+    if (!value && !shopOrder?.total) {
       return message.warning("Informe um valor");
     } else if (!reasson && !reasontype) {
       return notification.warning({
@@ -198,7 +199,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       const store = await window.Main.store.registratedStore();
       const purchaseProducts =
         await window.Main.product.getAllPurchaseProducts();
-      setStore(store?.id);
+      setStore(store?.company_id);
       setProductsCategory(purchaseProducts);
       setHasInternet(hasInternet);
       setFetchingProductsCategory(false);
@@ -381,7 +382,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                   <Col sm={24}>
                     <Form.Item
                       label="Nome Freelancer"
-                      name="observation"
+                      name="name"
                       rules={[
                         {
                           required: true,
@@ -392,7 +393,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                       <Input
                         placeholder="Nome Freelancer"
                         onChange={({ target: { value } }) =>
-                          handleShopInfo("observation", value)
+                          handleShopInfo("name", value)
                         }
                       />
                     </Form.Item>
