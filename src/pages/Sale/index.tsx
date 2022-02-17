@@ -29,6 +29,7 @@ import {
   Collapse,
   HeaderTable,
   SalesHistoryContainer,
+  HeaderCollapse,
 } from "./styles";
 
 type IProps = RouteComponentProps;
@@ -116,92 +117,109 @@ const Sale: React.FC<IProps> = ({ history }) => {
   return (
     <Container>
       <PageContent>
-        {sales.length ? (
+        {isLoading ? (
+          <Spinner />
+        ) : (
           <>
-            <Header>
-              <h2>Vendas</h2>
-            </Header>
-            <SearchContainer>
-              <Input placeholder="Digite a identificação da venda" />
-            </SearchContainer>
-            <ListSaleContainer>
-              <HeaderTable>
-                <Col sm={4}>ID</Col>
-                <Col sm={4}>VALOR</Col>
-                <Col sm={4}>QUANTIDADE</Col>
-                <Col sm={4}>HORA</Col>
-                <Col sm={4}>TIPO</Col>
-                <Col sm={4}>AÇÕES</Col>
-              </HeaderTable>
-              {selectedSale && (
-                <Collapse defaultActiveKey={["1"]} collapsible="disabled">
-                  <Panel
-                    header={
-                      <>
-                        <Col sm={4}>{selectedSale.id}</Col>
-                        <Col sm={4}> R$ {selectedSale.total_sold}</Col>
-                        <Col sm={4}>{selectedSale.quantity}</Col>
-                        <Col sm={4}>
-                          {moment(selectedSale.created_at)
-                            .add(3, "hours")
-                            .format("HH:mm:ss")}
-                        </Col>
-                        <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
-                        <Col sm={4}>AÇÕES</Col>
-                      </>
-                    }
-                    key="1"
-                  >
-                    <Collapse defaultActiveKey={["2"]}>
-                      <Panel header="Pagamentos" key="2">
-                        {selectedSale.payments.map((_payment, index) => (
-                          <React.Fragment key={index}>
-                            <p>{PaymentType[_payment.type]}</p>
-                            <p>{_payment.amount}</p>
-                          </React.Fragment>
-                        ))}
+            {sales.length ? (
+              <>
+                <Header>
+                  <h2>Vendas</h2>
+                </Header>
+                <SearchContainer>
+                  <Input placeholder="Digite a identificação da venda" />
+                </SearchContainer>
+                <ListSaleContainer>
+                  <HeaderTable>
+                    <Col sm={4}>ID</Col>
+                    <Col sm={4}>VALOR</Col>
+                    <Col sm={4}>QUANTIDADE</Col>
+                    <Col sm={4}>HORA</Col>
+                    <Col sm={4}>TIPO</Col>
+                    <Col sm={4}>AÇÕES</Col>
+                  </HeaderTable>
+                  {selectedSale && (
+                    <Collapse defaultActiveKey={["1"]} collapsible="disabled">
+                      <Panel
+                        header={
+                          <>
+                            <Col sm={4}>{selectedSale.id}</Col>
+                            <Col sm={4}> R$ {selectedSale.total_sold}</Col>
+                            <Col sm={4}>{selectedSale.quantity}</Col>
+                            <Col sm={4}>
+                              {moment(selectedSale.created_at)
+                                .add(3, "hours")
+                                .format("HH:mm:ss")}
+                            </Col>
+                            <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
+                            <Col sm={4}>AÇÕES</Col>
+                          </>
+                        }
+                        key="1"
+                      >
+                        <Collapse defaultActiveKey={["2"]}>
+                          <Panel header="Pagamentos" key="2">
+                            <HeaderCollapse>
+                              <Col sm={12}>TIPO</Col>
+                              <Col sm={12}>VALOR</Col>
+                            </HeaderCollapse>
+                            {selectedSale.payments.map((_payment, index) => (
+                              <Row key={index}>
+                                <Col sm={12}>{PaymentType[_payment.type]}</Col>
+                                <Col sm={12}>R$ {_payment.amount}</Col>
+                              </Row>
+                            ))}
+                          </Panel>
+                        </Collapse>
+                        {selectedSale.items.length ? (
+                          <Collapse defaultActiveKey={["3"]}>
+                            <Panel header="Itens" key="2">
+                              <HeaderCollapse>
+                                <Col sm={8}>PRODUTO</Col>
+                                <Col sm={8}>QUANTIDADE</Col>
+                                <Col sm={8}>PREÇO</Col>
+                              </HeaderCollapse>
+                              {selectedSale.items.map((_item, index) => (
+                                <Row key={index}>
+                                  <Col sm={8}>{_item.product.name}</Col>
+                                  <Col sm={8}>{_item.quantity}</Col>
+                                  <Col sm={8}>
+                                    R${" "}
+                                    {currencyFormater(
+                                      +_item.quantity *
+                                        +_item.storeProduct.price_unit
+                                    )}
+                                  </Col>
+                                </Row>
+                              ))}
+                            </Panel>
+                          </Collapse>
+                        ) : (
+                          <p>📌Vendas em delivery não possuem itens</p>
+                        )}
                       </Panel>
                     </Collapse>
-                    {selectedSale.items.length ? (
-                      <Collapse defaultActiveKey={["3"]}>
-                        <Panel header="Itens" key="2">
-                          {selectedSale.items.map((_item, index) => (
-                            <React.Fragment key={index}>
-                              <p>{_item.product.name}</p>
-                              <p>{_item.quantity}</p>
-                              <p>
-                                R${" "}
-                                {currencyFormater(
-                                  +_item.quantity *
-                                    +_item.storeProduct.price_unit
-                                )}
-                              </p>
-                            </React.Fragment>
-                          ))}
-                          <p>2</p>
-                        </Panel>
-                      </Collapse>
-                    ) : (
-                      <p>📌Vendas em delivery não possuem itens</p>
-                    )}
-                  </Panel>
-                </Collapse>
-              )}
-            </ListSaleContainer>
-            <SalesHistoryContainer>
-              <SalesHistory sales={sales} setSelectedSale={setSelectedSale} />
-            </SalesHistoryContainer>
+                  )}
+                </ListSaleContainer>
+                <SalesHistoryContainer>
+                  <SalesHistory
+                    sales={sales}
+                    setSelectedSale={setSelectedSale}
+                  />
+                </SalesHistoryContainer>
+              </>
+            ) : (
+              <Centralizer>
+                <Empty
+                  description="Nenhuma venda registrada para ser listada."
+                  image={notHandler}
+                  imageStyle={{
+                    height: 350,
+                  }}
+                />
+              </Centralizer>
+            )}
           </>
-        ) : (
-          <Centralizer>
-            <Empty
-              description="Nenhuma venda registrada para ser listada."
-              image={notHandler}
-              imageStyle={{
-                height: 350,
-              }}
-            />
-          </Centralizer>
         )}
       </PageContent>
     </Container>

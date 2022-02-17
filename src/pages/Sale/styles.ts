@@ -73,9 +73,24 @@ export const HeaderTable = styled(RowAnt)`
   color: white;
 `;
 
-export const Row = styled(RowAnt)``;
+export const HeaderCollapse = styled(RowAnt)`
+  display: flex;
+  width: 100%;
+  height: 1.5rem;
+  background: var(--grey-200);
+
+  .ant-col {
+    color: white !important;
+  }
+`;
+
+export const Row = styled(RowAnt)`
+  border-top: 1px solid var(--gray-50);
+  font-size: 0.8rem;
+`;
 
 export const Collapse = styled(CollapseAnt)`
+  user-select: none;
   .ant-collapse-item-disabled {
     .ant-col {
       color: var(--black-opaco);
@@ -92,4 +107,5 @@ export const SalesHistoryContainer = styled.div`
   background: #f9f9f9;
   margin-top: 1rem;
   padding: 1rem;
+  overflow: hidden;
 `;

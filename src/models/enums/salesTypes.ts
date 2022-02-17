@@ -1,5 +1,5 @@
 export enum SalesTypes {
-  STORE = 0,
+  LOJA = 0,
   IFOOD = 1,
   UBBEREATS = 2,
   WHATSAPP = 3,
