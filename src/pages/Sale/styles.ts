@@ -1,4 +1,6 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+import { Trash, RepeatOutline, Printer } from "../../styles/Icons";
 
 import {
   Input as InputAnt,
@@ -162,4 +164,20 @@ export const SalesHistoryContainer = styled.div`
   padding: 1rem;
   overflow: hidden;
   margin-bottom: 1rem;
+`;
+
+const IconCSS = css`
+  width: 7%;
+  height: 7%;
+  cursor: pointer;
+`;
+
+export const RemoveIcon = styled(Trash)`
+  ${IconCSS}
+`;
+export const RestoreIcon = styled(RepeatOutline)`
+  ${IconCSS}
+`;
+export const PrinterIcon = styled(Printer)`
+  ${IconCSS}
 `;

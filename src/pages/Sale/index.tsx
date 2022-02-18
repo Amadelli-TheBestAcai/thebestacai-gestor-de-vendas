@@ -14,7 +14,7 @@ import { SalesTypes } from "../../models/enums/salesTypes";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
 
 import notHandler from "../../assets/svg/notHandler.svg";
-import { Empty } from "antd";
+import { Empty, Tooltip } from "antd";
 
 import {
   Container,
@@ -30,6 +30,9 @@ import {
   HeaderTable,
   SalesHistoryContainer,
   HeaderCollapse,
+  PrinterIcon,
+  RemoveIcon,
+  RestoreIcon,
 } from "./styles";
 
 type IProps = RouteComponentProps;
@@ -152,7 +155,20 @@ const Sale: React.FC<IProps> = ({ history }) => {
                                 .format("HH:mm:ss")}
                             </Col>
                             <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
-                            <Col sm={4}>AÇÕES</Col>
+                            <Col
+                              sm={4}
+                              style={{ justifyContent: "space-evenly" }}
+                            >
+                              <Tooltip title="Remover" placement="bottom">
+                                <RemoveIcon />
+                              </Tooltip>
+                              <Tooltip title="Restaurar" placement="bottom">
+                                <RestoreIcon />
+                              </Tooltip>
+                              <Tooltip title="Imprimir" placement="bottom">
+                                <PrinterIcon />
+                              </Tooltip>
+                            </Col>
                           </>
                         }
                         key="1"
