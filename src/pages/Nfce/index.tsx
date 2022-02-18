@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { cleanObject } from "../../helpers/cleanObject";
 import { v4 } from "uuid";
 
-import { message as messageAnt, Popover, Tooltip } from "antd";
+import { message as messageAnt, Popover, Tooltip, notification } from "antd";
 
 import CashNotFound from "../../components/CashNotFound";
 import Spinner from "../../components/Spinner";
@@ -200,10 +200,23 @@ const Nfce: React.FC = () => {
   };
 
   const handleEmit = () => {
+    let payload = form.getFieldsValue();
     if (!productsNfe.length) {
-      messageAnt.warning("Adicione pelo menos um produto");
-      return;
+      return notification.warning({
+        message: "Oops! O carrinho está vazio.",
+        description: `Selecione algum item para continuar com a emissão da nota.`,
+        duration: 5,
+      });
     }
+
+    if (!payload.formaPagamento || !payload.indicadorFormaPagamento) {
+      return notification.warning({
+        message: "Operação e Tipo são obrigatórios.",
+        description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
+        duration: 5,
+      });
+    }
+
     const nfcePayload = {
       ...cleanObject(nfe),
       informacoesAdicionaisFisco:
@@ -221,9 +234,17 @@ const Nfce: React.FC = () => {
     const nfce = window.Main.sale.emitNfce(nfcePayload);
     setEmitingNfe(false);
     if (!nfce) {
-      messageAnt.error("Falha ao emitir NFCe, contate o suporte.");
+      return notification.error({
+        message: "Oops! Não foi possível emitir a NFCe.",
+        description: `Tente novamente, caso o problem persista, contate o suporte através do chat.`,
+        duration: 5,
+      });
     } else {
-      messageAnt.success("NFCe emitida com sucesso");
+      return notification.success({
+        message: "Emitida com sucesso!",
+        description: `A nota fiscal foi emitida com sucesso.`,
+        duration: 5,
+      });
     }
   };
 
