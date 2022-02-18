@@ -74,8 +74,8 @@ export const GlobalStyle = createGlobalStyle`
     max-height: 100vh;
     max-width: 100vw;
 
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     font: 500 1rem "Roboto", sans-serif;
     -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;

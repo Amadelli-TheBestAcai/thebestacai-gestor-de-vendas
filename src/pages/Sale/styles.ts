@@ -36,6 +36,22 @@ export const Header = styled.header`
   h2 {
     margin-bottom: 0px;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    h2 {
+      font-size: 1.1rem;
+    }
+  }
 `;
 
 export const SearchContainer = styled.div`
@@ -48,6 +64,20 @@ export const SearchContainer = styled.div`
 export const Input = styled(InputAnt)`
   height: 3.7rem;
   width: 20%;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.4rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+    font-size: 0.7rem;
+  }
 `;
 
 export const ListSaleContainer = styled.div`
@@ -71,6 +101,19 @@ export const HeaderTable = styled(RowAnt)`
   background: var(--black-opaco);
   border-radius: 3px;
   color: white;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 2.7rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.3rem;
+    font-size: 0.8rem;
+  }
 `;
 
 export const HeaderCollapse = styled(RowAnt)`
@@ -86,7 +129,7 @@ export const HeaderCollapse = styled(RowAnt)`
 
 export const Row = styled(RowAnt)`
   border-top: 1px solid var(--gray-50);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 `;
 
 export const Collapse = styled(CollapseAnt)`
@@ -94,11 +137,21 @@ export const Collapse = styled(CollapseAnt)`
   .ant-collapse-item-disabled {
     .ant-col {
       color: var(--black-opaco);
+
+      /*Responsive 1366px*/
+      @media (max-width: 1366px) {
+        font-size: 0.8rem;
+      }
     }
   }
 `;
 
-export const Panel = styled(CollapseAnt.Panel)``;
+export const Panel = styled(CollapseAnt.Panel)`
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
+`;
 
 export const SalesHistoryContainer = styled.div`
   display: flex;
@@ -108,4 +161,5 @@ export const SalesHistoryContainer = styled.div`
   margin-top: 1rem;
   padding: 1rem;
   overflow: hidden;
+  margin-bottom: 1rem;
 `;
