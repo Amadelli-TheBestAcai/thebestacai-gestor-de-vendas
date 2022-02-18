@@ -4,8 +4,9 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import LogoImg from "../../assets/img/logo-login.png";
 import Spinner from "../../components/Spinner";
 import { StoreDto } from "../../models/dtos/store";
+import { useSettings } from "../../hooks/useSettings";
 
-import { message, Form, Select } from "antd";
+import { Form, Select, notification } from "antd";
 
 import {
   Container,
@@ -21,9 +22,8 @@ import {
   LoginButton,
   ContactInfo,
   BackButton,
+  Checkbox,
 } from "./styles";
-
-import { useSettings } from "../../hooks/useSettings";
 
 const Option = Select;
 
@@ -59,7 +59,10 @@ const Login: React.FC<IProps> = ({ history }) => {
       user.password
     );
     if (error) {
-      message.error(error);
+      notification.error({
+        message: error,
+        duration: 5,
+      });
       setLoading(false);
       return;
     }
@@ -82,13 +85,19 @@ const Login: React.FC<IProps> = ({ history }) => {
         setStep(2);
       }
     } else {
-      message.error("Credenciais inválidas");
+      notification.error({
+        message: "Credenciais inválidas",
+        duration: 5,
+      });
     }
   };
 
   const registerStore = async () => {
     if (!store) {
-      message.warning("Selecione uma loja");
+      notification.warning({
+        message: "Selecione uma loja",
+        duration: 5,
+      });
       return;
     }
     const storeToRegister = stores.find(
@@ -197,18 +206,15 @@ const Login: React.FC<IProps> = ({ history }) => {
                   {step === 1 && (
                     <>
                       <ActionsContainer>
-                        <div>
-                          <input
-                            type="checkbox"
+                        <div className="remember_user">
+                          <Checkbox
                             checked={settings.should_remember_user}
                             onChange={rememberUserHandler}
                           />
                           Lembrar usuário
                         </div>
 
-                        <button onClick={() => viewPassword()}>
-                          Mostra senha
-                        </button>
+                        <a onClick={() => viewPassword()}>Mostrar senha</a>
                       </ActionsContainer>
                     </>
                   )}

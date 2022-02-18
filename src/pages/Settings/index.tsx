@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import CardSettings from "../../components/CardSettings";
 import Spinner from "../../components/Spinner";
 
 import { Modal, notification } from "antd";
@@ -9,14 +10,11 @@ import {
   Header,
   Footer,
   ButtonSave,
-  HeaderCard,
-  SettingsIcon,
-  ContentCard,
-  Select,
-  Option,
-  Switch,
-  SelectsContainer,
   ActionContainer,
+  Option,
+  Select,
+  SelectsContainer,
+  Switch,
 } from "./styles";
 
 import { useSettings } from "../../hooks/useSettings";
@@ -42,7 +40,7 @@ const Settings: React.FC = () => {
         );
         setSettings(_newSettings);
         notification.success({
-          message: "Configurações salva com sucesso!",
+          message: "Configurações salvas com sucesso!",
           description: "As configurações foram salvas com sucesso",
           duration: 5,
         });
@@ -56,13 +54,10 @@ const Settings: React.FC = () => {
         <Header>
           <h2>Configurações</h2>
         </Header>
-        <HeaderCard>
-          <SettingsIcon />
-          <span>Integração de Balança</span>
-        </HeaderCard>
-        <ContentCard>
+        <CardSettings title="Integração de Balança">
           <SelectsContainer>
             <Select
+              disabled={!settings.should_use_balance}
               placeholder="Porta da balança"
               value={settings.balance_port}
               onChange={(balance_port) =>
@@ -74,20 +69,6 @@ const Settings: React.FC = () => {
             >
               {ports.map((port) => (
                 <Option key={port}>{port}</Option>
-              ))}
-            </Select>
-            <Select
-              placeholder="Impressora"
-              value={settings.printer}
-              onChange={(printer) =>
-                setSettings((oldValues) => ({
-                  ...oldValues,
-                  printer: printer.toString(),
-                }))
-              }
-            >
-              {window.Main.settings.getPrinters().map((printer) => (
-                <Option key={printer}>{printer}</Option>
               ))}
             </Select>
           </SelectsContainer>
@@ -102,9 +83,46 @@ const Settings: React.FC = () => {
                 }))
               }
             />
-            <span>HABILITADO</span>
+            <span>
+              {!settings.should_use_balance ? "DESABILITADO" : "HABILITADO"}
+            </span>
           </ActionContainer>
-        </ContentCard>
+        </CardSettings>
+
+        <CardSettings title="Integração de Impressora">
+          <SelectsContainer>
+            <Select
+              disabled={!settings.should_use_balance}
+              placeholder="Impressora"
+              value={settings.printer}
+              onChange={(printer) =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  printer: printer.toString(),
+                }))
+              }
+            >
+              {window.Main.settings.getPrinters().map((printer) => (
+                <Option key={printer}>{printer}</Option>
+              ))}
+            </Select>
+          </SelectsContainer>
+          <ActionContainer>
+            <Switch
+              checked={settings.should_use_balance}
+              onChange={() =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  should_use_balance: !settings.should_use_balance,
+                }))
+              }
+            />
+            <span>
+              {!settings.should_use_balance ? "DESABILITADO" : "HABILITADO"}
+            </span>
+          </ActionContainer>
+        </CardSettings>
+
         <Footer>
           <ButtonSave onClick={handleSave} loading={loading}>
             Salvar

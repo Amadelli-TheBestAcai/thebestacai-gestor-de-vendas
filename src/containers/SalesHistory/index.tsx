@@ -1,6 +1,7 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
 import { currencyFormater } from "../../helpers/currencyFormater";
+import { SalesTypes } from "../../models/enums/salesTypes";
 import moment from "moment";
 import {
   Container,
@@ -43,7 +44,7 @@ const SalesHistory: React.FC<IProps> = ({ sales, setSelectedSale }) => {
                     .add(3, "hours")
                     .format("DD/MM/YYYY HH:mm:ss")}
                 </Col>
-                <Col sm={5}>{sale.type}</Col>
+                <Col sm={5}>{SalesTypes[sale.type]}</Col>
               </CardSale>
             ))}
           </>

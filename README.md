@@ -71,7 +71,7 @@ O conteúdo do arquivo **env.json** deverá conster as sequintes informações:
 }
 ```
 
-**Observação:** Apenas o valor ${\*} deverá ser alterado, não adicionando " " na substituição.
+**Observação:** Apenas o valor ${\*} deverá ser alterado, não adicionando " " na substituição
 
 ## Executando Aplicação
 

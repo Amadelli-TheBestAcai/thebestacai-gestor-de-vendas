@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { cleanObject } from "../../helpers/cleanObject";
 import { v4 } from "uuid";
 
-import { message as messageAnt, Popover, Spin, Tooltip } from "antd";
+import { message as messageAnt, Popover, Tooltip, notification } from "antd";
 
 import CashNotFound from "../../components/CashNotFound";
+import Spinner from "../../components/Spinner";
 
 import { ProductNfe } from "../../models/dtos/productNfe";
 import { ProductDto } from "../../models/dtos/product";
@@ -12,51 +13,47 @@ import { Nfe } from "../../models/dtos/nfe";
 
 import {
   Container,
-  Content,
-  HeaderContent,
   PageContent,
+  Header,
+  Content,
   LeftContainer,
+  RightContainer,
   BalanceContainer,
-  BalanceContent,
-  LefttSide,
+  PriceContent,
+  WeightContent,
   InputMonetary,
-  RightSide,
   InfoWeight,
   ItemsContainer,
+  IconContainer,
+  InputSearchProduct,
+  ProductSearch,
+  SearchIcon,
   TabContainer,
   TabItem,
-  ProductSearch,
-  IconContainer,
-  SearchIcon,
-  InputSearchProduct,
-  Header,
   Column,
+  HeaderItem,
+  ColumnProduct,
   ProductContainer,
   ProductContent,
-  ColumnProduct,
   AddIcon,
   InfoIcon,
-  RightContainer,
   ProductListContainer,
   ProductListHeader,
   ProductColumn,
-  Description,
   ProductsList,
   ProductsContent,
   Product,
-  DeleteButton,
-  DeleteIcon,
+  Input,
   FormContainer,
-  Form,
-  FormItem,
   Row,
   Col,
-  Input,
+  FormItem,
+  TotalValue,
   Select,
   Option,
-  SpinContainer,
-  PriceTotalNfce,
+  ButtonFinishContent,
   Button,
+  Form,
 } from "./styles";
 
 const Nfce: React.FC = () => {
@@ -203,10 +200,23 @@ const Nfce: React.FC = () => {
   };
 
   const handleEmit = () => {
+    let payload = form.getFieldsValue();
     if (!productsNfe.length) {
-      messageAnt.warning("Adicione pelo menos um produto");
-      return;
+      return notification.warning({
+        message: "Oops! O carrinho está vazio.",
+        description: `Selecione algum item para continuar com a emissão da nota.`,
+        duration: 5,
+      });
     }
+
+    if (!payload.formaPagamento || !payload.indicadorFormaPagamento) {
+      return notification.warning({
+        message: "Operação e Tipo são obrigatórios.",
+        description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
+        duration: 5,
+      });
+    }
+
     const nfcePayload = {
       ...cleanObject(nfe),
       informacoesAdicionaisFisco:
@@ -224,9 +234,17 @@ const Nfce: React.FC = () => {
     const nfce = window.Main.sale.emitNfce(nfcePayload);
     setEmitingNfe(false);
     if (!nfce) {
-      messageAnt.error("Falha ao emitir NFCe, contate o suporte.");
+      return notification.error({
+        message: "Oops! Não foi possível emitir a NFCe.",
+        description: `Tente novamente, caso o problem persista, contate o suporte através do chat.`,
+        duration: 5,
+      });
     } else {
-      messageAnt.success("NFCe emitida com sucesso");
+      return notification.success({
+        message: "Emitida com sucesso!",
+        description: `A nota fiscal foi emitida com sucesso.`,
+        duration: 5,
+      });
     }
   };
 
@@ -299,40 +317,42 @@ const Nfce: React.FC = () => {
 
   return (
     <Container>
-      <Content>
-        <HeaderContent>
-          <h2>Emissão NFC-e</h2>
-        </HeaderContent>
-        {!loading ? (
+      <PageContent>
+        {loading ? (
+          <>
+            <Spinner />
+          </>
+        ) : (
           <>
             {cashIsOpen ? (
               <>
-                <PageContent>
+                <Header>
+                  <h2>Emissão NFC-e</h2>
+                </Header>
+                <Content>
                   <LeftContainer>
                     <BalanceContainer>
-                      <BalanceContent>
-                        <RightSide>
-                          <span>Preço total self-service</span>
-                          <InputMonetary
-                            autoFocus={true}
-                            id="balanceInput"
-                            getValue={(value) => setSelfServiceAmount(+value)}
-                            onEnterPress={handleEnterToSubmit}
-                          />
-                        </RightSide>
-
-                        <LefttSide>
-                          <span>Preço do KG</span>
-                          <InfoWeight>
-                            R${" "}
-                            {findSelfService(products).price_unit?.replace(
-                              ".",
-                              ","
-                            )}
-                          </InfoWeight>
-                        </LefttSide>
-                      </BalanceContent>
+                      <PriceContent>
+                        <span>Preço total self-service</span>
+                        <InputMonetary
+                          autoFocus={true}
+                          id="balanceInput"
+                          getValue={(value) => setSelfServiceAmount(+value)}
+                          onEnterPress={handleEnterToSubmit}
+                        />
+                      </PriceContent>
+                      <WeightContent>
+                        <span>Preço do KG</span>
+                        <InfoWeight>
+                          R${" "}
+                          {findSelfService(products).price_unit?.replace(
+                            ".",
+                            ","
+                          )}
+                        </InfoWeight>
+                      </WeightContent>
                     </BalanceContainer>
+
                     <ItemsContainer>
                       <TabContainer defaultActiveKey="1">
                         {productsFormater(products).map((item, index) => (
@@ -344,11 +364,12 @@ const Nfce: React.FC = () => {
                               <InputSearchProduct placeholder="Procurar item" />
                             </ProductSearch>
 
-                            <Header>
+                            <HeaderItem>
                               <Column sm={11}>Produto</Column>
                               <Column sm={8}>Preço</Column>
                               <Column sm={5}>Ação</Column>
-                            </Header>
+                            </HeaderItem>
+
                             <ProductContainer>
                               {item.products.map((product) => (
                                 <ProductContent key={product.id}>
@@ -400,29 +421,22 @@ const Nfce: React.FC = () => {
                   <RightContainer>
                     <ProductListContainer>
                       <ProductListHeader>
-                        <ProductColumn span={10}>
-                          <Description>Produto</Description>
-                        </ProductColumn>
-                        <ProductColumn span={4}>
-                          <Description>Quantidade</Description>
-                        </ProductColumn>
-                        <ProductColumn span={4}>
-                          <Description>Valor Unitário</Description>
-                        </ProductColumn>
-                        <ProductColumn span={4}>
-                          <Description>Valor Total</Description>
-                        </ProductColumn>
-                        <ProductColumn span={2}>
-                          <Description>Ação</Description>
-                        </ProductColumn>
+                        <ProductColumn span={10}>Produto</ProductColumn>
+                        <ProductColumn span={4}>Quantidade</ProductColumn>
+                        <ProductColumn span={4}>Valor Unitário</ProductColumn>
+                        <ProductColumn span={4}>Valor Total</ProductColumn>
+                        <ProductColumn span={2}>Ação</ProductColumn>
                       </ProductListHeader>
 
                       <ProductsList>
                         <ProductsContent>
                           {productsNfe.map((product) => (
                             <Product key={product.id}>
-                              <ProductColumn span={10}>
-                                {product.descricao}
+                              <ProductColumn
+                                span={10}
+                                style={{ textTransform: "lowercase" }}
+                              >
+                                <span>{product.descricao}</span>
                               </ProductColumn>
                               <ProductColumn span={4}>
                                 {product.idItem === 1 ? (
@@ -434,33 +448,36 @@ const Nfce: React.FC = () => {
                                     onChange={({ target: { value } }) =>
                                       handleUpdateProduct(product.id, +value)
                                     }
-                                    style={{ width: "75px" }}
                                   />
                                 )}
                               </ProductColumn>
                               <ProductColumn span={4}>
-                                {product.valorUnitarioComercial
-                                  .toFixed(2)
-                                  .replace(".", ",")}
+                                <span>
+                                  {product.valorUnitarioComercial
+                                    .toFixed(2)
+                                    .replace(".", ",")}
+                                </span>
                               </ProductColumn>
                               <ProductColumn span={4}>
-                                R${" "}
-                                {(
-                                  product.valorUnitarioComercial *
-                                  product.quantidadeComercial
-                                )
-                                  .toFixed(2)
-                                  .replace(".", ",")}
+                                <span>
+                                  R${" "}
+                                  {(
+                                    product.valorUnitarioComercial *
+                                    product.quantidadeComercial
+                                  )
+                                    .toFixed(2)
+                                    .replace(".", ",")}
+                                </span>
                               </ProductColumn>
                               <ProductColumn span={2}>
                                 <Tooltip title="Remover" placement="bottom">
-                                  <DeleteButton
+                                  {/* <DeleteButton
                                     onClick={() =>
                                       handlerRemoveProduct(product.id)
                                     }
                                   >
                                     <DeleteIcon />
-                                  </DeleteButton>
+                                  </DeleteButton> */}
                                 </Tooltip>
                               </ProductColumn>
                             </Product>
@@ -473,22 +490,10 @@ const Nfce: React.FC = () => {
                       <Form layout="vertical" form={form}>
                         <Row>
                           <Col span={24}>
-                            <FormItem name="totalProdutos">
-                              <Input disabled />
-                            </FormItem>
+                            <TotalValue>
+                              VALOR TOTAL: <strong> R$ 0,00</strong>
+                            </TotalValue>
                           </Col>
-                          <Col span={0}>
-                            <FormItem
-                              label="Valor"
-                              name="valorPagamento"
-                              rules={[{ required: true }]}
-                            >
-                              <Input disabled />
-                            </FormItem>
-                          </Col>
-                        </Row>
-
-                        <Row>
                           <Col span={8}>
                             <FormItem
                               label="Operação"
@@ -496,6 +501,7 @@ const Nfce: React.FC = () => {
                               rules={[{ required: true }]}
                             >
                               <Select
+                                placeholder="Escolha a opção"
                                 onChange={(value) =>
                                   handleUpdateNfe("formaPagamento", value)
                                 }
@@ -515,6 +521,7 @@ const Nfce: React.FC = () => {
                               rules={[{ required: true }]}
                             >
                               <Select
+                                placeholder="Escolha a opção"
                                 onChange={(value) =>
                                   handleUpdateNfe(
                                     "indicadorFormaPagamento",
@@ -535,6 +542,7 @@ const Nfce: React.FC = () => {
                           <Col span={8}>
                             <FormItem label="CPF / CNPJ" name="CPFDestinatario">
                               <Input
+                                placeholder="CPF/CNPJ"
                                 className="ant-input"
                                 onChange={({ target: { value } }) =>
                                   handleUpdateNfe("CPFDestinatario", value)
@@ -542,16 +550,12 @@ const Nfce: React.FC = () => {
                               />
                             </FormItem>
                           </Col>
-                        </Row>
-
-                        <Row>
                           <Col span={24}>
                             <FormItem
                               label="Informações Adicionais"
                               name="informacoesAdicionaisFisco"
                             >
                               <Input.TextArea
-                                rows={4}
                                 onChange={({ target: { value } }) =>
                                   handleUpdateNfe(
                                     "informacoesAdicionaisFisco",
@@ -561,42 +565,25 @@ const Nfce: React.FC = () => {
                               />
                             </FormItem>
                           </Col>
-                          <Row>
-                            {emitingNfe ? (
-                              <Col span={24}>
-                                <PriceTotalNfce
-                                  style={{ background: "var(--white-25)" }}
-                                >
-                                  <Spin />
-                                </PriceTotalNfce>
-                              </Col>
-                            ) : (
-                              <Col span={24}>
-                                <Button
-                                  type="primary"
-                                  onClick={() => handleEmit()}
-                                >
-                                  Emitir Nota [F1]
-                                </Button>
-                              </Col>
-                            )}
-                          </Row>
                         </Row>
+                        <ButtonFinishContent>
+                          <Button type="primary" onClick={() => handleEmit()}>
+                            Emitir Nota [F1]
+                          </Button>
+                        </ButtonFinishContent>
                       </Form>
                     </FormContainer>
                   </RightContainer>
-                </PageContent>
+                </Content>
               </>
             ) : (
-              <CashNotFound />
+              <>
+                <CashNotFound />
+              </>
             )}
           </>
-        ) : (
-          <SpinContainer>
-            <Spin />
-          </SpinContainer>
         )}
-      </Content>
+      </PageContent>
     </Container>
   );
 };

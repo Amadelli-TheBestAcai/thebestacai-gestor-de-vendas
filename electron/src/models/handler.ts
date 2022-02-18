@@ -75,7 +75,7 @@ class Handler extends BaseRepository<Entity> {
       to_integrate: true,
       order_id,
       reason: !payload.cashHandler.reason
-        ? "Sem obeservação"
+        ? "Outros"
         : payload.cashHandler.reason,
     };
 

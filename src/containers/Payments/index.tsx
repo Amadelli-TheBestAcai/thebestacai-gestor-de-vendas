@@ -26,6 +26,7 @@ import {
   ButtonSave,
   Header,
   Column,
+  OnlineIcon,
 } from "./styles";
 
 interface IProps {
@@ -39,6 +40,7 @@ interface IProps {
   modalTitle: string;
   shouldViewValues?: boolean;
   shouldDisableButtons?: boolean;
+  usingDelivery?: boolean;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -52,6 +54,7 @@ const PaymentsContainer: React.FC<IProps> = ({
   modalTitle,
   shouldViewValues,
   shouldDisableButtons,
+  usingDelivery,
 }) => {
   const onModalCancel = (): void => {
     setModalState(false);
@@ -81,10 +84,12 @@ const PaymentsContainer: React.FC<IProps> = ({
       action: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito"),
     },
     {
-      icon: <TicketIcon />,
-      label: "Ticket [T]",
-      background: "var(--purple-450)",
-      action: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
+      icon: usingDelivery ? <OnlineIcon /> : <TicketIcon />,
+      label: usingDelivery ? "Online [T]" : "Ticket [T]",
+      background: usingDelivery ? "var(--orange-400)" : "var(--purple-450)",
+      action: usingDelivery
+        ? () => handleOpenPayment(PaymentType.ONLINE, "Online")
+        : () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     },
     {
       icon: <PixIcon src={PixLogo} />,
@@ -94,12 +99,18 @@ const PaymentsContainer: React.FC<IProps> = ({
     },
   ];
 
-  const getChangeAmount = (total_sold: number, total_paid: number) => {
+  const getChangeAmount = (
+    total_sold: number,
+    total_paid: number,
+    discount: number
+  ) => {
     if (total_paid > total_sold) {
-      const result = (total_paid - total_sold).toFixed(2).replace(".", ",");
+      const result = (total_paid - total_sold + discount)
+        .toFixed(2)
+        .replace(".", ",");
       return result;
     } else if (total_paid === total_sold) {
-      const result = (0).toFixed(2).replace(".", ",");
+      const result = (discount + 0).toFixed(2).replace(".", ",");
       return result;
     } else {
       return "0,00";
@@ -141,7 +152,7 @@ const PaymentsContainer: React.FC<IProps> = ({
           <ValueInfo>
             R$ Troco <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
-              {getChangeAmount(sale.total_sold, sale.total_paid)}
+              {getChangeAmount(sale.total_sold, sale.total_paid, sale.discount)}
             </strong>
           </ValueInfo>
           <ValueInfo>

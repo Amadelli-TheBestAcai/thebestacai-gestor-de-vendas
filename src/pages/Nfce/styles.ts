@@ -24,60 +24,25 @@ import {
 
 export const Container = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100%;
+  justify-content: center;
   width: 100%;
-  padding: 0.8rem;
+  height: 100%;
+  padding: 1rem;
 `;
 
-const ContentCSS = css`
+export const PageContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   background: var(--white);
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
   padding: 1rem;
 `;
 
-const BalanceCSS = css`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const InputCSS = css`
-  background: var(--white-30) !important;
-  border: 1px solid var(--grey-70) !important;
-  box-sizing: border-box;
-  border-radius: 9px;
-
-  font-size: 2.2rem;
-
-  :hover,
-  :focus,
-  :active {
-    border: 1px solid var(--grey-70);
-  }
-`;
-
-const iconCSS = css`
-  width: 20px;
-  height: 20px;
-  margin: 0px 5px;
-  cursor: pointer;
-`;
-
-export const Content = styled.div`
-  ${ContentCSS}
-  display: column;
-  height: 100%;
-  width: 100%;
-  margin-bottom: 5px;
-  overflow: hidden;
-  text-align: center;
-`;
-
-export const HeaderContent = styled.header`
+export const Header = styled.header`
   display: flex;
   align-items: center;
   width: 100%;
@@ -86,13 +51,24 @@ export const HeaderContent = styled.header`
   h2 {
     margin-bottom: 0px;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    h2 {
+      font-size: 1.2rem;
+    }
+    @media (max-height: 900px) {
+      h2 {
+        font-size: 1.1rem;
+      }
+    }
+  }
 `;
 
-export const PageContent = styled.div`
+export const Content = styled.div`
   display: flex;
-  height: 95%;
+  height: 100%;
   width: 100%;
-  margin-right: 1.2rem;
 `;
 
 export const LeftContainer = styled.div`
@@ -100,60 +76,115 @@ export const LeftContainer = styled.div`
   flex-direction: column;
   height: 100%;
   width: 30%;
-  margin-right: 1.2rem;
+  margin-right: 1rem;
 `;
 
 export const BalanceContainer = styled.div`
+  display: flex;
   width: 100%;
   height: 15%;
   margin-bottom: 1rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      margin-top: 5px;
+    }
+  }
 `;
 
-export const BalanceContent = styled.div`
+const InputCSS = css`
   display: flex;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background: var(--white-30) !important;
+  border: 1px solid var(--grey-70) !important;
+  border-radius: 9px;
+  font-weight: 500;
+  font-size: 2.2rem;
+
+  :hover,
+  :focus,
+  :active {
+    border: 1px solid var(--grey-70);
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 1.6rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 1.5rem;
+  }
+`;
+
+export const InputMonetary = styled(MonetaryInput)`
   height: 100%;
 `;
 
-export const RightSide = styled.div`
-  ${BalanceCSS}
-  width: 60%;
-  margin-right: 1rem;
+const BalanceCSS = css`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
   span {
+    color: var(--grey-80);
     font-size: 0.9rem;
     margin-bottom: 5px;
   }
 
   input {
-    ${InputCSS} !important;
+    ${InputCSS};
     height: 100%;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      span {
+        font-size: 0.8rem;
+      }
+    }
   }
 `;
 
-export const LefttSide = styled.div`
-  justify-content: space-between;
+export const PriceContent = styled.div`
+  ${BalanceCSS}
+  width: 60%;
+  margin-right: 1rem;
+`;
 
+export const WeightContent = styled.div`
   ${BalanceCSS}
   width: 40%;
-
-  span {
-    font-size: 12px;
-    line-height: 14px;
-    color: var(--grey-80);
-  }
 `;
 
 export const InfoWeight = styled.div`
   ${InputCSS}
   height: 80%;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-
   color: var(--grey-80);
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    font-size: 1.7rem;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 1.4rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 1.2rem;
+  }
 `;
 
 export const ItemsContainer = styled.div`
@@ -176,6 +207,13 @@ export const TabContainer = styled(TabsAnd)`
     position: absolute;
     background: white;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-tabs-tab {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const TabItem = styled(TabsAnd.TabPane)``;
@@ -189,6 +227,11 @@ export const ProductSearch = styled.div`
   background: var(--white-80);
   padding: 2%;
   margin-bottom: 8px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3.5rem;
+  }
 `;
 
 export const IconContainer = styled.div`
@@ -200,12 +243,23 @@ export const IconContainer = styled.div`
   background: var(--white);
   border-radius: 7px 0px 0px 7px;
   padding: 5px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 30px;
+  }
 `;
 
 export const SearchIcon = styled(Search)`
   width: 1rem;
   height: 1rem;
   color: var(--grey-80);
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 0.8rem;
+    height: 0.8em;
+  }
 `;
 
 export const InputSearchProduct = styled.input`
@@ -214,14 +268,12 @@ export const InputSearchProduct = styled.input`
   background: var(--white);
   border-radius: 0px 7px 7px 0px;
   padding: 5px;
-`;
 
-export const Header = styled.header`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 2.9rem;
-  background: #f9f9f9;
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 30px;
+    font-size: 0.8rem;
+  }
 `;
 
 export const Column = styled(ColAnt)`
@@ -231,12 +283,46 @@ export const Column = styled(ColAnt)`
   text-transform: uppercase;
 `;
 
+export const HeaderItem = styled.header`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 2.9rem;
+  background: var(--white-40);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 2.7rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.5rem;
+    font-size: 0.75rem;
+  }
+`;
+
 export const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 25rem;
+  height: 58vh;
   overflow-y: scroll;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 55vh;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 54vh;
+  }
 `;
 
 export const ProductContent = styled(RowAnt)`
@@ -250,21 +336,38 @@ export const ColumnProduct = styled(ColAnt)`
   height: 2.5rem;
   align-items: center;
   justify-content: center;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
-export const AddIcon = styled(AddCircle)`
+const IconCSS = css`
   cursor: pointer;
   height: 1.5rem;
   width: 1.5rem;
-  fill: var(--green-600);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 1.2rem;
+      width: 1.2rem;
+    }
+  }
 `;
 
 export const InfoIcon = styled(InfoCircle)`
-  cursor: pointer;
-  height: 1.5rem;
-  width: 1.5rem;
+  ${IconCSS}
+
   fill: var(--red-600);
-  ${iconCSS}
+`;
+
+export const AddIcon = styled(AddCircle)`
+  ${IconCSS}
+  fill: var(--green-600);
 `;
 
 export const RightContainer = styled.div`
@@ -276,10 +379,9 @@ export const RightContainer = styled.div`
 
 export const ProductListContainer = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 50%;
-  align-items: flex-start;
-  flex-direction: column;
 `;
 
 export const ProductListHeader = styled.div`
@@ -288,19 +390,58 @@ export const ProductListHeader = styled.div`
   height: 3rem;
   background: var(--black-opaco);
   border-radius: 3px;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 2.5rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.3rem;
+  }
 `;
 
 export const ProductColumn = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-export const Description = styled.label`
   color: white;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
+
+  span {
+    font-size: 0.9rem;
+    color: var(--black-opaco);
+  }
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    font-size: 0.9rem;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+
+      span {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.75rem;
+
+    span {
+      font-size: 0.75rem;
+    }
+  }
 `;
 
 export const ProductsList = styled.div`
@@ -314,7 +455,7 @@ export const ProductsList = styled.div`
 
 export const ProductsContent = styled.div`
   width: 100%;
-  height: 15rem;
+  height: 100%;
   margin-top: 8px;
 `;
 
@@ -326,29 +467,61 @@ export const Product = styled.div`
   margin-bottom: 8px;
 `;
 
-export const DeleteButton = styled.button`
-  padding: 5%;
-`;
-
-export const DeleteIcon = styled(TrashRestoreAlt)`
-  width: 1.2rem;
-  height: 1.2rem;
-  color: var(--red-600);
-`;
+export const Input = styled(InputAnt)``;
 
 export const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 50%;
   width: 100%;
-  background: var(--mainBackground);
 `;
+export const Form = styled(FormAnt)`
+  .ant-select-selector,
+  .ant-input {
+    height: 3.7rem !important;
+    align-items: center;
+  }
 
-export const FormItem = styled(FormAnt.Item)`
-  margin: 5px;
+  textarea.ant-input {
+    height: 8rem !important;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      .ant-select-selector,
+      .ant-input {
+        height: 3.4rem !important;
+      }
+
+      textarea.ant-input {
+        height: 5rem !important;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-select-selector,
+    .ant-input {
+      height: 3rem !important;
+      font-size: 0.8rem;
+    }
+
+    textarea.ant-input {
+      height: 4.7rem !important;
+      font-size: 0.8rem;
+    }
+
+    .ant-form-item-label > label {
+      font-size: 0.75rem;
+    }
+
+    .ant-select-selection-item {
+      font-size: 0.8rem;
+    }
+  }
 `;
-
-export const Form = styled(FormAnt)``;
 
 export const Row = styled(RowAnt)`
   margin-top: 0.5rem;
@@ -356,64 +529,77 @@ export const Row = styled(RowAnt)`
 
 export const Col = styled(ColAnt)``;
 
-export const Input = styled(InputAnt)``;
+export const FormItem = styled(FormAnt.Item)`
+  margin: 5px;
+`;
+
+export const TotalValue = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 2.5rem;
+  background: var(--white-40);
+  border: 1px solid var(--grey-70);
+  padding: 1rem;
+
+  strong {
+    margin-left: 3px;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.3rem;
+    font-size: 0.8rem;
+  }
+`;
 
 export const Select = styled(SelectAnt)``;
 
 export const Option = styled(SelectAnt.Option)``;
 
-export const InputMonetary = styled(MonetaryInput)`
-  height: 100%;
-`;
-
-export const InputMask = styled(MaskInput)``;
-
-export const SpinContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 1;
-`;
-
-export const ActionContainer = styled.div`
+export const ButtonFinishContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  height: 20%;
+  height: 25%;
   width: 100%;
-  padding: 1%;
-`;
-
-export const PriceTotalNfce = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  color: black;
-  font-weight: bold;
-  font-size: 15px;
 `;
 
 export const Button = styled(ButtonAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 10rem;
-  height: 2.3rem;
+  width: 15%;
+  height: 60%;
   border-radius: 5px;
-  background: var(--orange-250);
-  color: white;
+  background: var(--orange-450);
+  color: var(--brown-500);
   border: none;
   font-weight: 500;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  transition: 0.5s;
-  margin-left: 48.3rem;
 
   :hover,
   :active,
   :focus {
-    background: var(--orange-200);
+    background: var(--orange-450);
     border: none;
-    color: white;
+    color: var(--brown-500);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 55%;
+    font-size: 0.8rem;
   }
 `;
+
+// export const DeleteButton = styled.button`
+//   padding: 5%;
+// `;
+
+// export const DeleteIcon = styled(TrashRestoreAlt)`
+//   width: 1.2rem;
+//   height: 1.2rem;
+//   color: var(--red-600);
+// `;

@@ -439,6 +439,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                             modalTitle={paymentModalTitle}
                             setModalState={setPaymentModal}
                             handleOpenPayment={handleOpenPayment}
+                            usingDelivery={true}
                           />
                         </PaymentsContainer>
 

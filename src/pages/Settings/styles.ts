@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-import { Settings } from "../../styles/Icons";
 import {
   Select as SelectAnt,
   Switch as SwitchAnt,
@@ -33,6 +32,13 @@ export const Header = styled.header`
   align-items: center;
   width: 100%;
   height: 5%;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
 export const Footer = styled.footer`
@@ -55,46 +61,30 @@ export const ButtonSave = styled(ButtonAnt)`
   color: var(--brown-500);
   border-radius: 5px;
   font-weight: 500;
+  border: none;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-`;
 
-export const HeaderCard = styled.div`
-  display: flex;
-  align-items: center;
-  color: white;
-  margin-top: 1rem;
-  width: 100%;
-  height: 5%;
-  background: var(--black-opaco);
-  box-shadow: 0px 4px 6px rgba(163, 163, 163, 0.28);
-  padding: 1rem;
-
-  span {
-    font-size: 1.2rem;
+  :active,
+  :hover,
+  :focus {
+    background: var(--orange-250);
+    color: var(--brown-500);
+    border: none;
   }
-`;
 
-export const SettingsIcon = styled(Settings)`
-  color: white;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 1rem;
-`;
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 105px;
+      height: 40px;
+    }
+  }
 
-export const ContentCard = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 10%;
-  background: var(--white);
-  box-shadow: 0px 4px 6px rgba(163, 163, 163, 0.28);
-  border-radius: 0px;
-
-  .ant-select-selector,
-  .ant-input {
-    height: 3.7rem !important;
-    align-items: center;
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 100px;
+    height: 35px;
+    font-size: 0.8rem;
   }
 `;
 
@@ -108,9 +98,7 @@ export const SelectsContainer = styled.div`
 `;
 
 export const Select = styled(SelectAnt)`
-  :last-child {
-    margin-left: 1rem;
-  }
+  width: 100%;
 `;
 
 export const Option = styled(SelectAnt.Option)``;
@@ -128,8 +116,40 @@ export const ActionContainer = styled.div`
     font-size: 0.9rem;
     margin-top: 3%;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    span {
+      font-size: 0.8rem;
+
+      @media (max-height: 900px) {
+        font-size: 0.75rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    span {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const Switch = styled(SwitchAnt)`
-  zoom: 1.3;
+  zoom: 1.1;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    zoom: 1;
+
+    @media (max-height: 900px) {
+      zoom: 0.9;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    zoom: 0.8;
+  }
 `;

@@ -25,6 +25,11 @@ export const Container = styled.div`
       margin-bottom: 0;
       font-size: 1rem;
       color: var(--grey-200);
+
+      /*Responsive 1366px*/
+      @media (max-width: 1366px) {
+        font-size: 0.9rem;
+      }
     }
   }
 `;
@@ -42,6 +47,12 @@ const IconCSS = css`
   width: 20px;
   height: 20px;
   transition: 0.4s;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 1rem;
+    height: 1rem;
+  }
 `;
 
 export const GridIcon = styled(Grid3x2GapFill)<IListContainer>`
@@ -111,6 +122,12 @@ export const CardSale = styled(Row)`
   span {
     margin-left: 4px;
     color: var(--green-600);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 60px;
+    font-size: 0.9rem;
   }
 `;
 
