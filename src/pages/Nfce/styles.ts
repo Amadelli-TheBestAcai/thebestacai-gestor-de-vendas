@@ -54,17 +54,13 @@ export const Header = styled.header`
 
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
+    h2 {
+      font-size: 1.2rem;
+    }
     @media (max-height: 900px) {
       h2 {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
       }
-    }
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    h2 {
-      font-size: 1.1rem;
     }
   }
 `;
@@ -88,6 +84,13 @@ export const BalanceContainer = styled.div`
   width: 100%;
   height: 15%;
   margin-bottom: 1rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      margin-top: 5px;
+    }
+  }
 `;
 
 const InputCSS = css`
@@ -96,15 +99,26 @@ const InputCSS = css`
   justify-content: center;
   background: var(--white-30) !important;
   border: 1px solid var(--grey-70) !important;
-  box-sizing: border-box;
   border-radius: 9px;
-
+  font-weight: 500;
   font-size: 2.2rem;
 
   :hover,
   :focus,
   :active {
     border: 1px solid var(--grey-70);
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 1.6rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 1.5rem;
   }
 `;
 
@@ -118,6 +132,7 @@ const BalanceCSS = css`
   height: 100%;
 
   span {
+    color: var(--grey-80);
     font-size: 0.9rem;
     margin-bottom: 5px;
   }
@@ -125,6 +140,15 @@ const BalanceCSS = css`
   input {
     ${InputCSS};
     height: 100%;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      span {
+        font-size: 0.8rem;
+      }
+    }
   }
 `;
 
@@ -143,9 +167,24 @@ export const InfoWeight = styled.div`
   ${InputCSS}
   height: 80%;
   width: 100%;
-  font-size: 2rem;
-
   color: var(--grey-80);
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    font-size: 1.7rem;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 1.4rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 1.2rem;
+  }
 `;
 
 export const ItemsContainer = styled.div`
@@ -168,6 +207,13 @@ export const TabContainer = styled(TabsAnd)`
     position: absolute;
     background: white;
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-tabs-tab {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 export const TabItem = styled(TabsAnd.TabPane)``;
@@ -181,6 +227,11 @@ export const ProductSearch = styled.div`
   background: var(--white-80);
   padding: 2%;
   margin-bottom: 8px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3.5rem;
+  }
 `;
 
 export const IconContainer = styled.div`
@@ -192,12 +243,23 @@ export const IconContainer = styled.div`
   background: var(--white);
   border-radius: 7px 0px 0px 7px;
   padding: 5px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 30px;
+  }
 `;
 
 export const SearchIcon = styled(Search)`
   width: 1rem;
   height: 1rem;
   color: var(--grey-80);
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 0.8rem;
+    height: 0.8em;
+  }
 `;
 
 export const InputSearchProduct = styled.input`
@@ -206,6 +268,12 @@ export const InputSearchProduct = styled.input`
   background: var(--white);
   border-radius: 0px 7px 7px 0px;
   padding: 5px;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 30px;
+    font-size: 0.8rem;
+  }
 `;
 
 export const Column = styled(ColAnt)`
@@ -220,7 +288,21 @@ export const HeaderItem = styled.header`
   align-items: center;
   width: 100%;
   height: 2.9rem;
-  background: #f9f9f9;
+  background: var(--white-40);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 2.7rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.5rem;
+    font-size: 0.75rem;
+  }
 `;
 
 export const ProductContainer = styled.div`
@@ -229,6 +311,18 @@ export const ProductContainer = styled.div`
   width: 100%;
   height: 58vh;
   overflow-y: scroll;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 55vh;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 54vh;
+  }
 `;
 
 export const ProductContent = styled(RowAnt)`
@@ -242,12 +336,27 @@ export const ColumnProduct = styled(ColAnt)`
   height: 2.5rem;
   align-items: center;
   justify-content: center;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
 const IconCSS = css`
   cursor: pointer;
   height: 1.5rem;
   width: 1.5rem;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 1.2rem;
+      width: 1.2rem;
+    }
+  }
 `;
 
 export const InfoIcon = styled(InfoCircle)`
@@ -281,6 +390,18 @@ export const ProductListHeader = styled.div`
   height: 3rem;
   background: var(--black-opaco);
   border-radius: 3px;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 2.5rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.3rem;
+  }
 `;
 
 export const ProductColumn = styled(ColAnt)`
@@ -291,6 +412,36 @@ export const ProductColumn = styled(ColAnt)`
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
+
+  span {
+    font-size: 0.9rem;
+    color: var(--black-opaco);
+  }
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    font-size: 0.9rem;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      font-size: 0.8rem;
+
+      span {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.75rem;
+
+    span {
+      font-size: 0.75rem;
+    }
+  }
 `;
 
 export const ProductsList = styled.div`
@@ -334,6 +485,42 @@ export const Form = styled(FormAnt)`
   textarea.ant-input {
     height: 8rem !important;
   }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      .ant-select-selector,
+      .ant-input {
+        height: 3.4rem !important;
+      }
+
+      textarea.ant-input {
+        height: 5rem !important;
+      }
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    .ant-select-selector,
+    .ant-input {
+      height: 3rem !important;
+      font-size: 0.8rem;
+    }
+
+    textarea.ant-input {
+      height: 4.7rem !important;
+      font-size: 0.8rem;
+    }
+
+    .ant-form-item-label > label {
+      font-size: 0.75rem;
+    }
+
+    .ant-select-selection-item {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
 export const Row = styled(RowAnt)`
@@ -358,6 +545,12 @@ export const TotalValue = styled.div`
 
   strong {
     margin-left: 3px;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 2.3rem;
+    font-size: 0.8rem;
   }
 `;
 
@@ -393,6 +586,12 @@ export const Button = styled(ButtonAnt)`
     border: none;
     color: var(--brown-500);
   }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 55%;
+    font-size: 0.8rem;
+  }
 `;
 
 // export const DeleteButton = styled.button`
@@ -403,32 +602,4 @@ export const Button = styled(ButtonAnt)`
 //   width: 1.2rem;
 //   height: 1.2rem;
 //   color: var(--red-600);
-// `;
-
-// export const InputMask = styled(MaskInput)``;
-
-// export const SpinContainer = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   flex-grow: 1;
-// `;
-
-// export const ActionContainer = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: flex-end;
-//   height: 20%;
-//   width: 100%;
-//   padding: 1%;
-// `;
-
-// export const PriceTotalNfce = styled.div`
-//   display: flex;
-//   width: 100%;
-//   align-items: center;
-//   justify-content: center;
-//   color: black;
-//   font-weight: bold;
-//   font-size: 15px;
 // `;
