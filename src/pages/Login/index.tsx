@@ -22,6 +22,7 @@ import {
   LoginButton,
   ContactInfo,
   BackButton,
+  Checkbox,
 } from "./styles";
 
 const Option = Select;
@@ -206,8 +207,7 @@ const Login: React.FC<IProps> = ({ history }) => {
                     <>
                       <ActionsContainer>
                         <div className="remember_user">
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={settings.should_remember_user}
                             onChange={rememberUserHandler}
                           />

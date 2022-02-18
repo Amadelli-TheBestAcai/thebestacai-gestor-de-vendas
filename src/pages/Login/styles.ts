@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import BackgroundImg from "../../assets/svg/backgroundLogin.svg";
 
-import { Button, Input as InputAnt } from "antd";
+import { Button, Input as InputAnt, Checkbox as CheckboxAnt } from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -201,6 +201,22 @@ export const ActionsContainer = styled.div`
   }
 `;
 
+export const Checkbox = styled(CheckboxAnt)`
+  margin-right: 8px;
+
+  .ant-checkbox-inner {
+    background: var(--white-90);
+    border: none;
+  }
+
+  .ant-checkbox-checked {
+    border: none;
+    .ant-checkbox-inner {
+      background: var(--orange-250);
+    }
+  }
+`;
+
 const ButtonCSS = css`
   display: flex;
   align-items: center;
@@ -254,7 +270,7 @@ export const ContactInfo = styled.div`
   height: 20%;
 
   span {
-    color: var(--purple-450);
+    color: var(--orange-400);
   }
 
   @media (max-width: 1600px) {
