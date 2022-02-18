@@ -214,7 +214,7 @@ const Login: React.FC<IProps> = ({ history }) => {
                           Lembrar usuário
                         </div>
 
-                        <a onClick={() => viewPassword()}>Mostra senha</a>
+                        <a onClick={() => viewPassword()}>Mostrar senha</a>
                       </ActionsContainer>
                     </>
                   )}

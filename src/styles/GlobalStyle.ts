@@ -197,6 +197,7 @@ export const GlobalStyle = createGlobalStyle`
       border: none;
       box-shadow: 0 0 0 0;
       background: var(--white-70);
+      padding: 0.8rem;
       
       :focus,
       :active,
