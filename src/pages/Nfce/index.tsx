@@ -73,7 +73,8 @@ const Nfce: React.FC = () => {
         messageAnt.error("Falha ao obter produtos para NFe");
       }
       setProducts(_productsNfce);
-      const currentStoreCash = await window.Main.storeCash.getCurrent();
+      const { response: currentStoreCash } =
+        await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {
         setCashIsOpen(true);
       } else {

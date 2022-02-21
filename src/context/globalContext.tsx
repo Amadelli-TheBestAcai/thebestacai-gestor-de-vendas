@@ -50,7 +50,7 @@ export function GlobalProvider({ children }) {
     async function init() {
       setLoading(true);
       const _sale = await window.Main.sale.getCurrent();
-      const _storeCash = await window.Main.storeCash.getCurrent();
+      const { response: _storeCash } = await window.Main.storeCash.getCurrent();
       const _user = await window.Main.user.getUser();
       const _settings = await window.Main.settings.getSettings();
       setSettings(_settings);

@@ -8,7 +8,7 @@ import InOutForm from "../InOutForm";
 
 import ChatForm from "../ChatForm";
 
-import { message } from "antd";
+import { message, notification } from "antd";
 
 import {
   Container,
@@ -31,7 +31,7 @@ import { useSale } from "../../hooks/useSale";
 type ComponentProps = RouteComponentProps;
 
 const Actions: React.FC<ComponentProps> = ({ history }) => {
-  const { sale, discountModalHandler, onAddToQueue } = useSale();
+  const { discountModalHandler } = useSale();
   const { user } = useUser();
   const [store, setStore] = useState<string | undefined>(undefined);
   const [cash, setCash] = useState<string | undefined>("");
@@ -43,19 +43,12 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       const registratedStore = await window.Main.store.hasRegistration();
-      const storeCash = await window.Main.storeCash.getCurrent();
-      setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
+      const { response: storeCash } = await window.Main.storeCash.getCurrent();
       setStore(registratedStore.company.company_name);
+      setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
     }
     init();
   }, [history.location]);
-
-  const handleCommand = () => {
-    if (!sale.items.length) {
-      return message.warning("A lista de itens está vazia");
-    }
-    setCommandState(true);
-  };
 
   return (
     <Container>
@@ -83,7 +76,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <InfosAndChat>
         <ContentHeaderInfos>
           <InfoStore>
-            {/* {store.toUpperCase()} <br /> */}
+            {store.toUpperCase()} <br />
             <span
               style={{
                 color: cash === "ABERTO" ? "green" : "red",

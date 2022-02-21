@@ -49,7 +49,7 @@ const Home: React.FC = () => {
     async function init() {
       setLoading(true);
       const _sale = await window.Main.sale.getCurrent();
-      const _storeCash = await window.Main.storeCash.getCurrent();
+      const { response: _storeCash } = await window.Main.storeCash.getCurrent();
       setStoreCash(_storeCash);
       setSale(_sale);
       setLoading(false);
