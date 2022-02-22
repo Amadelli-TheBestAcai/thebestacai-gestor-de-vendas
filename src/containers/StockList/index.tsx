@@ -130,7 +130,7 @@ const StockList: React.FC<IProps> = ({
         <Spinner />
       ) : (
         <Content>
-          {(filteredProducts || products).map((storeProduct) => (
+          {(filteredProducts || products)?.map((storeProduct) => (
             <Tupla key={storeProduct.id}>
               <Col sm={6}>
                 <img src={notImage} alt="Imagem não encontrada" />

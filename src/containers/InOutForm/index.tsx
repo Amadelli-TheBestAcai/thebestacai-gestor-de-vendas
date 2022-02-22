@@ -197,8 +197,16 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     async function init() {
       const hasInternet = await window.Main.hasInternet();
       const store = await window.Main.store.registratedStore();
-      const purchaseProducts =
-        await window.Main.product.getAllPurchaseProducts();
+      const {
+        response: purchaseProducts,
+        has_internal_error: errorOnPurchaseProducts,
+      } = await window.Main.product.getAllPurchaseProducts();
+      if (errorOnPurchaseProducts) {
+        notification.error({
+          message: "Erro ao encontrar produtos para compra",
+          duration: 5,
+        });
+      }
       setStore(store?.company_id);
       setProductsCategory(purchaseProducts);
       setHasInternet(hasInternet);

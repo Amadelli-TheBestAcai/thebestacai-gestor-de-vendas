@@ -78,7 +78,7 @@ const AmountModal: React.FC<IProp> = ({
             await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
           if (errorOnStoreCash) {
             notification.error({
-              message: "Erro ao fechar um caixa",
+              message: "Erro ao fechar o caixa",
               duration: 5,
             });
             return;
@@ -99,7 +99,7 @@ const AmountModal: React.FC<IProp> = ({
             await window.Main.storeCash.openStoreCash(storeCashToOpen, total);
           if (errorOnStoreCash) {
             notification.error({
-              message: "Erro ao abrir um caixa",
+              message: "Erro ao abrir o caixa",
               duration: 5,
             });
             return;

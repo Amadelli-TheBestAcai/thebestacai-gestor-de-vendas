@@ -42,9 +42,17 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      const registratedStore = await window.Main.store.hasRegistration();
+      const { has_internal_error: errorOnStore, response: store } =
+        await window.Main.store.hasRegistration();
       const { response: storeCash } = await window.Main.storeCash.getCurrent();
-      setStore(registratedStore.company.company_name);
+      if (errorOnStore) {
+        notification.error({
+          message: "Erro ao encontrar loja vinculada ao usuário",
+          duration: 5,
+        });
+        return;
+      }
+      // setStore(store.company.company_name);
       setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
     }
     init();
@@ -76,7 +84,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <InfosAndChat>
         <ContentHeaderInfos>
           <InfoStore>
-            {store.toUpperCase()} <br />
+            {store?.toUpperCase()} <br />
             <span
               style={{
                 color: cash === "ABERTO" ? "green" : "red",
