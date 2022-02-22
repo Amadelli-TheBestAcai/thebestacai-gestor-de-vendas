@@ -3,7 +3,11 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreDto, StoreCashDto } from "../../models/gestor";
+import {
+  StoreDto,
+  StoreCashDto,
+  AvailableStoreCashes,
+} from "../../models/gestor";
 
 class GetAvailableStoreCashes implements IUseCaseFactory {
   constructor(
@@ -13,9 +17,7 @@ class GetAvailableStoreCashes implements IUseCaseFactory {
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
   ) {}
 
-  async execute(): Promise<
-    { store_cash: string; available: boolean }[] | undefined
-  > {
+  async execute(): Promise<AvailableStoreCashes[] | undefined> {
     const isOnline = await checkInternet();
     if (isOnline) {
       const currentStore = await this.storeRepository.getOne();
