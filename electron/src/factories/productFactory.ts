@@ -3,6 +3,7 @@ import { useCaseFactory } from "../usecases/useCaseFactory";
 import {
   updateProductStock,
   getProductStoreHistory,
+  getAllProductStore,
 } from "../usecases/product";
 
 export const productFactory = {
@@ -10,8 +11,9 @@ export const productFactory = {
   getSelfService: async () => await productModel.getSelfService(),
   getAllPurchaseProducts: async () =>
     await productModel.getAllPurchaseProducts(),
-  getAllProductStore: async () => await productModel.getAllProductStore(),
 
+  getAllProductStore: async () =>
+    await useCaseFactory.execute(getAllProductStore),
   GetProductStoreHistory: async (id: number, page: number, size: number) =>
     await useCaseFactory.execute(getProductStoreHistory, { id, page, size }),
   updateProductStock: async (id: number, quantity: number) =>
