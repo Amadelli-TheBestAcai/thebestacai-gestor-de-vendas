@@ -210,13 +210,14 @@ const StoreCash: React.FC = () => {
         confirmLoading={UpdatingCashObservation}
         destroyOnClose={true}
         closable={true}
+        onCancel={() => setModalJustify(false)}
         centered
         footer={
           <Footer>
             <ButtonCancel onClick={() => setModalJustify(false)}>
               Cancelar
             </ButtonCancel>
-            <ButtonSave onClick={updateStoreCashObservation}>
+            <ButtonSave onClick={() => updateStoreCashObservation()}>
               Salvar Alteração
             </ButtonSave>
           </Footer>
