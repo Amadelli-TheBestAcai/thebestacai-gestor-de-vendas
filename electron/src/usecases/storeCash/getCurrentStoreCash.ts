@@ -10,7 +10,6 @@ class GetCurrentStoreCash implements IUseCaseFactory {
     )
   ) {}
   async execute(): Promise<StoreCashDto | undefined> {
-    throw new Error("Simulando falha na obtenção de caixa");
     return await this.storeCashRepository.getOne();
   }
 }
