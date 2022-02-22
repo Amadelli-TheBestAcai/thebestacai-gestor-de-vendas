@@ -6,11 +6,12 @@ import {
   getAllProductStore,
   getAllPurchaseProducts,
   getSelfService,
+  getProducts,
 } from "../usecases/product";
 
 export const productFactory = {
-  getProducts: async () => await productModel.getProducts(),
-
+  getProducts: async (local = false) =>
+    await useCaseFactory.execute(getProducts, { local }),
   getSelfService: async () => await useCaseFactory.execute(getSelfService),
   getAllPurchaseProducts: async () =>
     await useCaseFactory.execute(getAllPurchaseProducts),
