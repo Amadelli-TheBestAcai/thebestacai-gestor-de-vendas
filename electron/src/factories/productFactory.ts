@@ -4,14 +4,15 @@ import {
   updateProductStock,
   getProductStoreHistory,
   getAllProductStore,
+  getAllPurchaseProducts,
 } from "../usecases/product";
 
 export const productFactory = {
   getProducts: async () => await productModel.getProducts(),
   getSelfService: async () => await productModel.getSelfService(),
-  getAllPurchaseProducts: async () =>
-    await productModel.getAllPurchaseProducts(),
 
+  getAllPurchaseProducts: async () =>
+    await useCaseFactory.execute(getAllPurchaseProducts),
   getAllProductStore: async () =>
     await useCaseFactory.execute(getAllProductStore),
   GetProductStoreHistory: async (id: number, page: number, size: number) =>

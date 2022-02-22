@@ -5,12 +5,6 @@ import { checkInternet } from "../../providers/internetConnection";
 import { ProductDto, StoreDto } from "../../models/gestor";
 import odinApi from "../../providers/odinApi";
 
-interface Request {
-  id: number;
-  page: number;
-  size: number;
-}
-
 class GetAllProductStore implements IUseCaseFactory {
   constructor(
     private productRepository = new BaseRepository<ProductDto>(
