@@ -27,7 +27,7 @@ class CloseStoreCash implements IUseCaseFactory {
       const currentStore = await this.storeRepository.getOne();
       await odinApi.put(
         `/store_cashes/${currentStore?.company_id}-${code}/close`,
-        { amount_on_close: amount_on_close.toString() || "0" }
+        { amount_on_close: +amount_on_close?.toString() || 0 }
       );
     }
     const storeCash = await this.storeCashRepository.getOne();
