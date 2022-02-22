@@ -6,19 +6,23 @@ import { StoreDto } from "../../models/gestor";
 import janusApi from "../../providers/janusApi";
 import user from "../../models/user";
 
-class HasRegistration implements IUseCaseFactory {
+class GetFromApi implements IUseCaseFactory {
   constructor(
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
   ) {}
 
-  async execute(): Promise<StoreDto | undefined> {
-    const store = await this.storeRepository.getOne();
-    if (!store) {
-      return undefined;
+  async execute(): Promise<StoreDto[]> {
+    const hasInternet = await checkInternet();
+    if (!hasInternet) {
+      return [];
     }
-    // this.registratedStore = store;
-    return store;
+
+    const {
+      data: { content },
+    } = await janusApi.get(`/companyUser/${user.loggedUser?.id}/user`);
+
+    return content;
   }
 }
 
-export const hasRegistration = new HasRegistration();
+export const getFromApi = new GetFromApi();
