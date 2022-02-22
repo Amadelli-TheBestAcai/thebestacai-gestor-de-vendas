@@ -67,19 +67,35 @@ const Login: React.FC<IProps> = ({ history }) => {
       return;
     }
     if (loggedUser) {
-      const registredStore = await window.Main.store.hasRegistration();
-
+      const { has_internal_error: errorOnStore, response } =
+        await window.Main.store.hasRegistration();
       const updatedSettings = await window.Main.settings.update(settings.id, {
         ...settings,
         rememberd_user: settings.should_remember_user ? user.username : "",
       });
+      if (errorOnStore) {
+        notification.error({
+          message: "Error ao encontrar loja vinculada ao usuário",
+          duration: 5,
+        });
+        return;
+      }
+
       setSettings(updatedSettings);
 
-      if (registredStore) {
+      if (response) {
         setLoading(false);
         return history.push("/home");
       } else {
-        const stores = await window.Main.store.getFromApi();
+        const { response: stores, has_internal_error: errorOnStore } =
+          await window.Main.store.getFromApi();
+        if (errorOnStore) {
+          notification.error({
+            message: "Erro ao encontrar loja",
+            duration: 5,
+          });
+          return;
+        }
         setStores(stores);
         setLoading(false);
         setStep(2);

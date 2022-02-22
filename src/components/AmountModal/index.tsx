@@ -74,10 +74,15 @@ const AmountModal: React.FC<IProp> = ({
       centered: true,
       async onOk() {
         if (storeCash?.is_opened) {
-          const _storeCash = await window.Main.storeCash.closeStoreCash(
-            storeCash?.code,
-            total
-          );
+          const { response: _storeCash, has_internal_error: errorOnStoreCash } =
+            await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
+          if (errorOnStoreCash) {
+            notification.error({
+              message: "Erro ao fechar um caixa",
+              duration: 5,
+            });
+            return;
+          }
           setStoreCash(_storeCash);
           notification.success({
             message: `Caixa ${
@@ -90,10 +95,15 @@ const AmountModal: React.FC<IProp> = ({
           });
           return history.push("/home");
         } else {
-          const _storeCash = await window.Main.storeCash.openStoreCash(
-            storeCashToOpen,
-            total
-          );
+          const { response: _storeCash, has_internal_error: errorOnStoreCash } =
+            await window.Main.storeCash.openStoreCash(storeCashToOpen, total);
+          if (errorOnStoreCash) {
+            notification.error({
+              message: "Erro ao abrir um caixa",
+              duration: 5,
+            });
+            return;
+          }
           setStoreCash(_storeCash);
           notification.success({
             message: `Caixa ${

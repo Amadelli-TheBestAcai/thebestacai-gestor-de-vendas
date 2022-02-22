@@ -7,11 +7,15 @@ import {
   openStoreCash,
   getAvailableStoreCashes,
 } from "../usecases/storeCash";
-import { BalanceDto, StoreCashDto } from "../models/gestor";
+import {
+  BalanceDto,
+  StoreCashDto,
+  AvailableStoreCashes,
+} from "../models/gestor";
 
 export const storeCashFactory = {
   getAvailableStoreCashes: async () =>
-    await useCaseFactory.execute<{ store_cash: string; available: boolean }[]>(
+    await useCaseFactory.execute<AvailableStoreCashes[]>(
       getAvailableStoreCashes
     ),
   getCurrent: async () =>

@@ -34,6 +34,7 @@ import {
   TicketIcon,
   MinusIcon,
 } from "./styles";
+import { notification } from "antd";
 
 const Balance: React.FC = () => {
   const [isConected, setIsConected] = useState(false);
@@ -43,7 +44,15 @@ const Balance: React.FC = () => {
 
   useEffect(() => {
     async function init() {
-      const _balance = await window.Main.storeCash.getStoreCashBalance();
+      const { response: _balance, has_internal_error: errorOnBalance } =
+        await window.Main.storeCash.getStoreCashBalance();
+      if (errorOnBalance) {
+        notification.error({
+          message: "Erro ao encontrar o balanço",
+          duration: 5,
+        });
+        return;
+      }
       const _isConnected = await window.Main.hasInternet();
       setBalance(_balance);
       setLoading(false);
