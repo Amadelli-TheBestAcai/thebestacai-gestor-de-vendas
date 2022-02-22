@@ -1,4 +1,4 @@
-export type StoreCashDto = {
+export interface StoreCashDto {
   id: string;
   code: string;
   cash_id?: number;
@@ -8,4 +8,4 @@ export type StoreCashDto = {
   is_opened: boolean;
   is_online: boolean;
   created_at?: string;
-};
+}
