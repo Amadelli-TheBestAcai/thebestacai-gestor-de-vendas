@@ -8,7 +8,7 @@ import { BalanceDTO } from "./dtos/balance";
 import { StoreCashHistoryDTO } from "./dtos/storeCashHistory";
 import { getBalance } from "../helpers/BalanceFormater";
 
-import { StoreCashDto } from "./dtos/storeCash";
+import { StoreCashDto } from "./gestor/storeCash";
 
 export const context = "StoreCash";
 

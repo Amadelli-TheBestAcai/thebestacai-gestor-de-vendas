@@ -1,7 +1,7 @@
 import { BaseRepository } from "../../repository/baseRepository";
-import { StoreCashDto } from "../../models/dtos/storeCash";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
+import { StoreCashDto } from "../../models/gestor";
 
 class GetCurrentStoreCash implements IUseCaseFactory {
   constructor(

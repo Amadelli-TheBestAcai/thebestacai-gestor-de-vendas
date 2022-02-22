@@ -3,8 +3,7 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import midasApi from "../../providers/midasApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreCashDto } from "../../models/dtos/storeCash";
-import { BalanceDto } from "../../models/gestor";
+import { BalanceDto, StoreCashDto } from "../../models/gestor";
 import { getBalance } from "../../helpers/BalanceFormater";
 
 interface Request {

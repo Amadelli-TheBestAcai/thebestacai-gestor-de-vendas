@@ -3,9 +3,9 @@ import { useCaseFactory } from "../usecases/useCaseFactory";
 import {
   getCurrentStoreCash,
   getStoreCashBalance,
+  closeStoreCash,
 } from "../usecases/storeCash";
-import { StoreCashDto } from "../models/dtos/storeCash";
-import { BalanceDto } from "../models/gestor";
+import { BalanceDto, StoreCashDto } from "../models/gestor";
 
 export const storeCashFactory = {
   getAvailableStoreCashes: async () =>
@@ -17,12 +17,12 @@ export const storeCashFactory = {
     amount_on_open: number
   ): Promise<StoreCashDto | undefined> =>
     await storeCashModel.openStoreCash(code, amount_on_open),
-  closeStoreCash: async (
-    code: string,
-    amount_on_open: number
-  ): Promise<StoreCashDto | undefined> =>
-    await storeCashModel.closeStoreCash(code, amount_on_open),
 
+  closeStoreCash: async (code: string, amount_on_open: number) =>
+    await useCaseFactory.execute<StoreCashDto>(closeStoreCash, {
+      code,
+      amount_on_open,
+    }),
   getStoreCashBalance: async (withClosedCash = false) =>
     await useCaseFactory.execute<BalanceDto>(getStoreCashBalance, {
       withClosedCash,
