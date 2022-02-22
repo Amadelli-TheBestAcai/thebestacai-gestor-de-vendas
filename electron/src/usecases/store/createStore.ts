@@ -1,5 +1,5 @@
 import { BaseRepository } from "../../repository/baseRepository";
-import { StoreDto } from "../../models/gestor/store";
+import { StoreDto } from "../../models/gestor";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 
