@@ -192,6 +192,13 @@ const Login: React.FC<IProps> = ({ history }) => {
                         <Select
                           onChange={(value) => setStore(+value)}
                           placeholder="Selecione uma loja"
+                          optionFilterProp="children"
+                          showSearch
+                          filterOption={(input, option) =>
+                            option?.children
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0
+                          }
                         >
                           {stores.map((store) => (
                             <Option key={store.company_id}>
