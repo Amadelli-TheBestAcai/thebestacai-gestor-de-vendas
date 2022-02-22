@@ -5,12 +5,13 @@ import {
   getProductStoreHistory,
   getAllProductStore,
   getAllPurchaseProducts,
+  getSelfService,
 } from "../usecases/product";
 
 export const productFactory = {
   getProducts: async () => await productModel.getProducts(),
-  getSelfService: async () => await productModel.getSelfService(),
 
+  getSelfService: async () => await useCaseFactory.execute(getSelfService),
   getAllPurchaseProducts: async () =>
     await useCaseFactory.execute(getAllPurchaseProducts),
   getAllProductStore: async () =>
