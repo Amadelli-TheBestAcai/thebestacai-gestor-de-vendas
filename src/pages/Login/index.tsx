@@ -103,7 +103,17 @@ const Login: React.FC<IProps> = ({ history }) => {
     const storeToRegister = stores.find(
       (_store) => _store.company.id === store
     );
-    await window.Main.store.create(storeToRegister);
+    const { has_internal_error: errorOnStore } = await window.Main.store.create(
+      storeToRegister
+    );
+
+    if (errorOnStore) {
+      notification.error({
+        message: "Error ao registrar a loja",
+        duration: 5,
+      });
+      return;
+    }
     return history.push("/home");
   };
 
