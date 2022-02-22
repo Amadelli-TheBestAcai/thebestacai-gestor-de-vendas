@@ -8,7 +8,7 @@ import Spinner from "../../components/Spinner";
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
 import { Balance as BalanceModel } from "../../models/balance";
 
-import { Modal, message as messageAnt } from "antd";
+import { Modal, notification } from "antd";
 
 import {
   Container,
@@ -26,6 +26,9 @@ import {
   CloseCashContatiner,
   CloseButton,
   Input,
+  Footer,
+  ButtonCancel,
+  ButtonSave,
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 
@@ -118,7 +121,12 @@ const StoreCash: React.FC = () => {
 
   const updateStoreCashObservation = async () => {
     if (justify.length < 3) {
-      messageAnt.warning("Digite uma justificativa válida");
+      notification.warning({
+        message: "Oops! Motivo inválido.",
+        description:
+          "Digite um motivo válido para para a divengência do fechamento de caixa.",
+        duration: 5,
+      });
       return;
     }
 
@@ -199,12 +207,20 @@ const StoreCash: React.FC = () => {
           +storeCashHistory?.result_cash
         )}]`}
         visible={modalJustify}
-        onCancel={() => setModalJustify(false)}
         confirmLoading={UpdatingCashObservation}
-        onOk={updateStoreCashObservation}
         destroyOnClose={true}
         closable={true}
         centered
+        footer={
+          <Footer>
+            <ButtonCancel onClick={() => setModalJustify(false)}>
+              Cancelar
+            </ButtonCancel>
+            <ButtonSave onClick={updateStoreCashObservation}>
+              Salvar Alteração
+            </ButtonSave>
+          </Footer>
+        }
       >
         <Input
           autoFocus={true}
