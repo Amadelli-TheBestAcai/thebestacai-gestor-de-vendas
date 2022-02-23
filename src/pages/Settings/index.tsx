@@ -34,10 +34,15 @@ const Settings: React.FC = () => {
       centered: true,
       async onOk() {
         setLoading(true);
-        const _newSettings = await window.Main.settings.update(
-          settings.id,
-          settings
-        );
+        const { response: _newSettings, has_internal_error: errorOnSettings } =
+          await window.Main.settings.update(settings.id, settings);
+        if (errorOnSettings) {
+          notification.error({
+            message: "Erro ao atualizar as configurações",
+            duration: 5,
+          });
+          return;
+        }
         setSettings(_newSettings);
         notification.success({
           message: "Configurações salvas com sucesso!",

@@ -52,7 +52,15 @@ export function GlobalProvider({ children }) {
       const _sale = await window.Main.sale.getCurrent();
       const { response: _storeCash } = await window.Main.storeCash.getCurrent();
       const _user = await window.Main.user.getUser();
-      const _settings = await window.Main.settings.getSettings();
+      const { response: _settings, has_internal_error: errorOnSettings } =
+        await window.Main.settings.getSettings();
+      if (errorOnSettings) {
+        notification.error({
+          message: "Erro ao obter a configuração",
+          duration: 5,
+        });
+        return;
+      }
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);
