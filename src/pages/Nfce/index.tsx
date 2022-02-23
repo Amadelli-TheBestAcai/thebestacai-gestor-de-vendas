@@ -68,11 +68,15 @@ const Nfce: React.FC = () => {
 
   useEffect(() => {
     async function init() {
-      const _productsNfce = await window.Main.product.getProducts();
-      if (!_productsNfce) {
-        messageAnt.error("Falha ao obter produtos para NFe");
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.getProducts();
+      if (errorOnProducts) {
+        notification.error({
+          message: "Erro ao encontrar todos produtos",
+          duration: 5,
+        });
       }
-      setProducts(_productsNfce);
+      setProducts(products);
       const { response: currentStoreCash } =
         await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {

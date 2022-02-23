@@ -1,3 +1,4 @@
+import { notification } from "antd";
 import React, { useState, useEffect } from "react";
 
 import StockList from "../../containers/StockList";
@@ -24,9 +25,16 @@ const Stock: React.FC = () => {
 
   useEffect(() => {
     async function init() {
-      const products = await window.Main.product.getAllProductStore();
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.getAllProductStore();
+      if (errorOnProducts) {
+        notification.error({
+          message: "Erro ao encontrar todos produtos",
+          duration: 5,
+        });
+      }
       setProductsStock(
-        products.filter(
+        products?.filter(
           (data) =>
             data.product_id !== RestrictedProducts.SELFSERVICE &&
             data.product_id !== RestrictedProducts.DELIVERY

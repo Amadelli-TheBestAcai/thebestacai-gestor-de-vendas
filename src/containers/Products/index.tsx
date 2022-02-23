@@ -17,6 +17,7 @@ import {
   ProductsContent,
   LoadingContainer,
 } from "./styles";
+import { notification } from "antd";
 
 type ProductByCategory = {
   category: string;
@@ -31,13 +32,20 @@ const ProductsContainer: React.FC = () => {
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const products = await window.Main.product.getProducts();
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.getProducts();
+      if (errorOnProducts) {
+        notification.error({
+          message: "Erro ao encontrar todos produtos",
+          duration: 5,
+        });
+      }
       const categories = products
-        .filter((_product) => _product.product.category.id !== 1)
-        .map((_product) => _product.product.category.name)
+        ?.filter((_product) => _product.product.category.id !== 1)
+        ?.map((_product) => _product.product.category.name)
         .filter((item, pos, self) => self.indexOf(item) == pos);
 
-      const payload = categories.map((_category) => ({
+      const payload = categories?.map((_category) => ({
         category: _category,
         products: products.filter(
           (_product) => _product.product.category.name === _category

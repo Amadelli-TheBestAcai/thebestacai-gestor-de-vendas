@@ -78,11 +78,21 @@ const StockList: React.FC<IProps> = ({
       async onOk() {
         setLoading(true);
         setIsModalVisible(false);
-        await window.Main.product.updateProductStock(
-          selectedProduct?.id,
-          (+selectedProduct?.quantity || 0) - (newQuantity || 0)
-        );
-        if (products) {
+        const { has_internal_error: errorOnProduct } =
+          await window.Main.product.updateProductStock(
+            selectedProduct?.id,
+            (+selectedProduct?.quantity || 0) - (newQuantity || 0)
+          );
+
+        if (errorOnProduct) {
+          notification.error({
+            message: "Oops! Não foi possível atualizar este produto!",
+            description: `O produto selecionado não foi atualizado. 
+            Tente novamente, se o erro persistir entre em contato através do chat de suporte.`,
+            duration: 5,
+          });
+          return;
+        } else {
           const productIndex = products.findIndex(
             (product) => product.id === selectedProduct?.id
           );
@@ -96,13 +106,6 @@ const StockList: React.FC<IProps> = ({
           return notification.success({
             message: "Produto atualizado com sucesso!",
             description: `O produto selecionado foi atualizado com sucesso.`,
-            duration: 5,
-          });
-        } else {
-          return notification.error({
-            message: "Oops! Não foi possível atualizar este produto!",
-            description: `O produto selecionado não foi atualizado. 
-            Tente novamente, se o erro persistir entre em contato através do chat de suporte.`,
             duration: 5,
           });
         }
@@ -127,7 +130,7 @@ const StockList: React.FC<IProps> = ({
         <Spinner />
       ) : (
         <Content>
-          {(filteredProducts || products).map((storeProduct) => (
+          {(filteredProducts || products)?.map((storeProduct) => (
             <Tupla key={storeProduct.id}>
               <Col sm={6}>
                 <img src={notImage} alt="Imagem não encontrada" />

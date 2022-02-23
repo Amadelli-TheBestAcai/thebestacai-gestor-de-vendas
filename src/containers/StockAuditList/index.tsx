@@ -7,7 +7,7 @@ import Centralizer from "../../containers/Centralizer";
 import { Audit as AuditModel } from "../../models/dtos/audit";
 import { Page } from "../../models/dtos/page";
 
-import { Spin, Empty, message } from "antd";
+import { Spin, Empty, message, notification } from "antd";
 import { Container, Modal } from "./styles";
 
 interface IProps {
@@ -32,12 +32,15 @@ const StockAuditList: React.FC<IProps> = ({
 
   useEffect(() => {
     async function init() {
-      const products = await window.Main.product.GetProductStoreHistory(
-        id,
-        page,
-        size
-      );
-      const totalElements = products.totalElements;
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.GetProductStoreHistory(id, page, size);
+      if (errorOnProducts) {
+        notification.error({
+          message: "Erro ao encontrar historícos dos produtos",
+          duration: 5,
+        });
+      }
+      const totalElements = products?.totalElements;
       if (products) {
         setLoading(false);
         setAudits(products.audits);

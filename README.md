@@ -48,7 +48,7 @@ yarn install --network-timeout 600000
 
 ###### Após instalações
 
-Criar arquivo como na estrutura abaixo
+Criar arquivo como na estrutura abaixo.
 
 ```bash
 -> electron

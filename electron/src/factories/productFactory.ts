@@ -1,13 +1,32 @@
-import productModel from "../models/product";
+import { useCaseFactory } from "../usecases/useCaseFactory";
+import {
+  updateProductStock,
+  getProductStoreHistory,
+  getAllProductStore,
+  getAllPurchaseProducts,
+  getSelfService,
+  getProducts,
+} from "../usecases/product";
+import { ProductDto, PurchaseProductDto, AuditDto } from "../models/gestor";
 
 export const productFactory = {
-  getProducts: async () => await productModel.getProducts(),
-  getSelfService: async () => await productModel.getSelfService(),
+  getProducts: async (local = false) =>
+    await useCaseFactory.execute<ProductDto[]>(getProducts, { local }),
+  getSelfService: async () =>
+    await useCaseFactory.execute<ProductDto>(getSelfService),
   getAllPurchaseProducts: async () =>
-    await productModel.getAllPurchaseProducts(),
-  getAllProductStore: async () => await productModel.getAllProductStore(),
+    await useCaseFactory.execute<PurchaseProductDto[]>(getAllPurchaseProducts),
+  getAllProductStore: async () =>
+    await useCaseFactory.execute<ProductDto[]>(getAllProductStore),
   GetProductStoreHistory: async (id: number, page: number, size: number) =>
-    await productModel.GetProductStoreHistory(id, page, size),
+    await useCaseFactory.execute<AuditDto>(getProductStoreHistory, {
+      id,
+      page,
+      size,
+    }),
   updateProductStock: async (id: number, quantity: number) =>
-    await productModel.updateProductStock(id, quantity),
+    await useCaseFactory.execute<ProductDto>(updateProductStock, {
+      id,
+      quantity,
+    }),
 };

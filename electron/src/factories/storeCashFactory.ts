@@ -1,25 +1,40 @@
 import storeCashModel from "../models/storeCash";
-import { StoreCashDto } from "../models/dtos/storeCash";
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { getCurrentStoreCash } from "../usecases/storeCash";
+import {
+  getCurrentStoreCash,
+  getStoreCashBalance,
+  closeStoreCash,
+  openStoreCash,
+  getAvailableStoreCashes,
+} from "../usecases/storeCash";
+import {
+  BalanceDto,
+  StoreCashDto,
+  AvailableStoreCashes,
+} from "../models/gestor";
 
 export const storeCashFactory = {
   getAvailableStoreCashes: async () =>
-    await storeCashModel.getAvailableStoreCashes(),
+    await useCaseFactory.execute<AvailableStoreCashes[]>(
+      getAvailableStoreCashes
+    ),
   getCurrent: async () =>
     await useCaseFactory.execute<StoreCashDto>(getCurrentStoreCash),
-  openStoreCash: async (
-    code: string,
-    amount_on_open: number
-  ): Promise<StoreCashDto | undefined> =>
-    await storeCashModel.openStoreCash(code, amount_on_open),
-  closeStoreCash: async (
-    code: string,
-    amount_on_open: number
-  ): Promise<StoreCashDto | undefined> =>
-    await storeCashModel.closeStoreCash(code, amount_on_open),
+  openStoreCash: async (code: string, amount_on_open: number) =>
+    await useCaseFactory.execute<StoreCashDto>(openStoreCash, {
+      code,
+      amount_on_open,
+    }),
+  closeStoreCash: async (code: string, amount_on_open: number) =>
+    await useCaseFactory.execute<StoreCashDto>(closeStoreCash, {
+      code,
+      amount_on_open,
+    }),
   getStoreCashBalance: async (withClosedCash = false) =>
-    await storeCashModel.getStoreCashBalance(withClosedCash),
+    await useCaseFactory.execute<BalanceDto>(getStoreCashBalance, {
+      withClosedCash,
+    }),
+
   getStoreCashHistoryService: async () =>
     await storeCashModel.getStoreCashHistoryService(),
   updateStoreCashObservation: async (observation: string) =>

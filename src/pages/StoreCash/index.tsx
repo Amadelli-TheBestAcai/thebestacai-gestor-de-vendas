@@ -52,11 +52,34 @@ const StoreCash: React.FC = () => {
   useEffect(() => {
     async function init() {
       const isConnected = await window.Main.hasInternet();
-      const availableStoreCashes =
-        await window.Main.storeCash.getAvailableStoreCashes();
+      const {
+        response: availableStoreCashes,
+        has_internal_error: errorOnStoreCashes,
+      } = await window.Main.storeCash.getAvailableStoreCashes();
+      if (errorOnStoreCashes) {
+        
+        
+        
+        .error({
+          message: "Erro ao encontrar caixas disponíveis",
+          duration: 5,
+        });
+        return;
+      }
+
       const _storeCashHistory =
         await window.Main.storeCash.getStoreCashHistoryService();
-      const _balance = await window.Main.storeCash.getStoreCashBalance();
+
+      const { response: _balance, has_internal_error: errorOnBalance } =
+        await window.Main.storeCash.getStoreCashBalance();
+      if (errorOnBalance) {
+        notification.error({
+          message: "Erro ao encontrar balanço",
+          duration: 5,
+        });
+        return;
+      }
+
       setBalance(_balance);
       setStoreCashHistory(_storeCashHistory);
       setCashes(availableStoreCashes);
