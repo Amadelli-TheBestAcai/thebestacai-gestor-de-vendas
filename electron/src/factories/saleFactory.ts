@@ -9,9 +9,12 @@ import {
   integrateAllSalesFromType,
   getSaleFromApi,
   deleteSaleFromApi,
+  getSaleFromApp,
+  getAllIntegratedSales,
 } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
+import { AppSaleDTO } from "../models/dtos/appSale";
 
 export const saleFactory = {
   getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
@@ -31,9 +34,11 @@ export const saleFactory = {
       return false;
     }
   },
-
+  getSaleFromApp: async () =>
+    await useCaseFactory.execute<AppSaleDTO>(getSaleFromApp),
   getAllIntegratedSales: async () =>
-    await saleModel.integrateQueueRepository.getAll(),
+    await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
+
   update: async (id: string | number, payload: Entity) =>
     await saleModel.update(id, payload),
   addPayment: async (amount: number, type: number) =>
@@ -42,7 +47,6 @@ export const saleFactory = {
   decressItem: async (id: string) => await saleModel.decressItem(id),
   addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
     await saleModel.addItem(productToAdd, quantity, price),
-  getSaleFromApp: async () => await saleModel.getSaleFromApp(),
   createStepSale: async (name: string) => await saleModel.createStepSale(name),
   getAllStepSales: async () => await saleModel.getAllStepSales(),
   recouverStepSales: async (id: string): Promise<Entity> =>
