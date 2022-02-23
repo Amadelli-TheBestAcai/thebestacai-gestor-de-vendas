@@ -1,2 +1,2 @@
 export * from "./buildNewSale";
-export * from "./getCurent";
+export * from "./getCurentSale";

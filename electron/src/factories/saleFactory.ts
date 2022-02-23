@@ -2,11 +2,11 @@ import saleModel, { Entity } from "../models/sale";
 import { Entity as ProductDto } from "../models/product";
 import { NfeDTO } from "../models/dtos/nfe";
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { buildNewSale } from "../usecases/sale";
+import { buildNewSale, getCurrentSale } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 
 export const saleFactory = {
-  getCurrent: async () => await saleModel.getCurrent(),
+  getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
   getAllIntegratedSales: async () =>
     await saleModel.integrateQueueRepository.getAll(),
   deleteSaleFromApi: async (id: string) => {
