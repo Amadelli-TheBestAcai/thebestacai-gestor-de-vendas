@@ -2,11 +2,13 @@ import saleModel, { Entity } from "../models/sale";
 import { Entity as ProductDto } from "../models/product";
 import { NfeDTO } from "../models/dtos/nfe";
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { buildNewSale, getCurrentSale } from "../usecases/sale";
+import { buildNewSale, getCurrentSale, finishSale } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 
 export const saleFactory = {
   getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
+  finishSale: async (payload: SaleDto, fromDelivery?: boolean) =>
+    await useCaseFactory.execute<void>(finishSale, { payload, fromDelivery }),
 
   getAllIntegratedSales: async () =>
     await saleModel.integrateQueueRepository.getAll(),
@@ -20,8 +22,6 @@ export const saleFactory = {
   },
   getSaleFromApi: async (withClosedCash = false) =>
     await saleModel.getSaleFromApi(withClosedCash),
-  finishSale: async (payload: Entity, fromDelivery?: boolean) =>
-    await saleModel.finishSale(payload, fromDelivery),
   update: async (id: string | number, payload: Entity) =>
     await saleModel.update(id, payload),
   addPayment: async (amount: number, type: number) =>

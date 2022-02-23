@@ -8,10 +8,10 @@ import { salesFormaterToIntegrate } from "../../helpers/salesFormaterToIntegrate
 
 class OnlineIntegration implements IUseCaseFactory {
   constructor(
-    private notIntegratedQueueRepository = new BaseRepository<SaleDto>(
+    private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Not_Integrated_Sale
     ),
-    private integrateQueueRepository = new BaseRepository<SaleDto>(
+    private integrateSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Integrated_Sale
     )
   ) {}
@@ -22,7 +22,7 @@ class OnlineIntegration implements IUseCaseFactory {
       return;
     }
     try {
-      const sales: SaleDto[] = await this.notIntegratedQueueRepository.getAll();
+      const sales: SaleDto[] = await this.notIntegratedSaleRepository.getAll();
 
       const salesOnline: SaleDto[] = sales.filter((_sale) => _sale.is_online);
 
@@ -32,9 +32,9 @@ class OnlineIntegration implements IUseCaseFactory {
         await midasApi.post("/sales", payload);
       }
 
-      await this.notIntegratedQueueRepository.clear();
+      await this.notIntegratedSaleRepository.clear();
 
-      await this.integrateQueueRepository.createMany(salesOnline);
+      await this.integrateSaleRepository.createMany(salesOnline);
     } catch (error) {
       console.log(error);
     }
