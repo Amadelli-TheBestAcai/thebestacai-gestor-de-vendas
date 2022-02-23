@@ -1,4 +1,3 @@
-import saleModel, { Entity } from "../models/sale";
 import { NfeDTO } from "../models/dtos/nfe";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import {
@@ -20,13 +19,14 @@ import {
   addItem,
   recouverStepSales,
   decressItem,
+  emitNfce,
 } from "../usecases/sale";
 import { SaleDto, ProductDto } from "../models/gestor";
-import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
-import { AppSaleDTO } from "../models/dtos/appSale";
+import { SaleFromApiDTO, AppSaleDTO } from "../models/dtos";
 
 export const saleFactory = {
-  getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
+  getCurrentSale: async () =>
+    await useCaseFactory.execute<SaleDto>(getCurrentSale),
   finishSale: async (payload: SaleDto, fromDelivery?: boolean) =>
     await useCaseFactory.execute<void>(finishSale, { payload, fromDelivery }),
   integrateAllSalesFromType: async (type: number) =>
@@ -44,18 +44,18 @@ export const saleFactory = {
     }
   },
   getSaleFromApp: async () =>
-    await useCaseFactory.execute<AppSaleDTO>(getSaleFromApp),
+    await useCaseFactory.execute<AppSaleDTO[]>(getSaleFromApp),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
   updateSale: async (id: string | number, payload: SaleDto) =>
     await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),
   getAllStepSales: async () =>
-    await useCaseFactory.execute<SaleDto>(getAllStepSales),
+    await useCaseFactory.execute<SaleDto[]>(getAllStepSales),
   buildNewSale: async (withPersistence = true) =>
     await useCaseFactory.execute<SaleDto>(buildNewSale, { withPersistence }),
   getAllDelivery: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllDelivery),
-  createDelivery: async (payload: Entity) =>
+  createDelivery: async (payload: any) =>
     await useCaseFactory.execute<void>(createDelivery, { payload }),
   addPayment: async (amount: number, type: number) =>
     await useCaseFactory.execute<SaleDto>(addPayment, { amount, type }),
@@ -73,10 +73,9 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto>(recouverStepSales, { id }),
   decressItem: async (id: string) =>
     await useCaseFactory.execute(decressItem, { id }),
-
-  emitNfce: async (
-    nfe: NfeDTO,
-    saleIdToUpdate?: number
-  ): Promise<{ error: boolean; message: string }> =>
-    await saleModel.emitNfce(nfe, saleIdToUpdate),
+  emitNfce: async (nfe: NfeDTO, saleIdToUpdate?: number) =>
+    await useCaseFactory.execute<{ error: boolean; message: string }>(
+      emitNfce,
+      { nfe, saleIdToUpdate }
+    ),
 };
