@@ -57,18 +57,22 @@ const StoreCash: React.FC = () => {
         has_internal_error: errorOnStoreCashes,
       } = await window.Main.storeCash.getAvailableStoreCashes();
       if (errorOnStoreCashes) {
-        
-        
-        
-        .error({
+        notification.error({
           message: "Erro ao encontrar caixas disponíveis",
           duration: 5,
         });
         return;
       }
-
-      const _storeCashHistory =
-        await window.Main.storeCash.getStoreCashHistoryService();
+      const {
+        response: _storeCashHistory,
+        has_internal_error: errorOnGetCashHistory,
+      } = await window.Main.storeCash.getStoreCashHistoryService();
+      if (errorOnGetCashHistory) {
+        notification.error({
+          message: "Erro ao obter Histórico do caixa",
+          duration: 5,
+        });
+      }
 
       const { response: _balance, has_internal_error: errorOnBalance } =
         await window.Main.storeCash.getStoreCashBalance();
@@ -81,7 +85,7 @@ const StoreCash: React.FC = () => {
       }
 
       setBalance(_balance);
-      setStoreCashHistory(_storeCashHistory);
+      setStoreCashHistory(null);
       setCashes(availableStoreCashes);
       setIsConnected(isConnected);
       setLoading(false);
