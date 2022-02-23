@@ -158,7 +158,15 @@ const StoreCash: React.FC = () => {
     }
 
     setUpdatingCashObservation(true);
-    await window.Main.storeCash.updateStoreCashObservation(justify);
+    const { has_internal_error: errorOnUpdateCash } =
+      await window.Main.storeCash.updateStoreCashObservation(justify);
+    if (errorOnUpdateCash) {
+      notification.error({
+        message: "Erro ao atualizar o caixa",
+        duration: 5,
+      });
+      return;
+    }
     setUpdatingCashObservation(false);
     setModalJustify(false);
   };
