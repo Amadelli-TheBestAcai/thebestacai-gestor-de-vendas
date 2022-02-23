@@ -1,7 +1,10 @@
 import userModel, { Entity } from "../models/user";
+import { useCaseFactory } from "../usecases/useCaseFactory";
+import { getUser } from "../usecases/user";
+import { UserDto } from "../models/gestor";
 
 export const userFactory = {
-  getUser: async (): Promise<Entity | undefined> => await userModel.get(),
+  getUser: async () => await useCaseFactory.execute<UserDto>(getUser),
   hasPermission: (permission: string) => userModel.hasPermission(permission),
   getAll: async () => await userModel.getAll(),
   login: async (
