@@ -11,7 +11,7 @@ class GetCurrentSale implements IUseCaseFactory {
     private buildNewSaleUseCase = buildNewSale
   ) {}
 
-  async execute(): Promise<SaleDto | undefined> {
+  async execute(): Promise<SaleDto> {
     const sales = await this.saleRepository.getAll();
     const currentSale = sales.find((_sale) => _sale.is_current);
     if (currentSale) {
@@ -21,6 +21,9 @@ class GetCurrentSale implements IUseCaseFactory {
         await useCaseFactory.execute<SaleDto>(this.buildNewSaleUseCase);
       if (errorOnBuildNewSale) {
         throw new Error("Erro ao criar uma nova venda");
+      }
+      if (!newSale) {
+        throw new Error("Nenhuma venda encontrada");
       }
       return newSale;
     }

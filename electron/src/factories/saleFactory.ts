@@ -16,6 +16,7 @@ import {
   getAllStepSales,
   getAllDelivery,
   createDelivery,
+  deletePayment,
 } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
@@ -55,8 +56,9 @@ export const saleFactory = {
     await useCaseFactory.execute<void>(createDelivery, { payload }),
   addPayment: async (amount: number, type: number) =>
     await useCaseFactory.execute<SaleDto>(addPayment, { amount, type }),
+  deletePayment: async (id: string) =>
+    await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
 
-  deletePayment: async (id: string) => await saleModel.deletePayment(id),
   decressItem: async (id: string) => await saleModel.decressItem(id),
   addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
     await saleModel.addItem(productToAdd, quantity, price),

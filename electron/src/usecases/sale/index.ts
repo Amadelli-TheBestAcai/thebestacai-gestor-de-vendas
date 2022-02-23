@@ -12,3 +12,4 @@ export * from "./updateSale";
 export * from "./getAllStepSales";
 export * from "./getAllDelivery";
 export * from "./createDelivery";
+export * from "./deletePayment";

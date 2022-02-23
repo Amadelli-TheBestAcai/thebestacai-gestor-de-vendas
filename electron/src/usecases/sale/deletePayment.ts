@@ -4,21 +4,18 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale } from "./getCurrentSale";
 import { SaleDto } from "../../models/gestor";
-import { v4 } from "uuid";
-import moment from "moment";
 
 interface Request {
-  amount: number;
-  type: number;
+  id: string;
 }
 
-class AddPayment implements IUseCaseFactory {
+class DeletePayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private getCurrentSaleUseCase = getCurrentSale
   ) {}
 
-  async execute({ amount, type }: Request): Promise<SaleDto> {
+  async execute({ id }: Request): Promise<SaleDto> {
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
       await useCaseFactory.execute<SaleDto>(this.getCurrentSaleUseCase);
 
@@ -29,20 +26,15 @@ class AddPayment implements IUseCaseFactory {
       throw new Error("Nenhuma venda encontrada");
     }
 
-    sale?.payments.push({
-      id: v4(),
-      amount,
-      type,
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-    });
+    sale.payments = sale.payments.filter((_payment) => _payment.id !== id);
 
     sale.total_paid = +sale.payments
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
 
-    await this.saleRepository.update(sale?.id, sale);
+    await this.saleRepository.update(sale.id, sale);
     return sale;
   }
 }
 
-export const addPayment = new AddPayment();
+export const deletePayment = new DeletePayment();
