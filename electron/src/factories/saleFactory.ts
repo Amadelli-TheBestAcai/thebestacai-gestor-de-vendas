@@ -2,13 +2,20 @@ import saleModel, { Entity } from "../models/sale";
 import { Entity as ProductDto } from "../models/product";
 import { NfeDTO } from "../models/dtos/nfe";
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { buildNewSale, getCurrentSale, finishSale } from "../usecases/sale";
+import {
+  buildNewSale,
+  getCurrentSale,
+  finishSale,
+  integrateAllSalesFromType,
+} from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 
 export const saleFactory = {
   getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
   finishSale: async (payload: SaleDto, fromDelivery?: boolean) =>
     await useCaseFactory.execute<void>(finishSale, { payload, fromDelivery }),
+  integrateAllSalesFromType: async (type: number) =>
+    await useCaseFactory.execute<void>(integrateAllSalesFromType, { type }),
 
   getAllIntegratedSales: async () =>
     await saleModel.integrateQueueRepository.getAll(),
@@ -38,8 +45,6 @@ export const saleFactory = {
   buildNewSale: async (withPersistence = true) =>
     await useCaseFactory.execute<SaleDto>(buildNewSale, { withPersistence }),
   getAllDelivery: async () => await saleModel.deliverySaleRepository.getAll(),
-  integrateAllSalesFromType: async (type: number): Promise<void> =>
-    await saleModel.integrateAllSalesFromType(type),
   createDelivery: async (payload: Entity) =>
     await saleModel.deliverySaleRepository.create(payload),
   emitNfce: async (
