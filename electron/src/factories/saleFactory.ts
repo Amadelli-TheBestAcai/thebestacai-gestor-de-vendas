@@ -1,5 +1,4 @@
 import saleModel, { Entity } from "../models/sale";
-import { Entity as ProductDto } from "../models/product";
 import { NfeDTO } from "../models/dtos/nfe";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import {
@@ -18,8 +17,9 @@ import {
   createDelivery,
   deletePayment,
   createStepSale,
+  addItem,
 } from "../usecases/sale";
-import { SaleDto } from "../models/gestor";
+import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
 import { AppSaleDTO } from "../models/dtos/appSale";
 
@@ -61,10 +61,14 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
   createStepSale: async (name: string) =>
     await useCaseFactory.execute<SaleDto>(createStepSale, { name }),
+  addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
+    await useCaseFactory.execute<SaleDto>(addItem, {
+      productToAdd,
+      quantity,
+      price,
+    }),
 
   decressItem: async (id: string) => await saleModel.decressItem(id),
-  addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
-    await saleModel.addItem(productToAdd, quantity, price),
   recouverStepSales: async (id: string): Promise<Entity> =>
     await saleModel.recouverStepSales(id),
   emitNfce: async (

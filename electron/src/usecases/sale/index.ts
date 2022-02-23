@@ -14,3 +14,4 @@ export * from "./getAllDelivery";
 export * from "./createDelivery";
 export * from "./deletePayment";
 export * from "./createStepSale";
+export * from "./addItem";
