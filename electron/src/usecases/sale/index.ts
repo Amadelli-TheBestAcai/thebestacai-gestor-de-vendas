@@ -10,3 +10,5 @@ export * from "./getSaleFromApp";
 export * from "./getAllIntegratedSales";
 export * from "./updateSale";
 export * from "./getAllStepSales";
+export * from "./getAllDelivery";
+export * from "./createDelivery";

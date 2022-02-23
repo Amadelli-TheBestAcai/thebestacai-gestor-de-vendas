@@ -13,6 +13,8 @@ import {
   getAllIntegratedSales,
   updateSale,
   getAllStepSales,
+  getAllDelivery,
+  createDelivery,
 } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
@@ -44,6 +46,12 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),
   getAllStepSales: async () =>
     await useCaseFactory.execute<SaleDto>(getAllStepSales),
+  buildNewSale: async (withPersistence = true) =>
+    await useCaseFactory.execute<SaleDto>(buildNewSale, { withPersistence }),
+  getAllDelivery: async () =>
+    await useCaseFactory.execute<SaleDto[]>(getAllDelivery),
+  createDelivery: async (payload: Entity) =>
+    await useCaseFactory.execute<void>(createDelivery, { payload }),
 
   addPayment: async (amount: number, type: number) =>
     await saleModel.addPayment(amount, type),
@@ -54,11 +62,6 @@ export const saleFactory = {
   createStepSale: async (name: string) => await saleModel.createStepSale(name),
   recouverStepSales: async (id: string): Promise<Entity> =>
     await saleModel.recouverStepSales(id),
-  buildNewSale: async (withPersistence = true) =>
-    await useCaseFactory.execute<SaleDto>(buildNewSale, { withPersistence }),
-  getAllDelivery: async () => await saleModel.deliverySaleRepository.getAll(),
-  createDelivery: async (payload: Entity) =>
-    await saleModel.deliverySaleRepository.create(payload),
   emitNfce: async (
     nfe: NfeDTO,
     saleIdToUpdate?: number
