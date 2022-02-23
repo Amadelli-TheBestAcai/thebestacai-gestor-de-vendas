@@ -5,3 +5,4 @@ export * from "./finishSale";
 export * from "./integrateAllSalesFromType";
 export * from "./addPayment";
 export * from "./getSaleFromApi";
+export * from "./deleteSaleFromApi";

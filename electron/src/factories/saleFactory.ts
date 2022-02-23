@@ -8,8 +8,10 @@ import {
   finishSale,
   integrateAllSalesFromType,
   getSaleFromApi,
+  deleteSaleFromApi,
 } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
+import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
 
 export const saleFactory = {
   getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
@@ -18,18 +20,20 @@ export const saleFactory = {
   integrateAllSalesFromType: async (type: number) =>
     await useCaseFactory.execute<void>(integrateAllSalesFromType, { type }),
   getSaleFromApi: async (withClosedCash = false) =>
-    await useCaseFactory.execute(getSaleFromApi, { withClosedCash }),
-
-  getAllIntegratedSales: async () =>
-    await saleModel.integrateQueueRepository.getAll(),
+    await useCaseFactory.execute<SaleFromApiDTO[]>(getSaleFromApi, {
+      withClosedCash,
+    }),
   deleteSaleFromApi: async (id: string) => {
     try {
-      await saleModel.deleteSaleFromApi(id);
+      await useCaseFactory.execute<void>(deleteSaleFromApi, { id });
       return true;
     } catch {
       return false;
     }
   },
+
+  getAllIntegratedSales: async () =>
+    await saleModel.integrateQueueRepository.getAll(),
   update: async (id: string | number, payload: Entity) =>
     await saleModel.update(id, payload),
   addPayment: async (amount: number, type: number) =>

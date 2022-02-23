@@ -4,42 +4,36 @@ import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import midasApi from "../../providers/midasApi";
 import { StoreCashDto } from "../../models/gestor";
-import { SaleFromApiDTO } from "../../models/dtos/salesFromApi";
 
 interface Request {
-  withClosedCash: false;
+  id: string;
 }
 
-class GetSaleFromApi implements IUseCaseFactory {
+class DeleteSaleFromApi implements IUseCaseFactory {
   constructor(
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     )
   ) {}
 
-  async execute({ withClosedCash }: Request): Promise<SaleFromApiDTO[]> {
+  async execute({ id }: Request): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
-      return [];
+      return;
     }
 
     const currentCash = await this.storeCashRepository.getOne();
-    if (!currentCash) {
-      return [];
-    }
-
-    if (!withClosedCash && !currentCash?.is_opened) {
-      return [];
+    if (!currentCash || !currentCash.is_opened) {
+      return;
     }
 
     const { store_id, code } = currentCash;
     if (!store_id || !code) {
-      return [];
+      return;
     }
 
-    const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
-    return data;
+    await midasApi.delete(`/sales/${id}`);
   }
 }
 
-export const getSaleFromApi = new GetSaleFromApi();
+export const deleteSaleFromApi = new DeleteSaleFromApi();
