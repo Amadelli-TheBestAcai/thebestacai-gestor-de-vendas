@@ -57,10 +57,7 @@ const StoreCash: React.FC = () => {
         has_internal_error: errorOnStoreCashes,
       } = await window.Main.storeCash.getAvailableStoreCashes();
       if (errorOnStoreCashes) {
-        
-        
-        
-        .error({
+        notification.error({
           message: "Erro ao encontrar caixas disponíveis",
           duration: 5,
         });
