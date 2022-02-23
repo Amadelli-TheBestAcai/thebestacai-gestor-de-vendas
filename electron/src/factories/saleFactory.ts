@@ -17,6 +17,7 @@ import {
   getAllDelivery,
   createDelivery,
   deletePayment,
+  createStepSale,
 } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
@@ -58,11 +59,12 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto>(addPayment, { amount, type }),
   deletePayment: async (id: string) =>
     await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
+  createStepSale: async (name: string) =>
+    await useCaseFactory.execute<SaleDto>(createStepSale, { name }),
 
   decressItem: async (id: string) => await saleModel.decressItem(id),
   addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
     await saleModel.addItem(productToAdd, quantity, price),
-  createStepSale: async (name: string) => await saleModel.createStepSale(name),
   recouverStepSales: async (id: string): Promise<Entity> =>
     await saleModel.recouverStepSales(id),
   emitNfce: async (
