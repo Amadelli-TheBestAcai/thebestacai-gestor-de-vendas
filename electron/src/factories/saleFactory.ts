@@ -1,9 +1,12 @@
 import saleModel, { Entity } from "../models/sale";
 import { Entity as ProductDto } from "../models/product";
 import { NfeDTO } from "../models/dtos/nfe";
+import { useCaseFactory } from "../usecases/useCaseFactory";
+import { buildNewSale, getCurrentSale } from "../usecases/sale";
+import { SaleDto } from "../models/gestor";
 
 export const saleFactory = {
-  getCurrent: async () => await saleModel.getCurrent(),
+  getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
   getAllIntegratedSales: async () =>
     await saleModel.integrateQueueRepository.getAll(),
   deleteSaleFromApi: async (id: string) => {
@@ -31,8 +34,8 @@ export const saleFactory = {
   getAllStepSales: async () => await saleModel.getAllStepSales(),
   recouverStepSales: async (id: string): Promise<Entity> =>
     await saleModel.recouverStepSales(id),
-  buildNewSale: async (withPersistence = true): Promise<Entity> =>
-    await saleModel.buildNewSale(withPersistence),
+  buildNewSale: async (withPersistence = true) =>
+    await useCaseFactory.execute<SaleDto>(buildNewSale, { withPersistence }),
   getAllDelivery: async () => await saleModel.deliverySaleRepository.getAll(),
   integrateAllSalesFromType: async (type: number): Promise<void> =>
     await saleModel.integrateAllSalesFromType(type),

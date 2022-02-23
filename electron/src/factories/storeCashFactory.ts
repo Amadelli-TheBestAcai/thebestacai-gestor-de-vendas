@@ -8,6 +8,7 @@ import {
   openStoreCash,
   getAvailableStoreCashes,
   getStoreCashHistoryService,
+  updateStoreCashObservation,
 } from "../usecases/storeCash";
 import {
   BalanceDto,
@@ -36,11 +37,10 @@ export const storeCashFactory = {
     await useCaseFactory.execute<BalanceDto>(getStoreCashBalance, {
       withClosedCash,
     }),
-
   getStoreCashHistoryService: async () =>
     await useCaseFactory.execute<StoreCashHistoryDTO | undefined>(
       getStoreCashHistoryService
     ),
   updateStoreCashObservation: async (observation: string) =>
-    await storeCashModel.updateStoreCashObservation(observation),
+    await useCaseFactory.execute(updateStoreCashObservation, { observation }),
 };

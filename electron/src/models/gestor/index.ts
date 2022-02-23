@@ -6,3 +6,5 @@ export * from "./audit";
 export * from "./balance";
 export * from "./storeCash";
 export * from "./availableStoreCashes";
+export * from "./settings";
+export * from "./sale";

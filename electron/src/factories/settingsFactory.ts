@@ -1,8 +1,12 @@
-import settingsModel, { Entity } from "../models/settings";
+import settingsModel from "../models/settings";
+import { useCaseFactory } from "../usecases/useCaseFactory";
+import { getSettings, update } from "../usecases/settitngs";
+import { SettingsDto } from "../models/gestor";
 
 export const settingsFactory = {
-  getSettings: async () => await settingsModel.getSettings(),
+  getSettings: async () =>
+    await useCaseFactory.execute<SettingsDto>(getSettings),
+  update: async (id: string, payload: any) =>
+    useCaseFactory.execute<SettingsDto>(update, { id, payload }),
   getPrinters: () => settingsModel.getPrinters(),
-  update: async (id: string, payload: Partial<Entity>) =>
-    (await settingsModel.update(id, payload)) as Entity,
 };

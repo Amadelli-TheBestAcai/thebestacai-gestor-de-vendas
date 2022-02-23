@@ -69,13 +69,21 @@ const Login: React.FC<IProps> = ({ history }) => {
     if (loggedUser) {
       const { has_internal_error: errorOnStore, response } =
         await window.Main.store.hasRegistration();
-      const updatedSettings = await window.Main.settings.update(settings.id, {
-        ...settings,
-        rememberd_user: settings.should_remember_user ? user.username : "",
-      });
       if (errorOnStore) {
         notification.error({
-          message: "Error ao encontrar loja vinculada ao usuário",
+          message: "Erro ao encontrar loja vinculada ao usuário",
+          duration: 5,
+        });
+        return;
+      }
+      const { response: updatedSettings, has_internal_error: errorOnSettings } =
+        await window.Main.settings.update(settings.id, {
+          ...settings,
+          rememberd_user: settings.should_remember_user ? user.username : "",
+        });
+      if (errorOnSettings) {
+        notification.error({
+          message: "Erro ao atualizar as configurações",
           duration: 5,
         });
         return;
@@ -125,7 +133,7 @@ const Login: React.FC<IProps> = ({ history }) => {
 
     if (errorOnStore) {
       notification.error({
-        message: "Error ao registrar a loja",
+        message: "Erro ao registrar a loja",
         duration: 5,
       });
       return;
@@ -143,10 +151,18 @@ const Login: React.FC<IProps> = ({ history }) => {
   };
 
   const rememberUserHandler = async () => {
-    const _updatedSettings = await window.Main.settings.update(settings.id, {
-      ...settings,
-      should_remember_user: !settings.should_remember_user,
-    });
+    const { response: _updatedSettings, has_internal_error: errorOnSettings } =
+      await window.Main.settings.update(settings.id, {
+        ...settings,
+        should_remember_user: !settings.should_remember_user,
+      });
+    if (errorOnSettings) {
+      notification.error({
+        message: "Erro ao atualizar as configurações",
+        duration: 5,
+      });
+      return;
+    }
     setSettings(_updatedSettings);
   };
 
