@@ -11,9 +11,7 @@ class GetAllStepSales implements IUseCaseFactory {
   ) {}
 
   async execute(): Promise<SaleDto[]> {
-    const stepSales = await this.stepSaleRepository.getAll();
-
-    return stepSales;
+    return await this.stepSaleRepository.getAll();
   }
 }
 

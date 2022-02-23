@@ -29,7 +29,7 @@ class AddPayment implements IUseCaseFactory {
       throw new Error("Nenhuma venda encontrada");
     }
 
-    sale?.payments.push({
+    sale.payments.push({
       id: v4(),
       amount,
       type,
@@ -40,7 +40,7 @@ class AddPayment implements IUseCaseFactory {
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
 
-    await this.saleRepository.update(sale?.id, sale);
+    await this.saleRepository.update(sale.id, sale);
     return sale;
   }
 }

@@ -4,8 +4,6 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale, buildNewSale } from "./index";
 import { SaleDto } from "../../models/gestor";
-import { v4 } from "uuid";
-import moment from "moment";
 
 interface Request {
   name: string;

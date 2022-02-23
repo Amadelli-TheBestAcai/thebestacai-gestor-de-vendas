@@ -3,7 +3,7 @@ import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale } from "./getCurrentSale";
-import { SaleDto, ProductDto } from "../../models/gestor";
+import { SaleDto } from "../../models/gestor";
 
 interface Request {
   id: string;

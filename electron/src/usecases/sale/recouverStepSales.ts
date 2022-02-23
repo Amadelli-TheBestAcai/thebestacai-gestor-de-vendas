@@ -11,7 +11,6 @@ interface Request {
 
 class RecouverStepSales implements IUseCaseFactory {
   constructor(
-    private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private stepSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Step_Sale
     ),
@@ -26,7 +25,7 @@ class RecouverStepSales implements IUseCaseFactory {
     const stepSale = await this.stepSaleRepository.getById(id);
 
     if (!stepSale) {
-      throw new Error("Venda não encontrada");
+      throw new Error("Nenhuma venda não encontrada");
     }
 
     const transferItem = async (

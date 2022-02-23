@@ -13,8 +13,12 @@ class UpdateSale implements IUseCaseFactory {
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale)
   ) {}
 
-  async execute({ id, payload }: Request): Promise<SaleDto | undefined> {
-    return await this.saleRepository.update(id, payload);
+  async execute({ id, payload }: Request): Promise<SaleDto> {
+    const sale = await this.saleRepository.update(id, payload);
+    if (!sale) {
+      throw new Error("Erro ao atualizar a venda");
+    }
+    return sale;
   }
 }
 
