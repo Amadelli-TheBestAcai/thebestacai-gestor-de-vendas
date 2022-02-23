@@ -18,6 +18,7 @@ import {
   deletePayment,
   createStepSale,
   addItem,
+  recouverStepSales,
 } from "../usecases/sale";
 import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
@@ -67,10 +68,10 @@ export const saleFactory = {
       quantity,
       price,
     }),
-
+  recouverStepSales: async (id: string) =>
+    await useCaseFactory.execute<SaleDto>(recouverStepSales, { id }),
   decressItem: async (id: string) => await saleModel.decressItem(id),
-  recouverStepSales: async (id: string): Promise<Entity> =>
-    await saleModel.recouverStepSales(id),
+
   emitNfce: async (
     nfe: NfeDTO,
     saleIdToUpdate?: number
