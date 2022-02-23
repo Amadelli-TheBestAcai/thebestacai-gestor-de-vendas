@@ -7,6 +7,7 @@ import {
   getCurrentSale,
   finishSale,
   integrateAllSalesFromType,
+  addPayment,
   getSaleFromApi,
   deleteSaleFromApi,
   getSaleFromApp,
@@ -52,9 +53,9 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto[]>(getAllDelivery),
   createDelivery: async (payload: Entity) =>
     await useCaseFactory.execute<void>(createDelivery, { payload }),
-
   addPayment: async (amount: number, type: number) =>
-    await saleModel.addPayment(amount, type),
+    await useCaseFactory.execute<SaleDto>(addPayment, { amount, type }),
+
   deletePayment: async (id: string) => await saleModel.deletePayment(id),
   decressItem: async (id: string) => await saleModel.decressItem(id),
   addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
