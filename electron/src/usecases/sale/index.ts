@@ -16,3 +16,4 @@ export * from "./deletePayment";
 export * from "./createStepSale";
 export * from "./addItem";
 export * from "./recouverStepSales";
+export * from "./decressItem";

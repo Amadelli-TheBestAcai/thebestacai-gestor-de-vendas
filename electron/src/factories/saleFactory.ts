@@ -19,6 +19,7 @@ import {
   createStepSale,
   addItem,
   recouverStepSales,
+  decressItem,
 } from "../usecases/sale";
 import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
@@ -70,7 +71,8 @@ export const saleFactory = {
     }),
   recouverStepSales: async (id: string) =>
     await useCaseFactory.execute<SaleDto>(recouverStepSales, { id }),
-  decressItem: async (id: string) => await saleModel.decressItem(id),
+  decressItem: async (id: string) =>
+    await useCaseFactory.execute(decressItem, { id }),
 
   emitNfce: async (
     nfe: NfeDTO,
