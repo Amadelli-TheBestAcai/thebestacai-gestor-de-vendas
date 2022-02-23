@@ -11,6 +11,7 @@ import {
   deleteSaleFromApi,
   getSaleFromApp,
   getAllIntegratedSales,
+  updateSale,
 } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 import { SaleFromApiDTO } from "../models/dtos/salesFromApi";
@@ -38,9 +39,9 @@ export const saleFactory = {
     await useCaseFactory.execute<AppSaleDTO>(getSaleFromApp),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
+  updateSale: async (id: string | number, payload: SaleDto) =>
+    await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),
 
-  update: async (id: string | number, payload: Entity) =>
-    await saleModel.update(id, payload),
   addPayment: async (amount: number, type: number) =>
     await saleModel.addPayment(amount, type),
   deletePayment: async (id: string) => await saleModel.deletePayment(id),
