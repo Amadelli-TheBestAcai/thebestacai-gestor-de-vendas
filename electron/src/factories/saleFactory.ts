@@ -7,6 +7,7 @@ import { SaleDto } from "../models/gestor";
 
 export const saleFactory = {
   getCurrent: async () => await useCaseFactory.execute<SaleDto>(getCurrentSale),
+
   getAllIntegratedSales: async () =>
     await saleModel.integrateQueueRepository.getAll(),
   deleteSaleFromApi: async (id: string) => {
