@@ -14,14 +14,14 @@ class BuildNewSale implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private storeCashRepository = new BaseRepository<StoreCashDto>(
-      StorageNames.Sale
+      StorageNames.StoreCash
     ),
     private getUserUseCase = getUser
   ) {}
 
   async execute({ withPersistence }: Request): Promise<SaleDto> {
     const { response: user, has_internal_error: errorOnGetUser } =
-      await useCaseFactory.execute<UserDto | undefined>(this.getUserUseCase);
+      await useCaseFactory.execute<UserDto>(this.getUserUseCase);
 
     if (errorOnGetUser) {
       throw new Error("Falha ao obter caixa atual");

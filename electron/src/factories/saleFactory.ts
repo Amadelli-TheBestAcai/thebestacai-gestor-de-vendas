@@ -7,6 +7,7 @@ import {
   getCurrentSale,
   finishSale,
   integrateAllSalesFromType,
+  getSaleFromApi,
 } from "../usecases/sale";
 import { SaleDto } from "../models/gestor";
 
@@ -16,6 +17,8 @@ export const saleFactory = {
     await useCaseFactory.execute<void>(finishSale, { payload, fromDelivery }),
   integrateAllSalesFromType: async (type: number) =>
     await useCaseFactory.execute<void>(integrateAllSalesFromType, { type }),
+  getSaleFromApi: async (withClosedCash = false) =>
+    await useCaseFactory.execute(getSaleFromApi, { withClosedCash }),
 
   getAllIntegratedSales: async () =>
     await saleModel.integrateQueueRepository.getAll(),
@@ -27,8 +30,6 @@ export const saleFactory = {
       return false;
     }
   },
-  getSaleFromApi: async (withClosedCash = false) =>
-    await saleModel.getSaleFromApi(withClosedCash),
   update: async (id: string | number, payload: Entity) =>
     await saleModel.update(id, payload),
   addPayment: async (amount: number, type: number) =>
