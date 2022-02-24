@@ -27,11 +27,11 @@ const Items: React.FC = () => {
         <Column span={4}>Valor Total</Column>
         <Column span={2}>Ação</Column>
       </Header>
-      {sale.items.length !== 0 ? (
+      {sale?.items?.length !== 0 ? (
         <>
           <ItemContainer>
             <ItemContent>
-              {sale.items.map((item) => (
+              {sale?.items?.map((item) => (
                 <Item key={item.id} item={item} />
               ))}
             </ItemContent>
