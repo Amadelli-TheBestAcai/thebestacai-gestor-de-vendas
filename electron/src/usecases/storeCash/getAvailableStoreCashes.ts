@@ -6,7 +6,7 @@ import { checkInternet } from "../../providers/internetConnection";
 import {
   StoreDto,
   StoreCashDto,
-  AvailableStoreCashes,
+  AvailableStoreCashesDto,
 } from "../../models/gestor";
 
 class GetAvailableStoreCashes implements IUseCaseFactory {
@@ -17,7 +17,7 @@ class GetAvailableStoreCashes implements IUseCaseFactory {
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
   ) {}
 
-  async execute(): Promise<AvailableStoreCashes[] | undefined> {
+  async execute(): Promise<AvailableStoreCashesDto[] | undefined> {
     const isOnline = await checkInternet();
     if (isOnline) {
       const currentStore = await this.storeRepository.getOne();

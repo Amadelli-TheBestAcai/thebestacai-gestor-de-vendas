@@ -7,21 +7,23 @@ import { getUser } from "../user";
 import { SaleDto, UserDto, StoreCashDto } from "../../models/gestor";
 
 interface Request {
-  withPersistence: true;
+  withPersistence?: boolean;
 }
 
 class BuildNewSale implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private storeCashRepository = new BaseRepository<StoreCashDto>(
-      StorageNames.Sale
+      StorageNames.StoreCash
     ),
     private getUserUseCase = getUser
   ) {}
 
-  async execute({ withPersistence }: Request): Promise<SaleDto> {
+  async execute(
+    { withPersistence }: Request = { withPersistence: true }
+  ): Promise<SaleDto> {
     const { response: user, has_internal_error: errorOnGetUser } =
-      await useCaseFactory.execute<UserDto | undefined>(this.getUserUseCase);
+      await useCaseFactory.execute<UserDto>(this.getUserUseCase);
 
     if (errorOnGetUser) {
       throw new Error("Falha ao obter caixa atual");

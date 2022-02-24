@@ -8,3 +8,4 @@ export * from "./storeCash";
 export * from "./availableStoreCashes";
 export * from "./settings";
 export * from "./sale";
+export * from "./emitNfce";

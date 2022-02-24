@@ -13,7 +13,7 @@ interface IProps {
 const OrderProgressList: React.FC<IProps> = ({ deliveries, finishSale }) => {
   return (
     <Container>
-      {deliveries.map((_delivery) => (
+      {deliveries?.map((_delivery) => (
         <CardOrder onClick={() => finishSale(_delivery.id)} key={_delivery.id}>
           <HeaderCard>
             <span>{_delivery.created_at.split(" ")[1]}</span>

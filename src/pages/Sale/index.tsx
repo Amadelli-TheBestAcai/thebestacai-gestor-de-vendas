@@ -14,7 +14,7 @@ import { SalesTypes } from "../../models/enums/salesTypes";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
 
 import notHandler from "../../assets/svg/notHandler.svg";
-import { Empty, Tooltip } from "antd";
+import { Empty, notification, Tooltip } from "antd";
 
 import {
   Container,
@@ -49,7 +49,14 @@ const Sale: React.FC<IProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       setIsLoading(true);
-      const _sales = await window.Main.sale.getSaleFromApi();
+      const { response: _sales, has_internal_error: errorOnGetSaleFromApi } =
+        await window.Main.sale.getSaleFromApi();
+      if (errorOnGetSaleFromApi) {
+        return notification.error({
+          message: "Erro ao obter vendas",
+          duration: 5,
+        });
+      }
 
       const payload = _sales.map((_sale) => ({
         ..._sale,

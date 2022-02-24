@@ -49,9 +49,28 @@ export function GlobalProvider({ children }) {
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const _sale = await window.Main.sale.getCurrent();
+      const { response: _sale, has_internal_error: errorOnSale } =
+        await window.Main.sale.getCurrentSale();
+      if (errorOnSale) {
+        notification.error({
+          message: "Erro ao obter venda atual",
+          duration: 5,
+        });
+        return;
+      }
+
       const { response: _storeCash } = await window.Main.storeCash.getCurrent();
-      const _user = await window.Main.user.getUser();
+
+      const { response: _user, has_internal_error: errorOnGetUser } =
+        await window.Main.user.getUser();
+      if (errorOnGetUser) {
+        notification.error({
+          message: "Erro ao obter usuário",
+          duration: 5,
+        });
+        return;
+      }
+
       const { response: _settings, has_internal_error: errorOnSettings } =
         await window.Main.settings.getSettings();
       if (errorOnSettings) {
@@ -81,16 +100,28 @@ export function GlobalProvider({ children }) {
     price?: number
   ): Promise<void> => {
     price;
-    const updatedSale = await window.Main.sale.addItem(
-      product,
-      quantity,
-      price
-    );
+    const { response: updatedSale, has_internal_error: errorOnAddItem } =
+      await window.Main.sale.addItem(product, quantity, price);
+    if (errorOnAddItem) {
+      return notification.error({
+        message: "Erro ao adicionar um item",
+        duration: 5,
+      });
+    }
+
     setSale(updatedSale);
   };
 
   const onDecressItem = async (id: string): Promise<void> => {
-    const updatedSale = await window.Main.sale.decressItem(id);
+    const { response: updatedSale, has_internal_error: errorOnDecressItem } =
+      await window.Main.sale.decressItem(id);
+    if (errorOnDecressItem) {
+      return notification.error({
+        message: "Erro ao remover item",
+        duration: 5,
+      });
+    }
+
     notification.success({
       message: "Item removido com sucesso!",
       description: `O item selecionado foi retirado do carrinho.`,
@@ -126,8 +157,25 @@ export function GlobalProvider({ children }) {
       }
 
       setSavingSale(true);
-      await window.Main.sale.finishSale(sale);
-      const _newSale = await window.Main.sale.buildNewSale();
+      const { has_internal_error: errorOnFinishSAle } =
+        await window.Main.sale.finishSale(sale);
+      if (errorOnFinishSAle) {
+        return notification.error({
+          message: "Erro ao finalizar venda",
+          duration: 5,
+        });
+      }
+
+      const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
+        await window.Main.sale.buildNewSale();
+      if (errorOnBuildNewSale) {
+        notification.error({
+          message: "Erro ao criar uma venda",
+          duration: 5,
+        });
+        return;
+      }
+
       setSale(_newSale);
       setSavingSale(false);
       notification.success({
@@ -139,7 +187,15 @@ export function GlobalProvider({ children }) {
   };
 
   const onAddToQueue = async (name: string): Promise<void> => {
-    const _newSale = await window.Main.sale.createStepSale(name);
+    const { response: _newSale, has_internal_error: errorOnCreateStepSale } =
+      await window.Main.sale.createStepSale(name);
+    if (errorOnCreateStepSale) {
+      return notification.error({
+        message: "Erro ao salvar comanda",
+        duration: 5,
+      });
+    }
+
     setSale(_newSale);
     notification.success({
       message: "Comanda salva com sucesso!",
@@ -156,10 +212,19 @@ export function GlobalProvider({ children }) {
         duration: 5,
       });
     }
-    const _updatedSale = await window.Main.sale.update(sale.id, {
-      ...sale,
-      discount: value,
-    });
+
+    const { response: _updatedSale, has_internal_error: errorOnUpdateSale } =
+      await window.Main.sale.updateSale(sale.id, {
+        ...sale,
+        discount: value,
+      });
+    if (errorOnUpdateSale) {
+      return notification.error({
+        message: "Erro ao aplicar desconto",
+        duration: 5,
+      });
+    }
+
     setSale(_updatedSale);
   };
 

@@ -13,12 +13,12 @@ import {
 import {
   BalanceDto,
   StoreCashDto,
-  AvailableStoreCashes,
+  AvailableStoreCashesDto,
 } from "../models/gestor";
 
 export const storeCashFactory = {
   getAvailableStoreCashes: async () =>
-    await useCaseFactory.execute<AvailableStoreCashes[]>(
+    await useCaseFactory.execute<AvailableStoreCashesDto[]>(
       getAvailableStoreCashes
     ),
   getCurrent: async () =>
