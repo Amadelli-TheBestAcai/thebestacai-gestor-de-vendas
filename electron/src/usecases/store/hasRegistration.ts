@@ -1,10 +1,7 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { checkInternet } from "../../providers/internetConnection";
 import { StoreDto } from "../../models/gestor";
-import janusApi from "../../providers/janusApi";
-import user from "../../models/user";
 
 class HasRegistration implements IUseCaseFactory {
   constructor(
