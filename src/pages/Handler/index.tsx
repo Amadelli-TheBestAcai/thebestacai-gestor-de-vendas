@@ -33,7 +33,15 @@ const Handler: React.FC = () => {
 
   useEffect(() => {
     async function init() {
-      const handlers = await window.Main.handler.getCashHandlersByStoreCash();
+      const { response: handlers, has_internal_error: errorOnGetHandler } =
+        await window.Main.handler.getCashHandlersByStoreCash();
+      if (errorOnGetHandler) {
+        return notification.error({
+          message: "Erro ao obter movimentações",
+          duration: 5,
+        });
+      }
+
       const isConnected = await window.Main.hasInternet();
       setHistoryId(handlers.history_id);
       setIsConected(isConnected);
@@ -55,7 +63,14 @@ const Handler: React.FC = () => {
         setIsLoading(true);
         const success =
           await window.Main.handler.deleteCashHandlerFromApiService(id);
-        const data = await window.Main.handler.getCashHandlersByStoreCash();
+        const { response: handlers, has_internal_error: errorOnGetHandler } =
+          await window.Main.handler.getCashHandlersByStoreCash();
+        if (errorOnGetHandler) {
+          return notification.error({
+            message: "Erro ao obter movimentações",
+            duration: 5,
+          });
+        }
         setIsLoading(false);
         if (!success) {
           return notification.error({
@@ -65,7 +80,7 @@ const Handler: React.FC = () => {
             duration: 5,
           });
         }
-        setHandlers(data.handlers);
+        setHandlers(handlers.handlers);
         return notification.success({
           message: "Movimentação removida com sucesso!",
           description: `A movimentação selecionada [${id}] foi excluída com sucesso.`,

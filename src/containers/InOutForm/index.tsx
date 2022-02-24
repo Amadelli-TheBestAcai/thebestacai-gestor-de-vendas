@@ -148,11 +148,20 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     };
 
     setLoading(true);
-    await window.Main.handler.create({
-      cashHandler: payload.handler,
-      sendToShop: payload.sendToShop,
-      shopOrder: payload.shopOrder,
-    });
+
+    const { has_internal_error: errorOnCreateHandler, response: handler } =
+      await window.Main.handler.create({
+        cashHandler: payload.handler,
+        sendToShop: payload.sendToShop,
+        shopOrder: payload.shopOrder,
+      });
+    if (errorOnCreateHandler) {
+      return notification.error({
+        message: "Erro ao criar movimentação",
+        duration: 5,
+      });
+    }
+
     setValue(null);
     setReasson(null);
     setReasonType(null);
