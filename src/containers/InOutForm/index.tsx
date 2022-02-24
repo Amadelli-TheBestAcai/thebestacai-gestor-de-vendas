@@ -129,7 +129,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     }
 
     if (!value && !shopOrder?.total) {
-      return message.warning("Informe um valor");
+      return notification.warning({
+        message: "Valor não informado",
+        description: `Informe um valor válido.`,
+        duration: 5,
+      });
     } else if (!reasson && !reasontype) {
       return notification.warning({
         message: "O motivo não foi informado",
@@ -156,7 +160,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     setValue(null);
     setReasson(null);
     setReasonType(null);
-    message.success("Movimentação cadastrada com sucesso");
+    notification.success({
+      message: "Salva com sucesso!",
+      description: `Movimentação cadastrada com sucesso.`,
+      duration: 5,
+    });
     setLoading(false);
     setModalState(false);
     return document.getElementById("mainContainer").focus();
