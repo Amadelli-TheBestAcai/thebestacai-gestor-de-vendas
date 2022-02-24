@@ -25,7 +25,7 @@ class RecouverStepSales implements IUseCaseFactory {
     const stepSale = await this.stepSaleRepository.getById(id);
 
     if (!stepSale) {
-      throw new Error("Nenhuma venda não encontrada");
+      throw new Error("Comanda não encontrada");
     }
 
     const transferItem = async (
@@ -37,7 +37,7 @@ class RecouverStepSales implements IUseCaseFactory {
         storeProductId
       )) as ProductDto;
       await useCaseFactory.execute<SaleDto>(this.addItemUseCase, {
-        product,
+        productToAdd: product,
         quantity,
         total,
       });

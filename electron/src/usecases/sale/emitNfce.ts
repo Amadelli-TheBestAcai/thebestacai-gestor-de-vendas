@@ -14,6 +14,7 @@ import {
   StoreCashDto,
   StoreDto,
   ProductDto,
+  EmitNfceDto,
 } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
 
@@ -40,10 +41,7 @@ class EmitNfce implements IUseCaseFactory {
     private onlineIntegrationUseCase = onlineIntegration
   ) {}
 
-  async execute({
-    nfe,
-    saleIdToUpdate,
-  }: Request): Promise<{ error: boolean; message: string }> {
+  async execute({ nfe, saleIdToUpdate }: Request): Promise<EmitNfceDto> {
     const hasInternet = await checkInternet();
     if (!hasInternet) {
       return {
@@ -164,8 +162,9 @@ class EmitNfce implements IUseCaseFactory {
               quantity: produto.quantidadeComercial,
               sale_id: v4(),
               items: product?.product,
-              // total:
-              //   +produto.quantidadeComercial * +product?.product?.price_sell,
+              total:
+                +produto.quantidadeComercial *
+                +(product?.product?.price_sell || 0),
             };
 
             const itens = payload.items;

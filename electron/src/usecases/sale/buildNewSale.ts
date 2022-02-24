@@ -7,7 +7,7 @@ import { getUser } from "../user";
 import { SaleDto, UserDto, StoreCashDto } from "../../models/gestor";
 
 interface Request {
-  withPersistence: true;
+  withPersistence?: boolean;
 }
 
 class BuildNewSale implements IUseCaseFactory {
@@ -19,7 +19,9 @@ class BuildNewSale implements IUseCaseFactory {
     private getUserUseCase = getUser
   ) {}
 
-  async execute({ withPersistence }: Request): Promise<SaleDto> {
+  async execute(
+    { withPersistence }: Request = { withPersistence: true }
+  ): Promise<SaleDto> {
     const { response: user, has_internal_error: errorOnGetUser } =
       await useCaseFactory.execute<UserDto>(this.getUserUseCase);
 

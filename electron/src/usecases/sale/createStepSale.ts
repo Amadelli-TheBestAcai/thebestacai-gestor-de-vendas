@@ -24,7 +24,7 @@ class CreateStepSale implements IUseCaseFactory {
       await useCaseFactory.execute<SaleDto>(this.getCurrentSaleUseCase);
 
     if (errorOnGetCurrentSale) {
-      throw new Error("Erro ao integrar venda");
+      throw new Error("Erro ao obter venda atual");
     }
     if (!currentSale) {
       throw new Error("Nenhuma venda encontrada");
@@ -45,8 +45,6 @@ class CreateStepSale implements IUseCaseFactory {
     if (!newSale) {
       throw new Error("Nenhuma venda encontrada");
     }
-
-    await this.saleRepository.create(newSale);
 
     return newSale;
   }

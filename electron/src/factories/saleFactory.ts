@@ -21,20 +21,50 @@ import {
   decressItem,
   emitNfce,
 } from "../usecases/sale";
-import { SaleDto, ProductDto } from "../models/gestor";
+import { SaleDto, ProductDto, EmitNfceDto } from "../models/gestor";
 import { SaleFromApiDTO, AppSaleDTO } from "../models/dtos";
 
 export const saleFactory = {
   getCurrentSale: async () =>
     await useCaseFactory.execute<SaleDto>(getCurrentSale),
+  buildNewSale: async (withPersistence = true) =>
+    await useCaseFactory.execute<SaleDto>(buildNewSale, { withPersistence }),
+  addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
+    await useCaseFactory.execute<SaleDto>(addItem, {
+      productToAdd,
+      quantity,
+      price,
+    }),
+  decressItem: async (id: string) =>
+    await useCaseFactory.execute<SaleDto>(decressItem, { id }),
+  addPayment: async (amount: number, type: number) =>
+    await useCaseFactory.execute<SaleDto>(addPayment, { amount, type }),
+  updateSale: async (id: string | number, payload: SaleDto) =>
+    await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),
+  getAllStepSales: async () =>
+    await useCaseFactory.execute<SaleDto[]>(getAllStepSales),
+  createStepSale: async (name: string) =>
+    await useCaseFactory.execute<SaleDto>(createStepSale, { name }),
+  recouverStepSales: async (id: string) =>
+    await useCaseFactory.execute<SaleDto>(recouverStepSales, { id }),
+  deletePayment: async (id: string) =>
+    await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
+  createDelivery: async (payload: any) =>
+    await useCaseFactory.execute<void>(createDelivery, { payload }),
+  getAllDelivery: async () =>
+    await useCaseFactory.execute<SaleDto[]>(getAllDelivery),
   finishSale: async (payload: SaleDto, fromDelivery?: boolean) =>
     await useCaseFactory.execute<void>(finishSale, { payload, fromDelivery }),
   integrateAllSalesFromType: async (type: number) =>
     await useCaseFactory.execute<void>(integrateAllSalesFromType, { type }),
+  getSaleFromApp: async () =>
+    await useCaseFactory.execute<AppSaleDTO[]>(getSaleFromApp),
   getSaleFromApi: async (withClosedCash = false) =>
     await useCaseFactory.execute<SaleFromApiDTO[]>(getSaleFromApi, {
       withClosedCash,
     }),
+  getAllIntegratedSales: async () =>
+    await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
   deleteSaleFromApi: async (id: string) => {
     try {
       await useCaseFactory.execute<void>(deleteSaleFromApi, { id });
@@ -43,39 +73,9 @@ export const saleFactory = {
       return false;
     }
   },
-  getSaleFromApp: async () =>
-    await useCaseFactory.execute<AppSaleDTO[]>(getSaleFromApp),
-  getAllIntegratedSales: async () =>
-    await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
-  updateSale: async (id: string | number, payload: SaleDto) =>
-    await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),
-  getAllStepSales: async () =>
-    await useCaseFactory.execute<SaleDto[]>(getAllStepSales),
-  buildNewSale: async (withPersistence = true) =>
-    await useCaseFactory.execute<SaleDto>(buildNewSale, { withPersistence }),
-  getAllDelivery: async () =>
-    await useCaseFactory.execute<SaleDto[]>(getAllDelivery),
-  createDelivery: async (payload: any) =>
-    await useCaseFactory.execute<void>(createDelivery, { payload }),
-  addPayment: async (amount: number, type: number) =>
-    await useCaseFactory.execute<SaleDto>(addPayment, { amount, type }),
-  deletePayment: async (id: string) =>
-    await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
-  createStepSale: async (name: string) =>
-    await useCaseFactory.execute<SaleDto>(createStepSale, { name }),
-  addItem: async (productToAdd: ProductDto, quantity: number, price?: number) =>
-    await useCaseFactory.execute<SaleDto>(addItem, {
-      productToAdd,
-      quantity,
-      price,
-    }),
-  recouverStepSales: async (id: string) =>
-    await useCaseFactory.execute<SaleDto>(recouverStepSales, { id }),
-  decressItem: async (id: string) =>
-    await useCaseFactory.execute(decressItem, { id }),
   emitNfce: async (nfe: NfeDTO, saleIdToUpdate?: number) =>
-    await useCaseFactory.execute<{ error: boolean; message: string }>(
-      emitNfce,
-      { nfe, saleIdToUpdate }
-    ),
+    await useCaseFactory.execute<EmitNfceDto>(emitNfce, {
+      nfe,
+      saleIdToUpdate,
+    }),
 };

@@ -28,7 +28,7 @@ class DecressItem implements IUseCaseFactory {
 
     const itemIndex = sale.items.findIndex((_item) => _item.id === id);
 
-    const newQuantity = +sale.items[itemIndex].quantity - 1;
+    const newQuantity = +sale.items[itemIndex]?.quantity - 1;
 
     if (sale.items[itemIndex].product.category.id === 1 || newQuantity <= 0) {
       sale.items = sale.items.filter((_item) => _item.id !== id);
@@ -40,12 +40,12 @@ class DecressItem implements IUseCaseFactory {
 
     sale.total_sold = sale.items.reduce(
       (total, item) =>
-        +(item.storeProduct?.price_unit || 0) * item.quantity + total,
+        +(item.storeProduct?.price_unit || 0) * item?.quantity + total,
       0
     );
 
     sale.quantity = sale.items.reduce(
-      (total, item) => item.quantity + total,
+      (total, item) => item?.quantity + total,
       0
     );
 
