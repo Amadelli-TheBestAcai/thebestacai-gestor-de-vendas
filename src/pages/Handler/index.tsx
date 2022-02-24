@@ -76,11 +76,20 @@ const Handler: React.FC = () => {
   };
 
   const onPdf = async () => {
+    const { response: _user, has_internal_error: errorOnGetUser } =
+      await window.Main.user.getUser();
+    if (errorOnGetUser) {
+      notification.error({
+        message: "Erro ao obter usuário",
+        duration: 5,
+      });
+      return;
+    }
     const { data: response } = await axios({
       method: "GET",
       responseType: "blob",
       headers: {
-        Authorization: `Bearer ${(await window.Main.user.getUser()).token}`,
+        Authorization: `Bearer ${_user?.token}`,
       },
       url: `${window.Main.env.API_DASH}/cash_handler/pdf/${historyId}`,
     });

@@ -65,9 +65,27 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      const _newSale = await window.Main.sale.buildNewSale();
+      const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
+        await window.Main.sale.buildNewSale();
+      if (errorOnBuildNewSale) {
+        notification.error({
+          message: "Erro ao criar uma venda",
+          duration: 5,
+        });
+        return;
+      }
+
       setSale(_newSale);
-      const _deliveries = await window.Main.sale.getAllDelivery();
+
+      const { response: _deliveries, has_internal_error: errorOnAllDelivery } =
+        await window.Main.sale.getAllDelivery();
+      if (errorOnAllDelivery) {
+        return notification.error({
+          message: "Erro ao obter todos delivery",
+          duration: 5,
+        });
+      }
+
       setDeliveries(_deliveries);
       setLoading(false);
     }
@@ -76,7 +94,16 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      const _sale = await window.Main.sale.getSaleFromApp();
+      const { response: _sale, has_internal_error: errorOnGetSaleFromApp } =
+        await window.Main.sale.getSaleFromApp();
+      if (errorOnGetSaleFromApp) {
+        notification.error({
+          message: "Erro ao obter vendas do APP",
+          duration: 5,
+        });
+        return;
+      }
+
       const inConnected = await window.Main.hasInternet();
       setHasConnection(inConnected);
       const salesResult: IntegrateAppSalesDTO = {
@@ -113,7 +140,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
     };
 
     const updatedSale = sale;
-    updatedSale.payments.push(newPayment);
+    updatedSale?.payments?.push(newPayment);
 
     setSale(updatedSale);
 
@@ -165,11 +192,38 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         const payload = sale;
         payload.quantity = 1;
         payload.type = deliveryType;
-        await window.Main.sale.createDelivery(payload);
-        const newSale = await window.Main.sale.buildNewSale(false);
+        const { has_internal_error: errorOnCreateDelivery } =
+          await window.Main.sale.createDelivery(payload);
+        if (errorOnCreateDelivery) {
+          return notification.error({
+            message: "Erro ao criar delivery",
+            duration: 5,
+          });
+        }
+
+        const { response: newSale, has_internal_error: errorOnBuildNewSale } =
+          await window.Main.sale.buildNewSale();
+        if (errorOnBuildNewSale) {
+          notification.error({
+            message: "Erro ao criar uma venda",
+            duration: 5,
+          });
+          return;
+        }
         setSale(newSale);
-        const _newDeliveries = await window.Main.sale.getAllDelivery();
+
+        const {
+          response: _newDeliveries,
+          has_internal_error: errorOnAllDelivery,
+        } = await window.Main.sale.getAllDelivery();
+        if (errorOnAllDelivery) {
+          return notification.error({
+            message: "Erro ao obter todos delivery",
+            duration: 5,
+          });
+        }
         setDeliveries(_newDeliveries);
+
         notification.success({
           message: "Venda salva com sucesso!",
           description: `A venda de [${payload.name}] foi salva com sucesso. 
@@ -190,9 +244,28 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
       async onOk() {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
-        await window.Main.sale.finishSale(payload, true);
-        const _newDeliveries = await window.Main.sale.getAllDelivery();
+
+        const { has_internal_error: errorOnFinishSAle } =
+          await window.Main.sale.finishSale(payload, true);
+        if (errorOnFinishSAle) {
+          return notification.error({
+            message: "Erro ao finalizar uma venda",
+            duration: 5,
+          });
+        }
+
+        const {
+          response: _newDeliveries,
+          has_internal_error: errorOnAllDelivery,
+        } = await window.Main.sale.getAllDelivery();
+        if (errorOnAllDelivery) {
+          return notification.error({
+            message: "Erro ao obter todos delivery",
+            duration: 5,
+          });
+        }
         setDeliveries(_newDeliveries);
+
         notification.success({
           message: "Venda confirmada!",
           description: `A venda selecionada foi finalizada, e não será mais exibida na lista de delivery em andamento.`,
@@ -267,9 +340,27 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       cancelText: "Não",
       centered: true,
       async onOk() {
-        await window.Main.sale.integrateAllSalesFromType(type);
-        const _updatedDeliverySales = await window.Main.sale.getAllDelivery();
+        const { has_internal_error: errorOnIntegrateAllSales } =
+          await window.Main.sale.integrateAllSalesFromType(type);
+        if (errorOnIntegrateAllSales) {
+          return notification.error({
+            message: "Erro ao integrar todos os delivery",
+            duration: 5,
+          });
+        }
+
+        const {
+          response: _updatedDeliverySales,
+          has_internal_error: errorOnAllDelivery,
+        } = await window.Main.sale.getAllDelivery();
+        if (errorOnAllDelivery) {
+          return notification.error({
+            message: "Erro ao obter todos delivery",
+            duration: 5,
+          });
+        }
         setDeliveries(_updatedDeliverySales);
+
         notification.success({
           message: "Vendas integradas com sucesso!",
           description: `A venda do tipo [${SalesTypes[deliveryType]}] foram integradas com sucesso. 
@@ -407,7 +498,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                         <ActionContent>
                           <Input
                             placeholder="Nome do cliente"
-                            value={sale.name}
+                            value={sale?.name}
                             onChange={({ target: { value } }) =>
                               setSale((oldValues) => ({
                                 ...oldValues,
@@ -422,7 +513,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                         <InputValue>
                           R${" "}
                           {currencyFormater(
-                            sale.payments.reduce(
+                            sale?.payments?.reduce(
                               (total, _payment) => +_payment.amount + total,
                               0
                             )
@@ -471,7 +562,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                         <OrdersListContainer>
                           <OrderProgressList
                             finishSale={finishSale}
-                            deliveries={deliveries.filter(
+                            deliveries={deliveries?.filter(
                               (_delivery) => _delivery.type === deliveryType
                             )}
                           />
