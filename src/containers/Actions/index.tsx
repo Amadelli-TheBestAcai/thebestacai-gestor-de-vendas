@@ -52,7 +52,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         });
         return;
       }
-      // setStore(store.company.company_name);
+      setStore(store.company.company_name);
       setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
     }
     init();
