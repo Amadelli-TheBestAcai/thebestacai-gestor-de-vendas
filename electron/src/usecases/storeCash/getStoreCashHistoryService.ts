@@ -25,12 +25,6 @@ class GetStoreCashHistoryService implements IUseCaseFactory {
       } = await odinApi.get(`/current_cash_history/${store_id}-${code}`);
       return history;
     } else {
-      if (!cashier) {
-        throw new Error("Caixa não encontrado");
-      }
-      if (!cashier.history_id) {
-        throw new Error("Historico do caixa não encontrado");
-      }
       return undefined;
     }
   }
