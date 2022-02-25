@@ -1,18 +1,16 @@
-import userModel, { Entity } from "../models/user";
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { getUser } from "../usecases/user";
+import { getUser, getAllUser, login } from "../usecases/user";
 import { UserDto } from "../models/gestor";
 
 export const userFactory = {
   getUser: async () => await useCaseFactory.execute<UserDto>(getUser),
-  hasPermission: (permission: string) => userModel.hasPermission(permission),
-  getAll: async () => await userModel.getAll(),
-  login: async (
-    username: string,
-    password: string
-  ): Promise<{ user: Entity | undefined; error?: string }> => {
+  getAllUser: async () => await useCaseFactory.execute<UserDto[]>(getAllUser),
+  login: async (username: string, password: string) => {
     try {
-      const user = await userModel.login(username, password);
+      const user = await useCaseFactory.execute<{
+        user: UserDto | undefined;
+        error?: string;
+      }>(login, { username, password });
       return {
         user,
       };
