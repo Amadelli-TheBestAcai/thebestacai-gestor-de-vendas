@@ -6,6 +6,7 @@ import Spinner from "../../components/Spinner";
 import { StoreDto } from "../../models/dtos/store";
 import { useSettings } from "../../hooks/useSettings";
 import { useUser } from "../../hooks/useUser";
+import { useStore } from "../../hooks/useStore";
 
 import { Form, Select, notification } from "antd";
 
@@ -32,6 +33,7 @@ type IProps = RouteComponentProps;
 
 const Login: React.FC<IProps> = ({ history }) => {
   const { setUser: setContextUser } = useUser();
+  const { setStore: setContextStore, store: storeContext } = useStore();
   const { settings, setSettings } = useSettings();
   const [user, setUser] = useState({
     username: settings.should_remember_user ? settings.rememberd_user : "",
@@ -69,8 +71,8 @@ const Login: React.FC<IProps> = ({ history }) => {
       return;
     }
     if (loggedUser) {
-      const registredStore = await window.Main.store.hasRegistration();
       setContextUser(loggedUser);
+
       const { response: updatedSettings, has_internal_error: errorOnSettings } =
         await window.Main.settings.update(settings.id, {
           ...settings,
@@ -86,7 +88,7 @@ const Login: React.FC<IProps> = ({ history }) => {
 
       setSettings(updatedSettings);
 
-      if (registredStore) {
+      if (storeContext) {
         setLoading(false);
         return history.push("/home");
       } else {
@@ -122,9 +124,8 @@ const Login: React.FC<IProps> = ({ history }) => {
     const storeToRegister = stores.find(
       (_store) => _store.company.id === store
     );
-    const { has_internal_error: errorOnStore } = await window.Main.store.create(
-      storeToRegister
-    );
+    const { response: _store, has_internal_error: errorOnStore } =
+      await window.Main.store.create(storeToRegister);
 
     if (errorOnStore) {
       notification.error({
@@ -133,6 +134,7 @@ const Login: React.FC<IProps> = ({ history }) => {
       });
       return;
     }
+    setContextStore(_store);
     return history.push("/home");
   };
 
