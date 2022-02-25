@@ -12,8 +12,8 @@ class CreateStore implements IUseCaseFactory {
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
   ) {}
 
-  async execute({ payload }: Request): Promise<void> {
-    await this.storeRepository.create(payload);
+  async execute({ payload }: Request): Promise<StoreDto> {
+    return await this.storeRepository.create(payload);
   }
 }
 
