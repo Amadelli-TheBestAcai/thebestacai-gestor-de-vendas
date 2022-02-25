@@ -6,6 +6,15 @@ export function useUser() {
     GlobalContext,
     (globalContext) => globalContext.user
   );
+  const setUser = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.setUser
+  );
 
-  return { user };
+  const hasPermission = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.hasPermission
+  );
+
+  return { user, setUser, hasPermission };
 }

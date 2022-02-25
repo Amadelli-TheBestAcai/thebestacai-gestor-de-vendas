@@ -12,14 +12,8 @@ export const handlerFactory = {
     await useCaseFactory.execute<HandlerDto>(insertHandler, { payload }),
   getCashHandlersByStoreCash: async () =>
     await useCaseFactory.execute<CashHandlerDTO>(getCashHandlersByStoreCash),
-  deleteCashHandlerFromApiService: async (id: number) => {
-    try {
-      await useCaseFactory.execute<void>(deleteCashHandlerFromApiService, {
-        id,
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  },
+  deleteCashHandlerFromApiService: async (id: number) =>
+    await useCaseFactory.execute<void>(deleteCashHandlerFromApiService, {
+      id,
+    })
 };

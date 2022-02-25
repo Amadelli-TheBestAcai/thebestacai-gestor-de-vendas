@@ -33,6 +33,8 @@ type GlobalContextType = {
     closeDiscoundModal: () => void;
   };
   user: UserDto | null;
+  setUser: Dispatch<SetStateAction<UserDto | null>>;
+  hasPermission: (permission: string) => Promise<boolean>;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(null);
@@ -228,6 +230,12 @@ export function GlobalProvider({ children }) {
     setSale(_updatedSale);
   };
 
+  const hasPermission = async (permission: string): Promise<boolean> => {
+    return user
+      ? user.permissions.some((_permission) => _permission === permission)
+      : false;
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -247,6 +255,8 @@ export function GlobalProvider({ children }) {
         onRegisterSale,
         onAddToQueue,
         user,
+        setUser,
+        hasPermission,
       }}
     >
       {children}

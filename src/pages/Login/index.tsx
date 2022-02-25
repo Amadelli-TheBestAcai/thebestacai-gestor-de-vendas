@@ -5,6 +5,7 @@ import LogoImg from "../../assets/img/logo-login.png";
 import Spinner from "../../components/Spinner";
 import { StoreDto } from "../../models/dtos/store";
 import { useSettings } from "../../hooks/useSettings";
+import { useUser } from "../../hooks/useUser";
 
 import { Form, Select, notification } from "antd";
 
@@ -30,6 +31,7 @@ const Option = Select;
 type IProps = RouteComponentProps;
 
 const Login: React.FC<IProps> = ({ history }) => {
+  const { setUser: setContextUser } = useUser();
   const { settings, setSettings } = useSettings();
   const [user, setUser] = useState({
     username: settings.should_remember_user ? settings.rememberd_user : "",
@@ -68,6 +70,7 @@ const Login: React.FC<IProps> = ({ history }) => {
     }
     if (loggedUser) {
       const registredStore = await window.Main.store.hasRegistration();
+      setContextUser(loggedUser);
       const { response: updatedSettings, has_internal_error: errorOnSettings } =
         await window.Main.settings.update(settings.id, {
           ...settings,
