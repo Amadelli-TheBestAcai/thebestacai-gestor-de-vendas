@@ -6,12 +6,14 @@ import {
   SettingsIcon,
 } from "./styles";
 import { Menu } from "antd";
+import { useUser } from "../../hooks/useUser";
 
 const redirect = (history: any, route?: string) => {
   return history.push(`/${route}`);
 };
 
 const MenuAvatar = (history: any) => {
+  const { hasPermission } = useUser();
   return (
     <Menu>
       <Menu.Item>
@@ -23,7 +25,7 @@ const MenuAvatar = (history: any) => {
           <LogOutCircleIcon />
           <Actions>Log out</Actions>
         </ActionsContent>
-        {window.Main.user.hasPermission("config.config_access") && (
+        {hasPermission("config.config_access") && (
           <ActionsContent
             onClick={() => {
               redirect(history, "settings");
