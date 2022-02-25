@@ -1,5 +1,4 @@
 import { StoreCashHistoryDTO } from "../models/dtos/storeCashHistory";
-import storeCashModel from "../models/storeCash";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import {
   getCurrentStoreCash,

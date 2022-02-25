@@ -3,6 +3,7 @@ import React from "react";
 import { Container, Column, RemoveIcon, PrinterIcon } from "./styles";
 
 import { Handler as HandlerModel } from "../../models/dtos/handler";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = {
   handler: HandlerModel;
@@ -10,6 +11,7 @@ type IProps = {
 };
 
 const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
+  const { hasPermission } = useUser();
   const { id, type, amount, created_at, reason } = handler;
   const time = created_at.split(" ")[1];
 
@@ -26,7 +28,7 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
       <Column span={4}>{reason}</Column>
       <>
         <Column span={4}>
-          {window.Main.user.hasPermission("handler.delete_handler") && (
+          {hasPermission("handler.delete_handler") && (
             <RemoveIcon onClick={() => onDelete(id)} />
           )}
           <PrinterIcon />
