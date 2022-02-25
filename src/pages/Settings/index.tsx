@@ -97,7 +97,7 @@ const Settings: React.FC = () => {
         <CardSettings title="Integração de Impressora">
           <SelectsContainer>
             <Select
-              disabled={!settings.should_use_balance}
+              disabled={!settings.should_use_printer}
               placeholder="Impressora"
               value={settings.printer}
               onChange={(printer) =>
@@ -114,16 +114,16 @@ const Settings: React.FC = () => {
           </SelectsContainer>
           <ActionContainer>
             <Switch
-              checked={settings.should_use_balance}
+              checked={settings.should_use_printer}
               onChange={() =>
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  should_use_balance: !settings.should_use_balance,
+                  should_use_printer: !settings.should_use_printer,
                 }))
               }
             />
             <span>
-              {!settings.should_use_balance ? "DESABILITADO" : "HABILITADO"}
+              {!settings.should_use_printer ? "DESABILITADO" : "HABILITADO"}
             </span>
           </ActionContainer>
         </CardSettings>
