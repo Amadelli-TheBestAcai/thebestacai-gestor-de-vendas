@@ -1,6 +1,6 @@
-import { Entity } from "../models/sale";
+import { SaleDto } from "../models/gestor";
 
-export const salesFormaterToIntegrate = (payload: Entity | Entity[]) => {
+export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[]) => {
   if (Array.isArray(payload)) {
     return payload.map((_payload) => ({
       quantity: _payload.quantity,
