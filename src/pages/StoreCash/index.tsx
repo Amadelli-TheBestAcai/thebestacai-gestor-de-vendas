@@ -85,11 +85,13 @@ const StoreCash: React.FC = () => {
 
       setBalance(_balance);
       setStoreCashHistory(_storeCashHistory);
+      console.log(_storeCashHistory);
       setCashes(availableStoreCashes);
       setIsConnected(isConnected);
       setLoading(false);
       if (
-        +_storeCashHistory?.result_cash !== 0 &&
+        _storeCashHistory !== undefined &&
+        +_storeCashHistory.in_result !== 0 &&
         !_storeCashHistory?.observation
       ) {
         setModalJustify(true);
