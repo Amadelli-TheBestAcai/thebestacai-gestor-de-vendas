@@ -66,7 +66,7 @@ const StoreCash: React.FC = () => {
       const {
         response: _storeCashHistory,
         has_internal_error: errorOnGetCashHistory,
-      } = await window.Main.storeCash.getStoreCashHistoryService();
+      } = await window.Main.storeCash.getStoreCashHistory();
       if (errorOnGetCashHistory) {
         notification.error({
           message: "Erro ao obter Histórico do caixa",

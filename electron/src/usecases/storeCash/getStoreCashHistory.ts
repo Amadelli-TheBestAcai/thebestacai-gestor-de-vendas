@@ -5,7 +5,7 @@ import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
 import { getCurrentStoreCash } from "./getCurrentStoreCash";
 import { useCaseFactory } from "../useCaseFactory";
 
-class GetStoreCashHistoryService implements IUseCaseFactory {
+class GetStoreCashHistory implements IUseCaseFactory {
   constructor(private getCurrentStoreCashUseCase = getCurrentStoreCash) {}
 
   async execute(): Promise<StoreCashHistoryDTO | undefined> {
@@ -30,4 +30,4 @@ class GetStoreCashHistoryService implements IUseCaseFactory {
   }
 }
 
-export const getStoreCashHistoryService = new GetStoreCashHistoryService();
+export const getStoreCashHistory = new GetStoreCashHistory();
