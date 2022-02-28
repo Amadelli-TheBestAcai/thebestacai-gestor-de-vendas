@@ -296,6 +296,9 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
                   reasontype === ReasonOutValue.PAG_FREELA) ? (
                   <Input
+                    placeholder={currencyFormater(
+                      (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
+                    )}
                     value={currencyFormater(
                       (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
                     )}
