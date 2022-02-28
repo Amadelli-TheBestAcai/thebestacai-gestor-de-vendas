@@ -2,7 +2,6 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 
-import { ipcRenderer } from "electron";
 import { Socket, io } from "socket.io-client";
 
 import { useUser } from "../../hooks/useUser";
@@ -57,38 +56,27 @@ const ChatForm: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [userMessage, setUserMessage] = useState<UserMessage | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  // useEffect(() => {
-  //   function boostrap() {
-  //     ipcRenderer.send("user:get");
-  //     ipcRenderer.once("user:get:response", (event, user) => {
-  //       const { name, email } = user;
-  //       setUserAccess({ name, email });
-  //       setSocket(() => {
-  //         const _socket = io(config.CHAT_DASH, {
-  //           extraHeaders: {
-  //             user: name,
-  //             email: email,
-  //           },
-  //         });
+  useEffect(() => {
+    function boostrap() {
+      const { name, email } = user;
+      setUserAccess({ name, email });
+      setSocket(() => {
+        const _socket = io(window.Main.env.CHAT_DASH, {
+          extraHeaders: {
+            user: name,
+            email: email,
+          },
+        });
+        _socket.on("userMessage", async (response) => {
+          console.log({ response });
+          setUserMessage(response);
+        });
 
-  //         _socket.on("userMessage", async (response) => {
-  //           setUserMessage(response);
-  //         });
-  //         _socket.on("handleQuery", async ({ admin, query }) => {
-  //           ipcRenderer.send("user:query", query);
-  //           ipcRenderer.once("user:query:response", (event, response) => {
-  //             _socket.emit("responseQuery", {
-  //               admin,
-  //               response,
-  //             });
-  //           });
-  //         });
-  //         return _socket;
-  //       });
-  //     });
-  //   }
-  //   boostrap();
-  // }, []);
+        return _socket;
+      });
+    }
+    boostrap();
+  }, []);
 
   const handleMessage = () => {
     if (!message || !message.length) {
@@ -99,18 +87,18 @@ const ChatForm: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     setMessage("");
   };
 
-  // const uploadFile = async (file) => {
-  //   const payload = new FormData();
-  //   payload.append("file", file);
-  //   payload.append("message", file.type);
-  //   payload.append("email", userAccess.email);
-  //   payload.append("created_by", userAccess.name);
-  //   await axios({
-  //     method: "POST",
-  //     url: `${env.CHAT_DASH}/message`,
-  //     data: payload,
-  //   });
-  // };
+  const uploadFile = async (file) => {
+    const payload = new FormData();
+    payload.append("file", file);
+    payload.append("message", file.type);
+    payload.append("email", userAccess.email);
+    payload.append("created_by", userAccess.name);
+    await axios({
+      method: "POST",
+      url: `${window.Main.env.CHAT_DASH}/message`,
+      data: payload,
+    });
+  };
 
   async function urltoFile(_url, fileName) {
     const response = await fetch(_url);

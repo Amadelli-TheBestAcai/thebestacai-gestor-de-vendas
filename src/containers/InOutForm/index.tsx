@@ -131,7 +131,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     }
 
     if (!value && !shopOrder?.total) {
-      return message.warning("Informe um valor");
+      return notification.warning({
+        message: "Valor não informado",
+        description: `Informe um valor válido.`,
+        duration: 5,
+      });
     } else if (!reasson && !reasontype) {
       return notification.warning({
         message: "O motivo não foi informado",
@@ -167,7 +171,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     setValue(null);
     setReasson(null);
     setReasonType(null);
-    message.success("Movimentação cadastrada com sucesso");
+    notification.success({
+      message: "Salva com sucesso!",
+      description: `Movimentação cadastrada com sucesso.`,
+      duration: 5,
+    });
     setLoading(false);
     setModalState(false);
     return document.getElementById("mainContainer").focus();
@@ -289,6 +297,9 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
                   reasontype === ReasonOutValue.PAG_FREELA) ? (
                   <Input
+                    placeholder={currencyFormater(
+                      (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
+                    )}
                     value={currencyFormater(
                       (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
                     )}
@@ -318,11 +329,10 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 >
                   <Input.TextArea
                     placeholder="Digite alguma obsevação"
-                    autoSize={{ minRows: 3, maxRows: 5 }}
+                    autoSize={{ minRows: 2, maxRows: 1 }}
                     showCount
                     maxLength={140}
                     value={reasson}
-                    onPressEnter={handleSubmit}
                     onChange={({ target: { value } }) => setReasson(value)}
                   />
                 </Form.Item>
@@ -476,7 +486,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                         >
                           <Input.TextArea
                             placeholder="Digite alguma obsevação"
-                            autoSize={{ minRows: 3, maxRows: 5 }}
+                            autoSize={{ minRows: 2, maxRows: 1 }}
                             showCount
                             maxLength={140}
                             onChange={({ target: { value } }) =>

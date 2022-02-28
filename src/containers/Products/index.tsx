@@ -3,6 +3,10 @@ import { ProductDto } from "../../models/dtos/product";
 
 import Spinner from "../../components/Spinner";
 import Product from "../../components/Product";
+import Centralizer from "../../containers/Centralizer";
+import EmptyProduct from "../../assets/svg/EmptyProduct.svg";
+
+import { notification, Empty } from "antd";
 
 import {
   Container,
@@ -17,7 +21,6 @@ import {
   ProductsContent,
   LoadingContainer,
 } from "./styles";
-import { notification } from "antd";
 
 type ProductByCategory = {
   category: string;
@@ -80,38 +83,55 @@ const ProductsContainer: React.FC = () => {
           <Spinner />
         </LoadingContainer>
       ) : (
-        <TabContainer defaultActiveKey="1" onChange={() => setSearchByName("")}>
-          {products?.map((productCategory, index) => (
-            <TabItem tab={productCategory.category} key={index + 1}>
-              <ProductSearch>
-                <IconContainer>
-                  <SearchIcon />
-                </IconContainer>
-                <InputSearchProduct
-                  placeholder="Procurar item"
-                  value={searchByName}
-                  onChange={({ target: { value } }) =>
-                    setSearchByName(value || "")
-                  }
-                />
-              </ProductSearch>
+        <>
+          {products.length !== 0 ? (
+            <TabContainer
+              defaultActiveKey="1"
+              onChange={() => setSearchByName("")}
+            >
+              {products?.map((productCategory, index) => (
+                <TabItem tab={productCategory.category} key={index + 1}>
+                  <ProductSearch>
+                    <IconContainer>
+                      <SearchIcon />
+                    </IconContainer>
+                    <InputSearchProduct
+                      placeholder="Procurar item"
+                      value={searchByName}
+                      onChange={({ target: { value } }) =>
+                        setSearchByName(value || "")
+                      }
+                    />
+                  </ProductSearch>
 
-              <Header>
-                <Column sm={11}>Produto</Column>
-                <Column sm={8}>Preço</Column>
-                <Column sm={5}>Ação</Column>
-              </Header>
+                  <Header>
+                    <Column sm={11}>Produto</Column>
+                    <Column sm={8}>Preço</Column>
+                    <Column sm={5}>Ação</Column>
+                  </Header>
 
-              <ProductsContent>
-                {handleFilter(productCategory, searchByName).products.map(
-                  (product) => (
-                    <Product key={product.product_id} product={product} />
-                  )
-                )}
-              </ProductsContent>
-            </TabItem>
-          ))}
-        </TabContainer>
+                  <ProductsContent>
+                    {handleFilter(productCategory, searchByName).products.map(
+                      (product) => (
+                        <Product key={product.product_id} product={product} />
+                      )
+                    )}
+                  </ProductsContent>
+                </TabItem>
+              ))}
+            </TabContainer>
+          ) : (
+            <Centralizer>
+              <Empty
+                description="Não existe nenhum produto cadastro para venda nesta loja. Acesse o Dashboard para cadastrar novos Produtos do Gestor"
+                image={EmptyProduct}
+                imageStyle={{
+                  height: 200,
+                }}
+              />
+            </Centralizer>
+          )}
+        </>
       )}
     </Container>
   );

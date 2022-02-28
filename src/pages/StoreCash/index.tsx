@@ -46,7 +46,7 @@ const StoreCash: React.FC = () => {
   const [storeCashToOpen, setStoreCashToOpen] = useState<string>();
 
   const [modalJustify, setModalJustify] = useState(false);
-  const [UpdatingCashObservation, setUpdatingCashObservation] = useState(false);
+  const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
 
   useEffect(() => {
@@ -77,21 +77,23 @@ const StoreCash: React.FC = () => {
       const { response: _balance, has_internal_error: errorOnBalance } =
         await window.Main.storeCash.getStoreCashBalance();
       if (errorOnBalance) {
-        notification.error({
+        return notification.error({
           message: "Erro ao encontrar balanço",
           duration: 5,
         });
-        return;
       }
 
       setBalance(_balance);
-      setStoreCashHistory(null);
+      setStoreCashHistory(_storeCashHistory);
+      console.log(_storeCashHistory);
       setCashes(availableStoreCashes);
       setIsConnected(isConnected);
       setLoading(false);
       if (
-        +_storeCashHistory?.result_cash !== 0 &&
-        !_storeCashHistory?.observation
+        _storeCashHistory !== undefined &&
+        +_storeCashHistory.in_result !== 0 &&
+        !_storeCashHistory?.observation &&
+        _storeCashHistory.closed_at !== null
       ) {
         setModalJustify(true);
       }
@@ -112,7 +114,9 @@ const StoreCash: React.FC = () => {
       {
         id: 2,
         label: "Entradas",
-        value: currencyFormater(+_storeCashHistory?.in_result),
+        value: storeCash.is_opened
+          ? "0,00"
+          : currencyFormater(+_storeCashHistory?.in_result),
       },
       {
         id: 3,
@@ -129,7 +133,9 @@ const StoreCash: React.FC = () => {
       {
         id: 5,
         label: "Saídas",
-        value: currencyFormater(+_storeCashHistory?.out_result),
+        value: storeCash.is_opened
+          ? "0,00"
+          : currencyFormater(+_storeCashHistory?.out_result),
       },
       {
         id: 6,
@@ -242,7 +248,7 @@ const StoreCash: React.FC = () => {
           +storeCashHistory?.result_cash
         )}]`}
         visible={modalJustify}
-        confirmLoading={UpdatingCashObservation}
+        confirmLoading={updatingCashObservation}
         destroyOnClose={true}
         closable={true}
         onCancel={() => setModalJustify(false)}
