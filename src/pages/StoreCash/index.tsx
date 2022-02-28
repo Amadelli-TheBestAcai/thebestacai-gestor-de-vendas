@@ -77,11 +77,10 @@ const StoreCash: React.FC = () => {
       const { response: _balance, has_internal_error: errorOnBalance } =
         await window.Main.storeCash.getStoreCashBalance();
       if (errorOnBalance) {
-        notification.error({
+        return notification.error({
           message: "Erro ao encontrar balanço",
           duration: 5,
         });
-        return;
       }
 
       setBalance(_balance);
