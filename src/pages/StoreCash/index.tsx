@@ -85,12 +85,15 @@ const StoreCash: React.FC = () => {
 
       setBalance(_balance);
       setStoreCashHistory(_storeCashHistory);
+      console.log(_storeCashHistory);
       setCashes(availableStoreCashes);
       setIsConnected(isConnected);
       setLoading(false);
       if (
-        +_storeCashHistory?.result_cash !== 0 &&
-        !_storeCashHistory?.observation
+        _storeCashHistory !== undefined &&
+        +_storeCashHistory.in_result !== 0 &&
+        !_storeCashHistory?.observation &&
+        _storeCashHistory.closed_at !== null
       ) {
         setModalJustify(true);
       }
@@ -111,7 +114,9 @@ const StoreCash: React.FC = () => {
       {
         id: 2,
         label: "Entradas",
-        value: currencyFormater(+_storeCashHistory?.in_result),
+        value: storeCash.is_opened
+          ? "0,00"
+          : currencyFormater(+_storeCashHistory?.in_result),
       },
       {
         id: 3,
@@ -128,7 +133,9 @@ const StoreCash: React.FC = () => {
       {
         id: 5,
         label: "Saídas",
-        value: currencyFormater(+_storeCashHistory?.out_result),
+        value: storeCash.is_opened
+          ? "0,00"
+          : currencyFormater(+_storeCashHistory?.out_result),
       },
       {
         id: 6,

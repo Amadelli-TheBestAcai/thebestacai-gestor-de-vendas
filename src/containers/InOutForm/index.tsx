@@ -328,11 +328,10 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 >
                   <Input.TextArea
                     placeholder="Digite alguma obsevação"
-                    autoSize={{ minRows: 3, maxRows: 5 }}
+                    autoSize={{ minRows: 2, maxRows: 1 }}
                     showCount
                     maxLength={140}
                     value={reasson}
-                    onPressEnter={handleSubmit}
                     onChange={({ target: { value } }) => setReasson(value)}
                   />
                 </Form.Item>
@@ -486,7 +485,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                         >
                           <Input.TextArea
                             placeholder="Digite alguma obsevação"
-                            autoSize={{ minRows: 3, maxRows: 5 }}
+                            autoSize={{ minRows: 2, maxRows: 1 }}
                             showCount
                             maxLength={140}
                             onChange={({ target: { value } }) =>
