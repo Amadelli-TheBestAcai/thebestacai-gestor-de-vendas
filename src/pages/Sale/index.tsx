@@ -14,7 +14,7 @@ import { SalesTypes } from "../../models/enums/salesTypes";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
 
 import notHandler from "../../assets/svg/notHandler.svg";
-import { Empty, Tooltip } from "antd";
+import { Empty, notification, Tooltip } from "antd";
 
 import {
   Container,
@@ -49,7 +49,14 @@ const Sale: React.FC<IProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       setIsLoading(true);
-      const _sales = await window.Main.sale.getSaleFromApi();
+      const { response: _sales, has_internal_error: errorOnGetSaleFromApi } =
+        await window.Main.sale.getSaleFromApi();
+      if (errorOnGetSaleFromApi) {
+        return notification.error({
+          message: "Erro ao obter vendas",
+          duration: 5,
+        });
+      }
 
       const payload = _sales.map((_sale) => ({
         ..._sale,
@@ -147,7 +154,10 @@ const Sale: React.FC<IProps> = ({ history }) => {
                         header={
                           <>
                             <Col sm={4}>{selectedSale.id}</Col>
-                            <Col sm={4}> R$ {selectedSale.total_sold}</Col>
+                            <Col sm={4}>
+                              {" "}
+                              R$ {currencyFormater(selectedSale.total_sold)}
+                            </Col>
                             <Col sm={4}>{selectedSale.quantity}</Col>
                             <Col sm={4}>
                               {moment(selectedSale.created_at)
@@ -159,12 +169,16 @@ const Sale: React.FC<IProps> = ({ history }) => {
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
                             >
-                              <Tooltip title="Remover" placement="bottom">
-                                <RemoveIcon />
-                              </Tooltip>
-                              <Tooltip title="Restaurar" placement="bottom">
-                                <RestoreIcon />
-                              </Tooltip>
+                              {!selectedSale.deleted_at && (
+                                <Tooltip title="Remover" placement="bottom">
+                                  <RemoveIcon />
+                                </Tooltip>
+                              )}
+                              {selectedSale.deleted_at && (
+                                <Tooltip title="Restaurar" placement="bottom">
+                                  <RestoreIcon />
+                                </Tooltip>
+                              )}
                               <Tooltip title="Imprimir" placement="bottom">
                                 <PrinterIcon />
                               </Tooltip>

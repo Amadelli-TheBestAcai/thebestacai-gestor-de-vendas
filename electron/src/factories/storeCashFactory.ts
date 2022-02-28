@@ -1,23 +1,45 @@
-import storeCashModel, { Entity } from "../models/storeCash";
+import { StoreCashHistoryDTO } from "../models/dtos/storeCashHistory";
+import { useCaseFactory } from "../usecases/useCaseFactory";
+import {
+  getCurrentStoreCash,
+  getStoreCashBalance,
+  closeStoreCash,
+  openStoreCash,
+  getAvailableStoreCashes,
+  getStoreCashHistoryService,
+  updateStoreCashObservation,
+} from "../usecases/storeCash";
+import {
+  BalanceDto,
+  StoreCashDto,
+  AvailableStoreCashesDto,
+} from "../models/gestor";
 
 export const storeCashFactory = {
   getAvailableStoreCashes: async () =>
-    await storeCashModel.getAvailableStoreCashes(),
-  getCurrent: async () => await storeCashModel.getOne(),
-  openStoreCash: async (
-    code: string,
-    amount_on_open: number
-  ): Promise<Entity | undefined> =>
-    await storeCashModel.openStoreCash(code, amount_on_open),
-  closeStoreCash: async (
-    code: string,
-    amount_on_open: number
-  ): Promise<Entity | undefined> =>
-    await storeCashModel.closeStoreCash(code, amount_on_open),
+    await useCaseFactory.execute<AvailableStoreCashesDto[]>(
+      getAvailableStoreCashes
+    ),
+  getCurrent: async () =>
+    await useCaseFactory.execute<StoreCashDto>(getCurrentStoreCash),
+  openStoreCash: async (code: string, amount_on_open: number) =>
+    await useCaseFactory.execute<StoreCashDto>(openStoreCash, {
+      code,
+      amount_on_open,
+    }),
+  closeStoreCash: async (code: string, amount_on_open: number) =>
+    await useCaseFactory.execute<StoreCashDto>(closeStoreCash, {
+      code,
+      amount_on_open,
+    }),
   getStoreCashBalance: async (withClosedCash = false) =>
-    await storeCashModel.getStoreCashBalance(withClosedCash),
+    await useCaseFactory.execute<BalanceDto>(getStoreCashBalance, {
+      withClosedCash,
+    }),
   getStoreCashHistoryService: async () =>
-    await storeCashModel.getStoreCashHistoryService(),
+    await useCaseFactory.execute<StoreCashHistoryDTO | undefined>(
+      getStoreCashHistoryService
+    ),
   updateStoreCashObservation: async (observation: string) =>
-    await storeCashModel.updateStoreCashObservation(observation),
+    await useCaseFactory.execute(updateStoreCashObservation, { observation }),
 };

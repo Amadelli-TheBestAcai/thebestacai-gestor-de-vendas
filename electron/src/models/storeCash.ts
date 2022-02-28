@@ -8,21 +8,11 @@ import { BalanceDTO } from "./dtos/balance";
 import { StoreCashHistoryDTO } from "./dtos/storeCashHistory";
 import { getBalance } from "../helpers/BalanceFormater";
 
-export type Entity = {
-  id: string;
-  code: string;
-  cash_id?: number;
-  history_id?: number;
-  store_id?: number;
-  amount_on_open: number;
-  is_opened: boolean;
-  is_online: boolean;
-  created_at?: string;
-};
+import { StoreCashDto } from "./gestor";
 
 export const context = "StoreCash";
 
-class StoreCash extends BaseRepository<Entity> {
+class StoreCash extends BaseRepository<StoreCashDto> {
   constructor(storageName = context) {
     super(storageName);
   }
@@ -30,8 +20,8 @@ class StoreCash extends BaseRepository<Entity> {
   async openStoreCash(
     code: string,
     amount_on_open: number
-  ): Promise<Entity | undefined> {
-    const payload: Entity = {
+  ): Promise<StoreCashDto | undefined> {
+    const payload: StoreCashDto = {
       id: v4(),
       code,
       amount_on_open,
@@ -109,7 +99,7 @@ class StoreCash extends BaseRepository<Entity> {
   async closeStoreCash(
     code: string,
     amount_on_close: number
-  ): Promise<Entity | undefined> {
+  ): Promise<StoreCashDto | undefined> {
     const isConnected = await checkInternet();
     if (isConnected) {
       const currentStore = await storeModel.getOne();
@@ -152,7 +142,7 @@ class StoreCash extends BaseRepository<Entity> {
     return balance;
   }
 
-  async getCurrentCash(): Promise<Entity | undefined> {
+  async getCurrentCash(): Promise<StoreCashDto | undefined> {
     return await this.getOne();
   }
 

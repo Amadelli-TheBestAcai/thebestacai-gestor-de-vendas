@@ -34,10 +34,15 @@ const Settings: React.FC = () => {
       centered: true,
       async onOk() {
         setLoading(true);
-        const _newSettings = await window.Main.settings.update(
-          settings.id,
-          settings
-        );
+        const { response: _newSettings, has_internal_error: errorOnSettings } =
+          await window.Main.settings.update(settings.id, settings);
+        if (errorOnSettings) {
+          notification.error({
+            message: "Erro ao atualizar as configurações",
+            duration: 5,
+          });
+          return;
+        }
         setSettings(_newSettings);
         notification.success({
           message: "Configurações salvas com sucesso!",
@@ -92,7 +97,7 @@ const Settings: React.FC = () => {
         <CardSettings title="Integração de Impressora">
           <SelectsContainer>
             <Select
-              disabled={!settings.should_use_balance}
+              disabled={!settings.should_use_printer}
               placeholder="Impressora"
               value={settings.printer}
               onChange={(printer) =>
@@ -109,16 +114,16 @@ const Settings: React.FC = () => {
           </SelectsContainer>
           <ActionContainer>
             <Switch
-              checked={settings.should_use_balance}
+              checked={settings.should_use_printer}
               onChange={() =>
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  should_use_balance: !settings.should_use_balance,
+                  should_use_printer: !settings.should_use_printer,
                 }))
               }
             />
             <span>
-              {!settings.should_use_balance ? "DESABILITADO" : "HABILITADO"}
+              {!settings.should_use_printer ? "DESABILITADO" : "HABILITADO"}
             </span>
           </ActionContainer>
         </CardSettings>

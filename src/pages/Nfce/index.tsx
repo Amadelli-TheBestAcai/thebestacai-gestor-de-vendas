@@ -54,6 +54,8 @@ import {
   ButtonFinishContent,
   Button,
   Form,
+  DeleteButton,
+  DeleteIcon,
 } from "./styles";
 
 const Nfce: React.FC = () => {
@@ -68,12 +70,17 @@ const Nfce: React.FC = () => {
 
   useEffect(() => {
     async function init() {
-      const _productsNfce = await window.Main.product.getProducts();
-      if (!_productsNfce) {
-        messageAnt.error("Falha ao obter produtos para NFe");
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.getProducts();
+      if (errorOnProducts) {
+        notification.error({
+          message: "Erro ao encontrar todos produtos",
+          duration: 5,
+        });
       }
-      setProducts(_productsNfce);
-      const currentStoreCash = await window.Main.storeCash.getCurrent();
+      setProducts(products);
+      const { response: currentStoreCash } =
+        await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {
         setCashIsOpen(true);
       } else {
@@ -471,13 +478,13 @@ const Nfce: React.FC = () => {
                               </ProductColumn>
                               <ProductColumn span={2}>
                                 <Tooltip title="Remover" placement="bottom">
-                                  {/* <DeleteButton
+                                  <DeleteButton
                                     onClick={() =>
                                       handlerRemoveProduct(product.id)
                                     }
                                   >
                                     <DeleteIcon />
-                                  </DeleteButton> */}
+                                  </DeleteButton>
                                 </Tooltip>
                               </ProductColumn>
                             </Product>
@@ -490,9 +497,9 @@ const Nfce: React.FC = () => {
                       <Form layout="vertical" form={form}>
                         <Row>
                           <Col span={24}>
-                            <TotalValue>
-                              VALOR TOTAL: <strong> R$ 0,00</strong>
-                            </TotalValue>
+                            <FormItem name="totalProdutos">
+                              <TotalValue disabled className="totalValue" />
+                            </FormItem>
                           </Col>
                           <Col span={8}>
                             <FormItem

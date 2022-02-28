@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import Spinner from "../../components/Spinner";
-import { Modal } from "antd";
+import { Modal, notification } from "antd";
 import { ProductDto } from "../../models/dtos/product";
 
 import {
@@ -37,7 +37,14 @@ const BalanceContainer: React.FC<IProps> = ({
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const selfService = await window.Main.product.getSelfService();
+      const { response: selfService, has_internal_error: errorOnSelfService } =
+        await window.Main.product.getSelfService();
+      if (errorOnSelfService) {
+        notification.error({
+          message: "Erro ao encontrar self-service",
+          duration: 5,
+        });
+      }
       setselfService(selfService);
       setLoading(false);
     }

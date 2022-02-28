@@ -31,7 +31,14 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
 
   useEffect(() => {
     async function init() {
-      const _stepSales = await window.Main.sale.getAllStepSales();
+      const { response: _stepSales, has_internal_error: errorOnStepSales } =
+        await window.Main.sale.getAllStepSales();
+      if (errorOnStepSales) {
+        return notification.error({
+          message: "Erro ao obter comanda",
+          duration: 5,
+        });
+      }
       setStepSales(_stepSales);
       setName("");
       setLoading(false);
@@ -65,7 +72,16 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
 
   const handleRestore = async (id: string) => {
     setLoading(true);
-    const _updatedSale = await window.Main.sale.recouverStepSales(id);
+    const {
+      response: _updatedSale,
+      has_internal_error: errorOnRecouverStepSales,
+    } = await window.Main.sale.recouverStepSales(id);
+    if (errorOnRecouverStepSales) {
+      return notification.error({
+        message: "Erro ao restaurar a comanda",
+        duration: 5,
+      });
+    }
     setSale(_updatedSale);
     setLoading(false);
     setModalState(false);

@@ -533,7 +533,7 @@ export const FormItem = styled(FormAnt.Item)`
   margin: 5px;
 `;
 
-export const TotalValue = styled.div`
+export const TotalValue = styled(InputAnt)`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -594,12 +594,12 @@ export const Button = styled(ButtonAnt)`
   }
 `;
 
-// export const DeleteButton = styled.button`
-//   padding: 5%;
-// `;
+export const DeleteButton = styled.button`
+  padding: 5%;
+`;
 
-// export const DeleteIcon = styled(TrashRestoreAlt)`
-//   width: 1.2rem;
-//   height: 1.2rem;
-//   color: var(--red-600);
-// `;
+export const DeleteIcon = styled(TrashRestoreAlt)`
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--red-600);
+`;

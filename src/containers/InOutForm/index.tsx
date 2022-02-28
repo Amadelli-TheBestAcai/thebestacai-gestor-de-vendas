@@ -129,7 +129,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     }
 
     if (!value && !shopOrder?.total) {
-      return message.warning("Informe um valor");
+      return notification.warning({
+        message: "Valor não informado",
+        description: `Informe um valor válido.`,
+        duration: 5,
+      });
     } else if (!reasson && !reasontype) {
       return notification.warning({
         message: "O motivo não foi informado",
@@ -148,15 +152,28 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     };
 
     setLoading(true);
-    await window.Main.handler.create({
-      cashHandler: payload.handler,
-      sendToShop: payload.sendToShop,
-      shopOrder: payload.shopOrder,
-    });
+
+    const { has_internal_error: errorOnCreateHandler, response: handler } =
+      await window.Main.handler.create({
+        cashHandler: payload.handler,
+        sendToShop: payload.sendToShop,
+        shopOrder: payload.shopOrder,
+      });
+    if (errorOnCreateHandler) {
+      return notification.error({
+        message: "Erro ao criar movimentação",
+        duration: 5,
+      });
+    }
+
     setValue(null);
     setReasson(null);
     setReasonType(null);
-    message.success("Movimentação cadastrada com sucesso");
+    notification.success({
+      message: "Salva com sucesso!",
+      description: `Movimentação cadastrada com sucesso.`,
+      duration: 5,
+    });
     setLoading(false);
     setModalState(false);
     return document.getElementById("mainContainer").focus();
@@ -197,8 +214,16 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     async function init() {
       const hasInternet = await window.Main.hasInternet();
       const store = await window.Main.store.registratedStore();
-      const purchaseProducts =
-        await window.Main.product.getAllPurchaseProducts();
+      const {
+        response: purchaseProducts,
+        has_internal_error: errorOnPurchaseProducts,
+      } = await window.Main.product.getAllPurchaseProducts();
+      if (errorOnPurchaseProducts) {
+        notification.error({
+          message: "Erro ao encontrar produtos para compra",
+          duration: 5,
+        });
+      }
       setStore(store?.company_id);
       setProductsCategory(purchaseProducts);
       setHasInternet(hasInternet);
@@ -271,6 +296,9 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
                   reasontype === ReasonOutValue.PAG_FREELA) ? (
                   <Input
+                    placeholder={currencyFormater(
+                      (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
+                    )}
                     value={currencyFormater(
                       (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
                     )}
@@ -300,11 +328,10 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 >
                   <Input.TextArea
                     placeholder="Digite alguma obsevação"
-                    autoSize={{ minRows: 3, maxRows: 5 }}
+                    autoSize={{ minRows: 2, maxRows: 1 }}
                     showCount
                     maxLength={140}
                     value={reasson}
-                    onPressEnter={handleSubmit}
                     onChange={({ target: { value } }) => setReasson(value)}
                   />
                 </Form.Item>
@@ -458,7 +485,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                         >
                           <Input.TextArea
                             placeholder="Digite alguma obsevação"
-                            autoSize={{ minRows: 3, maxRows: 5 }}
+                            autoSize={{ minRows: 2, maxRows: 1 }}
                             showCount
                             maxLength={140}
                             onChange={({ target: { value } }) =>

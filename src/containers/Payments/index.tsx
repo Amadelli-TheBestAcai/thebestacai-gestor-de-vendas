@@ -125,7 +125,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             key={index}
             style={{ background: buttonStyle.background }}
             onClick={buttonStyle.action}
-            disabled={shouldDisableButtons && !sale.items.length}
+            disabled={shouldDisableButtons && !sale?.items?.length}
           >
             {buttonStyle.icon} {buttonStyle.label}
           </Button>
@@ -138,7 +138,7 @@ const PaymentsContainer: React.FC<IProps> = ({
           <Column sm={8}>Valor</Column>
           <Column sm={8}>Ação</Column>
         </Header>
-        {sale.payments?.map((payment) => (
+        {sale?.payments?.map((payment) => (
           <Payment
             key={payment.id}
             payment={payment}
@@ -152,25 +152,29 @@ const PaymentsContainer: React.FC<IProps> = ({
           <ValueInfo>
             R$ Troco <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
-              {getChangeAmount(sale.total_sold, sale.total_paid, sale.discount)}
+              {getChangeAmount(
+                sale?.total_sold,
+                sale?.total_paid,
+                sale?.discount
+              )}
             </strong>
           </ValueInfo>
           <ValueInfo>
             R$ Desconto <br />{" "}
             <strong style={{ color: "var(--green-600" }}>
-              {sale.discount.toFixed(2).replace(".", ",")}
+              {sale?.discount.toFixed(2).replace(".", ",")}
             </strong>
           </ValueInfo>
           <ValueInfo>
             R$ Valor Pago <br />{" "}
             <strong style={{ color: "var(--green-600" }}>
-              {sale.total_paid.toFixed(2).replace(".", ",")}
+              {sale?.total_paid.toFixed(2).replace(".", ",")}
             </strong>
           </ValueInfo>
           <ValueInfo>
             Quantidade Itens <br />{" "}
             <strong style={{ color: "var(--grey-80" }}>
-              {sale.quantity || 0}
+              {sale?.quantity || 0}
             </strong>
           </ValueInfo>
         </ValuesContainer>
@@ -198,7 +202,7 @@ const PaymentsContainer: React.FC<IProps> = ({
           onEnterPress={addPayment}
           defaultValue={
             modalTitle !== "Dinheiro"
-              ? sale.total_sold - sale.total_paid - sale.discount
+              ? sale?.total_sold - sale?.total_paid - sale?.discount
               : 0
           }
         />

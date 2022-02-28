@@ -16,6 +16,7 @@ import {
   NfceIcon,
 } from "./styles";
 import moment from "moment";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = {
   sale: SaleDto;
@@ -24,6 +25,7 @@ type IProps = {
 };
 
 const Sale: React.FC<IProps> = ({ sale, onDelete, setShouldSearch }) => {
+  const { hasPermission } = useUser();
   const [nfceModal, setNfceModal] = useState(false);
   const {
     id,
@@ -99,13 +101,12 @@ const Sale: React.FC<IProps> = ({ sale, onDelete, setShouldSearch }) => {
             <ColHeader span={4}>{getType(type)}</ColHeader>
             <ColHeader span={4}>
               <PrinterIcon onClick={() => onPrinter()} />
-              {window.Main.user.hasPermission("sales.remove_sale") && (
+              {hasPermission("sales.remove_sale") && (
                 <RemoveIcon onClick={() => onDelete(id)} />
               )}
-              {window.Main.user.hasPermission("sales.emit_nfce") &&
-                !sale.nfce_id && (
-                  <NfceIcon onClick={() => setNfceModal(true)} />
-                )}
+              {hasPermission("sales.emit_nfce") && !sale.nfce_id && (
+                <NfceIcon onClick={() => setNfceModal(true)} />
+              )}
             </ColHeader>
           </Row>
         }

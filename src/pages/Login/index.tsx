@@ -5,6 +5,7 @@ import LogoImg from "../../assets/img/logo-login.png";
 import Spinner from "../../components/Spinner";
 import { StoreDto } from "../../models/dtos/store";
 import { useSettings } from "../../hooks/useSettings";
+import { useUser } from "../../hooks/useUser";
 
 import { Form, Select, notification } from "antd";
 
@@ -30,6 +31,7 @@ const Option = Select;
 type IProps = RouteComponentProps;
 
 const Login: React.FC<IProps> = ({ history }) => {
+  const { setUser: setContextUser } = useUser();
   const { settings, setSettings } = useSettings();
   const [user, setUser] = useState({
     username: settings.should_remember_user ? settings.rememberd_user : "",
@@ -68,18 +70,35 @@ const Login: React.FC<IProps> = ({ history }) => {
     }
     if (loggedUser) {
       const registredStore = await window.Main.store.hasRegistration();
+      setContextUser(loggedUser);
+      const { response: updatedSettings, has_internal_error: errorOnSettings } =
+        await window.Main.settings.update(settings.id, {
+          ...settings,
+          rememberd_user: settings.should_remember_user ? user.username : "",
+        });
+      if (errorOnSettings) {
+        notification.error({
+          message: "Erro ao atualizar as configurações",
+          duration: 5,
+        });
+        return;
+      }
 
-      const updatedSettings = await window.Main.settings.update(settings.id, {
-        ...settings,
-        rememberd_user: settings.should_remember_user ? user.username : "",
-      });
       setSettings(updatedSettings);
 
       if (registredStore) {
         setLoading(false);
         return history.push("/home");
       } else {
-        const stores = await window.Main.store.getFromApi();
+        const { response: stores, has_internal_error: errorOnStore } =
+          await window.Main.store.getFromApi();
+        if (errorOnStore) {
+          notification.error({
+            message: "Erro ao encontrar loja",
+            duration: 5,
+          });
+          return;
+        }
         setStores(stores);
         setLoading(false);
         setStep(2);
@@ -103,7 +122,17 @@ const Login: React.FC<IProps> = ({ history }) => {
     const storeToRegister = stores.find(
       (_store) => _store.company.id === store
     );
-    await window.Main.store.create(storeToRegister);
+    const { has_internal_error: errorOnStore } = await window.Main.store.create(
+      storeToRegister
+    );
+
+    if (errorOnStore) {
+      notification.error({
+        message: "Erro ao registrar a loja",
+        duration: 5,
+      });
+      return;
+    }
     return history.push("/home");
   };
 
@@ -117,10 +146,18 @@ const Login: React.FC<IProps> = ({ history }) => {
   };
 
   const rememberUserHandler = async () => {
-    const _updatedSettings = await window.Main.settings.update(settings.id, {
-      ...settings,
-      should_remember_user: !settings.should_remember_user,
-    });
+    const { response: _updatedSettings, has_internal_error: errorOnSettings } =
+      await window.Main.settings.update(settings.id, {
+        ...settings,
+        should_remember_user: !settings.should_remember_user,
+      });
+    if (errorOnSettings) {
+      notification.error({
+        message: "Erro ao atualizar as configurações",
+        duration: 5,
+      });
+      return;
+    }
     setSettings(_updatedSettings);
   };
 
@@ -192,6 +229,13 @@ const Login: React.FC<IProps> = ({ history }) => {
                         <Select
                           onChange={(value) => setStore(+value)}
                           placeholder="Selecione uma loja"
+                          optionFilterProp="children"
+                          showSearch
+                          filterOption={(input, option) =>
+                            option?.children
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0
+                          }
                         >
                           {stores.map((store) => (
                             <Option key={store.company_id}>

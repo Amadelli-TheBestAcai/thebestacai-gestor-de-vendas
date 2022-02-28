@@ -48,8 +48,18 @@ const Home: React.FC = () => {
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const _sale = await window.Main.sale.getCurrent();
-      const _storeCash = await window.Main.storeCash.getCurrent();
+
+      const { response: _sale, has_internal_error: errorOnSale } =
+        await window.Main.sale.getCurrentSale();
+      if (errorOnSale) {
+        notification.error({
+          message: "Erro ao obter venda atual",
+          duration: 5,
+        });
+        return;
+      }
+
+      const { response: _storeCash } = await window.Main.storeCash.getCurrent();
       setStoreCash(_storeCash);
       setSale(_sale);
       setLoading(false);
@@ -59,16 +69,20 @@ const Home: React.FC = () => {
 
   const addPayment = async () => {
     if (!currentPayment) {
-      return notification.warning({
+      return notification.error({
         message: "Pagamento inválido!",
         description: `Valor incorreto para pagamento.`,
         duration: 5,
       });
     }
-    const updatedSale = await window.Main.sale.addPayment(
-      currentPayment,
-      paymentType
-    );
+    const { response: updatedSale, has_internal_error: errorOnAddPayment } =
+      await window.Main.sale.addPayment(currentPayment, paymentType);
+    if (errorOnAddPayment) {
+      return notification.error({
+        message: "Erro ao adicionar pagamento",
+        duration: 5,
+      });
+    }
     setSale(updatedSale);
 
     setCurrentPayment(0);
@@ -76,7 +90,14 @@ const Home: React.FC = () => {
   };
 
   const removePayment = async (id: string) => {
-    const updatedSale = await window.Main.sale.deletePayment(id);
+    const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
+      await window.Main.sale.deletePayment(id);
+    if (errorOnDeletePayment) {
+      return notification.error({
+        message: "Erro ao remover pagamento",
+        duration: 5,
+      });
+    }
     setSale(updatedSale);
   };
 
