@@ -46,7 +46,7 @@ const StoreCash: React.FC = () => {
   const [storeCashToOpen, setStoreCashToOpen] = useState<string>();
 
   const [modalJustify, setModalJustify] = useState(false);
-  const [UpdatingCashObservation, setUpdatingCashObservation] = useState(false);
+  const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const StoreCash: React.FC = () => {
       }
 
       setBalance(_balance);
-      setStoreCashHistory(null);
+      setStoreCashHistory(_storeCashHistory);
       setCashes(availableStoreCashes);
       setIsConnected(isConnected);
       setLoading(false);
@@ -242,7 +242,7 @@ const StoreCash: React.FC = () => {
           +storeCashHistory?.result_cash
         )}]`}
         visible={modalJustify}
-        confirmLoading={UpdatingCashObservation}
+        confirmLoading={updatingCashObservation}
         destroyOnClose={true}
         closable={true}
         onCancel={() => setModalJustify(false)}
