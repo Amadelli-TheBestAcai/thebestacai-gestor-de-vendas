@@ -35,8 +35,8 @@ export const getBalance = (sales: SalesHistory[]): BalanceDTO => {
       const { total, money, credit, debit, pix, ticket } = getPayments(
         sale.payments
       );
-      balance.store.total += +total - +sale.change_amount;
-      balance.store.money += +money - +sale.change_amount;
+      balance.store.total += +total - +sale.change_amount - +sale.discount;
+      balance.store.money += +money - +sale.change_amount - +sale.discount;
       balance.store.credit += +credit;
       balance.store.debit += +debit;
       balance.store.pix += +pix;

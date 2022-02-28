@@ -16,8 +16,10 @@ class OpenStoreCash implements IUseCaseFactory {
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
-    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
-  ) {}
+    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
+    private saleRepository = new BaseRepository<StoreDto>(StorageNames.Sale),
+    private integratedSaleRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Sale)
+  ) { }
 
   async execute({
     amount_on_open,
@@ -49,6 +51,8 @@ class OpenStoreCash implements IUseCaseFactory {
       payload.is_online = true;
     }
     await this.storeCashRepository.clear();
+    await this.saleRepository.clear();
+    await this.integratedSaleRepository.clear();
     await this.storeCashRepository.create(payload);
     return payload;
   }

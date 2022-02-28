@@ -16,7 +16,7 @@ class AddPayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private getCurrentSaleUseCase = getCurrentSale
-  ) {}
+  ) { }
 
   async execute({ amount, type }: Request): Promise<SaleDto> {
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
@@ -36,9 +36,15 @@ class AddPayment implements IUseCaseFactory {
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     });
 
-    sale.total_paid = +sale.payments
+    const total_paid = +sale.payments
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
+
+    sale.total_paid = total_paid
+
+    if (total_paid > sale.total_sold) {
+      sale.change_amount = +(total_paid - sale.total_sold).toFixed(2)
+    }
 
     await this.saleRepository.update(sale.id, sale);
     return sale;
