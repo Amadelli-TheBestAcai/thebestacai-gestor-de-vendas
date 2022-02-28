@@ -8,6 +8,7 @@ import { SettingsDto } from "../models/dtos/settings";
 import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
+import { StoreDto } from "../models/dtos/store";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -34,6 +35,8 @@ type GlobalContextType = {
   };
   user: UserDto | null;
   setUser: Dispatch<SetStateAction<UserDto | null>>;
+  store: StoreDto | null;
+  setStore: Dispatch<SetStateAction<StoreDto | null>>;
   hasPermission: (permission: string) => Promise<boolean>;
 };
 
@@ -47,6 +50,7 @@ export function GlobalProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
+  const [store, setStore] = useState<StoreDto | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -60,6 +64,19 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
+
+      const {
+        response: _registredStore,
+        has_internal_error: errorOnRegistrationStore,
+      } = await window.Main.store.hasRegistration();
+
+      if (errorOnRegistrationStore) {
+        return notification.error({
+          message: "Falha ao obter loja registrada",
+          duration: 5,
+        });
+      }
+      setStore(_registredStore);
 
       const { response: _storeCash } = await window.Main.storeCash.getCurrent();
 
@@ -257,6 +274,8 @@ export function GlobalProvider({ children }) {
         user,
         setUser,
         hasPermission,
+        store,
+        setStore,
       }}
     >
       {children}

@@ -1,29 +1,23 @@
-import { BaseRepository } from "../repository/baseRepository";
+import { BaseRepository } from "../../repository/baseRepository";
+import { IUseCaseFactory } from "../useCaseFactory.interface";
+import { StorageNames } from "../../repository/storageNames";
+import { UserDto } from "../../models/gestor";
+import { checkInternet } from "../../providers/internetConnection";
+import janusApi from "../../providers/janusApi";
+import criptography from "../../providers/Criptography";
 import jwt_decode from "jwt-decode";
-import janusApi from "../providers/janusApi";
-import criptography from "../providers/Criptography";
-import { checkInternet } from "../providers/internetConnection";
 
-export type Entity = {
-  id: number;
+interface Request {
   username: string;
   password: string;
-  name: string;
-  email: string;
-  level: number;
-  image: string;
-  token: string;
-  is_actived: boolean;
-  permissions: string[];
-};
+}
 
-class User extends BaseRepository<Entity> {
-  loggedUser: Entity | null = null;
-  constructor(storageName = "User") {
-    super(storageName);
-  }
+class Login implements IUseCaseFactory {
+  constructor(
+    private userRepository = new BaseRepository<UserDto>(StorageNames.User)
+  ) {}
 
-  async login(username: string, password: string): Promise<Entity | undefined> {
+  async execute({ password, username }: Request): Promise<UserDto | undefined> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       const {
@@ -34,15 +28,14 @@ class User extends BaseRepository<Entity> {
       }
       const hashedPassword = await criptography.hash(password);
       const userPayload = {
-        ...jwt_decode<Entity>(access_token),
+        ...jwt_decode<UserDto>(access_token),
         username,
         password: hashedPassword,
         token: access_token,
         is_actived: true,
       };
-      this.loggedUser = userPayload;
 
-      let users = await this.getAll();
+      let users = await this.userRepository.getAll();
       users = users.map((_user) => ({
         ..._user,
         is_actived: false,
@@ -54,16 +47,16 @@ class User extends BaseRepository<Entity> {
 
       if (userIndex >= 0) {
         users[userIndex] = userPayload;
-        await this.clear();
-        await this.createMany(users);
+        await this.userRepository.clear();
+        await this.userRepository.createMany(users);
       } else {
-        await this.clear();
-        await this.createMany([...users, userPayload]);
+        await this.userRepository.clear();
+        await this.userRepository.createMany([...users, userPayload]);
       }
 
       return userPayload;
     } else {
-      let users = await this.getAll();
+      let users = await this.userRepository.getAll();
       users = users.map((_user) => ({
         ..._user,
         is_actived: false,
@@ -84,13 +77,12 @@ class User extends BaseRepository<Entity> {
       }
 
       users[userIndex].is_actived = true;
-      this.loggedUser = users[userIndex];
-      await this.clear();
-      await this.createMany(users);
+      await this.userRepository.clear();
+      await this.userRepository.createMany(users);
 
       return users[userIndex];
     }
   }
 }
 
-export default new User();
+export const login = new Login();

@@ -1,4 +1,3 @@
-import { NfeDTO } from "../models/dtos/nfe";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import {
   buildNewSale,
@@ -22,7 +21,7 @@ import {
   emitNfce,
 } from "../usecases/sale";
 import { SaleDto, ProductDto, EmitNfceDto } from "../models/gestor";
-import { SaleFromApiDTO, AppSaleDTO } from "../models/dtos";
+import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
 
 export const saleFactory = {
   getCurrentSale: async () =>
