@@ -1,4 +1,3 @@
-import storeModel from "../models/store";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import { createStore, hasRegistration, getFromApi } from "../usecases/store";
 import { StoreDto } from "../models/gestor";
