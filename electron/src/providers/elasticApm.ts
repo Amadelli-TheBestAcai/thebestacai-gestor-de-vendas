@@ -1,4 +1,5 @@
 import apm from "elastic-apm-node"
+import Datastore from 'nedb'
 import { checkInternet } from "./internetConnection"
 import winston, { Logger } from "winston"
 import { ElasticsearchTransport, ElasticsearchTransportOptions } from "winston-elasticsearch"
@@ -12,8 +13,8 @@ import env from "./env.json"
 class ElasticApm {
   private logger: Logger
   private startTime = new Date()
+  private apmTempRepository: Datastore
   constructor(
-    private apmTempRepository = new BaseRepository<any>(StorageNames.APM_Temp),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private storeCashRepository = new BaseRepository<StoreCashDto>(StorageNames.StoreCash),
   ) {
@@ -33,6 +34,7 @@ class ElasticApm {
         new ElasticsearchTransport(esTransportOpts)
       ]
     });
+    this.apmTempRepository = new Datastore({ filename: `${process.env.AppData}/GestorDatabase/apm_temp.db`, autoload: true });
   }
 
   start(): void {
@@ -64,6 +66,33 @@ class ElasticApm {
 
     if (hasInternet) {
       this.logger.info(log)
+
+      const notIntegratedLogs = await this.apmTempRepository.getAllData();
+
+      if (notIntegratedLogs.length) {
+        await Promise.all(
+          notIntegratedLogs.map(async nextPayload => {
+            await this.integrateTempLogs(nextPayload);
+          })
+        )
+      }
+    } else {
+      await this.apmTempRepository.insert(log)
+      const notIntegratedLogs = await this.apmTempRepository.getAllData();
+      console.log(notIntegratedLogs)
+    }
+  }
+
+  private async integrateTempLogs(payload) {
+    try {
+      this.logger.info(payload)
+      await this.apmTempRepository.remove({ _id: payload._id })
+    } catch (error) {
+      await this.apmTempRepository.insert({
+        message: 'Falha ao integrar com a cloud',
+        payload,
+        error,
+      })
     }
   }
 }
