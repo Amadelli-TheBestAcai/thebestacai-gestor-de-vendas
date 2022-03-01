@@ -107,18 +107,18 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       const inConnected = await window.Main.hasInternet();
       setHasConnection(inConnected);
       const salesResult: IntegrateAppSalesDTO = {
-        sales_in_delivery: _sale.length,
-        total: _sale.reduce((total, sale) => total + +sale.valor_pedido, 0),
+        sales_in_delivery: _sale?.length,
+        total: _sale?.reduce((total, sale) => total + +sale.valor_pedido, 0),
         money: _sale
-          .filter((sale) => +sale.tipo_pagamento === PaymentType.DINHEIRO)
+          ?.filter((sale) => +sale.tipo_pagamento === PaymentType.DINHEIRO)
           .reduce((total, sale) => total + +sale.valor_pedido, 0),
         credit_card: _sale
-          .filter((sale) => +sale.tipo_pagamento === PaymentType.CREDITO)
+          ?.filter((sale) => +sale.tipo_pagamento === PaymentType.CREDITO)
           .reduce((total, sale) => total + +sale.valor_pedido, 0),
         debit_card: _sale
-          .filter((sale) => +sale.tipo_pagamento === PaymentType.DEBITO)
+          ?.filter((sale) => +sale.tipo_pagamento === PaymentType.DEBITO)
           .reduce((total, sale) => total + +sale.valor_pedido, 0),
-        salesIds: _sale.map((sale) => sale.id),
+        salesIds: _sale?.map((sale) => sale.id),
       };
       setAppSalesResult(salesResult);
       setLoading(false);

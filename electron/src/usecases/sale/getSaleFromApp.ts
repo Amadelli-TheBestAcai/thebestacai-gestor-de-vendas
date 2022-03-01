@@ -17,7 +17,7 @@ class GetSaleFromApp implements IUseCaseFactory {
     )
   ) {}
 
-  async execute(): Promise<AppSaleDTO[]> {
+  async execute(): Promise<AppSaleDTO[] | undefined> {
     const is_online = await checkInternet();
     if (!is_online) {
       return [];
@@ -25,11 +25,13 @@ class GetSaleFromApp implements IUseCaseFactory {
 
     const currentCash = await this.storeCashRepository.getOne();
     if (!currentCash || !currentCash?.is_opened) {
+      return undefined;
       throw new Error("Caixa fechado");
     }
 
     const { store_id } = currentCash;
     if (!store_id) {
+      return undefined;
       throw new Error("Id da loja não encontrado");
     }
 
