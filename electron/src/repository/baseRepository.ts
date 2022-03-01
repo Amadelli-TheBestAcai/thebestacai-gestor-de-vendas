@@ -11,17 +11,18 @@ export class BaseRepository<T extends { id?: string | number }>
     this.storageName = storageName;
   }
 
-  async create(payload: T): Promise<void> {
+  async create(payload: T): Promise<T> {
     const entities =
       (await database.getConnection().getItem(this.storageName)) || [];
-    await database.getConnection().setItem(this.storageName, [
-      ...entities,
-      {
-        ...payload,
-        id: payload?.id || v4(),
-        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-      },
-    ]);
+    const entity: T = {
+      ...payload,
+      id: payload?.id || v4(),
+      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+    };
+    await database
+      .getConnection()
+      .setItem(this.storageName, [...entities, entity]);
+    return entity;
   }
 
   async createMany(payload: T[]): Promise<void> {

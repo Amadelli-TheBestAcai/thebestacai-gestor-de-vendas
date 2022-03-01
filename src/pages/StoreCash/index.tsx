@@ -66,7 +66,7 @@ const StoreCash: React.FC = () => {
       const {
         response: _storeCashHistory,
         has_internal_error: errorOnGetCashHistory,
-      } = await window.Main.storeCash.getStoreCashHistoryService();
+      } = await window.Main.storeCash.getStoreCashHistory();
       if (errorOnGetCashHistory) {
         notification.error({
           message: "Erro ao obter Histórico do caixa",
@@ -114,7 +114,7 @@ const StoreCash: React.FC = () => {
       {
         id: 2,
         label: "Entradas",
-        value: storeCash.is_opened
+        value: storeCash?.is_opened
           ? "0,00"
           : currencyFormater(+_storeCashHistory?.in_result),
       },
@@ -133,7 +133,7 @@ const StoreCash: React.FC = () => {
       {
         id: 5,
         label: "Saídas",
-        value: storeCash.is_opened
+        value: storeCash?.is_opened
           ? "0,00"
           : currencyFormater(+_storeCashHistory?.out_result),
       },

@@ -27,13 +27,14 @@ import {
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
+import { useStore } from "../../hooks/useStore";
 
 type ComponentProps = RouteComponentProps;
 
 const Actions: React.FC<ComponentProps> = ({ history }) => {
   const { discountModalHandler } = useSale();
+  const { store } = useStore();
   const { user } = useUser();
-  const [store, setStore] = useState<string | undefined>(undefined);
   const [cash, setCash] = useState<string | undefined>("");
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
@@ -42,10 +43,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      const store = await window.Main.store.hasRegistration();
       const { response: storeCash } = await window.Main.storeCash.getCurrent();
-
-      setStore(store.company.company_name);
       setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
     }
     init();
@@ -77,7 +75,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <InfosAndChat>
         <ContentHeaderInfos>
           <InfoStore>
-            {store?.toUpperCase()} <br />
+            {store?.company?.company_name?.toUpperCase()} <br />
             <span
               style={{
                 color: cash === "ABERTO" ? "green" : "red",

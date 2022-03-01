@@ -2,7 +2,8 @@ import { useCaseFactory } from "../useCaseFactory";
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { onlineIntegration } from "./onlineIntegration";
+import { SalesTypes } from "../../models/enums/salesTypes";
+import { finishSale } from "./finishSale";
 import { SaleDto } from "../../models/gestor";
 
 interface Request {
@@ -17,8 +18,8 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Not_Integrated_Sale
     ),
-    private onlineIntegrationUseCase = onlineIntegration
-  ) {}
+    private finishSaleUseCase = finishSale
+  ) { }
 
   async execute({ type }: Request): Promise<void> {
     const deliverySales = await this.deliverySaleRepository.getAll();
@@ -34,16 +35,25 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
     const deliveryToIntegrate = deliverySales.filter(
       (_deliverySale) => _deliverySale.type === type
     );
-    await this.notIntegratedSaleRepository.createMany(deliveryToIntegrate);
 
-    const { has_internal_error: errorOnOnlineTntegrate, response } =
-      await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
+    await Promise.all(
+      deliveryToIntegrate.map(async payload => {
+        const { has_internal_error: errorOnOnlineTntegrate, response } =
+          await useCaseFactory.execute<void>(this.finishSaleUseCase,
+            {
+              payload: {
+                ...payload,
+                formated_type: SalesTypes[payload.type]
+              }, fromDelivery: true
+            });
+        if (errorOnOnlineTntegrate) {
+          throw new Error("Erro ao integrar venda online");
+        } else {
+          return response;
+        }
 
-    if (errorOnOnlineTntegrate) {
-      throw new Error("Erro ao integrar venda online");
-    } else {
-      return response;
-    }
+      })
+    )
   }
 }
 

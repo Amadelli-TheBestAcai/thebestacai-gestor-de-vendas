@@ -8,6 +8,7 @@ export type SaleDto = {
   quantity: number;
   change_amount: number;
   type: number;
+  formated_type?: string;
   discount: number;
   nfce_id?: number;
   nfce_url?: string;

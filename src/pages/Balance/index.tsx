@@ -4,10 +4,12 @@ import { PieChart } from "react-minimal-pie-chart";
 import DisconectedForm from "../../containers/DisconectedForm";
 
 import Spinner from "../../components/Spinner";
+import CashNotFound from "../../components/CashNotFound";
 import pixImg from "../../assets/svg/pixIcon.svg";
 
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { Balance as BalanceModel } from "../../models/balance";
+import { StoreCashDto } from "../../models/dtos/storeCash";
 
 import {
   Container,
@@ -41,19 +43,21 @@ const Balance: React.FC = () => {
   const [isLoading, setLoading] = useState(true);
   const [balance, setBalance] = useState<BalanceModel | null>(null);
   const [currentTab, setCurrentTab] = useState("delivery");
+  const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
 
   useEffect(() => {
     async function init() {
       const { response: _balance, has_internal_error: errorOnBalance } =
         await window.Main.storeCash.getStoreCashBalance();
       if (errorOnBalance) {
-        notification.error({
+        return notification.error({
           message: "Erro ao encontrar o balanço",
           duration: 5,
         });
-        return;
       }
       const _isConnected = await window.Main.hasInternet();
+      const { response: _storeCash } = await window.Main.storeCash.getCurrent();
+      setStoreCash(_storeCash);
       setBalance(_balance);
       setLoading(false);
       setIsConected(_isConnected);
@@ -259,97 +263,107 @@ const Balance: React.FC = () => {
       {isLoading ? (
         <Spinner />
       ) : isConected ? (
-        <PageContent>
-          <Header>
-            <h2>Balanço</h2>
-          </Header>
+        <>
+          {" "}
+          {storeCash?.is_opened ? (
+            <PageContent>
+              <Header>
+                <h2>Balanço</h2>
+              </Header>
 
-          <TabContainer>
-            <Tabs
-              defaultActiveKey="1"
-              onChange={(id_tab) => setCurrentTab(id_tab)}
-            >
-              {createTabPanes(balance).map((_tab) => (
-                <TabPane tab={_tab.label} key={_tab.id}>
-                  <Content>
-                    <h2>Estátisticas</h2>
-                    <PaymentTypesContainer>
-                      <PaymentTypes>
-                        {createAmountTypePayments(_tab.id, balance).map(
-                          (typePayment) => (
-                            <CardType>
-                              <IconContainer>{typePayment.icon}</IconContainer>
-                              <p>{typePayment.type}</p>
+              <TabContainer>
+                <Tabs
+                  defaultActiveKey="1"
+                  onChange={(id_tab) => setCurrentTab(id_tab)}
+                >
+                  {createTabPanes(balance).map((_tab) => (
+                    <TabPane tab={_tab.label} key={_tab.id}>
+                      <Content>
+                        <h2>Estátisticas</h2>
+                        <PaymentTypesContainer>
+                          <PaymentTypes>
+                            {createAmountTypePayments(_tab.id, balance).map(
+                              (typePayment) => (
+                                <CardType>
+                                  <IconContainer>
+                                    {typePayment.icon}
+                                  </IconContainer>
+                                  <p>{typePayment.type}</p>
 
-                              {_tab.id !== "billing" ? (
-                                <span>
-                                  R$ {currencyFormater(+typePayment.value)}
-                                </span>
-                              ) : (
-                                <>
-                                  {typePayment.id === 10 ||
-                                  typePayment.id === 11 ? (
+                                  {_tab.id !== "billing" ? (
                                     <span>
                                       R$ {currencyFormater(+typePayment.value)}
                                     </span>
                                   ) : (
-                                    <span>{+typePayment.value}</span>
+                                    <>
+                                      {typePayment.id === 10 ||
+                                      typePayment.id === 11 ? (
+                                        <span>
+                                          R${" "}
+                                          {currencyFormater(+typePayment.value)}
+                                        </span>
+                                      ) : (
+                                        <span>{+typePayment.value}</span>
+                                      )}
+                                    </>
                                   )}
-                                </>
+                                </CardType>
+                              )
+                            )}
+                          </PaymentTypes>
+                          <ChartContainer>
+                            <PieChart
+                              data={createPaymentsPie(_tab.id, balance)}
+                              lineWidth={18}
+                              rounded
+                              background="var(--grey-70)"
+                              label={({ x, y, dx, dy }) => (
+                                <text
+                                  x={x}
+                                  y={y}
+                                  dx={dx}
+                                  dy={dy}
+                                  dominant-baseline="central"
+                                  text-anchor="middle"
+                                  style={{
+                                    fontSize: "0.6rem",
+                                    fill: "var(--grey-100)",
+                                  }}
+                                >
+                                  R$ {currencyFormater(balance[_tab.id].total)}
+                                </text>
                               )}
-                            </CardType>
-                          )
-                        )}
-                      </PaymentTypes>
-                      <ChartContainer>
-                        <PieChart
-                          data={createPaymentsPie(_tab.id, balance)}
-                          lineWidth={18}
-                          rounded
-                          background="var(--grey-70)"
-                          label={({ x, y, dx, dy }) => (
-                            <text
-                              x={x}
-                              y={y}
-                              dx={dx}
-                              dy={dy}
-                              dominant-baseline="central"
-                              text-anchor="middle"
-                              style={{
-                                fontSize: "0.6rem",
-                                fill: "var(--grey-100)",
-                              }}
-                            >
-                              R$ {currencyFormater(balance[_tab.id].total)}
-                            </text>
-                          )}
-                          animate
-                          labelPosition={0}
-                        />
-                      </ChartContainer>
-                    </PaymentTypesContainer>
-                    <FooterContainer>
-                      <footer>
-                        <span>Legenda Gráfico</span>
-                        <LegendDescription>
-                          {legendGraph.map((legend) => (
-                            <div>
-                              <div
-                                id="circle"
-                                style={{ background: `${legend.color}` }}
-                              />
-                              <span>{legend.label}</span>
-                            </div>
-                          ))}
-                        </LegendDescription>
-                      </footer>
-                    </FooterContainer>
-                  </Content>
-                </TabPane>
-              ))}
-            </Tabs>
-          </TabContainer>
-        </PageContent>
+                              animate
+                              labelPosition={0}
+                            />
+                          </ChartContainer>
+                        </PaymentTypesContainer>
+                        <FooterContainer>
+                          <footer>
+                            <span>Legenda Gráfico</span>
+                            <LegendDescription>
+                              {legendGraph.map((legend) => (
+                                <div>
+                                  <div
+                                    id="circle"
+                                    style={{ background: `${legend.color}` }}
+                                  />
+                                  <span>{legend.label}</span>
+                                </div>
+                              ))}
+                            </LegendDescription>
+                          </footer>
+                        </FooterContainer>
+                      </Content>
+                    </TabPane>
+                  ))}
+                </Tabs>
+              </TabContainer>
+            </PageContent>
+          ) : (
+            <CashNotFound />
+          )}
+        </>
       ) : (
         <DisconectedForm />
       )}
