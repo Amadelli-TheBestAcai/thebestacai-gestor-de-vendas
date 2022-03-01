@@ -15,4 +15,5 @@ export enum StorageNames {
   StoreCash = "StoreCash",
   User = "User",
   Errors = "Errors",
+  APM_Temp = "APM_Temp",
 }

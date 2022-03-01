@@ -192,6 +192,12 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         const payload = sale;
         payload.quantity = 1;
         payload.type = deliveryType;
+        const total = payload.payments.reduce(
+          (total, payment) => total + +payment.amount,
+          0
+        );
+        payload.total_sold = total;
+        payload.total_paid = total;
         const { has_internal_error: errorOnCreateDelivery } =
           await window.Main.sale.createDelivery(payload);
         if (errorOnCreateDelivery) {
@@ -246,7 +252,10 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
 
         const { has_internal_error: errorOnFinishSAle } =
-          await window.Main.sale.finishSale(payload, true);
+          await window.Main.sale.finishSale(
+            { ...payload, formated_type: SalesTypes[payload.type] },
+            true
+          );
         if (errorOnFinishSAle) {
           return notification.error({
             message: "Erro ao finalizar uma venda",

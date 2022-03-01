@@ -20,7 +20,7 @@ class FinishSale implements IUseCaseFactory {
       StorageNames.Not_Integrated_Sale
     ),
     private onlineIntegrationUseCase = onlineIntegration
-  ) {}
+  ) { }
 
   async execute({ payload, fromDelivery }: Request): Promise<void> {
     payload.is_current = false;
