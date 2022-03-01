@@ -54,6 +54,8 @@ import {
   ButtonFinishContent,
   Button,
   Form,
+  DeleteButton,
+  DeleteIcon,
 } from "./styles";
 
 const Nfce: React.FC = () => {
@@ -476,13 +478,13 @@ const Nfce: React.FC = () => {
                               </ProductColumn>
                               <ProductColumn span={2}>
                                 <Tooltip title="Remover" placement="bottom">
-                                  {/* <DeleteButton
+                                  <DeleteButton
                                     onClick={() =>
                                       handlerRemoveProduct(product.id)
                                     }
                                   >
                                     <DeleteIcon />
-                                  </DeleteButton> */}
+                                  </DeleteButton>
                                 </Tooltip>
                               </ProductColumn>
                             </Product>
@@ -495,9 +497,9 @@ const Nfce: React.FC = () => {
                       <Form layout="vertical" form={form}>
                         <Row>
                           <Col span={24}>
-                            <TotalValue>
-                              VALOR TOTAL: <strong> R$ 0,00</strong>
-                            </TotalValue>
+                            <FormItem name="totalProdutos">
+                              <TotalValue disabled className="totalValue" />
+                            </FormItem>
                           </Col>
                           <Col span={8}>
                             <FormItem
