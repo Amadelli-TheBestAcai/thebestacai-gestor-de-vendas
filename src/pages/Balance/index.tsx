@@ -147,7 +147,6 @@ const Balance: React.FC = () => {
     const response = [];
 
     if (tab === "store" || tab === "delivery") {
-      console.log(tab);
       response.push(
         {
           id: 1,
