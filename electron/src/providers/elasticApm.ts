@@ -64,17 +64,6 @@ class ElasticApm {
 
     if (hasInternet) {
       this.logger.info(log)
-
-      const notIntegratedLogs = await this.apmTempRepository.getAll();
-
-      if (notIntegratedLogs.length) {
-        for (const notIntegratedPayload of notIntegratedLogs) {
-          this.logger.info(notIntegratedPayload)
-        }
-        await this.apmTempRepository.clear()
-      }
-    } else {
-      await this.apmTempRepository.create(log)
     }
   }
 }
