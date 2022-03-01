@@ -47,11 +47,10 @@ const Balance: React.FC = () => {
       const { response: _balance, has_internal_error: errorOnBalance } =
         await window.Main.storeCash.getStoreCashBalance();
       if (errorOnBalance) {
-        notification.error({
+        return notification.error({
           message: "Erro ao encontrar o balanço",
           duration: 5,
         });
-        return;
       }
       const _isConnected = await window.Main.hasInternet();
       setBalance(_balance);
@@ -143,6 +142,7 @@ const Balance: React.FC = () => {
     const response = [];
 
     if (tab === "store" || tab === "delivery") {
+      console.log(tab);
       response.push(
         {
           id: 1,

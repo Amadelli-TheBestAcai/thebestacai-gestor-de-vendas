@@ -15,6 +15,12 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+  win.setTitle("Gestor de Vendas");
+
+  win.on("page-title-updated", function (e) {
+    e.preventDefault();
+  });
+
   if (app.isPackaged) {
     // 'build/index.html'
     win.loadURL(`file://${__dirname}/../index.html`);
