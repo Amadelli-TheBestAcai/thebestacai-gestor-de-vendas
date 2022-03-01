@@ -14,7 +14,7 @@ import { SalesTypes } from "../../models/enums/salesTypes";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
 
 import notHandler from "../../assets/svg/notHandler.svg";
-import { Empty, notification, Tooltip } from "antd";
+import { Empty, notification, Tooltip, Modal } from "antd";
 
 import {
   Container,
@@ -82,25 +82,41 @@ const Sale: React.FC<IProps> = ({ history }) => {
     }
   }, [shouldSearch]);
 
-  // const onDelete = (id: string): void => {
-  //   confirm({
-  //     content: "Tem certeza que gostaria de remover esta venda",
-  //     okText: "Sim",
-  //     okType: "default",
-  //     cancelText: "Não",
-  //     async onOk() {
-  //       setIsLoading(true);
-  //       const success = await window.Main.sale.deleteSaleFromApi(id);
-  //       if (!success) {
-  //         message.warning("Falha ao remover venda");
-  //       }
-  //       const _sale = await window.Main.sale.getSaleFromApi();
-  //       setSales(_sale);
-  //       message.success("Venda removida com sucesso");
-  //       setIsLoading(false);
-  //     },
-  //   });
-  // };
+  const onDelete = (id: string): void => {
+    Modal.confirm({
+      content: "Tem certeza que gostaria de remover esta venda",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+      async onOk() {
+        try {
+          setIsLoading(true);
+
+          const success = await window.Main.sale.deleteSaleFromApi(id);
+          if (!success) {
+            return notification.error({
+              message: "Oops! Falha ao remover venda.",
+              duration: 5,
+            });
+          }
+
+          //  const _sale = await window.Main.sale.getSaleFromApi();
+          //  setSales(_sale);
+
+          return notification.success({
+            message: "Venda removida com sucesso!",
+            duration: 5,
+          });
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+          setShouldSearch(false);
+        }
+      },
+    });
+  };
 
   // const handleIntegrate = () => {
   //   setIsIntegrating(true)
@@ -171,7 +187,11 @@ const Sale: React.FC<IProps> = ({ history }) => {
                             >
                               {!selectedSale.deleted_at && (
                                 <Tooltip title="Remover" placement="bottom">
-                                  <RemoveIcon />
+                                  <RemoveIcon
+                                    onClick={() =>
+                                      onDelete(selectedSale.id.toString())
+                                    }
+                                  />
                                 </Tooltip>
                               )}
                               {selectedSale.deleted_at && (

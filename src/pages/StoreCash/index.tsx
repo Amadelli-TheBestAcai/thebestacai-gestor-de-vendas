@@ -114,7 +114,7 @@ const StoreCash: React.FC = () => {
       {
         id: 2,
         label: "Entradas",
-        value: storeCash.is_opened
+        value: storeCash?.is_opened
           ? "0,00"
           : currencyFormater(+_storeCashHistory?.in_result),
       },
@@ -133,7 +133,7 @@ const StoreCash: React.FC = () => {
       {
         id: 5,
         label: "Saídas",
-        value: storeCash.is_opened
+        value: storeCash?.is_opened
           ? "0,00"
           : currencyFormater(+_storeCashHistory?.out_result),
       },
