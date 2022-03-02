@@ -1,8 +1,5 @@
-import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
-import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
-import { ProductDto, StoreDto } from "../../models/gestor";
 import odinApi from "../../providers/odinApi";
 
 class CheckUpdates implements IUseCaseFactory {
@@ -18,13 +15,11 @@ class CheckUpdates implements IUseCaseFactory {
       const server = {
         version,
         high_priority: version.split(".")[0],
-        low_priority: version.split(".")[1]
       }
 
       const local = {
         version: pkg_version,
         high_priority: pkg_version.split(".")[0],
-        low_priority: pkg_version.split(".")[1]
       }
 
       console.log({
