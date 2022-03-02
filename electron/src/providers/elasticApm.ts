@@ -1,5 +1,4 @@
 import apm from "elastic-apm-node"
-import Datastore from 'nedb'
 import { checkInternet } from "./internetConnection"
 import winston, { Logger } from "winston"
 import { ElasticsearchTransport, ElasticsearchTransportOptions } from "winston-elasticsearch"
@@ -13,10 +12,11 @@ import env from "./env.json"
 class ElasticApm {
   private logger: Logger
   private startTime = new Date()
-  private apmTempRepository: Datastore
   constructor(
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private storeCashRepository = new BaseRepository<StoreCashDto>(StorageNames.StoreCash),
+    private apmTempRepository = new BaseRepository<any>(StorageNames.Apm_Temp),
+
   ) {
     const esTransportOpts: ElasticsearchTransportOptions = {
       apm,
@@ -34,7 +34,6 @@ class ElasticApm {
         new ElasticsearchTransport(esTransportOpts)
       ]
     });
-    this.apmTempRepository = new Datastore({ filename: `${process.env.AppData}/GestorDatabase/apm_temp.db`, autoload: true });
   }
 
   start(): void {
@@ -67,7 +66,7 @@ class ElasticApm {
     if (hasInternet) {
       this.logger.info(log)
 
-      const notIntegratedLogs = await this.apmTempRepository.getAllData();
+      const notIntegratedLogs = await this.apmTempRepository.getAll();
 
       if (notIntegratedLogs.length) {
         await Promise.all(
@@ -77,18 +76,16 @@ class ElasticApm {
         )
       }
     } else {
-      await this.apmTempRepository.insert(log)
-      const notIntegratedLogs = await this.apmTempRepository.getAllData();
-      console.log(notIntegratedLogs)
+      await this.apmTempRepository.create(log)
     }
   }
 
   private async integrateTempLogs(payload) {
     try {
       this.logger.info(payload)
-      await this.apmTempRepository.remove({ _id: payload._id })
+      await this.apmTempRepository.deleteById(payload.id)
     } catch (error) {
-      await this.apmTempRepository.insert({
+      await this.apmTempRepository.create({
         message: 'Falha ao integrar com a cloud',
         payload,
         error,
