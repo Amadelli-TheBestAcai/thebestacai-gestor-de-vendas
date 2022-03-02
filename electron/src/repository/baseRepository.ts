@@ -18,7 +18,7 @@ export class BaseRepository<T extends { id?: string | number }>
     const entity: T = {
       ...payload,
       id: payload?.id || v4(),
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DD'T'HH:mm:ss"),
     };
     await this.dataStore.asyncInsert(entity)
     return entity;
@@ -27,7 +27,7 @@ export class BaseRepository<T extends { id?: string | number }>
   async createMany(payload: T[]): Promise<void> {
     const response = payload.map((_payload) => ({
       ..._payload,
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DD'T'HH:mm:ss"),
     }));
     await Promise.all(
       response.map(async entity => await this.dataStore.asyncInsert(entity))
@@ -37,7 +37,7 @@ export class BaseRepository<T extends { id?: string | number }>
   async createManyAndReplace(payload: T[]): Promise<void> {
     const response = payload.map((_payload) => ({
       ..._payload,
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DD'T'HH:mm:ss"),
     }));
     await this.dataStore.asyncRemove({}, { multi: true })
     await Promise.all(
