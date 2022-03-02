@@ -1,6 +1,6 @@
 {
   "name": "gestor-de-vendas",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "author": "Amabest",
   "homepage": "./",
   "description": "Gestor de Vendas",
@@ -20,7 +20,6 @@
     "node-abi": "^3.5.0",
     "node-cron": "^3.0.0",
     "node-fetch": "2.6.1",
-    "node-persist": "^3.1.0",
     "node-thermal-printer": "^4.1.2",
     "printer": "git+https://github.com/tojocky/node-printer.git",
     "react": "^17.0.2",
@@ -80,7 +79,6 @@
     "@types/moment": "^2.13.0",
     "@types/node": "^16.11.7",
     "@types/node-fetch": "^3.0.3",
-    "@types/node-persist": "^3.1.2",
     "@types/printer": "^0.4.0",
     "@types/react": "^17.0.35",
     "@types/react-dom": "^17.0.11",

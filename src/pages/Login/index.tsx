@@ -58,13 +58,14 @@ const Login: React.FC<IProps> = ({ history }) => {
 
   const onLogin = async () => {
     setLoading(true);
-    const { user: loggedUser, error } = await window.Main.user.login(
-      user.username,
-      user.password
-    );
+    const {
+      response: loggedUser,
+      has_internal_error: error,
+      error_message,
+    } = await window.Main.user.login(user.username, user.password);
     if (error) {
       notification.error({
-        message: error,
+        message: error_message,
         duration: 5,
       });
       setLoading(false);

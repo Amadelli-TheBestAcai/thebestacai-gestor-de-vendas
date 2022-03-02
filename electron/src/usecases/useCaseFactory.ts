@@ -28,22 +28,31 @@ class UseCaseFactory {
         has_internal_error: false,
       };
     } catch (error: any) {
+      let error_message = error.message
+      if (error?.response) {
+        if (error?.response?.data?.message) {
+          error_message = error?.response?.data?.message
+        }
+      }
+
       await this.errorsRepository.create({
         useCase: useCase.constructor.name,
         error: {
-          message: error.message,
+          error_message,
           trace: JSON.stringify(error.stack),
         },
       });
+
       elasticApm.finish({
         useCase: useCase.constructor.name,
-        error_message: error.message,
+        error_message,
         success: false,
         error
       })
       return {
         response: undefined,
         has_internal_error: true,
+        error_message
       };
     }
   }

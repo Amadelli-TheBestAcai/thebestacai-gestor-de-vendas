@@ -56,27 +56,38 @@ const ChatForm: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [userMessage, setUserMessage] = useState<UserMessage | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  // useEffect(() => {
-  //   function boostrap() {
-  //     const { name, email } = user;
-  //     setUserAccess({ name, email });
-  //     setSocket(() => {
-  //       const _socket = io(window.Main.env.CHAT_DASH, {
-  //         extraHeaders: {
-  //           user: name,
-  //           email: email,
-  //         },
-  //       });
-  //       _socket.on("userMessage", async (response) => {
-  //         console.log({ response });
-  //         setUserMessage(response);
-  //       });
+  useEffect(() => {
+    function boostrap() {
+      const { name, email } = user;
+      setUserAccess({ name, email });
+      setSocket((oldValue) => {
+        if (oldValue?.active) {
+          console.log({ oldValue });
+          oldValue.disconnect;
+        }
+        const _socket = io(window.Main.env.CHAT_DASH, {
+          extraHeaders: {
+            user: name,
+            email: email,
+          },
+        });
+        _socket.on("userMessage", async (response) => {
+          console.log({ response });
+          setUserMessage(response);
+        });
 
-  //       return _socket;
-  //     });
-  //   }
-  //   boostrap();
-  // }, []);
+        return _socket;
+      });
+    }
+    if (isVisible) {
+      boostrap();
+    } else {
+      setSocket((oldValue) => {
+        oldValue?.disconnect();
+        return null;
+      });
+    }
+  }, [isVisible]);
 
   const handleMessage = () => {
     if (!message || !message.length) {
