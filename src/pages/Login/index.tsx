@@ -8,7 +8,7 @@ import { useSettings } from "../../hooks/useSettings";
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
 
-import { Form, Select, notification } from "antd";
+import { Form, Select, notification, Modal, Row, Progress } from "antd";
 
 import {
   Container,
@@ -39,18 +39,49 @@ const Login: React.FC<IProps> = ({ history }) => {
     username: settings.should_remember_user ? settings.rememberd_user : "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [step, setStep] = useState<number>(1);
   const [store, setStore] = useState<number | undefined>(undefined);
   const [stores, setStores] = useState<StoreDto[]>([]);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [typeInput, setTypeInput] = useState<string>("password");
+  const [shouldApplyMandatoryVersion, setShouldApplyMandatoryVersion] =
+    useState(false);
+  const [percentDownloaded, setPercentDownloaded] = useState<number>(0);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    form.setFieldsValue({
-      username: settings.should_remember_user ? settings.rememberd_user : "",
-    });
+    async function init() {
+      window.Main.send("app_version", async (pkg_version) => {
+        const { response, has_internal_error: errorOnGetVersion } =
+          await window.Main.common.checkForUpdates(pkg_version);
+        if (errorOnGetVersion) {
+          notification.error({
+            message: "Falha ao verificar atualizações para o sistema",
+            duration: 5,
+          });
+        } else {
+          if (response.has_update) {
+            if (response.is_mandatory) {
+              setShouldApplyMandatoryVersion(true);
+            }
+            window.Main.message("check_for_update");
+            window.Main.once("update-available", () => {
+              window.Main.on("download-progress", (event, percent) => {
+                setPercentDownloaded(+percent.slice(0, 2));
+              });
+            });
+          }
+        }
+        form.setFieldsValue({
+          username: settings.should_remember_user
+            ? settings.rememberd_user
+            : "",
+        });
+        setLoading(false);
+      });
+    }
+    init();
   }, []);
 
   const handleState = ({ target: { name, value } }: any) =>
@@ -295,6 +326,20 @@ const Login: React.FC<IProps> = ({ history }) => {
       ) : (
         <Spinner />
       )}
+      <Modal
+        title="Atualização do APP"
+        footer={null}
+        visible={shouldApplyMandatoryVersion}
+        closable={false}
+      >
+        <Row>
+          Instalando nova versão do APP, ao finalizar, o APP será
+          automaticamente reiniciado.
+        </Row>
+        <Row justify="center">
+          <Progress percent={+percentDownloaded} />
+        </Row>
+      </Modal>
     </Container>
   );
 };
