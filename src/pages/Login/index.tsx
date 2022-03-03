@@ -66,10 +66,9 @@ const Login: React.FC<IProps> = ({ history }) => {
               setShouldApplyMandatoryVersion(true);
             }
             window.Main.message("check_for_update");
-            window.Main.once("update-available", () => {
-              window.Main.on("download-progress", (event, percent) => {
-                setPercentDownloaded(+percent.slice(0, 2));
-              });
+            window.Main.on("download-progress", (percent) => {
+              console.log({ percent: percent.slice(0, 2) });
+              setPercentDownloaded(+percent.slice(0, 2));
             });
           }
         }
