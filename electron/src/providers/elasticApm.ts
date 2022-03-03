@@ -57,16 +57,13 @@ class ElasticApm {
       storeCashId: storeCash?.id,
       storeCash: storeCash?.code,
       duration: +Math.abs(diff).toFixed(4),
-      created_at: moment(new Date()).format("yyyy-MM-DD'T'HH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       ...data,
     }
 
     const hasInternet = await checkInternet()
 
     if (hasInternet) {
-      if (log.useCase === "FinishSale") {
-        console.log({ log })
-      }
       this.logger.info(log)
 
       const notIntegratedLogs = await this.apmTempRepository.getAll();
