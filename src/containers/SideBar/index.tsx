@@ -28,6 +28,7 @@ type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history, location }) => {
   const { hasPermission } = useUser();
+
   const handleClick = (route: string): void => {
     history.push(route);
   };

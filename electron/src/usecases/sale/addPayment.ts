@@ -4,6 +4,7 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale } from "./getCurrentSale";
 import { SaleDto } from "../../models/gestor";
+import { PaymentType } from "../../models/enums/paymentType";
 import { v4 } from "uuid";
 import moment from "moment";
 
@@ -33,6 +34,7 @@ class AddPayment implements IUseCaseFactory {
       id: v4(),
       amount,
       type,
+      formated_type: PaymentType[type],
       created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
     });
 

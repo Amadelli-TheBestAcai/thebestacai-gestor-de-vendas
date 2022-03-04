@@ -1,10 +1,13 @@
 import { app, BrowserWindow, screen, ipcMain } from "electron";
+import { autoUpdater } from 'electron-updater'
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
 
+let win: Electron.BrowserWindow | null
+
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width,
     height,
     resizable: false,
@@ -15,6 +18,15 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    repo: 'thebestacai-gestor-de-vendas',
+    owner: 'Amadelli-TheBestAcai',
+    releaseType: 'release',
+    private: false,
+  })
+
   win.setTitle("Gestor de Vendas");
 
   win.on("page-title-updated", function (e) {
@@ -42,6 +54,26 @@ function createWindow() {
     });
   }
 }
+
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = 'Download speed: ' + progressObj.bytesPerSecond
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
+  log_message =
+    log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+  console.log(log_message)
+  win?.webContents.send(
+    'download-progress',
+    progressObj.transferred.toString()
+  )
+})
+
+autoUpdater.on('update-downloaded', () => {
+  autoUpdater.quitAndInstall()
+})
+
+ipcMain.on('check_for_update', function () {
+  autoUpdater.checkForUpdates()
+})
 
 app.whenReady().then(async () => {
   createWindow();

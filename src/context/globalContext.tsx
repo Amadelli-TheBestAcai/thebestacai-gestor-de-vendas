@@ -4,6 +4,8 @@ import { createContext } from "use-context-selector";
 import { notification } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
+import { SalesTypes } from "../models/enums/salesTypes";
+import { PaymentType } from "../models/enums/paymentType";
 import { SettingsDto } from "../models/dtos/settings";
 import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
@@ -177,7 +179,10 @@ export function GlobalProvider({ children }) {
 
       setSavingSale(true);
       const { has_internal_error: errorOnFinishSAle } =
-        await window.Main.sale.finishSale(sale);
+        await window.Main.sale.finishSale({
+          ...sale,
+          formated_type: SalesTypes[sale.type],
+        });
       if (errorOnFinishSAle) {
         return notification.error({
           message: "Erro ao finalizar venda",

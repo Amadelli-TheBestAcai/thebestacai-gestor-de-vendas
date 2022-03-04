@@ -6,3 +6,4 @@ export * from "./saleFactory";
 export * from "./settingsFactory";
 export * from "./storeCashFactory";
 export * from "./storeFactory";
+export * from "./commonFactory";

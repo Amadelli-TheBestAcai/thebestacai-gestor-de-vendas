@@ -1,14 +1,17 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { checkInternet } from "./src/providers/internetConnection";
-import { userFactory } from "./src/factories/userFactory";
-import { storeFactory } from "./src/factories/storeFactory";
-import { productFactory } from "./src/factories/productFactory";
-import { saleFactory } from "./src/factories/saleFactory";
-import { handlerFactory } from "./src/factories/handlerFactory";
-import { storeCashFactory } from "./src/factories/storeCashFactory";
-import { itemOutCartFactory } from "./src/factories/itemOutCartFactory";
-import { settingsFactory } from "./src/factories/settingsFactory";
 import env from "./src/providers/env.json";
+import {
+  userFactory,
+  commonFactory,
+  handlerFactory,
+  itemOutCartFactory,
+  productFactory,
+  saleFactory,
+  settingsFactory,
+  storeCashFactory,
+  storeFactory
+} from "./src/factories";
 
 export const api = {
   send: (channel: string, func: Function, data?: any) => {
@@ -30,5 +33,6 @@ export const api = {
   storeCash: storeCashFactory,
   itemOutCart: itemOutCartFactory,
   settings: settingsFactory,
+  common: commonFactory,
 };
 contextBridge.exposeInMainWorld("Main", { ...api });

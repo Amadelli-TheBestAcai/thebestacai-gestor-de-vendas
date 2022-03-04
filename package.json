@@ -1,6 +1,6 @@
 {
   "name": "gestor-de-vendas",
-  "version": "0.0.9",
+  "version": "1.0.2",
   "author": "Amabest",
   "homepage": "./",
   "description": "Gestor de Vendas",
@@ -11,14 +11,15 @@
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
+    "elastic-apm-node": "^3.29.0",
     "electron-devtools-installer": "^3.2.0",
-    "electron-updater": "^4.6.1",
+    "electron-updater": "^4.6.5",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
+    "nedb-async": "^0.1.6",
     "node-abi": "^3.5.0",
     "node-cron": "^3.0.0",
     "node-fetch": "2.6.1",
-    "node-persist": "^3.1.0",
     "node-thermal-printer": "^4.1.2",
     "printer": "git+https://github.com/tojocky/node-printer.git",
     "react": "^17.0.2",
@@ -34,7 +35,9 @@
     "styled-components": "^5.3.3",
     "styled-icons": "^10.45.0",
     "use-context-selector": "^1.3.9",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "winston": "^3.6.0",
+    "winston-elasticsearch": "^0.16.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -44,7 +47,7 @@
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
     "dev:react": "cross-env BROWSER=none yarn start",
     "dev:electron": "tsc -p electron && electron .",
-    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish never",
+    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish always",
     "eject": "react-scripts eject"
   },
   "build": {
@@ -76,7 +79,6 @@
     "@types/moment": "^2.13.0",
     "@types/node": "^16.11.7",
     "@types/node-fetch": "^3.0.3",
-    "@types/node-persist": "^3.1.2",
     "@types/printer": "^0.4.0",
     "@types/react": "^17.0.35",
     "@types/react-dom": "^17.0.11",
