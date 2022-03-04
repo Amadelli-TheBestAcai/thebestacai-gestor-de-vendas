@@ -34,6 +34,7 @@ import {
   RemoveIcon,
   RestoreIcon,
 } from "./styles";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
@@ -45,6 +46,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
   const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
   const [isConected, setIsConected] = useState<boolean>(true);
+  const { hasPermission } = useUser();
 
   useEffect(() => {
     async function init() {
@@ -91,6 +93,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
       centered: true,
       async onOk() {
         try {
+          console.log(hasPermission("sales.remove_sale"));
           setIsLoading(true);
 
           const success = await window.Main.sale.deleteSaleFromApi(id);
@@ -185,15 +188,16 @@ const Sale: React.FC<IProps> = ({ history }) => {
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
                             >
-                              {!selectedSale.deleted_at && (
-                                <Tooltip title="Remover" placement="bottom">
-                                  <RemoveIcon
-                                    onClick={() =>
-                                      onDelete(selectedSale.id.toString())
-                                    }
-                                  />
-                                </Tooltip>
-                              )}
+                              {hasPermission("sales.remove_sale") &&
+                                !selectedSale.deleted_at && (
+                                  <Tooltip title="Remover" placement="bottom">
+                                    <RemoveIcon
+                                      onClick={() =>
+                                        onDelete(selectedSale.id.toString())
+                                      }
+                                    />
+                                  </Tooltip>
+                                )}
                               {selectedSale.deleted_at && (
                                 <Tooltip title="Restaurar" placement="bottom">
                                   <RestoreIcon />

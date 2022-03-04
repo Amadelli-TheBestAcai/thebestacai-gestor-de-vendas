@@ -37,7 +37,7 @@ type GlobalContextType = {
   setUser: Dispatch<SetStateAction<UserDto | null>>;
   store: StoreDto | null;
   setStore: Dispatch<SetStateAction<StoreDto | null>>;
-  hasPermission: (permission: string) => Promise<boolean>;
+  hasPermission: (_permission: string) => boolean;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(null);
@@ -247,10 +247,8 @@ export function GlobalProvider({ children }) {
     setSale(_updatedSale);
   };
 
-  const hasPermission = async (permission: string): Promise<boolean> => {
-    return user
-      ? user.permissions.some((_permission) => _permission === permission)
-      : false;
+  const hasPermission = (_permission: string): boolean => {
+    return user.permissions?.some((permission) => permission === _permission);
   };
 
   return (
