@@ -62,11 +62,19 @@ const Sale: React.FC<IProps> = ({ history }) => {
 
       const payload = _sales.map((_sale) => ({
         ..._sale,
-        total_sold: _sale.items.reduce(
-          (total, _item) => total + _item.total,
-          0
-        ),
+        total_sold: _sale.items.length
+          ? _sale.items.reduce((total, _item) => total + _item.total, 0)
+          : _sale.payments.reduce(
+              (total, _payment) => total + _payment.amount,
+              0
+            ),
       }));
+      console.log(payload);
+      console.log(
+        _sales.map((_sale) =>
+          _sale.payments.reduce((total, _payment) => total + _payment.amount, 0)
+        )
+      );
 
       if (_sales.length) {
         setSelectedSale(payload[0]);
