@@ -69,12 +69,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
               0
             ),
       }));
-      console.log(payload);
-      console.log(
-        _sales.map((_sale) =>
-          _sale.payments.reduce((total, _payment) => total + _payment.amount, 0)
-        )
-      );
 
       if (_sales.length) {
         setSelectedSale(payload[0]);
@@ -101,7 +95,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
       centered: true,
       async onOk() {
         try {
-          console.log(hasPermission("sales.remove_sale"));
           setIsLoading(true);
 
           const success = await window.Main.sale.deleteSaleFromApi(id);
