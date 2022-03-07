@@ -93,6 +93,7 @@ const Login: React.FC<IProps> = ({ history }) => {
       has_internal_error: error,
       error_message,
     } = await window.Main.user.login(user.username, user.password);
+
     if (error) {
       notification.error({
         message: error_message,
@@ -141,6 +142,7 @@ const Login: React.FC<IProps> = ({ history }) => {
         message: "Credenciais inválidas",
         duration: 5,
       });
+      setLoading(false);
     }
   };
 

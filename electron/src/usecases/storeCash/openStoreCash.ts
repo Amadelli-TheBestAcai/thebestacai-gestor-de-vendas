@@ -32,6 +32,15 @@ class OpenStoreCash implements IUseCaseFactory {
       is_opened: true,
       is_online: false,
     };
+
+    const currentStoreCash = await this.storeCashRepository.getOne()
+
+    const isOpeningOfflineStoreCash = currentStoreCash?.is_opened && !currentStoreCash?.is_online
+
+    if (isOpeningOfflineStoreCash) {
+      payload.id = currentStoreCash.id
+    }
+
     const isConnected = await checkInternet();
     if (isConnected) {
       const currentStore = await this.storeRepository.getOne();
@@ -50,10 +59,14 @@ class OpenStoreCash implements IUseCaseFactory {
       payload.store_id = store_id;
       payload.is_online = true;
     }
-    await this.storeCashRepository.clear();
     await this.saleRepository.clear();
     await this.integratedSaleRepository.clear();
-    await this.storeCashRepository.create(payload);
+    if (isOpeningOfflineStoreCash) {
+      await this.storeCashRepository.update(payload.id, payload);
+    } else {
+      await this.storeCashRepository.clear();
+      await this.storeCashRepository.create(payload);
+    }
     return payload;
   }
 }

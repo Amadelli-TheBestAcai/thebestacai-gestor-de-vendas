@@ -1,15 +1,15 @@
-import { SaleDto } from "../models/gestor";
+import { SaleDto, StoreCashDto } from "../models/gestor";
 
-export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[]) => {
+export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[], storeCash: StoreCashDto) => {
   if (Array.isArray(payload)) {
     return payload.map((_payload) => ({
       quantity: _payload.quantity,
       change_amount: _payload.change_amount,
       type: _payload.type,
       discount: _payload.discount,
-      cash_id: _payload.cash_id,
+      cash_id: _payload.cash_id || storeCash.cash_id,
       user_id: _payload.user_id,
-      cash_history_id: _payload.cash_history_id,
+      cash_history_id: _payload.cash_history_id || storeCash.history_id,
       nfce_id: _payload.nfce_id,
       nfce_url: _payload.nfce_url,
       payments: _payload.payments.map((_payment) => ({
