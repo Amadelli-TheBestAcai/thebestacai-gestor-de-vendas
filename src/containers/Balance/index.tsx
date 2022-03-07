@@ -37,15 +37,28 @@ const BalanceContainer: React.FC<IProps> = ({
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const { response: selfService, has_internal_error: errorOnSelfService } =
-        await window.Main.product.getSelfService();
-      if (errorOnSelfService) {
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.getProducts();
+      if (errorOnProducts) {
         notification.error({
-          message: "Erro ao encontrar self-service",
+          message: "Erro ao encontrar todos produtos",
           duration: 5,
         });
       }
-      setselfService(selfService);
+
+      const _selfService = products.find(
+        (_product) => _product.product.category_id === 1
+      );
+
+      if (!_selfService) {
+        notification.warning({
+          message: "Self-service não foi cadastrado nessa loja",
+          duration: 5,
+        });
+      }
+
+      console.log(_selfService);
+      setselfService(_selfService);
       setLoading(false);
     }
     init();
