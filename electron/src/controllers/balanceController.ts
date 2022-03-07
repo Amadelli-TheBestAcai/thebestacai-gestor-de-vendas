@@ -1,22 +1,29 @@
 import SerialPort from "serialport";
 import { ipcMain } from "electron";
 import { sleep } from "../helpers/sleep";
+import { settingsFactory } from '../factories/settingsFactory'
 
 let port: SerialPort | null = null;
 
 ipcMain.on("balance:connect", async (event) => {
   try {
-    // const settings = await GetSettingsService.execute();
+    const { has_internal_error, response: settings } = await settingsFactory.getSettings();
 
-    // if (!settings.balance_port) {
-    //   return;
-    // }
-    // if (port && port.isOpen) {
-    //   return;
-    // }
+    if (has_internal_error) {
+      event.reply("balance:get:response", { error: true });
+      return
+    }
+
+    if (!settings?.balance_port) {
+      return;
+    }
+
+    if (port && port.isOpen) {
+      return;
+    }
 
     port = new SerialPort(
-      /*settings.balance_port*/ "COM1",
+      settings?.balance_port,
       {
         baudRate: 9600,
         dataBits: 7,
@@ -26,19 +33,11 @@ ipcMain.on("balance:connect", async (event) => {
       },
       () => {
         port?.on("error", function (err: any) {
-          // sendLog({
-          //   title: "Erro ao obter peso da balança",
-          //   payload: err.message,
-          // });
           event.reply("balance:get:response", { error: true });
         });
       }
     );
   } catch (err) {
-    // sendLog({
-    //   title: "Erro ao estabelecar conexão com balança",
-    //   payload: err.message,
-    // });
     console.error(err);
   }
 });

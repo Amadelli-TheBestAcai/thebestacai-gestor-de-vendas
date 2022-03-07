@@ -164,7 +164,6 @@ const Home: React.FC = () => {
                 <LeftSide>
                   <BalanceContainer>
                     <Balance
-                      addItem={onAddItem}
                       handleOpenPayment={handleOpenPayment}
                       openDiscoundModal={discountModalHandler.openDiscoundModal}
                     />

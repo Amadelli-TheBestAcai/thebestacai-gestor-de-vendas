@@ -122,6 +122,7 @@ const Login: React.FC<IProps> = ({ history }) => {
 
       if (storeContext) {
         setLoading(false);
+        window.Main.message("balance:connect");
         return history.push("/home");
       } else {
         const { response: stores, has_internal_error: errorOnStore } =
@@ -168,6 +169,7 @@ const Login: React.FC<IProps> = ({ history }) => {
       return;
     }
     setContextStore(_store);
+    window.Main.message("balance:connect");
     return history.push("/home");
   };
 
