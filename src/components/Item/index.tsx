@@ -49,7 +49,7 @@ const Item: React.FC<IProps> = ({ item }) => {
       <Column span={4}>
         R$ {(+item.storeProduct.price_unit).toFixed(2).replace(".", ",")}
       </Column>
-      <Column span={4}>R$ {item.total.toFixed(2).replace(".", ",")}</Column>
+      <Column span={4}>R$ {item.total?.toFixed(2).replace(".", ",")}</Column>
       <Column span={2}>
         <Tooltip title="Remover" placement="bottom">
           <Button onClick={() => setModalState(true)}>

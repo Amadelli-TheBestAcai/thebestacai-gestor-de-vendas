@@ -200,7 +200,11 @@ const Sale: React.FC<IProps> = ({ history }) => {
                                 </Tooltip>
                               )}
                               <Tooltip title="Imprimir" placement="bottom">
-                                <PrinterIcon />
+                                <PrinterIcon
+                                  onClick={() =>
+                                    window.Main.common.printSale(selectedSale)
+                                  }
+                                />
                               </Tooltip>
                             </Col>
                           </>
