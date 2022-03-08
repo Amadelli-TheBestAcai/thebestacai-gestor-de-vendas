@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { cleanObject } from "../../helpers/cleanObject";
 import { v4 } from "uuid";
 
-import { message as messageAnt, Popover, Tooltip, notification } from "antd";
+import { Popover, Tooltip, notification } from "antd";
 
 import CashNotFound from "../../components/CashNotFound";
 import Spinner from "../../components/Spinner";
+import DisconectedForm from "../../containers/DisconectedForm";
 
 import { ProductNfe } from "../../models/dtos/productNfe";
 import { ProductDto } from "../../models/dtos/product";
@@ -66,6 +67,7 @@ const Nfce: React.FC = () => {
   const [emitingNfe, setEmitingNfe] = useState(false);
   const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
   const [products, setProducts] = useState<ProductDto[]>([]);
+  const [isConected, setIsConected] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -78,7 +80,9 @@ const Nfce: React.FC = () => {
           duration: 5,
         });
       }
+      const _isConnected = await window.Main.hasInternet();
       setProducts(products);
+      setIsConected(_isConnected);
       const { response: currentStoreCash } =
         await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {
@@ -331,261 +335,307 @@ const Nfce: React.FC = () => {
           </>
         ) : (
           <>
-            {cashIsOpen ? (
+            {isConected ? (
               <>
-                <Header>
-                  <h2>Emissão NFC-e</h2>
-                </Header>
-                <Content>
-                  <LeftContainer>
-                    <BalanceContainer>
-                      <PriceContent>
-                        <span>Preço total self-service</span>
-                        <InputMonetary
-                          autoFocus={true}
-                          id="balanceInput"
-                          getValue={(value) => setSelfServiceAmount(+value)}
-                          onEnterPress={handleEnterToSubmit}
-                        />
-                      </PriceContent>
-                      <WeightContent>
-                        <span>Preço do KG</span>
-                        <InfoWeight>
-                          R${" "}
-                          {findSelfService(products).price_unit?.replace(
-                            ".",
-                            ","
-                          )}
-                        </InfoWeight>
-                      </WeightContent>
-                    </BalanceContainer>
+                <>
+                  {cashIsOpen ? (
+                    <>
+                      <Header>
+                        <h2>Emissão NFC-e</h2>
+                      </Header>
+                      <Content>
+                        <LeftContainer>
+                          <BalanceContainer>
+                            <PriceContent>
+                              <span>Preço total self-service</span>
+                              <InputMonetary
+                                autoFocus={true}
+                                id="balanceInput"
+                                getValue={(value) =>
+                                  setSelfServiceAmount(+value)
+                                }
+                                onEnterPress={handleEnterToSubmit}
+                              />
+                            </PriceContent>
+                            <WeightContent>
+                              <span>Preço do KG</span>
+                              <InfoWeight>
+                                R${" "}
+                                {findSelfService(products).price_unit?.replace(
+                                  ".",
+                                  ","
+                                )}
+                              </InfoWeight>
+                            </WeightContent>
+                          </BalanceContainer>
 
-                    <ItemsContainer>
-                      <TabContainer defaultActiveKey="1">
-                        {productsFormater(products).map((item, index) => (
-                          <TabItem tab={item.name} key={index + 1}>
-                            <ProductSearch>
-                              <IconContainer>
-                                <SearchIcon />
-                              </IconContainer>
-                              <InputSearchProduct placeholder="Procurar item" />
-                            </ProductSearch>
+                          <ItemsContainer>
+                            <TabContainer defaultActiveKey="1">
+                              {productsFormater(products).map((item, index) => (
+                                <TabItem tab={item.name} key={index + 1}>
+                                  <ProductSearch>
+                                    <IconContainer>
+                                      <SearchIcon />
+                                    </IconContainer>
+                                    <InputSearchProduct placeholder="Procurar item" />
+                                  </ProductSearch>
 
-                            <HeaderItem>
-                              <Column sm={11}>Produto</Column>
-                              <Column sm={8}>Preço</Column>
-                              <Column sm={5}>Ação</Column>
-                            </HeaderItem>
+                                  <HeaderItem>
+                                    <Column sm={11}>Produto</Column>
+                                    <Column sm={8}>Preço</Column>
+                                    <Column sm={5}>Ação</Column>
+                                  </HeaderItem>
 
-                            <ProductContainer>
-                              {item.products.map((product) => (
-                                <ProductContent key={product.id}>
-                                  <ColumnProduct span={11}>
-                                    {product.product.name}
-                                  </ColumnProduct>
-                                  <ColumnProduct span={8}>
-                                    {product.price_unit?.replace(".", ",")}
-                                  </ColumnProduct>
-                                  <ColumnProduct span={5}>
-                                    {isValidProduct(product).valid ? (
-                                      <>
-                                        {!productsNfe.some(
-                                          (productNfe) =>
-                                            productNfe.idItem ===
-                                            product.product_id
-                                        ) && (
-                                          <Tooltip
-                                            title="Adicionar"
-                                            placement="right"
-                                          >
-                                            <AddIcon
-                                              onClick={() =>
-                                                handleSelectProduct(product)
+                                  <ProductContainer>
+                                    {item.products.map((product) => (
+                                      <ProductContent key={product.id}>
+                                        <ColumnProduct span={11}>
+                                          {product.product.name}
+                                        </ColumnProduct>
+                                        <ColumnProduct span={8}>
+                                          {product.price_unit?.replace(
+                                            ".",
+                                            ","
+                                          )}
+                                        </ColumnProduct>
+                                        <ColumnProduct span={5}>
+                                          {isValidProduct(product).valid ? (
+                                            <>
+                                              {!productsNfe.some(
+                                                (productNfe) =>
+                                                  productNfe.idItem ===
+                                                  product.product_id
+                                              ) && (
+                                                <Tooltip
+                                                  title="Adicionar"
+                                                  placement="right"
+                                                >
+                                                  <AddIcon
+                                                    onClick={() =>
+                                                      handleSelectProduct(
+                                                        product
+                                                      )
+                                                    }
+                                                  />
+                                                </Tooltip>
+                                              )}
+                                            </>
+                                          ) : (
+                                            <Popover
+                                              content={
+                                                isValidProduct(product).message
                                               }
-                                            />
-                                          </Tooltip>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <Popover
-                                        content={
-                                          isValidProduct(product).message
-                                        }
-                                      >
-                                        <InfoIcon />
-                                      </Popover>
-                                    )}
-                                  </ColumnProduct>
-                                </ProductContent>
+                                            >
+                                              <InfoIcon />
+                                            </Popover>
+                                          )}
+                                        </ColumnProduct>
+                                      </ProductContent>
+                                    ))}
+                                  </ProductContainer>
+                                </TabItem>
                               ))}
-                            </ProductContainer>
-                          </TabItem>
-                        ))}
-                      </TabContainer>
-                    </ItemsContainer>
-                  </LeftContainer>
+                            </TabContainer>
+                          </ItemsContainer>
+                        </LeftContainer>
 
-                  <RightContainer>
-                    <ProductListContainer>
-                      <ProductListHeader>
-                        <ProductColumn span={10}>Produto</ProductColumn>
-                        <ProductColumn span={4}>Quantidade</ProductColumn>
-                        <ProductColumn span={4}>Valor Unitário</ProductColumn>
-                        <ProductColumn span={4}>Valor Total</ProductColumn>
-                        <ProductColumn span={2}>Ação</ProductColumn>
-                      </ProductListHeader>
-
-                      <ProductsList>
-                        <ProductsContent>
-                          {productsNfe.map((product) => (
-                            <Product key={product.id}>
-                              <ProductColumn
-                                span={10}
-                                style={{ textTransform: "lowercase" }}
-                              >
-                                <span>{product.descricao}</span>
+                        <RightContainer>
+                          <ProductListContainer>
+                            <ProductListHeader>
+                              <ProductColumn span={10}>Produto</ProductColumn>
+                              <ProductColumn span={4}>Quantidade</ProductColumn>
+                              <ProductColumn span={4}>
+                                Valor Unitário
                               </ProductColumn>
                               <ProductColumn span={4}>
-                                {product.idItem === 1 ? (
-                                  <span>{product.quantidadeComercial}KG</span>
-                                ) : (
-                                  <Input
-                                    type="number"
-                                    defaultValue={product.quantidadeComercial}
-                                    onChange={({ target: { value } }) =>
-                                      handleUpdateProduct(product.id, +value)
-                                    }
-                                  />
-                                )}
+                                Valor Total
                               </ProductColumn>
-                              <ProductColumn span={4}>
-                                <span>
-                                  {product.valorUnitarioComercial
-                                    .toFixed(2)
-                                    .replace(".", ",")}
-                                </span>
-                              </ProductColumn>
-                              <ProductColumn span={4}>
-                                <span>
-                                  R${" "}
-                                  {(
-                                    product.valorUnitarioComercial *
-                                    product.quantidadeComercial
-                                  )
-                                    .toFixed(2)
-                                    .replace(".", ",")}
-                                </span>
-                              </ProductColumn>
-                              <ProductColumn span={2}>
-                                <Tooltip title="Remover" placement="bottom">
-                                  <DeleteButton
-                                    onClick={() =>
-                                      handlerRemoveProduct(product.id)
-                                    }
-                                  >
-                                    <DeleteIcon />
-                                  </DeleteButton>
-                                </Tooltip>
-                              </ProductColumn>
-                            </Product>
-                          ))}
-                        </ProductsContent>
-                      </ProductsList>
-                    </ProductListContainer>
+                              <ProductColumn span={2}>Ação</ProductColumn>
+                            </ProductListHeader>
 
-                    <FormContainer>
-                      <Form layout="vertical" form={form}>
-                        <Row>
-                          <Col span={24}>
-                            <FormItem name="totalProdutos">
-                              <TotalValue disabled className="totalValue" />
-                            </FormItem>
-                          </Col>
-                          <Col span={8}>
-                            <FormItem
-                              label="Operação"
-                              name="formaPagamento"
-                              rules={[{ required: true }]}
-                            >
-                              <Select
-                                placeholder="Escolha a opção"
-                                onChange={(value) =>
-                                  handleUpdateNfe("formaPagamento", value)
-                                }
-                              >
-                                {formasPagamento.map((formaPagamento) => (
-                                  <Option key={formaPagamento.id}>
-                                    {formaPagamento.value}
-                                  </Option>
+                            <ProductsList>
+                              <ProductsContent>
+                                {productsNfe.map((product) => (
+                                  <Product key={product.id}>
+                                    <ProductColumn
+                                      span={10}
+                                      style={{ textTransform: "lowercase" }}
+                                    >
+                                      <span>{product.descricao}</span>
+                                    </ProductColumn>
+                                    <ProductColumn span={4}>
+                                      {product.idItem === 1 ? (
+                                        <span>
+                                          {product.quantidadeComercial}KG
+                                        </span>
+                                      ) : (
+                                        <Input
+                                          type="number"
+                                          defaultValue={
+                                            product.quantidadeComercial
+                                          }
+                                          onChange={({ target: { value } }) =>
+                                            handleUpdateProduct(
+                                              product.id,
+                                              +value
+                                            )
+                                          }
+                                        />
+                                      )}
+                                    </ProductColumn>
+                                    <ProductColumn span={4}>
+                                      <span>
+                                        {product.valorUnitarioComercial
+                                          .toFixed(2)
+                                          .replace(".", ",")}
+                                      </span>
+                                    </ProductColumn>
+                                    <ProductColumn span={4}>
+                                      <span>
+                                        R${" "}
+                                        {(
+                                          product.valorUnitarioComercial *
+                                          product.quantidadeComercial
+                                        )
+                                          .toFixed(2)
+                                          .replace(".", ",")}
+                                      </span>
+                                    </ProductColumn>
+                                    <ProductColumn span={2}>
+                                      <Tooltip
+                                        title="Remover"
+                                        placement="bottom"
+                                      >
+                                        <DeleteButton
+                                          onClick={() =>
+                                            handlerRemoveProduct(product.id)
+                                          }
+                                        >
+                                          <DeleteIcon />
+                                        </DeleteButton>
+                                      </Tooltip>
+                                    </ProductColumn>
+                                  </Product>
                                 ))}
-                              </Select>
-                            </FormItem>
-                          </Col>
-                          <Col span={8}>
-                            <FormItem
-                              label="Tipo"
-                              name="indicadorFormaPagamento"
-                              rules={[{ required: true }]}
-                            >
-                              <Select
-                                placeholder="Escolha a opção"
-                                onChange={(value) =>
-                                  handleUpdateNfe(
-                                    "indicadorFormaPagamento",
-                                    +value
-                                  )
-                                }
-                              >
-                                {indicadoresFormaPagamento.map(
-                                  (indicadorFormaPagamento) => (
-                                    <Option key={indicadorFormaPagamento.id}>
-                                      {indicadorFormaPagamento.value}
-                                    </Option>
-                                  )
-                                )}
-                              </Select>
-                            </FormItem>
-                          </Col>
-                          <Col span={8}>
-                            <FormItem label="CPF / CNPJ" name="CPFDestinatario">
-                              <Input
-                                placeholder="CPF/CNPJ"
-                                className="ant-input"
-                                onChange={({ target: { value } }) =>
-                                  handleUpdateNfe("CPFDestinatario", value)
-                                }
-                              />
-                            </FormItem>
-                          </Col>
-                          <Col span={24}>
-                            <FormItem
-                              label="Informações Adicionais"
-                              name="informacoesAdicionaisFisco"
-                            >
-                              <Input.TextArea
-                                onChange={({ target: { value } }) =>
-                                  handleUpdateNfe(
-                                    "informacoesAdicionaisFisco",
-                                    value
-                                  )
-                                }
-                              />
-                            </FormItem>
-                          </Col>
-                        </Row>
-                        <ButtonFinishContent>
-                          <Button type="primary" onClick={() => handleEmit()}>
-                            Emitir Nota [F1]
-                          </Button>
-                        </ButtonFinishContent>
-                      </Form>
-                    </FormContainer>
-                  </RightContainer>
-                </Content>
+                              </ProductsContent>
+                            </ProductsList>
+                          </ProductListContainer>
+
+                          <FormContainer>
+                            <Form layout="vertical" form={form}>
+                              <Row>
+                                <Col span={24}>
+                                  <FormItem name="totalProdutos">
+                                    <TotalValue
+                                      disabled
+                                      className="totalValue"
+                                    />
+                                  </FormItem>
+                                </Col>
+                                <Col span={8}>
+                                  <FormItem
+                                    label="Operação"
+                                    name="formaPagamento"
+                                    rules={[{ required: true }]}
+                                  >
+                                    <Select
+                                      placeholder="Escolha a opção"
+                                      onChange={(value) =>
+                                        handleUpdateNfe("formaPagamento", value)
+                                      }
+                                    >
+                                      {formasPagamento.map((formaPagamento) => (
+                                        <Option key={formaPagamento.id}>
+                                          {formaPagamento.value}
+                                        </Option>
+                                      ))}
+                                    </Select>
+                                  </FormItem>
+                                </Col>
+                                <Col span={8}>
+                                  <FormItem
+                                    label="Tipo"
+                                    name="indicadorFormaPagamento"
+                                    rules={[{ required: true }]}
+                                  >
+                                    <Select
+                                      placeholder="Escolha a opção"
+                                      onChange={(value) =>
+                                        handleUpdateNfe(
+                                          "indicadorFormaPagamento",
+                                          +value
+                                        )
+                                      }
+                                    >
+                                      {indicadoresFormaPagamento.map(
+                                        (indicadorFormaPagamento) => (
+                                          <Option
+                                            key={indicadorFormaPagamento.id}
+                                          >
+                                            {indicadorFormaPagamento.value}
+                                          </Option>
+                                        )
+                                      )}
+                                    </Select>
+                                  </FormItem>
+                                </Col>
+                                <Col span={8}>
+                                  <FormItem
+                                    label="CPF / CNPJ"
+                                    name="CPFDestinatario"
+                                  >
+                                    <Input
+                                      placeholder="CPF/CNPJ"
+                                      className="ant-input"
+                                      onChange={({ target: { value } }) =>
+                                        handleUpdateNfe(
+                                          "CPFDestinatario",
+                                          value
+                                        )
+                                      }
+                                    />
+                                  </FormItem>
+                                </Col>
+                                <Col span={24}>
+                                  <FormItem
+                                    label="Informações Adicionais"
+                                    name="informacoesAdicionaisFisco"
+                                  >
+                                    <Input.TextArea
+                                      onChange={({ target: { value } }) =>
+                                        handleUpdateNfe(
+                                          "informacoesAdicionaisFisco",
+                                          value
+                                        )
+                                      }
+                                    />
+                                  </FormItem>
+                                </Col>
+                              </Row>
+                              <ButtonFinishContent>
+                                <Button
+                                  type="primary"
+                                  onClick={() => handleEmit()}
+                                >
+                                  Emitir Nota [F1]
+                                </Button>
+                              </ButtonFinishContent>
+                            </Form>
+                          </FormContainer>
+                        </RightContainer>
+                      </Content>
+                    </>
+                  ) : (
+                    <>
+                      <CashNotFound />
+                    </>
+                  )}
+                </>
               </>
             ) : (
               <>
-                <CashNotFound />
+                {" "}
+                <DisconectedForm />
               </>
             )}
           </>
