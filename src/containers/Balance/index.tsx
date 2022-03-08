@@ -46,7 +46,7 @@ const BalanceContainer: React.FC<IProps> = ({
         });
       }
 
-      const _selfService = products.find(
+      const _selfService = products?.find(
         (_product) => _product.product.category_id === 1
       );
 
