@@ -519,16 +519,18 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                             <Option>Entrega</Option>
                           </Select>
                         </ActionContent>
-                        <InputValue>
-                          R${" "}
-                          {currencyFormater(
-                            sale?.payments?.reduce(
-                              (total, _payment) => +_payment.amount + total,
-                              0
-                            )
-                          )}
-                          <span>Valor do Delivery</span>
-                        </InputValue>
+                        {sale.payments.length !== 0 && (
+                          <InputValue>
+                            R${" "}
+                            {currencyFormater(
+                              sale?.payments?.reduce(
+                                (total, _payment) => +_payment.amount + total,
+                                0
+                              )
+                            )}
+                            <span>Valor do Delivery</span>
+                          </InputValue>
+                        )}
                         <PaymentsContainer>
                           <Payments
                             sale={sale}
