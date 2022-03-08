@@ -22,7 +22,7 @@ class InsertHandler implements IUseCaseFactory {
     ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
     private integrateHandlerUseCase = integrateHandler
-  ) {}
+  ) { }
 
   async execute({ payload }: Request): Promise<HandlerDto> {
     const { response: currentCash, has_internal_error: errorOnStoreCash } =
@@ -55,10 +55,10 @@ class InsertHandler implements IUseCaseFactory {
     newHandler.cashHandler = {
       ...newHandler.cashHandler,
       id: v4(),
-      cash_id: currentCash.cash_id,
+      cash_id: currentCash.is_online ? currentCash.cash_id : undefined,
       cash_code: currentCash.code,
       store_id: currentCash.store_id,
-      cash_history_id: currentCash?.history_id,
+      cash_history_id: currentCash.is_online ? currentCash?.history_id : undefined,
       to_integrate: true,
       order_id,
       reason: !payload.cashHandler.reason

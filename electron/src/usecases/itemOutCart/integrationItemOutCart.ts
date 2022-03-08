@@ -20,7 +20,7 @@ class IntegrationItemOutCart implements IUseCaseFactory {
     ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
     private hasRegistrationUseCase = hasRegistration
-  ) {}
+  ) { }
 
   async execute(): Promise<void> {
     const hasInternet = await checkInternet();
@@ -43,23 +43,27 @@ class IntegrationItemOutCart implements IUseCaseFactory {
       throw new Error("Falha ao obter loja registrada");
     }
 
-    if (!hasInternet || !storeCash || !store) {
+    if (!hasInternet || !storeCash || !store || !storeCash.is_online) {
       return;
     }
 
     const items = await this.notIntegratedItemOutCartRepository.getAll();
 
     if (items.length) {
-      try {
-        await odinApi.post(
-          `/items_out_cart/${store.company.id}-${storeCash.code}`,
-          items
-        );
-        await this.integratedItemOutCartRepository.createMany(items);
-        await this.notIntegratedItemOutCartRepository.clear();
-      } catch (error) {
-        console.log(error);
-      }
+      await Promise.all(
+        items.map(async item => {
+          try {
+            await odinApi.post(
+              `/items_out_cart/${item.store_id}-${item.cash_code || storeCash.code}`,
+              items
+            );
+            await this.integratedItemOutCartRepository.create(item);
+            await this.notIntegratedItemOutCartRepository.deleteById(item.id);
+          } catch (error) {
+            console.log(error)
+          }
+        })
+      )
     }
   }
 }
