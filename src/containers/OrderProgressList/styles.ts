@@ -1,4 +1,8 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+
+import { CloseOutline } from "../../styles/Icons";
+
+import { Checkbox as CheckboxAnt } from "antd";
 
 export const Container = styled.div`
   display: grid;
@@ -44,7 +48,7 @@ export const HeaderCard = styled.div`
   background: var(--white-25);
   font-size: 1rem;
   color: var(--grey-100);
-  padding: 0 1rem;
+  padding-left: 1rem;
 
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
@@ -56,6 +60,11 @@ export const HeaderCard = styled.div`
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     font-size: 0.7rem;
+  }
+
+  span {
+    font-weight: normal;
+    font-size: 0.9rem;
   }
 `;
 
@@ -101,4 +110,34 @@ export const Content = styled.div`
       font-size: 0.7rem;
     }
   }
+`;
+
+export const ActionContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 40%;
+  height: 100%;
+`;
+
+export const Checkbox = styled(CheckboxAnt)`
+  .ant-checkbox-inner {
+    background: var(--white);
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    border: none;
+  }
+
+  .ant-checkbox-checked {
+    border: none;
+    .ant-checkbox-inner {
+      background: var(--orange-250);
+    }
+  }
+`;
+
+export const CancelIcon = styled(CloseOutline)`
+  width: 70%;
+  height: 70%;
+  color: red;
+  cursor: pointer;
 `;
