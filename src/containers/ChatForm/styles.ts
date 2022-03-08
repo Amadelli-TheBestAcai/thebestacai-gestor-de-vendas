@@ -75,7 +75,7 @@ export const MessageBalloon = styled.div<IMessageBalloon>`
   display: flex;
   flex-direction: column;
   background: #f8f8f9;
-  color: #4f4e4e;
+  color: var(--grey-100);
   padding: 3%;
   border-radius: 0 10px 10px 10px;
   margin: 0 0 10px 0;
@@ -83,7 +83,7 @@ export const MessageBalloon = styled.div<IMessageBalloon>`
   span {
     font-size: 10px;
     text-align: end;
-    color: var(--white);
+    color: var(--grey-80);
   }
 
   ${({ user_login, user_message }) =>
@@ -92,6 +92,10 @@ export const MessageBalloon = styled.div<IMessageBalloon>`
       border-radius: 10px 0 10px 10px;
       margin: 0 0 10px 0;
       background: var(--orange-250);
+
+      span {
+        color: var(--white);
+      }
     `}
 `;
 

@@ -5,6 +5,7 @@ import { v4 } from "uuid";
 import moment from "moment";
 
 import Payments from "../../containers/Payments";
+import DisconectedForm from "../../containers/DisconectedForm";
 import OrderProgressList from "../../containers/OrderProgressList";
 import { useSale } from "../../hooks/useSale";
 import Spinner from "../../components/Spinner";
@@ -94,6 +95,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
+      const inConnected = await window.Main.hasInternet();
       const { response: _sale, has_internal_error: errorOnGetSaleFromApp } =
         await window.Main.sale.getSaleFromApp();
       if (errorOnGetSaleFromApp) {
@@ -104,8 +106,6 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         return;
       }
 
-      const inConnected = await window.Main.hasInternet();
-      setHasConnection(inConnected);
       const salesResult: IntegrateAppSalesDTO = {
         sales_in_delivery: _sale?.length,
         total: _sale?.reduce((total, sale) => total + +sale.valor_pedido, 0),
@@ -122,6 +122,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       };
       setAppSalesResult(salesResult);
       setLoading(false);
+      setHasConnection(inConnected);
     }
     init();
   }, []);
@@ -486,105 +487,121 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
   return (
     <Container id="mainContainer" handlers={handlers} keyMap={keyMap}>
       <PageContent>
-        {storeCash?.is_opened ? (
+        {loading ? (
           <>
-            <Header>
-              <h2>Delivery</h2>
-            </Header>
-            {loading ? (
-              <Spinner />
-            ) : (
-              <Tabs
-                defaultActiveKey="1"
-                centered
-                onChange={(type) => setDeliveryType(+type)}
-              >
-                {tabPanes.map((_tab) => (
-                  <TabPane key={_tab.id} tab={_tab.label}>
-                    <Content>
-                      <LeftContainer>
-                        <h2>Adicionar Pedidos</h2>
-                        <ActionContent>
-                          <Input
-                            placeholder="Nome do cliente"
-                            value={sale?.name}
-                            onChange={({ target: { value } }) =>
-                              setSale((oldValues) => ({
-                                ...oldValues,
-                                name: value,
-                              }))
-                            }
-                          />
-                          <Select placeholder="Escolha a opção">
-                            <Option>Entrega</Option>
-                          </Select>
-                        </ActionContent>
-                        <InputValue>
-                          R${" "}
-                          {currencyFormater(
-                            sale?.payments?.reduce(
-                              (total, _payment) => +_payment.amount + total,
-                              0
-                            )
-                          )}
-                          <span>Valor do Delivery</span>
-                        </InputValue>
-                        <PaymentsContainer>
-                          <Payments
-                            sale={sale}
-                            addPayment={addPayment}
-                            removePayment={removePayment}
-                            setCurrentPayment={setAmount}
-                            modalState={paymentModal}
-                            modalTitle={paymentModalTitle}
-                            setModalState={setPaymentModal}
-                            handleOpenPayment={handleOpenPayment}
-                            usingDelivery={true}
-                          />
-                        </PaymentsContainer>
-
-                        <ButtonsContainer>
-                          <ButtonCancel onClick={() => handleCancel()}>
-                            CANCELAR [C]
-                          </ButtonCancel>
-                          <ButtonConfirm onClick={handleCreateSale}>
-                            ADICIONAR [F]
-                          </ButtonConfirm>
-                        </ButtonsContainer>
-                      </LeftContainer>
-
-                      <RightContainer>
-                        <HeaderRight>
-                          <h2>Delivery em Andamento</h2>
-                          <Tooltip
-                            placement="right"
-                            title="Confirmar todas as vendas"
-                          >
-                            <CheckAll
-                              onClick={() =>
-                                integrateAllSalesFromType(deliveryType)
-                              }
-                            />
-                          </Tooltip>
-                        </HeaderRight>
-
-                        <OrdersListContainer>
-                          <OrderProgressList
-                            finishSale={finishSale}
-                            deliveries={deliveries?.filter(
-                              (_delivery) => _delivery.type === deliveryType
-                            )}
-                          />
-                        </OrdersListContainer>
-                      </RightContainer>
-                    </Content>
-                  </TabPane>
-                ))}
-              </Tabs>
-            )}
+            <Spinner />
           </>
         ) : (
-          <CashNotFound />
+          <>
+            {hasConnection ? (
+              <>
+                {storeCash?.is_opened ? (
+                  <>
+                    <Header>
+                      <h2>Delivery</h2>
+                    </Header>
+                    <Tabs
+                      defaultActiveKey="1"
+                      centered
+                      onChange={(type) => setDeliveryType(+type)}
+                    >
+                      {tabPanes.map((_tab) => (
+                        <TabPane key={_tab.id} tab={_tab.label}>
+                          <Content>
+                            <LeftContainer>
+                              <h2>Adicionar Pedidos</h2>
+                              <ActionContent>
+                                <Input
+                                  placeholder="Nome do cliente"
+                                  value={sale?.name}
+                                  onChange={({ target: { value } }) =>
+                                    setSale((oldValues) => ({
+                                      ...oldValues,
+                                      name: value,
+                                    }))
+                                  }
+                                />
+                                <Select placeholder="Escolha a opção">
+                                  <Option>Entrega</Option>
+                                </Select>
+                              </ActionContent>
+                              {sale.payments.length !== 0 && (
+                                <InputValue>
+                                  R${" "}
+                                  {currencyFormater(
+                                    sale?.payments?.reduce(
+                                      (total, _payment) =>
+                                        +_payment.amount + total,
+                                      0
+                                    )
+                                  )}
+                                  <span>Valor do Delivery</span>
+                                </InputValue>
+                              )}
+                              <PaymentsContainer>
+                                <Payments
+                                  sale={sale}
+                                  addPayment={addPayment}
+                                  removePayment={removePayment}
+                                  setCurrentPayment={setAmount}
+                                  modalState={paymentModal}
+                                  modalTitle={paymentModalTitle}
+                                  setModalState={setPaymentModal}
+                                  handleOpenPayment={handleOpenPayment}
+                                  usingDelivery={true}
+                                />
+                              </PaymentsContainer>
+
+                              <ButtonsContainer>
+                                <ButtonCancel onClick={() => handleCancel()}>
+                                  CANCELAR [C]
+                                </ButtonCancel>
+                                <ButtonConfirm onClick={handleCreateSale}>
+                                  ADICIONAR [F]
+                                </ButtonConfirm>
+                              </ButtonsContainer>
+                            </LeftContainer>
+
+                            <RightContainer>
+                              <HeaderRight>
+                                <h2>Delivery em Andamento</h2>
+                                <Tooltip
+                                  placement="right"
+                                  title="Confirmar todas as vendas"
+                                >
+                                  <CheckAll
+                                    onClick={() =>
+                                      integrateAllSalesFromType(deliveryType)
+                                    }
+                                  />
+                                </Tooltip>
+                              </HeaderRight>
+
+                              <OrdersListContainer>
+                                <OrderProgressList
+                                  finishSale={finishSale}
+                                  deliveries={deliveries?.filter(
+                                    (_delivery) =>
+                                      _delivery.type === deliveryType
+                                  )}
+                                />
+                              </OrdersListContainer>
+                            </RightContainer>
+                          </Content>
+                        </TabPane>
+                      ))}
+                    </Tabs>
+                  </>
+                ) : (
+                  <CashNotFound />
+                )}
+              </>
+            ) : (
+              <>
+                <DisconectedForm />
+              </>
+            )}
+          </>
         )}
       </PageContent>
     </Container>
