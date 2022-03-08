@@ -107,7 +107,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           sendToShop = false;
         }
         shopOrder = {
-          store_id: store,
+          store_id: store.company_id,
           due_date: new Date(),
           pay_date: new Date(),
           payment_method: 0,
