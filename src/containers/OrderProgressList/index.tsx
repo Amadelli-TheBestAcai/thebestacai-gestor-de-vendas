@@ -19,8 +19,13 @@ import {
 interface IProps {
   deliveries: SaleDto[];
   finishSale: (id: string) => Promise<void>;
+  removeSale: (id: string) => Promise<void>;
 }
-const OrderProgressList: React.FC<IProps> = ({ deliveries, finishSale }) => {
+const OrderProgressList: React.FC<IProps> = ({
+  deliveries,
+  finishSale,
+  removeSale,
+}) => {
   const [check, setCheck] = useState(true);
 
   const handleFinish = (id: string) => {
@@ -50,7 +55,7 @@ const OrderProgressList: React.FC<IProps> = ({ deliveries, finishSale }) => {
               >
                 <Checkbox onClick={() => handleFinish(_delivery.id)} />
               </Tooltip>
-              <CancelIcon />
+              <CancelIcon onClick={() => removeSale(_delivery.id)} />
             </ActionContainer>
           </HeaderCard>
           <Content>
