@@ -57,6 +57,8 @@ import {
   Form,
   DeleteButton,
   DeleteIcon,
+  ModalNFCe,
+  NFCeButton,
 } from "./styles";
 
 const Nfce: React.FC = () => {
@@ -68,6 +70,8 @@ const Nfce: React.FC = () => {
   const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
   const [products, setProducts] = useState<ProductDto[]>([]);
   const [isConected, setIsConected] = useState(false);
+  const [modalState, setModalState] = useState(false);
+  const [shouldSearch, setShouldSearch] = useState(true);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -87,13 +91,17 @@ const Nfce: React.FC = () => {
         await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {
         setCashIsOpen(true);
+        setLoading(false);
+        setShouldSearch(false);
       } else {
         setCashIsOpen(false);
       }
-      setLoading(false);
     }
-    init();
-  }, []);
+
+    if (shouldSearch) {
+      init();
+    }
+  }, [shouldSearch]);
 
   const findSelfService = (products: ProductDto[]): ProductDto => {
     return products.find((product) => product.product.category_id === 1);
@@ -251,11 +259,7 @@ const Nfce: React.FC = () => {
         duration: 5,
       });
     } else {
-      return notification.success({
-        message: "Emitida com sucesso!",
-        description: `A nota fiscal foi emitida com sucesso.`,
-        duration: 5,
-      });
+      setModalState(true);
     }
   };
 
@@ -325,6 +329,12 @@ const Nfce: React.FC = () => {
     { id: 1, value: "À prazo" },
     { id: 2, value: "Outros" },
   ];
+
+  const newNfce = () => {
+    cleanObject(nfe);
+    setModalState(false);
+    setShouldSearch(true);
+  };
 
   return (
     <Container>
@@ -641,6 +651,21 @@ const Nfce: React.FC = () => {
           </>
         )}
       </PageContent>
+
+      <ModalNFCe
+        title="Emissão NFC-e"
+        visible={modalState}
+        onCancel={() => setModalState(false)}
+        closable={true}
+        centered
+        width={500}
+        footer={[
+          <NFCeButton onClick={() => newNfce()}>Emitir outra</NFCeButton>,
+          <NFCeButton>Imprimir</NFCeButton>,
+        ]}
+      >
+        Nota fiscal emitida com sucesso.
+      </ModalNFCe>
     </Container>
   );
 };
