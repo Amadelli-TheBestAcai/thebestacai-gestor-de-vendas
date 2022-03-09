@@ -34,6 +34,7 @@ import {
   RemoveIcon,
   RestoreIcon,
 } from "./styles";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
@@ -45,6 +46,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
   const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
   const [isConected, setIsConected] = useState<boolean>(true);
+  const { hasPermission } = useUser();
 
   useEffect(() => {
     async function init() {
@@ -60,10 +62,12 @@ const Sale: React.FC<IProps> = ({ history }) => {
 
       const payload = _sales.map((_sale) => ({
         ..._sale,
-        total_sold: _sale.items.reduce(
-          (total, _item) => total + _item.total,
-          0
-        ),
+        total_sold: _sale.items.length
+          ? _sale.items.reduce((total, _item) => total + _item.total, 0)
+          : _sale.payments.reduce(
+              (total, _payment) => total + _payment.amount,
+              0
+            ),
       }));
 
       if (_sales.length) {
@@ -185,15 +189,16 @@ const Sale: React.FC<IProps> = ({ history }) => {
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
                             >
-                              {!selectedSale.deleted_at && (
-                                <Tooltip title="Remover" placement="bottom">
-                                  <RemoveIcon
-                                    onClick={() =>
-                                      onDelete(selectedSale.id.toString())
-                                    }
-                                  />
-                                </Tooltip>
-                              )}
+                              {hasPermission("sales.remove_sale") &&
+                                !selectedSale.deleted_at && (
+                                  <Tooltip title="Remover" placement="bottom">
+                                    <RemoveIcon
+                                      onClick={() =>
+                                        onDelete(selectedSale.id.toString())
+                                      }
+                                    />
+                                  </Tooltip>
+                                )}
                               {selectedSale.deleted_at && (
                                 <Tooltip title="Restaurar" placement="bottom">
                                   <RestoreIcon />

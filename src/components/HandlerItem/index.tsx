@@ -28,7 +28,7 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
       <Column span={4}>{reason}</Column>
       <>
         <Column span={4}>
-          {hasPermission("handler.delete_handler") && (
+          {hasPermission("handler.delete") && (
             <RemoveIcon onClick={() => onDelete(id)} />
           )}
           <PrinterIcon />

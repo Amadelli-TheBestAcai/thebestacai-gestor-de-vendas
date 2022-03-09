@@ -104,7 +104,7 @@ const Nfce: React.FC = () => {
   }, [shouldSearch]);
 
   const findSelfService = (products: ProductDto[]): ProductDto => {
-    return products.find((product) => product.product.category_id === 1);
+    return products?.find((product) => product.product.category_id === 1);
   };
 
   const handleEnterToSubmit = () => {
@@ -283,14 +283,14 @@ const Nfce: React.FC = () => {
   };
 
   const productsFormater = (payload) => {
-    let categories = payload.map((product) => ({
+    let categories = payload?.map((product) => ({
       id: product.product.category.id,
       name: product.product.category.name,
       products: [],
     }));
 
     categories = Array.from(
-      new Set(categories.map((category) => category.id))
+      new Set(categories?.map((category) => category.id))
     ).map((id) => {
       return categories.find((category) => category.id === id);
     });
@@ -371,7 +371,7 @@ const Nfce: React.FC = () => {
                               <span>Preço do KG</span>
                               <InfoWeight>
                                 R${" "}
-                                {findSelfService(products).price_unit?.replace(
+                                {findSelfService(products)?.price_unit?.replace(
                                   ".",
                                   ","
                                 )}

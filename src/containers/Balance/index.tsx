@@ -36,12 +36,23 @@ const BalanceContainer: React.FC<IProps> = ({
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const { response: selfService, has_internal_error: errorOnSelfService } =
-        await window.Main.product.getSelfService();
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.getProducts();
 
-      if (errorOnSelfService) {
+      if (errorOnProducts) {
         notification.error({
-          message: "Erro ao encontrar self-service",
+          message: "Erro ao encontrar todos produtos",
+          duration: 5,
+        });
+      }
+
+      const _selfService = products?.find(
+        (_product) => _product.product.category_id === 1
+      );
+
+      if (!_selfService) {
+        notification.warning({
+          message: "Self-service não foi cadastrado nessa loja",
           duration: 5,
         });
       }
@@ -54,8 +65,9 @@ const BalanceContainer: React.FC<IProps> = ({
           duration: 5,
         });
       }
+
       setShouldUseBalance(_settings.should_use_balance);
-      setselfService(selfService);
+      setselfService(_selfService);
       setLoading(false);
     }
     init();
@@ -89,7 +101,7 @@ const BalanceContainer: React.FC<IProps> = ({
               "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
           });
         } else {
-          const amount = +weight * +selfService.price_unit;
+          const amount = +weight * +selfService?.price_unit;
           setBalanceAmount(amount);
         }
       });
