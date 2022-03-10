@@ -105,8 +105,30 @@ const Sale: React.FC<IProps> = ({ history }) => {
             });
           }
 
-          //  const _sale = await window.Main.sale.getSaleFromApi();
-          //  setSales(_sale);
+          const {
+            response: _sales,
+            has_internal_error: errorOnGetSaleFromApi,
+          } = await window.Main.sale.getSaleFromApi();
+          if (errorOnGetSaleFromApi) {
+            return notification.error({
+              message: "Erro ao obter vendas",
+              duration: 5,
+            });
+          }
+          const payload = _sales.map((_sale) => ({
+            ..._sale,
+            total_sold: _sale.items.length
+              ? _sale.items.reduce((total, _item) => total + _item.total, 0)
+              : _sale.payments.reduce(
+                  (total, _payment) => total + _payment.amount,
+                  0
+                ),
+          }));
+
+          if (_sales.length) {
+            setSelectedSale(payload[0]);
+          }
+          setSales(payload);
 
           return notification.success({
             message: "Venda removida com sucesso!",
