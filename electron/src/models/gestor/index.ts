@@ -10,3 +10,4 @@ export * from "./settings";
 export * from "./sale";
 export * from "./emitNfce";
 export * from "./handler";
+export * from "./itemOutCart";

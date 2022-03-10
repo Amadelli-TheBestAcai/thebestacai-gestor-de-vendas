@@ -84,7 +84,7 @@ const ProductsContainer: React.FC = () => {
         </LoadingContainer>
       ) : (
         <>
-          {products.length !== 0 ? (
+          {products?.length !== 0 ? (
             <TabContainer
               defaultActiveKey="1"
               onChange={() => setSearchByName("")}

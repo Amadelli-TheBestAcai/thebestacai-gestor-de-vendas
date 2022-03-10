@@ -17,7 +17,7 @@ class BuildNewSale implements IUseCaseFactory {
       StorageNames.StoreCash
     ),
     private getUserUseCase = getUser
-  ) {}
+  ) { }
 
   async execute(
     { withPersistence }: Request = { withPersistence: true }
@@ -26,20 +26,18 @@ class BuildNewSale implements IUseCaseFactory {
       await useCaseFactory.execute<UserDto>(this.getUserUseCase);
 
     if (errorOnGetUser) {
-      throw new Error("Falha ao obter caixa atual");
+      throw new Error("Falha ao obter usuário atual");
     }
 
     const storeCash = await this.storeCashRepository.getOne();
 
-    const newSale = {
+    const newSale: SaleDto = {
       id: v4(),
       user_id: user?.id,
       quantity: 0,
       change_amount: 0,
       type: 0,
       discount: 0,
-      cash_id: storeCash?.cash_id,
-      cash_history_id: storeCash?.history_id,
       is_online: storeCash?.history_id && storeCash?.cash_id ? true : false,
       is_current: true,
       is_integrated: false,
@@ -49,6 +47,12 @@ class BuildNewSale implements IUseCaseFactory {
       items: [],
       payments: [],
     };
+
+    if (storeCash?.is_opened && storeCash?.is_online) {
+      newSale.cash_id = storeCash?.cash_id
+      newSale.cash_history_id = storeCash?.history_id
+    }
+
     if (withPersistence) {
       await this.saleRepository.create(newSale);
     }

@@ -293,17 +293,20 @@ export const Option = styled(SelectAnt.Option)``;
 
 export const InputValue = styled.div`
   position: relative;
+  user-select: none;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding: 3%;
   width: 100%;
   height: 15%;
-  border: 1px solid var(--grey-70) !important;
+  //border: 1px solid var(--grey-70) !important;
   background: white !important;
   font-size: 2.5rem;
   text-align: end;
   font-weight: 500;
+  border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
 
   span {
     position: absolute;

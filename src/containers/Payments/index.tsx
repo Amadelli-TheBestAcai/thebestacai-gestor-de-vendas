@@ -85,7 +85,7 @@ const PaymentsContainer: React.FC<IProps> = ({
     },
     {
       icon: usingDelivery ? <OnlineIcon /> : <TicketIcon />,
-      label: usingDelivery ? "Online [T]" : "Ticket [T]",
+      label: usingDelivery ? "Online [O]" : "Ticket [T]",
       background: usingDelivery ? "var(--orange-400)" : "var(--purple-450)",
       action: usingDelivery
         ? () => handleOpenPayment(PaymentType.ONLINE, "Online")

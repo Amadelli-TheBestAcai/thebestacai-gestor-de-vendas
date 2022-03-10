@@ -17,7 +17,7 @@ class IntegrateHandler implements IUseCaseFactory {
       StorageNames.Integrated_Handler
     ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash
-  ) {}
+  ) { }
 
   async execute(): Promise<void> {
     const { response: currentCash, has_internal_error: errorOnStoreCash } =
@@ -32,6 +32,10 @@ class IntegrateHandler implements IUseCaseFactory {
       throw new Error("Erro ao obter caixa atual");
     }
 
+    if (!currentCash.is_online) {
+      return
+    }
+
     const handlers = await this.handlerRepository.getAll();
     const handlersToIntegrate = handlers.filter(
       (_handler) => _handler.cashHandler.to_integrate
@@ -39,7 +43,7 @@ class IntegrateHandler implements IUseCaseFactory {
     const unformatedHandlers = handlersToIntegrate.map(
       (_handler) => _handler.cashHandler
     );
-    const formatedHandlers = formatHandlesToIntegrate(unformatedHandlers);
+    const formatedHandlers = formatHandlesToIntegrate(unformatedHandlers, currentCash.cash_id, currentCash.history_id);
 
     try {
       await odinApi.post(

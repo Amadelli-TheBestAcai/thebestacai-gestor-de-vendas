@@ -2,6 +2,8 @@ import { notification } from "antd";
 import React, { useState, useEffect } from "react";
 
 import StockList from "../../containers/StockList";
+import DisconectedForm from "../../containers/DisconectedForm";
+import Spinner from "../../components/Spinner";
 
 import { ProductDto } from "../../models/dtos/product";
 import { RestrictedProducts } from "../../models/enums/restrictedProducts";
@@ -22,6 +24,7 @@ const Stock: React.FC = () => {
     ProductDto[] | undefined
   >(undefined);
   const [loading, setLoading] = useState(true);
+  const [isConected, setIsConected] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -33,6 +36,8 @@ const Stock: React.FC = () => {
           duration: 5,
         });
       }
+      const _isConnected = await window.Main.hasInternet();
+
       setProductsStock(
         products?.filter(
           (data) =>
@@ -41,6 +46,7 @@ const Stock: React.FC = () => {
         )
       );
       setLoading(false);
+      setIsConected(_isConnected);
     }
     init();
   }, []);
@@ -55,25 +61,37 @@ const Stock: React.FC = () => {
   return (
     <Container>
       <PageContent>
-        <Header>
-          <h2>Estoque</h2>
-        </Header>
-        <SearchContainer>
-          <Input
-            placeholder="Digite o nome do produto"
-            onChange={findProduct}
-            prefix={<SearchIcon />}
-          />
-        </SearchContainer>
-        <Content>
-          <StockList
-            loading={loading}
-            setLoading={setLoading}
-            filteredProducts={filteredProducts}
-            products={productsStock}
-            setProductsStock={setProductsStock}
-          />
-        </Content>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            {isConected ? (
+              <>
+                <Header>
+                  <h2>Estoque</h2>
+                </Header>
+                <SearchContainer>
+                  <Input
+                    placeholder="Digite o nome do produto"
+                    onChange={findProduct}
+                    prefix={<SearchIcon />}
+                  />
+                </SearchContainer>
+                <Content>
+                  <StockList
+                    loading={loading}
+                    setLoading={setLoading}
+                    filteredProducts={filteredProducts}
+                    products={productsStock}
+                    setProductsStock={setProductsStock}
+                  />
+                </Content>
+              </>
+            ) : (
+              <DisconectedForm />
+            )}
+          </>
+        )}
       </PageContent>
     </Container>
   );

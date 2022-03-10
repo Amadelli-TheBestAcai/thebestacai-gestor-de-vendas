@@ -1,4 +1,3 @@
-import { NfeDTO } from "../models/dtos/nfe";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import {
   buildNewSale,
@@ -20,9 +19,10 @@ import {
   recouverStepSales,
   decressItem,
   emitNfce,
+  deleteSaleDelivery,
 } from "../usecases/sale";
 import { SaleDto, ProductDto, EmitNfceDto } from "../models/gestor";
-import { SaleFromApiDTO, AppSaleDTO } from "../models/dtos";
+import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -51,6 +51,8 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
   createDelivery: async (payload: any) =>
     await useCaseFactory.execute<void>(createDelivery, { payload }),
+  deleteSaleDelivery: async (id: string) =>
+    await useCaseFactory.execute<void>(deleteSaleDelivery, { id }),
   getAllDelivery: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllDelivery),
   finishSale: async (payload: SaleDto, fromDelivery?: boolean) =>

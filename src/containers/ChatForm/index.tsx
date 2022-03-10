@@ -60,7 +60,11 @@ const ChatForm: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     function boostrap() {
       const { name, email } = user;
       setUserAccess({ name, email });
-      setSocket(() => {
+      setSocket((oldValue) => {
+        if (oldValue?.active) {
+          console.log({ oldValue });
+          oldValue.disconnect;
+        }
         const _socket = io(window.Main.env.CHAT_DASH, {
           extraHeaders: {
             user: name,
@@ -75,8 +79,15 @@ const ChatForm: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         return _socket;
       });
     }
-    boostrap();
-  }, []);
+    if (isVisible) {
+      boostrap();
+    } else {
+      setSocket((oldValue) => {
+        oldValue?.disconnect();
+        return null;
+      });
+    }
+  }, [isVisible]);
 
   const handleMessage = () => {
     if (!message || !message.length) {

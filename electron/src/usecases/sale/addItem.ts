@@ -17,7 +17,7 @@ class AddItem implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private getCurrentSaleUseCase = getCurrentSale
-  ) {}
+  ) { }
 
   async execute({ productToAdd, quantity, price }: Request): Promise<SaleDto> {
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =

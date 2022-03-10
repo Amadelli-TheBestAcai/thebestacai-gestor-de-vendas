@@ -1,4 +1,5 @@
 import { IBaseRepository } from "./baseRepository.interface";
+import Datastore from 'nedb-async'
 import database from "../../src/providers/database";
 import moment from "moment";
 import { v4 } from "uuid";
@@ -7,54 +8,49 @@ export class BaseRepository<T extends { id?: string | number }>
   implements IBaseRepository<T>
 {
   private storageName: string;
+  private dataStore: Datastore<T>;
   constructor(storageName: string) {
     this.storageName = storageName;
+    this.dataStore = database.getConnection<T>(this.storageName)
   }
 
-  async create(payload: T): Promise<void> {
-    const entities =
-      (await database.getConnection().getItem(this.storageName)) || [];
-    await database.getConnection().setItem(this.storageName, [
-      ...entities,
-      {
-        ...payload,
-        id: payload?.id || v4(),
-        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-      },
-    ]);
+  async create(payload: T): Promise<T> {
+    const entity: T = {
+      ...payload,
+      id: payload?.id || v4(),
+      created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
+    };
+    await this.dataStore.asyncInsert(entity)
+    return entity;
   }
 
   async createMany(payload: T[]): Promise<void> {
-    const oldEntities =
-      (await database.getConnection().getItem(this.storageName)) || [];
     const response = payload.map((_payload) => ({
       ..._payload,
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
     }));
-    await database
-      .getConnection()
-      .setItem(this.storageName, [...response, ...oldEntities]);
+    await Promise.all(
+      response.map(async entity => await this.dataStore.asyncInsert(entity))
+    )
   }
 
   async createManyAndReplace(payload: T[]): Promise<void> {
     const response = payload.map((_payload) => ({
       ..._payload,
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
     }));
-    await database.getConnection().setItem(this.storageName, response);
+    await this.dataStore.asyncRemove({}, { multi: true })
+    await Promise.all(
+      response.map(async entity => await this.dataStore.asyncInsert(entity))
+    )
   }
 
   async getById(id: string | number): Promise<T | undefined> {
-    const response: T[] = await database
-      .getConnection()
-      .getItem(this.storageName);
-    return response.find((_response: T) => _response.id === id);
+    return await this.dataStore.asyncFindOne({ id })
   }
 
   async deleteById(id: string | number): Promise<void> {
-    const data: T[] = await database.getConnection().getItem(this.storageName);
-    const response = data.filter((_entity) => _entity.id !== id);
-    await database.getConnection().setItem(this.storageName, response);
+    await this.dataStore.asyncRemove({ id })
   }
 
   async update(
@@ -64,27 +60,21 @@ export class BaseRepository<T extends { id?: string | number }>
     if (!id) {
       return;
     }
-    const data: T[] = await database.getConnection().getItem(this.storageName);
-    const entityIndex = data.findIndex((_entity) => _entity.id === id);
-    data[entityIndex] = {
-      ...data[entityIndex],
-      ...payload,
-    };
-    await database.getConnection().setItem(this.storageName, data);
-    return data[entityIndex];
+    const t = await this.dataStore.asyncUpdate({ id }, payload)
+    return await this.dataStore.asyncFindOne({ id })
   }
 
   async getAll(): Promise<T[]> {
-    const response = await database.getConnection().getItem(this.storageName);
-    return response || [];
+    const response = await this.dataStore.asyncFind({})
+    return response || []
   }
 
   async getOne(): Promise<T | undefined> {
-    const response = await database.getConnection().getItem(this.storageName);
+    const response = await this.dataStore.asyncFind({})
     return (response && response[0]) || undefined;
   }
 
   async clear(): Promise<void> {
-    await database.getConnection().setItem(this.storageName, []);
+    await this.dataStore.asyncRemove({}, { multi: true })
   }
 }

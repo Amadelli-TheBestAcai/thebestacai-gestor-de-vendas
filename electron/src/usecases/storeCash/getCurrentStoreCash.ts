@@ -9,12 +9,8 @@ class GetCurrentStoreCash implements IUseCaseFactory {
       StorageNames.StoreCash
     )
   ) {}
-  async execute(): Promise<StoreCashDto> {
-    const storeCash = await this.storeCashRepository.getOne();
-    if (!storeCash) {
-      throw new Error("Caixa atual não encontrado");
-    }
-    return storeCash;
+  async execute(): Promise<StoreCashDto | undefined> {
+    return await this.storeCashRepository.getOne();
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import AmountModal from "../../components/AmountModal";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
@@ -32,8 +33,10 @@ import {
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 
-const StoreCash: React.FC = () => {
-  const { storeCash } = useSale();
+interface IProp extends RouteComponentProps {}
+
+const StoreCash: React.FC<IProp> = ({ history }) => {
+  const { storeCash, setStoreCash } = useSale();
   const [storeCashHistory, setStoreCashHistory] =
     useState<StoreCashHistoryDTO | null>(null);
   const [amountModal, setAmountModal] = useState<boolean>(false);
@@ -66,7 +69,7 @@ const StoreCash: React.FC = () => {
       const {
         response: _storeCashHistory,
         has_internal_error: errorOnGetCashHistory,
-      } = await window.Main.storeCash.getStoreCashHistoryService();
+      } = await window.Main.storeCash.getStoreCashHistory();
       if (errorOnGetCashHistory) {
         notification.error({
           message: "Erro ao obter Histórico do caixa",
@@ -85,7 +88,6 @@ const StoreCash: React.FC = () => {
 
       setBalance(_balance);
       setStoreCashHistory(_storeCashHistory);
-      console.log(_storeCashHistory);
       setCashes(availableStoreCashes);
       setIsConnected(isConnected);
       setLoading(false);
@@ -96,6 +98,20 @@ const StoreCash: React.FC = () => {
         _storeCashHistory.closed_at !== null
       ) {
         setModalJustify(true);
+      }
+      if (storeCash?.is_opened && !storeCash?.is_online && isConnected) {
+        Modal.confirm({
+          title: "Conexão disponível para sincronizar caixa offline",
+          content:
+            "Selecione um dos caixas disponíveis para sincronizar caixa offline ao servidor",
+          okText: "ok",
+          okType: "default",
+          cancelText: "Não",
+          cancelButtonProps: {
+            hidden: true,
+          },
+          centered: true,
+        });
       }
     }
     init();
@@ -114,7 +130,7 @@ const StoreCash: React.FC = () => {
       {
         id: 2,
         label: "Entradas",
-        value: storeCash.is_opened
+        value: storeCash?.is_opened
           ? "0,00"
           : currencyFormater(+_storeCashHistory?.in_result),
       },
@@ -133,7 +149,7 @@ const StoreCash: React.FC = () => {
       {
         id: 5,
         label: "Saídas",
-        value: storeCash.is_opened
+        value: storeCash?.is_opened
           ? "0,00"
           : currencyFormater(+_storeCashHistory?.out_result),
       },
@@ -177,6 +193,41 @@ const StoreCash: React.FC = () => {
     setModalJustify(false);
   };
 
+  const connectOfflineStoreCash = async (cashCode: string) => {
+    Modal.confirm({
+      title: "Conectando caixa offline ao servidor",
+      content: `O caixa ${cashCode} será aberto com o valor ${storeCash.amount_on_open.toFixed(
+        2
+      )}`,
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+      async onOk() {
+        setLoading(true);
+        const { response: _storeCash, has_internal_error: errorOnStoreCash } =
+          await window.Main.storeCash.openStoreCash(
+            cashCode,
+            +storeCash.amount_on_open
+          );
+        if (errorOnStoreCash) {
+          notification.error({
+            message: "Erro ao abrir o caixa",
+            duration: 5,
+          });
+          return;
+        }
+        setStoreCash(_storeCash);
+        notification.success({
+          message: `Caixa offline conectado ao servidor no caixa ${cashCode} com sucesso`,
+          duration: 5,
+        });
+        setLoading(false);
+        return history.push("/home");
+      },
+    });
+  };
+
   return (
     <Container>
       <PageContent>
@@ -187,15 +238,22 @@ const StoreCash: React.FC = () => {
           <Spinner />
         ) : (
           <>
-            {!storeCash?.is_opened && (
+            {(!storeCash?.is_opened ||
+              (storeCash?.is_opened &&
+                !storeCash?.is_online &&
+                isConnected)) && (
               <CashContainer>
                 {cashes.map((cash) => (
                   <Cash
                     key={cash.store_cash}
                     cash={cash}
                     handleCash={(_storeCash) => {
-                      setStoreCashToOpen(_storeCash);
-                      setAmountModal(true);
+                      if (storeCash?.is_opened && !storeCash?.is_online) {
+                        connectOfflineStoreCash(_storeCash);
+                      } else {
+                        setStoreCashToOpen(_storeCash);
+                        setAmountModal(true);
+                      }
                     }}
                   />
                 ))}
@@ -274,4 +332,4 @@ const StoreCash: React.FC = () => {
   );
 };
 
-export default StoreCash;
+export default withRouter(StoreCash);

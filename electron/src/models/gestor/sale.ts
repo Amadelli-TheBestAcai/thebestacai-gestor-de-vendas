@@ -5,6 +5,7 @@ export interface SaleDto {
   quantity: number;
   change_amount: number;
   type: number;
+  formated_type?: string;
   discount: number;
   nfce_id?: number;
   nfce_url?: string;
@@ -86,6 +87,7 @@ export interface SaleDto {
   payments: {
     id: string;
     amount: number;
+    formated_type?: string;
     type: number;
     created_at?: string;
     deleted_at?: string;

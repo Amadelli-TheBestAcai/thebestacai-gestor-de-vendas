@@ -14,7 +14,7 @@ import { SalesTypes } from "../../models/enums/salesTypes";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
 
 import notHandler from "../../assets/svg/notHandler.svg";
-import { Empty, notification, Tooltip } from "antd";
+import { Empty, notification, Tooltip, Modal } from "antd";
 
 import {
   Container,
@@ -34,6 +34,7 @@ import {
   RemoveIcon,
   RestoreIcon,
 } from "./styles";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
@@ -45,6 +46,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
   const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
   const [isConected, setIsConected] = useState<boolean>(true);
+  const { hasPermission } = useUser();
 
   useEffect(() => {
     async function init() {
@@ -60,10 +62,12 @@ const Sale: React.FC<IProps> = ({ history }) => {
 
       const payload = _sales.map((_sale) => ({
         ..._sale,
-        total_sold: _sale.items.reduce(
-          (total, _item) => total + _item.total,
-          0
-        ),
+        total_sold: _sale.items.length
+          ? _sale.items.reduce((total, _item) => total + _item.total, 0)
+          : _sale.payments.reduce(
+              (total, _payment) => total + _payment.amount,
+              0
+            ),
       }));
 
       if (_sales.length) {
@@ -82,25 +86,41 @@ const Sale: React.FC<IProps> = ({ history }) => {
     }
   }, [shouldSearch]);
 
-  // const onDelete = (id: string): void => {
-  //   confirm({
-  //     content: "Tem certeza que gostaria de remover esta venda",
-  //     okText: "Sim",
-  //     okType: "default",
-  //     cancelText: "Não",
-  //     async onOk() {
-  //       setIsLoading(true);
-  //       const success = await window.Main.sale.deleteSaleFromApi(id);
-  //       if (!success) {
-  //         message.warning("Falha ao remover venda");
-  //       }
-  //       const _sale = await window.Main.sale.getSaleFromApi();
-  //       setSales(_sale);
-  //       message.success("Venda removida com sucesso");
-  //       setIsLoading(false);
-  //     },
-  //   });
-  // };
+  const onDelete = (id: string): void => {
+    Modal.confirm({
+      content: "Tem certeza que gostaria de remover esta venda",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+      async onOk() {
+        try {
+          setIsLoading(true);
+
+          const success = await window.Main.sale.deleteSaleFromApi(id);
+          if (!success) {
+            return notification.error({
+              message: "Oops! Falha ao remover venda.",
+              duration: 5,
+            });
+          }
+
+          //  const _sale = await window.Main.sale.getSaleFromApi();
+          //  setSales(_sale);
+
+          return notification.success({
+            message: "Venda removida com sucesso!",
+            duration: 5,
+          });
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+          setShouldSearch(false);
+        }
+      },
+    });
+  };
 
   // const handleIntegrate = () => {
   //   setIsIntegrating(true)
@@ -169,18 +189,27 @@ const Sale: React.FC<IProps> = ({ history }) => {
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
                             >
-                              {!selectedSale.deleted_at && (
-                                <Tooltip title="Remover" placement="bottom">
-                                  <RemoveIcon />
-                                </Tooltip>
-                              )}
+                              {hasPermission("sales.remove_sale") &&
+                                !selectedSale.deleted_at && (
+                                  <Tooltip title="Remover" placement="bottom">
+                                    <RemoveIcon
+                                      onClick={() =>
+                                        onDelete(selectedSale.id.toString())
+                                      }
+                                    />
+                                  </Tooltip>
+                                )}
                               {selectedSale.deleted_at && (
                                 <Tooltip title="Restaurar" placement="bottom">
                                   <RestoreIcon />
                                 </Tooltip>
                               )}
                               <Tooltip title="Imprimir" placement="bottom">
-                                <PrinterIcon />
+                                <PrinterIcon
+                                  onClick={() =>
+                                    window.Main.common.printSale(selectedSale)
+                                  }
+                                />
                               </Tooltip>
                             </Col>
                           </>

@@ -1,6 +1,9 @@
 import axios from "axios";
-import userModel from "../models/user";
 import env from "./env.json";
+
+import { useCaseFactory } from "../usecases/useCaseFactory";
+import { getUser } from "../usecases/user";
+import { UserDto } from "../models/gestor";
 const API_URL = env.API_SALES_HANDLER;
 
 const api = axios.create({
@@ -9,7 +12,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  const user = await userModel.get();
+  const { response: user } = await useCaseFactory.execute<UserDto>(getUser);
+
   if (user?.token) {
     //@ts-ignore
     config.headers.Authorization = `Bearer ${user.token}`;

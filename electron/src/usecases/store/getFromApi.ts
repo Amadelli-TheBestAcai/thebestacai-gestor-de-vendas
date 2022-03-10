@@ -1,15 +1,12 @@
-import { BaseRepository } from "../../repository/baseRepository";
+import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
-import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreDto } from "../../models/gestor";
+import { StoreDto, UserDto } from "../../models/gestor";
 import janusApi from "../../providers/janusApi";
-import user from "../../models/user";
+import { getUser } from "../user/getUser";
 
 class GetFromApi implements IUseCaseFactory {
-  constructor(
-    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
-  ) {}
+  constructor(private getUseCaseFactory = getUser) {}
 
   async execute(): Promise<StoreDto[]> {
     const hasInternet = await checkInternet();
@@ -17,9 +14,20 @@ class GetFromApi implements IUseCaseFactory {
       return [];
     }
 
+    const { response: user, has_internal_error: errorOnGetCurrentUser } =
+      await useCaseFactory.execute<UserDto>(this.getUseCaseFactory);
+
+    if (errorOnGetCurrentUser) {
+      throw new Error("Erro ao obter usuário atual");
+    }
+
+    if (!user) {
+      throw new Error("Nenhum usuário encontrado");
+    }
+
     const {
       data: { content },
-    } = await janusApi.get(`/companyUser/${user.loggedUser?.id}/user`);
+    } = await janusApi.get(`/companyUser/${user.id}/user`);
 
     return content;
   }

@@ -32,9 +32,9 @@ export const formatHandlesToIntegrate = (
     reason: handler.reason,
     amount: handler.amount,
     store_id: handler.store_id,
-    cash_id: cash_id || handler.cash_id,
+    cash_id: handler.cash_id || cash_id,
     cash_code: handler.cash_code,
-    cash_history_id: cash_history_id || handler.cash_history_id,
+    cash_history_id: handler.cash_history_id || cash_history_id,
     order_id: handler.order_id,
   }));
   return formatedHandlers;

@@ -18,17 +18,6 @@ class ItemOutCart extends BaseRepository<Entity> {
     super(storageName);
   }
 
-  async getSettings(): Promise<Entity> {
-    const _settings = await this.getOne();
-    if (_settings) {
-      return _settings;
-    } else {
-      const payload: Entity = { id: v4() };
-      await this.create(payload);
-      return payload;
-    }
-  }
-
   getPrinters(): string[] {
     return Printer.getPrinters().map((printer) => printer.name) || [];
   }

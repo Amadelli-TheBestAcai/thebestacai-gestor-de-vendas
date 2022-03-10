@@ -8,6 +8,8 @@ import MonetaryInput from "../../components/MonetaryInput";
 
 import { message, Form, notification } from "antd";
 
+import { useStore } from "../../hooks/useStore";
+
 import {
   Container,
   Footer,
@@ -45,7 +47,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
   const [reasson, setReasson] = useState<string>();
   const [reasontype, setReasonType] = useState<string>();
   const [shopInfo, setShopInfo] = useState<ShopInfo | null>(null);
-  const [store, setStore] = useState<number | null>(null);
+  const { store } = useStore();
 
   const shopIsValid = (order): boolean => {
     return (
@@ -76,7 +78,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     if (type !== "entrada" && sendToShop) {
       if (reasontype === "Pagamento fornecedor") {
         shopOrder = {
-          store_id: store,
+          store_id: store.company_id,
           due_date: new Date(),
           pay_date: new Date(),
           payment_method: 0,
@@ -105,7 +107,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           sendToShop = false;
         }
         shopOrder = {
-          store_id: store,
+          store_id: store.company_id,
           due_date: new Date(),
           pay_date: new Date(),
           payment_method: 0,
@@ -213,7 +215,6 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     setReasonType("");
     async function init() {
       const hasInternet = await window.Main.hasInternet();
-      const store = await window.Main.store.registratedStore();
       const {
         response: purchaseProducts,
         has_internal_error: errorOnPurchaseProducts,
@@ -224,7 +225,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           duration: 5,
         });
       }
-      setStore(store?.company_id);
+
       setProductsCategory(purchaseProducts);
       setHasInternet(hasInternet);
       setFetchingProductsCategory(false);

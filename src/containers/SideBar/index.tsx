@@ -22,10 +22,13 @@ import {
   SettingsIcon,
   LogOutIcon,
 } from "./styles";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history, location }) => {
+  const { hasPermission } = useUser();
+
   const handleClick = (route: string): void => {
     history.push(route);
   };
@@ -34,68 +37,84 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
     return location.pathname === route;
   };
 
-  const menus = [
-    {
-      id: 1,
-      icon: <HomeIcon />,
-      label: "Página Inicial",
-      router: "/home",
-    },
-    {
-      id: 2,
-      icon: <CashRegisterIcon />,
-      label: "Gerenciamento de Caixa",
-      router: "/store-cash",
-    },
-    {
-      id: 3,
-      icon: <DeliveryIcon />,
-      label: "Delivery",
-      router: "/delivery",
-    },
-    {
-      id: 4,
-      icon: <RetweetIcon />,
-      label: "Movimentações",
-      router: "/handler",
-    },
-    {
-      id: 5,
-      icon: <BoxIcon />,
-      label: "Estoque",
-      router: "/stock",
-    },
-    {
-      id: 6,
-      icon: <ChartIcon />,
-      label: "Balanço",
-      router: "/balance",
-    },
-    {
-      id: 7,
-      icon: <CoinsIcon />,
-      label: "Vendas",
-      router: "/sale",
-    },
-    {
-      id: 8,
-      icon: <ScrollIcon />,
-      label: "NFC-e",
-      router: "/nfce",
-    },
-    {
-      id: 9,
-      icon: <SettingsIcon />,
-      label: "Configuração",
-      router: "/settings",
-    },
-    {
+  const tab = () => {
+    const response = [];
+
+    response.push(
+      {
+        id: 1,
+        icon: <HomeIcon />,
+        label: "Página Inicial",
+        router: "/home",
+      },
+      {
+        id: 2,
+        icon: <CashRegisterIcon />,
+        label: "Gerenciamento de Caixa",
+        router: "/store-cash",
+      },
+      {
+        id: 3,
+        icon: <DeliveryIcon />,
+        label: "Delivery",
+        router: "/delivery",
+      },
+      {
+        id: 4,
+        icon: <RetweetIcon />,
+        label: "Movimentações",
+        router: "/handler",
+      },
+      {
+        id: 5,
+        icon: <BoxIcon />,
+        label: "Estoque",
+        router: "/stock",
+      }
+    );
+
+    if (hasPermission("balance.balance_access")) {
+      response.push({
+        id: 6,
+        icon: <ChartIcon />,
+        label: "Balanço",
+        router: "/balance",
+      });
+    }
+
+    response.push(
+      {
+        id: 7,
+        icon: <CoinsIcon />,
+        label: "Vendas",
+        router: "/sale",
+      },
+      {
+        id: 8,
+        icon: <ScrollIcon />,
+        label: "NFC-e",
+        router: "/nfce",
+      }
+    );
+
+    if (hasPermission("config.config_access")) {
+      response.push({
+        id: 9,
+        icon: <SettingsIcon />,
+        label: "Configuração",
+        router: "/settings",
+      });
+    }
+
+    response.push({
       id: 10,
       icon: <LogOutIcon />,
       label: "Sair",
       router: "/login",
-    },
-  ];
+    });
+
+    return response;
+  };
 
   return (
     <Container>
@@ -103,7 +122,7 @@ const SideBar: React.FC<IProps> = ({ history, location }) => {
         <Logo src={LogoImg} />
       </LogoContainer>
       <Content>
-        {menus.map((menu) => (
+        {tab().map((menu) => (
           <Tooltip
             key={menu.id}
             placement="right"

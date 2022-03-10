@@ -1,29 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { SaleDto } from "../../models/dtos/sale";
 
-import { Checkbox, Tooltip } from "antd";
+import moment from "moment";
 
-import { Container, CardOrder, HeaderCard, Content } from "./styles";
+import { Tooltip } from "antd";
+
+import {
+  Container,
+  CardOrder,
+  HeaderCard,
+  Content,
+  Checkbox,
+  ActionContainer,
+  CancelIcon,
+} from "./styles";
 
 interface IProps {
   deliveries: SaleDto[];
   finishSale: (id: string) => Promise<void>;
+  removeSale: (id: string) => Promise<void>;
 }
-const OrderProgressList: React.FC<IProps> = ({ deliveries, finishSale }) => {
+const OrderProgressList: React.FC<IProps> = ({
+  deliveries,
+  finishSale,
+  removeSale,
+}) => {
+  const [check, setCheck] = useState(true);
+
+  const handleFinish = (id: string) => {
+    setCheck(!check);
+
+    if (check) {
+      finishSale(id);
+    }
+  };
   return (
     <Container>
       {deliveries?.map((_delivery) => (
-        <CardOrder onClick={() => finishSale(_delivery.id)} key={_delivery.id}>
+        <CardOrder key={_delivery.id}>
           <HeaderCard>
-            <span>{_delivery.created_at.split(" ")[1]}</span>
-            <Tooltip
-              title="Confirmar venda"
-              key={_delivery.id}
-              placement="bottom"
-            >
-              <Checkbox />
-            </Tooltip>
+            <span>
+              {moment(_delivery.created_at, "yyyy-MM-DDTHH:mm:ss").format(
+                "hh:mm:ss"
+              )}
+            </span>
+
+            <ActionContainer>
+              {" "}
+              <Tooltip
+                title="Confirmar venda"
+                key={_delivery.id}
+                placement="bottom"
+              >
+                <Checkbox onClick={() => handleFinish(_delivery.id)} />
+              </Tooltip>
+              <CancelIcon onClick={() => removeSale(_delivery.id)} />
+            </ActionContainer>
           </HeaderCard>
           <Content>
             <label> {_delivery.name}</label>

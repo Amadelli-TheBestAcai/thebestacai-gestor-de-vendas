@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import Spinner from "../../components/Spinner";
-import { Modal, notification } from "antd";
+import { Modal, notification, Spin } from "antd";
 import { ProductDto } from "../../models/dtos/product";
 
 import {
@@ -17,7 +17,6 @@ import { useSale } from "../../hooks/useSale";
 interface IProps {
   openDiscoundModal: () => void;
   handleOpenPayment: (type: number, title: string) => void;
-  addItem: (product: ProductDto, quantity?: number, total?: number) => void;
 }
 
 const BalanceContainer: React.FC<IProps> = ({
@@ -37,15 +36,38 @@ const BalanceContainer: React.FC<IProps> = ({
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const { response: selfService, has_internal_error: errorOnSelfService } =
-        await window.Main.product.getSelfService();
-      if (errorOnSelfService) {
+      const { response: products, has_internal_error: errorOnProducts } =
+        await window.Main.product.getProducts();
+
+      if (errorOnProducts) {
         notification.error({
-          message: "Erro ao encontrar self-service",
+          message: "Erro ao encontrar todos produtos",
           duration: 5,
         });
       }
-      setselfService(selfService);
+
+      const _selfService = products?.find(
+        (_product) => _product.product.category_id === 1
+      );
+
+      if (!_selfService) {
+        notification.warning({
+          message: "Self-service não foi cadastrado nessa loja",
+          duration: 5,
+        });
+      }
+
+      const { response: _settings, has_internal_error: errorOnSettings } =
+        await window.Main.settings.getSettings();
+      if (errorOnSettings) {
+        notification.error({
+          message: "Erro ao encontrar configurações",
+          duration: 5,
+        });
+      }
+
+      setShouldUseBalance(_settings.should_use_balance);
+      setselfService(_selfService);
       setLoading(false);
     }
     init();
@@ -70,20 +92,19 @@ const BalanceContainer: React.FC<IProps> = ({
   const getWeightByBalance = async (): Promise<void> => {
     if (!fetchingBalanceWeight) {
       setFetchingBalanceWeight(true);
-      // TODO: INTEGRAR BALANÇA
-      const response = { weight: 1, error: null };
-      const { weight, error } = response;
-      setFetchingBalanceWeight(false);
-      if (error) {
-        Modal.info({
-          title: "Falha de Leitura",
-          content:
-            "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
-        });
-      } else {
-        const amount = +weight * +selfService.price_unit;
-        setBalanceAmount(amount);
-      }
+      window.Main.send("balance:get", ({ weight, error }) => {
+        setFetchingBalanceWeight(false);
+        if (error) {
+          Modal.info({
+            title: "Falha de Leitura",
+            content:
+              "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+          });
+        } else {
+          const amount = +weight * +selfService?.price_unit;
+          setBalanceAmount(amount);
+        }
+      });
     }
   };
 
@@ -125,17 +146,32 @@ const BalanceContainer: React.FC<IProps> = ({
       ) : (
         <Container>
           <RightSide>
-            <span>Preço indicado na balança</span>
-            <InputPrice
-              autoFocus={true}
-              id="balanceInput"
-              getValue={(value) => setBalanceAmount(value)}
-              onEnterPress={handleEnterToSubmit}
-              onPressKey={handlerEventKey}
-            />
+            <span>
+              Preço indicado na balança
+              {fetchingBalanceWeight && <Spin size="small" />}
+            </span>
+            {shouldUseBalance ? (
+              <input
+                id="balanceInput"
+                value={balanceAmount?.toFixed(2).replace(".", ",") || "0,00"}
+                autoFocus={true}
+                className="ant-input"
+                onKeyPress={async (event) => await handlerEventKey(event.key)}
+                readOnly
+              />
+            ) : (
+              <InputPrice
+                autoFocus={true}
+                id="balanceInput"
+                getValue={(value) => setBalanceAmount(value)}
+                onEnterPress={handleEnterToSubmit}
+                onPressKey={handlerEventKey}
+              />
+            )}
           </RightSide>
           <LefttSide>
             <span>Peso</span>
+
             <InfoWeight>
               KG{" "}
               {+balanceAmount
