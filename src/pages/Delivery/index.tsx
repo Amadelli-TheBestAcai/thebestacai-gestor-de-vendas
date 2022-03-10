@@ -69,11 +69,10 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
         await window.Main.sale.buildNewSale();
       if (errorOnBuildNewSale) {
-        notification.error({
+        return notification.error({
           message: "Erro ao criar uma venda",
           duration: 5,
         });
-        return;
       }
 
       setSale(_newSale);
@@ -270,7 +269,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         } = await window.Main.sale.getAllDelivery();
         if (errorOnAllDelivery) {
           return notification.error({
-            message: "Erro ao obter todos delivery",
+            message: "Erro ao obter  delivery",
             duration: 5,
           });
         }
@@ -279,6 +278,46 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         notification.success({
           message: "Venda confirmada!",
           description: `A venda selecionada foi finalizada, e não será mais exibida na lista de delivery em andamento.`,
+          duration: 5,
+        });
+      },
+    });
+  };
+
+  const handleCancelSale = async (id: string): Promise<void> => {
+    Modal.confirm({
+      content: "Gostaria de prosseguir e cancelar esta venda?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+
+      async onOk() {
+        const { has_internal_error: errorOnDeleteDelivery } =
+          await window.Main.sale.deleteSaleDelivery(id);
+        if (errorOnDeleteDelivery) {
+          return notification.error({
+            message: "Erro ao remover delivery",
+            duration: 5,
+          });
+        }
+
+        const {
+          response: _deliveries,
+          has_internal_error: errorOnAllDelivery,
+        } = await window.Main.sale.getAllDelivery();
+        if (errorOnAllDelivery) {
+          return notification.error({
+            message: "Erro ao obter todos delivery",
+            duration: 5,
+          });
+        }
+
+        setDeliveries(_deliveries);
+
+        notification.success({
+          message: "Venda removida com sucesso!",
+          description: `A venda selecionada foi removida, e não será mais exibida na lista de delivery em andamento.`,
           duration: 5,
         });
       },
@@ -580,6 +619,7 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                               <OrdersListContainer>
                                 <OrderProgressList
                                   finishSale={finishSale}
+                                  removeSale={handleCancelSale}
                                   deliveries={deliveries?.filter(
                                     (_delivery) =>
                                       _delivery.type === deliveryType

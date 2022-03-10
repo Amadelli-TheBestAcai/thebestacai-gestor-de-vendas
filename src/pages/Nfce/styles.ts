@@ -1,7 +1,5 @@
 import styled, { css } from "styled-components";
 
-import MaskInput from "react-input-mask";
-
 import {
   Trash,
   AddCircle,
@@ -20,6 +18,7 @@ import {
   Select as SelectAnt,
   Button as ButtonAnt,
   Tabs as TabsAnd,
+  Modal,
 } from "antd";
 
 export const Container = styled.div`
@@ -602,4 +601,33 @@ export const DeleteIcon = styled(TrashRestoreAlt)`
   width: 1.2rem;
   height: 1.2rem;
   color: var(--red-600);
+`;
+
+export const ModalNFCe = styled(Modal)`
+  color: var(--grey-90);
+
+  span {
+    color: var(--orange-250);
+  }
+
+  .ant-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+`;
+
+const ButtonModal = css`
+  border-radius: 5px;
+  border: 1px solid var(--grey-90);
+  color: var(--grey-90);
+  padding: 1% 3%;
+  margin-left: 1rem;
+
+  :hover {
+    border-color: var(--orange-250);
+    color: var(--orange-250);
+  }
+`;
+export const NFCeButton = styled.button`
+  ${ButtonModal}
 `;
