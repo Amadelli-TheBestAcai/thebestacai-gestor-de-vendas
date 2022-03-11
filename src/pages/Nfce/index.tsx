@@ -661,7 +661,6 @@ const Nfce: React.FC = () => {
         width={500}
         footer={[
           <NFCeButton onClick={() => newNfce()}>Emitir outra</NFCeButton>,
-          <NFCeButton>Imprimir</NFCeButton>,
         ]}
       >
         Nota fiscal emitida com sucesso.

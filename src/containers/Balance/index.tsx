@@ -155,7 +155,6 @@ const BalanceContainer: React.FC<IProps> = ({
                 id="balanceInput"
                 value={balanceAmount?.toFixed(2).replace(".", ",") || "0,00"}
                 autoFocus={true}
-                className="ant-input"
                 onKeyPress={async (event) => await handlerEventKey(event.key)}
                 readOnly
               />

@@ -32,7 +32,6 @@ import {
   HeaderCollapse,
   PrinterIcon,
   RemoveIcon,
-  RestoreIcon,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
 
@@ -46,6 +45,9 @@ const Sale: React.FC<IProps> = ({ history }) => {
   const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
   const [isConected, setIsConected] = useState<boolean>(true);
+  const [filteredSale, setFiltered] = useState<SaleFromApi[] | undefined>(
+    undefined
+  );
   const { hasPermission } = useUser();
 
   useEffect(() => {
@@ -105,9 +107,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
             });
           }
 
-          //  const _sale = await window.Main.sale.getSaleFromApi();
-          //  setSales(_sale);
-
           return notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
@@ -116,7 +115,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
           console.log(error);
         } finally {
           setIsLoading(false);
-          setShouldSearch(false);
+          setShouldSearch(true);
         }
       },
     });
@@ -144,6 +143,13 @@ const Sale: React.FC<IProps> = ({ history }) => {
   //   })
   // }
 
+  const findSale = ({ target: { value } }) => {
+    const filteredSale = sales.filter((_sale) =>
+      _sale?.id?.toString().includes(value)
+    );
+    setFiltered(filteredSale);
+  };
+
   return (
     <Container>
       <PageContent>
@@ -157,7 +163,10 @@ const Sale: React.FC<IProps> = ({ history }) => {
                   <h2>Vendas</h2>
                 </Header>
                 <SearchContainer>
-                  <Input placeholder="Digite a identificação da venda" />
+                  <Input
+                    placeholder="Digite a identificação da venda"
+                    onChange={findSale}
+                  />
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
@@ -199,11 +208,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
                                     />
                                   </Tooltip>
                                 )}
-                              {selectedSale.deleted_at && (
-                                <Tooltip title="Restaurar" placement="bottom">
-                                  <RestoreIcon />
-                                </Tooltip>
-                              )}
                               <Tooltip title="Imprimir" placement="bottom">
                                 <PrinterIcon
                                   onClick={() =>
@@ -264,6 +268,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
                   <SalesHistory
                     sales={sales}
                     setSelectedSale={setSelectedSale}
+                    filteredSales={filteredSale}
                   />
                 </SalesHistoryContainer>
               </>

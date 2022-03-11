@@ -93,7 +93,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       setLoading(false);
       if (
         _storeCashHistory !== undefined &&
-        +_storeCashHistory.in_result !== 0 &&
+        +_storeCashHistory.result_cash !== 0 &&
         !_storeCashHistory?.observation &&
         _storeCashHistory.closed_at !== null
       ) {
@@ -121,18 +121,29 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     _balance: BalanceModel,
     _storeCashHistory?: StoreCashHistoryDTO
   ) => {
-    return [
+    const response = [];
+
+    if (!storeCash?.is_opened) {
+      response.push(
+        {
+          id: 2,
+          label: "Entradas",
+          value: currencyFormater(+_storeCashHistory?.in_result),
+        },
+
+        {
+          id: 5,
+          label: "Saídas",
+          value: currencyFormater(+_storeCashHistory?.out_result),
+        }
+      );
+    }
+
+    response.push(
       {
         id: 1,
         label: "Abertura",
         value: currencyFormater(+_storeCashHistory?.amount_on_open),
-      },
-      {
-        id: 2,
-        label: "Entradas",
-        value: storeCash?.is_opened
-          ? "0,00"
-          : currencyFormater(+_storeCashHistory?.in_result),
       },
       {
         id: 3,
@@ -147,13 +158,6 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         value: currencyFormater(+_storeCashHistory?.amount_on_close),
       },
       {
-        id: 5,
-        label: "Saídas",
-        value: storeCash?.is_opened
-          ? "0,00"
-          : currencyFormater(+_storeCashHistory?.out_result),
-      },
-      {
         id: 6,
         label: "Vendas - Crédito",
         value: currencyFormater(
@@ -164,8 +168,10 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         id: 7,
         label: "Balanço",
         value: currencyFormater(+_storeCashHistory?.result_cash),
-      },
-    ];
+      }
+    );
+
+    return response;
   };
 
   const updateStoreCashObservation = async () => {

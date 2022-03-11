@@ -31,7 +31,9 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
           {hasPermission("handler.delete") && (
             <RemoveIcon onClick={() => onDelete(id)} />
           )}
-          <PrinterIcon />
+          <PrinterIcon
+            onClick={() => window.Main.common.printHandler(handler)}
+          />
         </Column>
       </>
     </Container>

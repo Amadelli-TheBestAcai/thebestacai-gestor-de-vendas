@@ -6,7 +6,7 @@ import { ReasonOutValue } from "../../models/enums/reasonSangria";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import { message, Form, notification } from "antd";
+import { Form, notification } from "antd";
 
 import { useStore } from "../../hooks/useStore";
 
@@ -126,7 +126,10 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         };
       }
       if (!shopIsValid(shopOrder)) {
-        return message.warning("Preencha todos os campos corretamente.");
+        return notification.warning({
+          message: "Preencha todos os campos corretamente.",
+          duration: 5,
+        });
       }
     }
 
@@ -255,7 +258,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         </Footer>
       }
     >
-      <Form layout="vertical" initialValues={{ remember: false }}>
+      <Form
+        layout="vertical"
+        initialValues={{ remember: false }}
+        preserve={false}
+      >
         <Content>
           <Row>
             <Col sm={24}>
@@ -306,11 +313,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                     disabled
                   />
                 ) : (
-                  <MonetaryInput
-                    autoFocus={false}
-                    getValue={getAmount}
-                    onEnterPress={handleSubmit}
-                  />
+                  <MonetaryInput autoFocus={false} getValue={getAmount} />
                 )}
               </Form.Item>
             </Col>

@@ -55,7 +55,13 @@ const OrderProgressList: React.FC<IProps> = ({
               >
                 <Checkbox onClick={() => handleFinish(_delivery.id)} />
               </Tooltip>
-              <CancelIcon onClick={() => removeSale(_delivery.id)} />
+              <Tooltip
+                title="Remover venda"
+                key={_delivery.id}
+                placement="bottom"
+              >
+                <CancelIcon onClick={() => removeSale(_delivery.id)} />
+              </Tooltip>
             </ActionContainer>
           </HeaderCard>
           <Content>

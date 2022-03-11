@@ -15,9 +15,6 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
     private deliverySaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Delivery_Sale
     ),
-    private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
-      StorageNames.Not_Integrated_Sale
-    ),
     private finishSaleUseCase = finishSale
   ) { }
 
@@ -36,24 +33,24 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
       (_deliverySale) => _deliverySale.type === type
     );
 
-    await Promise.all(
-      deliveryToIntegrate.map(async payload => {
-        const { has_internal_error: errorOnOnlineTntegrate, response } =
-          await useCaseFactory.execute<void>(this.finishSaleUseCase,
-            {
-              payload: {
-                ...payload,
-                formated_type: SalesTypes[payload.type]
-              }, fromDelivery: true
-            });
-        if (errorOnOnlineTntegrate) {
-          throw new Error("Erro ao integrar venda online");
-        } else {
-          return response;
-        }
+    await deliveryToIntegrate.reduce(async (previousPromise, nextProduct) => {
+      await previousPromise
+      return this.integrateSale(nextProduct);
+    }, Promise.resolve());
+  }
 
-      })
-    )
+  async integrateSale(payload: SaleDto): Promise<void> {
+    const { has_internal_error: errorOnOnlineTntegrate } =
+      await useCaseFactory.execute<void>(this.finishSaleUseCase,
+        {
+          payload: {
+            ...payload,
+            formated_type: SalesTypes[payload.type]
+          }, fromDelivery: true
+        });
+    if (errorOnOnlineTntegrate) {
+      throw new Error("Erro ao integrar venda online");
+    }
   }
 }
 

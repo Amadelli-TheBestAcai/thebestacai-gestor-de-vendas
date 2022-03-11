@@ -66,6 +66,18 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
+      const inConnected = await window.Main.hasInternet();
+
+      const { response: _sale, has_internal_error: errorOnGetSaleFromApp } =
+        await window.Main.sale.getSaleFromApp();
+      if (errorOnGetSaleFromApp) {
+        notification.error({
+          message: "Erro ao obter vendas do APP",
+          duration: 5,
+        });
+        return;
+      }
+
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
         await window.Main.sale.buildNewSale();
       if (errorOnBuildNewSale) {
@@ -75,8 +87,6 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
         });
       }
 
-      setSale(_newSale);
-
       const { response: _deliveries, has_internal_error: errorOnAllDelivery } =
         await window.Main.sale.getAllDelivery();
       if (errorOnAllDelivery) {
@@ -84,25 +94,6 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
           message: "Erro ao obter todos delivery",
           duration: 5,
         });
-      }
-
-      setDeliveries(_deliveries);
-      setLoading(false);
-    }
-    init();
-  }, []);
-
-  useEffect(() => {
-    async function init() {
-      const inConnected = await window.Main.hasInternet();
-      const { response: _sale, has_internal_error: errorOnGetSaleFromApp } =
-        await window.Main.sale.getSaleFromApp();
-      if (errorOnGetSaleFromApp) {
-        notification.error({
-          message: "Erro ao obter vendas do APP",
-          duration: 5,
-        });
-        return;
       }
 
       const salesResult: IntegrateAppSalesDTO = {
@@ -119,9 +110,12 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
           .reduce((total, sale) => total + +sale.valor_pedido, 0),
         salesIds: _sale?.map((sale) => sale.id),
       };
+
+      setSale(_newSale);
+      setDeliveries(_deliveries);
       setAppSalesResult(salesResult);
-      setLoading(false);
       setHasConnection(inConnected);
+      setLoading(false);
     }
     init();
   }, []);
@@ -324,26 +318,6 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
     });
   };
 
-  const formatAppSaleToSales = () => {
-    const listOfSales = [].map((appSale) => ({
-      change_amount: 0,
-      type: 5,
-      discount: 0,
-      cash_id: +storeCash?.cash_id,
-      cash_history_id: storeCash?.history_id,
-      quantity: 1,
-      items: [],
-      payments: [
-        { amount: +appSale.valor_pedido, type: +appSale.tipo_pagamento },
-      ],
-    }));
-    const listOfIds = [].map((sale) => sale.id);
-    return {
-      sales: listOfSales,
-      appSalesIds: listOfIds,
-    };
-  };
-
   const handleCancel = () => {
     const payments = sale.payments;
     while (payments.length) {
@@ -355,31 +329,6 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
       name: "",
     }));
   };
-
-  // const handleUpdateProduct = async () => {
-  //   confirm({
-  //     title: "Integrar Vendas",
-  //     content:
-  //       "Gostaria de prosseguir com a integração das vendas ao caixa atual??",
-  //     okText: "Sim",
-  //     okType: "default",
-  //     cancelText: "Não",
-  //     async onOk() {
-  //       const payload = formatAppSaleToSales();
-  //       setLoadingSales(true);
-  //       ipcRenderer.send("appSale:integrate", payload);
-  //       ipcRenderer.once("appSale:integrate:response", (event, status) => {
-  //         if (status) {
-  //           message.success("Vendas integradas com sucesso.");
-  //           history.push("/home");
-  //         } else {
-  //           message.error("Erro ao integrar vendas");
-  //         }
-  //         setLoadingSales(false);
-  //       });
-  //     },
-  //   });
-  // };
 
   const integrateAllSalesFromType = async (type: number) => {
     Modal.confirm({
@@ -604,16 +553,17 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                             <RightContainer>
                               <HeaderRight>
                                 <h2>Delivery em Andamento</h2>
-                                <Tooltip
-                                  placement="right"
-                                  title="Confirmar todas as vendas"
-                                >
-                                  <CheckAll
+
+                                {deliveries.length !== 0 && (
+                                  <a
                                     onClick={() =>
                                       integrateAllSalesFromType(deliveryType)
                                     }
-                                  />
-                                </Tooltip>
+                                  >
+                                    {" "}
+                                    Confirmar todas as vendas
+                                  </a>
+                                )}
                               </HeaderRight>
 
                               <OrdersListContainer>
