@@ -105,9 +105,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
             });
           }
 
-          //  const _sale = await window.Main.sale.getSaleFromApi();
-          //  setSales(_sale);
-
           return notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
@@ -116,7 +113,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
           console.log(error);
         } finally {
           setIsLoading(false);
-          setShouldSearch(false);
+          setShouldSearch(true);
         }
       },
     });
