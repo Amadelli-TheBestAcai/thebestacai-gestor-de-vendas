@@ -108,7 +108,7 @@ const Home: React.FC = () => {
   };
 
   const sendFocusToBalance = () => {
-    document.getElementById("balanceInput").focus();
+    document.getElementById("balanceInput")?.focus();
   };
 
   const keyMap = {

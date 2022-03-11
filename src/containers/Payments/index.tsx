@@ -187,7 +187,7 @@ const PaymentsContainer: React.FC<IProps> = ({
         destroyOnClose={true}
         closable={true}
         centered
-        afterClose={() => document.getElementById("mainContainer").focus()}
+        afterClose={() => document.getElementById("balanceInput")?.focus()}
         footer={
           <Footer>
             <ButtonCancel onClick={onModalCancel}>Cancelar</ButtonCancel>

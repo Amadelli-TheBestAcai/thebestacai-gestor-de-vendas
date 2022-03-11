@@ -131,6 +131,8 @@ export function GlobalProvider({ children }) {
     }
 
     setSale(updatedSale);
+
+    document.getElementById("balanceInput")?.focus();
   };
 
   const onDecressItem = async (id: string): Promise<void> => {
@@ -208,6 +210,8 @@ export function GlobalProvider({ children }) {
         duration: 3,
       });
     }
+
+    document.getElementById("balanceInput")?.focus();
   };
 
   const onAddToQueue = async (name: string): Promise<void> => {
@@ -226,6 +230,8 @@ export function GlobalProvider({ children }) {
       description: `Para que a venda retorne ao carrinho, clique na ação de restaurar a comanda[🔁] do modal anterior.`,
       duration: 5,
     });
+
+    document.getElementById("balanceInput")?.focus();
   };
 
   const onAddDiscount = async (value: number): Promise<void> => {
@@ -250,6 +256,7 @@ export function GlobalProvider({ children }) {
     }
 
     setSale(_updatedSale);
+    document.getElementById("balanceInput")?.focus();
   };
 
   const hasPermission = (_permission: string): boolean => {
