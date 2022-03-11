@@ -199,11 +199,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
                                     />
                                   </Tooltip>
                                 )}
-                              {selectedSale.deleted_at && (
-                                <Tooltip title="Restaurar" placement="bottom">
-                                  <RestoreIcon />
-                                </Tooltip>
-                              )}
                               <Tooltip title="Imprimir" placement="bottom">
                                 <PrinterIcon
                                   onClick={() =>

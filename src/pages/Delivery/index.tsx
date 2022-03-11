@@ -553,16 +553,17 @@ const Delivery: React.FC<ComponentProps> = ({ history }) => {
                             <RightContainer>
                               <HeaderRight>
                                 <h2>Delivery em Andamento</h2>
-                                <Tooltip
-                                  placement="right"
-                                  title="Confirmar todas as vendas"
-                                >
-                                  <CheckAll
+
+                                {deliveries.length !== 0 && (
+                                  <a
                                     onClick={() =>
                                       integrateAllSalesFromType(deliveryType)
                                     }
-                                  />
-                                </Tooltip>
+                                  >
+                                    {" "}
+                                    Confirmar todas as vendas
+                                  </a>
+                                )}
                               </HeaderRight>
 
                               <OrdersListContainer>

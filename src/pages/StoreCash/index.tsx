@@ -123,22 +123,18 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   ) => {
     const response = [];
 
-    if (!storeCash.is_opened) {
+    if (!storeCash?.is_opened) {
       response.push(
         {
           id: 2,
           label: "Entradas",
-          value: storeCash?.is_opened
-            ? "0,00"
-            : currencyFormater(+_storeCashHistory?.in_result),
+          value: currencyFormater(+_storeCashHistory?.in_result),
         },
 
         {
           id: 5,
           label: "Saídas",
-          value: storeCash?.is_opened
-            ? "0,00"
-            : currencyFormater(+_storeCashHistory?.out_result),
+          value: currencyFormater(+_storeCashHistory?.out_result),
         }
       );
     }

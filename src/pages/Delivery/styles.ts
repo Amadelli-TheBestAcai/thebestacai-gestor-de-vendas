@@ -399,6 +399,17 @@ export const HeaderRight = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  a {
+    background-color: var(--green-400);
+    padding: 0.5%;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    color: white;
+    :hover {
+      color: white;
+    }
+  }
 `;
 
 export const OrdersListContainer = styled.div`
