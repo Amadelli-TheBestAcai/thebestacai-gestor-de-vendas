@@ -93,7 +93,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       setLoading(false);
       if (
         _storeCashHistory !== undefined &&
-        +_storeCashHistory.in_result !== 0 &&
+        +_storeCashHistory.result_cash !== 0 &&
         !_storeCashHistory?.observation &&
         _storeCashHistory.closed_at !== null
       ) {
