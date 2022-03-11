@@ -32,7 +32,6 @@ import {
   HeaderCollapse,
   PrinterIcon,
   RemoveIcon,
-  RestoreIcon,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
 
@@ -46,6 +45,9 @@ const Sale: React.FC<IProps> = ({ history }) => {
   const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
   const [isConected, setIsConected] = useState<boolean>(true);
+  const [filteredSale, setFiltered] = useState<SaleFromApi[] | undefined>(
+    undefined
+  );
   const { hasPermission } = useUser();
 
   useEffect(() => {
@@ -141,6 +143,13 @@ const Sale: React.FC<IProps> = ({ history }) => {
   //   })
   // }
 
+  const findSale = ({ target: { value } }) => {
+    const filteredSale = sales.filter((_sale) =>
+      _sale?.id?.toString().includes(value)
+    );
+    setFiltered(filteredSale);
+  };
+
   return (
     <Container>
       <PageContent>
@@ -154,7 +163,10 @@ const Sale: React.FC<IProps> = ({ history }) => {
                   <h2>Vendas</h2>
                 </Header>
                 <SearchContainer>
-                  <Input placeholder="Digite a identificação da venda" />
+                  <Input
+                    placeholder="Digite a identificação da venda"
+                    onChange={findSale}
+                  />
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
@@ -256,6 +268,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
                   <SalesHistory
                     sales={sales}
                     setSelectedSale={setSelectedSale}
+                    filteredSales={filteredSale}
                   />
                 </SalesHistoryContainer>
               </>
