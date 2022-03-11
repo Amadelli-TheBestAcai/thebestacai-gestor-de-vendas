@@ -123,7 +123,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   ) => {
     const response = [];
 
-    if (!storeCash.is_opened) {
+    if (!storeCash?.is_opened) {
       response.push(
         {
           id: 2,
