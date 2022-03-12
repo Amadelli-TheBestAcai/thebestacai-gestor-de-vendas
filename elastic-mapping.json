@@ -1,0 +1,528 @@
+{
+  "properties": {
+    "@timestamp": {
+      "type": "date"
+    },
+    "fields": {
+      "type": "object"
+    },
+    "message": {
+      "properties": {
+        "created_at": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "duration": {
+          "type": "float"
+        },
+        "historyId": {
+          "type": "long"
+        },
+        "params": {
+          "properties": {
+            "amount": {
+              "type": "long"
+            },
+            "amount_on_close": {
+              "type": "long"
+            },
+            "amount_on_open": {
+              "type": "long"
+            },
+            "code": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "fromDelivery": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "local": {
+              "type": "boolean"
+            },
+            "observation": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "password": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "payload": {
+              "properties": {
+                "_id": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "balance_port": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "cashHandler": {
+                  "properties": {
+                    "amount": {
+                      "type": "float"
+                    },
+                    "reason": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "type": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    }
+                  }
+                },
+                "cash_history_id": {
+                  "type": "long"
+                },
+                "cash_id": {
+                  "type": "long"
+                },
+                "change_amount": {
+                  "type": "long"
+                },
+                "created_at": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "discount": {
+                  "type": "long"
+                },
+                "formated_type": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "id": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "is_current": {
+                  "type": "boolean"
+                },
+                "is_integrated": {
+                  "type": "boolean"
+                },
+                "is_online": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "payments": {
+                  "properties": {
+                    "amount": {
+                      "type": "long"
+                    },
+                    "created_at": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "type": {
+                      "type": "long"
+                    }
+                  }
+                },
+                "printer": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "quantity": {
+                  "type": "long"
+                },
+                "rememberd_user": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "sendToShop": {
+                  "type": "boolean"
+                },
+                "should_use_balance": {
+                  "type": "boolean"
+                },
+                "should_use_printer": {
+                  "type": "boolean"
+                },
+                "to_integrate": {
+                  "type": "boolean"
+                },
+                "total_paid": {
+                  "type": "long"
+                },
+                "total_sold": {
+                  "type": "long"
+                },
+                "type": {
+                  "type": "long"
+                },
+                "user_id": {
+                  "type": "long"
+                }
+              }
+            },
+            "pkg_version": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "price": {
+              "type": "float"
+            },
+            "productToAdd": {
+              "properties": {
+                "cfop": {
+                  "type": "long"
+                },
+                "created_at": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "icms_origin": {
+                  "type": "long"
+                },
+                "icms_tax_situation": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "id": {
+                  "type": "long"
+                },
+                "permission": {
+                  "type": "boolean"
+                },
+                "price_permission": {
+                  "type": "boolean"
+                },
+                "price_taxable": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "price_unit": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "product": {
+                  "properties": {
+                    "brand": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "category": {
+                      "properties": {
+                        "created_at": {
+                          "type": "text",
+                          "fields": {
+                            "keyword": {
+                              "type": "keyword",
+                              "ignore_above": 256
+                            }
+                          }
+                        },
+                        "id": {
+                          "type": "long"
+                        },
+                        "name": {
+                          "type": "text",
+                          "fields": {
+                            "keyword": {
+                              "type": "keyword",
+                              "ignore_above": 256
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "category_id": {
+                      "type": "long"
+                    },
+                    "cod_ncm": {
+                      "type": "long"
+                    },
+                    "cod_product": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "created_at": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "description": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "long"
+                    },
+                    "name": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "permission_order": {
+                      "type": "boolean"
+                    },
+                    "permission_purchase": {
+                      "type": "boolean"
+                    },
+                    "permission_store": {
+                      "type": "boolean"
+                    },
+                    "price_buy": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    },
+                    "price_sell": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        }
+                      }
+                    }
+                  }
+                },
+                "product_id": {
+                  "type": "long"
+                },
+                "quantity": {
+                  "type": "long"
+                },
+                "store_id": {
+                  "type": "long"
+                },
+                "tax_regime": {
+                  "type": "long"
+                },
+                "unity_taxable": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                }
+              }
+            },
+            "quantity": {
+              "type": "float"
+            },
+            "type": {
+              "type": "long"
+            },
+            "username": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "withClosedCash": {
+              "type": "boolean"
+            },
+            "withPersistence": {
+              "type": "boolean"
+            }
+          }
+        },
+        "store": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "storeCash": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "storeCashId": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "useCase": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "severity": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    }
+  }
+}
