@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import AmountModal from "../../components/AmountModal";
 import { currencyFormater } from "../../helpers/currencyFormater";
+import moment from "moment";
 
+import AmountModal from "../../components/AmountModal";
 import Cash from "../../components/StoreCash";
 import Spinner from "../../components/Spinner";
 
@@ -34,6 +35,24 @@ import {
 import { useSale } from "../../hooks/useSale";
 
 interface IProp extends RouteComponentProps {}
+
+moment.locale("pt-br");
+moment.updateLocale("pt", {
+  months: [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ],
+});
 
 const StoreCash: React.FC<IProp> = ({ history }) => {
   const { storeCash, setStoreCash } = useSale();
@@ -166,7 +185,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       },
       {
         id: 7,
-        label: "Balanço",
+        label: "Resultado",
         value: currencyFormater(+_storeCashHistory?.result_cash),
       }
     );
@@ -276,7 +295,12 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>
                   </Status>
-                  <span>{storeCash?.created_at}</span>
+                  <span>
+                    {moment(
+                      storeCash?.created_at,
+                      "yyyy-MM-DDTHH:mm:ss"
+                    ).format("DD [de] MMMM [de] YYYY  HH:mm")}
+                  </span>
                 </StatusCash>
               </HeaderStatus>
 
@@ -285,7 +309,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   (amoutStatus) => (
                     <CardStatus id_card={amoutStatus.id} key={amoutStatus.id}>
                       <label>{amoutStatus.label}</label>
-                      R$ {amoutStatus.value}
+                      <span> R$ {amoutStatus.value}</span>
                     </CardStatus>
                   )
                 )}
