@@ -185,6 +185,11 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       },
       {
         id: 7,
+        label: "Delivery - Online",
+        value: currencyFormater(_balance?.delivery?.online),
+      },
+      {
+        id: 8,
         label: "Resultado",
         value: currencyFormater(+_storeCashHistory?.result_cash),
       }
@@ -295,19 +300,26 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>
                   </Status>
-                  <span>
-                    {moment(
-                      storeCash?.created_at,
-                      "yyyy-MM-DDTHH:mm:ss"
-                    ).format("DD [de] MMMM [de] YYYY  HH:mm")}
-                  </span>
+                  {!storeCash.is_opened && (
+                    <span>
+                      {moment(
+                        storeCash?.created_at,
+                        "yyyy-MM-DDTHH:mm:ss"
+                      ).format("DD [de] MMMM [de] YYYY  HH:mm")}
+                    </span>
+                  )}
                 </StatusCash>
               </HeaderStatus>
 
               <ContentStatusCash>
                 {createClosedStatus(balance, storeCashHistory).map(
                   (amoutStatus) => (
-                    <CardStatus id_card={amoutStatus.id} key={amoutStatus.id}>
+                    <CardStatus
+                      id_card={amoutStatus.id}
+                      key={amoutStatus.id}
+                      amount_open={+storeCashHistory.amount_on_open}
+                      result_cash={+storeCashHistory.result_cash}
+                    >
                       <label>{amoutStatus.label}</label>
                       <span> R$ {amoutStatus.value}</span>
                     </CardStatus>
