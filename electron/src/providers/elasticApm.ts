@@ -25,7 +25,7 @@ class ElasticApm {
     const esTransportOpts: ElasticsearchTransportOptions = {
       apm,
       level: 'info',
-      indexPrefix: 'gestor',
+      indexPrefix: 'logs-gestor',
       indexSuffixPattern: 'YYYY.MM.DD',
       clientOpts: {
         cloud: {

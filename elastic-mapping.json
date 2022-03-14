@@ -21,18 +21,18 @@
           "type": "float"
         },
         "historyId": {
-          "type": "long"
+          "type": "float"
         },
         "params": {
           "properties": {
             "amount": {
-              "type": "long"
+              "type": "float"
             },
             "amount_on_close": {
-              "type": "long"
+              "type": "float"
             },
             "amount_on_open": {
-              "type": "long"
+              "type": "float"
             },
             "code": {
               "type": "text",
@@ -122,13 +122,13 @@
                   }
                 },
                 "cash_history_id": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "cash_id": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "change_amount": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "created_at": {
                   "type": "text",
@@ -140,7 +140,7 @@
                   }
                 },
                 "discount": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "formated_type": {
                   "type": "text",
@@ -181,7 +181,7 @@
                 "payments": {
                   "properties": {
                     "amount": {
-                      "type": "long"
+                      "type": "float"
                     },
                     "created_at": {
                       "type": "text",
@@ -202,7 +202,7 @@
                       }
                     },
                     "type": {
-                      "type": "long"
+                      "type": "float"
                     }
                   }
                 },
@@ -216,7 +216,7 @@
                   }
                 },
                 "quantity": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "rememberd_user": {
                   "type": "text",
@@ -240,16 +240,16 @@
                   "type": "boolean"
                 },
                 "total_paid": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "total_sold": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "type": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "user_id": {
-                  "type": "long"
+                  "type": "float"
                 }
               }
             },
@@ -268,7 +268,7 @@
             "productToAdd": {
               "properties": {
                 "cfop": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "created_at": {
                   "type": "text",
@@ -280,7 +280,7 @@
                   }
                 },
                 "icms_origin": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "icms_tax_situation": {
                   "type": "text",
@@ -292,7 +292,7 @@
                   }
                 },
                 "id": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "permission": {
                   "type": "boolean"
@@ -341,7 +341,7 @@
                           }
                         },
                         "id": {
-                          "type": "long"
+                          "type": "float"
                         },
                         "name": {
                           "type": "text",
@@ -355,10 +355,10 @@
                       }
                     },
                     "category_id": {
-                      "type": "long"
+                      "type": "float"
                     },
                     "cod_ncm": {
-                      "type": "long"
+                      "type": "float"
                     },
                     "cod_product": {
                       "type": "text",
@@ -388,7 +388,7 @@
                       }
                     },
                     "id": {
-                      "type": "long"
+                      "type": "float"
                     },
                     "name": {
                       "type": "text",
@@ -429,16 +429,16 @@
                   }
                 },
                 "product_id": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "quantity": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "store_id": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "tax_regime": {
-                  "type": "long"
+                  "type": "float"
                 },
                 "unity_taxable": {
                   "type": "text",
@@ -455,7 +455,7 @@
               "type": "float"
             },
             "type": {
-              "type": "long"
+              "type": "float"
             },
             "username": {
               "type": "text",
