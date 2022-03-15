@@ -300,7 +300,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>
                   </Status>
-                  {!storeCash.is_opened && (
+                  {!storeCash?.is_opened && (
                     <span>
                       {moment(
                         storeCash?.created_at,
@@ -317,8 +317,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                     <CardStatus
                       id_card={amoutStatus.id}
                       key={amoutStatus.id}
-                      amount_open={+storeCashHistory.amount_on_open}
-                      result_cash={+storeCashHistory.result_cash}
+                      amount_open={+storeCashHistory?.amount_on_open}
+                      result_cash={+storeCashHistory?.result_cash}
                     >
                       <label>{amoutStatus.label}</label>
                       <span> R$ {amoutStatus.value}</span>

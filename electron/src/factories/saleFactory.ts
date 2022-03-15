@@ -76,8 +76,11 @@ export const saleFactory = {
     }
   },
   emitNfce: async (nfe: NfeDTO, saleIdToUpdate?: number) =>
-    await useCaseFactory.execute<EmitNfceDto>(emitNfce, {
-      nfe,
-      saleIdToUpdate,
-    }),
+    await useCaseFactory.execute<{ error: boolean; message: string }>(
+      emitNfce,
+      {
+        nfe,
+        saleIdToUpdate,
+      }
+    ),
 };

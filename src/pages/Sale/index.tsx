@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import moment from "moment";
 import { currencyFormater } from "../../helpers/currencyFormater";
-import DisconectedForm from "../../containers/DisconectedForm";
+
 import SalesHistory from "../../containers/SalesHistory";
 import Centralizer from "../../containers/Centralizer";
-import RouterDescription from "../../components/RouterDescription";
+import NfeForm from "../../containers/NfeForm";
 import Spinner from "../../components/Spinner";
-import SaleItem from "../../components/Sale";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SalesTypes } from "../../models/enums/salesTypes";
@@ -32,6 +31,7 @@ import {
   HeaderCollapse,
   PrinterIcon,
   RemoveIcon,
+  NfceIcon,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
 
@@ -49,6 +49,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
     undefined
   );
   const { hasPermission } = useUser();
+  const [nfceModal, setNfceModal] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -77,10 +78,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
       }
       setSales(payload);
       setIsLoading(false);
-      // ipcRenderer.send('integrate:status')
-      // ipcRenderer.once('integrate:status:response', (event, { sales }) => {
-      //   setPendingSales(sales?.length)
-      // })
       setShouldSearch(false);
     }
     if (shouldSearch) {
@@ -120,28 +117,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
       },
     });
   };
-
-  // const handleIntegrate = () => {
-  //   setIsIntegrating(true)
-  //   ipcRenderer.send('integrate:integrate')
-  //   ipcRenderer.once('integrate:integrate:response', (event, status) => {
-  //     setIsIntegrating(false)
-  //     if (status) {
-  //       Modal.confirm({
-  //         title: 'Integração de vendas concluida.',
-  //         content:
-  //           'As vendas foram enviadas com sucesso e estão sendo processadas. Pode levar alguns minutos até que todas sejam processadas e salvas pelo servidor.',
-  //         onOk() {
-  //           return history.push('/home')
-  //         },
-  //         cancelButtonProps: { hidden: true },
-  //       })
-  //     } else {
-  //       message.error('Houve um erro na tentativa de integrar as vendas.')
-  //     }
-  //     setPendingSales(sales?.length)
-  //   })
-  // }
 
   const findSale = ({ target: { value } }) => {
     const filteredSale = sales.filter((_sale) =>
@@ -205,6 +180,14 @@ const Sale: React.FC<IProps> = ({ history }) => {
                                       onClick={() =>
                                         onDelete(selectedSale.id.toString())
                                       }
+                                    />
+                                  </Tooltip>
+                                )}
+                              {hasPermission("sales.emit_nfce") &&
+                                !selectedSale.nfce_id && (
+                                  <Tooltip title="NFc-e" placement="bottom">
+                                    <NfceIcon
+                                      onClick={() => setNfceModal(true)}
                                     />
                                   </Tooltip>
                                 )}
@@ -286,6 +269,12 @@ const Sale: React.FC<IProps> = ({ history }) => {
           </>
         )}
       </PageContent>
+      <NfeForm
+        setShouldSearch={setShouldSearch}
+        modalState={nfceModal}
+        setModalState={setNfceModal}
+        sale={selectedSale}
+      />
     </Container>
   );
 };

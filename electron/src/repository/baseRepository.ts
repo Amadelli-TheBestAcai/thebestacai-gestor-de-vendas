@@ -71,7 +71,10 @@ export class BaseRepository<T extends { id?: string | number }>
     return response || [];
   }
 
-  async getOne(): Promise<T | undefined> {
+  async getOne(criteria?: Partial<T>): Promise<T | undefined> {
+    if (criteria) {
+      return await this.dataStore.asyncFindOne(criteria);
+    }
     const response = await this.dataStore.asyncFind({});
     return (response && response[0]) || undefined;
   }

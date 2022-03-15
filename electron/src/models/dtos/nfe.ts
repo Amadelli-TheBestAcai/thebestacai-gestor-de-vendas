@@ -1,11 +1,18 @@
 import { ProductNfeDTO } from "./productNfe";
 
-export type NfeDTO = {
-  valorPagamento?: number;
-  formaPagamento?: string;
-  indicadorFormaPagamento?: number;
-  CPFDestinatario?: string;
+export interface NfeDTO {
+  troco: number;
+  indicadorFormaPagamento: number;
+  formaPagamento: string;
+  valorPagamento: number;
+  ambiente?: number;
+  CPFDestinatario: string;
+  nomeDestinatario?: string;
+  municipioDestinatario?: string;
+  logradouroDestinatario?: string;
+  numeroDestinatario?: string;
+  bairroDestinatario?: string;
+  UFDestinatario?: string;
   informacoesAdicionaisFisco?: string;
   produtos: ProductNfeDTO[];
-  ambiente?: number;
-};
+}

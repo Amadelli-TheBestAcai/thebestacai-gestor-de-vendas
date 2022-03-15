@@ -542,7 +542,7 @@ const Nfce: React.FC = () => {
                                     />
                                   </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={6}>
                                   <FormItem
                                     label="Operação"
                                     name="formaPagamento"
@@ -562,7 +562,7 @@ const Nfce: React.FC = () => {
                                     </Select>
                                   </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={6}>
                                   <FormItem
                                     label="Tipo"
                                     name="indicadorFormaPagamento"
@@ -589,7 +589,20 @@ const Nfce: React.FC = () => {
                                     </Select>
                                   </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={6}>
+                                  <FormItem
+                                    label="Troco"
+                                    name="troco"
+                                    rules={[{ required: true }]}
+                                  >
+                                    <InputMonetary
+                                      getValue={(value) =>
+                                        handleUpdateNfe("troco", +value)
+                                      }
+                                    />
+                                  </FormItem>
+                                </Col>
+                                <Col span={6}>
                                   <FormItem
                                     label="CPF / CNPJ"
                                     name="CPFDestinatario"
