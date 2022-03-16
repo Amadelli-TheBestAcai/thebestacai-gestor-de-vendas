@@ -1,6 +1,4 @@
-import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
-import { StorageNames } from "../../repository/storageNames";
 import { ProductDto } from "../../models/gestor";
 import { checkInternet } from "../../providers/internetConnection";
 import odinApi from "../../providers/odinApi";
@@ -11,11 +9,7 @@ interface Request {
 }
 
 class UpdateProductStock implements IUseCaseFactory {
-  constructor(
-    private productRepository = new BaseRepository<ProductDto>(
-      StorageNames.Product
-    )
-  ) {}
+  constructor() {}
 
   async execute({ id, quantity }: Request): Promise<ProductDto> {
     const hasInternet = await checkInternet();

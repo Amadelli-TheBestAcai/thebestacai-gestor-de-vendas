@@ -1,8 +1,6 @@
-import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
-import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
-import { ProductDto, AuditDto } from "../../models/gestor";
+import { AuditDto } from "../../models/gestor";
 import odinApi from "../../providers/odinApi";
 
 interface Request {
@@ -12,11 +10,7 @@ interface Request {
 }
 
 class GetProductStoreHistory implements IUseCaseFactory {
-  constructor(
-    private productRepository = new BaseRepository<ProductDto>(
-      StorageNames.Product
-    )
-  ) {}
+  constructor() {}
 
   async execute({ id, page, size }: Request): Promise<AuditDto> {
     const hasInternet = await checkInternet();

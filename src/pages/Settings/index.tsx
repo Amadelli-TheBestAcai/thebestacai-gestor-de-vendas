@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import CardSettings from "../../components/CardSettings";
-import Spinner from "../../components/Spinner";
 
 import { Modal, notification } from "antd";
 import {

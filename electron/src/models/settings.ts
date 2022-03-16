@@ -1,5 +1,4 @@
 import { BaseRepository } from "../repository/baseRepository";
-import { v4 } from "uuid";
 import Printer from "printer";
 
 export type Entity = {

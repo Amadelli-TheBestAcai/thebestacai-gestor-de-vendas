@@ -37,14 +37,11 @@ import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
-const Sale: React.FC<IProps> = ({ history }) => {
+const Sale: React.FC<IProps> = () => {
   const [shouldSearch, setShouldSearch] = useState(true);
   const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [pendingSales, setPendingSales] = useState<number>(0);
-  const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
-  const [isConected, setIsConected] = useState<boolean>(true);
   const [filteredSale, setFiltered] = useState<SaleFromApi[] | undefined>(
     undefined
   );
@@ -120,7 +117,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
 
   const findSale = ({ target: { value } }) => {
     const filteredSale = sales.filter((_sale) =>
-      _sale?.id?.toString().includes(value)
+      _sale?.id?.toString()?.includes(value)
     );
     setFiltered(filteredSale);
   };

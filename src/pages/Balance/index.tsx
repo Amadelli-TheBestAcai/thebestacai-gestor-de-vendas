@@ -8,7 +8,7 @@ import CashNotFound from "../../components/CashNotFound";
 import pixImg from "../../assets/svg/pixIcon.svg";
 
 import { currencyFormater } from "../../helpers/currencyFormater";
-import { Balance as BalanceModel } from "../../models/balance";
+import { Balance as BalanceModel } from "../../models/dtos/balance";
 import { StoreCashDto } from "../../models/dtos/storeCash";
 
 import {

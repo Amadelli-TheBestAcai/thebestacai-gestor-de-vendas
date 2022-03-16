@@ -4,7 +4,7 @@ import { SaleDto } from "../../models/dtos/sale";
 
 import Spinner from "../../components/Spinner";
 
-import { message, notification } from "antd";
+import { notification } from "antd";
 
 import {
   Container,
