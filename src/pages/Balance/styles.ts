@@ -19,6 +19,10 @@ interface ITabColor {
   tab_id: number;
 }
 
+interface IPaymentType {
+  tab: string;
+}
+
 export const Container = styled.div`
   display: flex;
   align-items: center;
@@ -304,12 +308,26 @@ export const PaymentTypesContainer = styled.div`
   height: 85%;
 `;
 
-export const PaymentTypes = styled.div`
+export const PaymentTypes = styled.div<IPaymentType>`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-gap: 10px;
   width: 75%;
   height: 100%;
+
+  ${({ tab }) => {
+    if (tab === "delivery" || tab === "store") {
+      return css`
+        grid-template-columns: repeat(5, 1fr);
+      `;
+    }
+
+    if (tab === "billing") {
+      return css`
+        grid-template-columns: repeat(6, 1fr);
+      `;
+    }
+  }}
 `;
 
 export const CardType = styled.div`

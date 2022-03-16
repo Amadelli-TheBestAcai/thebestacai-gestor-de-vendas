@@ -401,7 +401,7 @@ const Balance: React.FC = () => {
                       <Content>
                         <h2>Estátisticas</h2>
                         <PaymentTypesContainer>
-                          <PaymentTypes>
+                          <PaymentTypes tab={_tab.id}>
                             {createAmountTypePayments(_tab.id, balance).map(
                               (typePayment) => (
                                 <CardType>
