@@ -2,7 +2,7 @@ import axios from "axios";
 import env from "./env.json";
 
 const api = axios.create({
-  baseURL: "http://hml.amazum.com.br/api",
+  baseURL: "http://amazum.com.br/api",
   responseType: "json",
 });
 

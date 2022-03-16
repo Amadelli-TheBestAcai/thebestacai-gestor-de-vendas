@@ -9,18 +9,12 @@ import moment from "moment";
 import apiNfce from "../../providers/apiNfe";
 import midasApi from "../../providers/midasApi";
 
-import {
-  getCurrentSale,
-  addItem,
-  onlineIntegration,
-  buildNewSale,
-} from "./index";
+import { onlineIntegration, buildNewSale } from "./index";
 import {
   SaleDto,
   StoreCashDto,
   StoreDto,
   ProductDto,
-  EmitNfceDto,
 } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
 
