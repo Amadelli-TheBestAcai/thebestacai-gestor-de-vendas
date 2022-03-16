@@ -301,20 +301,15 @@ export const LabelCardTab = styled.div`
 export const PaymentTypesContainer = styled.div`
   display: flex;
   width: 100%;
-  height: 60%;
+  height: 85%;
 `;
 
 export const PaymentTypes = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 70%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 10px;
+  width: 75%;
   height: 100%;
-
-  /*Responsive 1680px*/
-  @media (max-width: 1680px) {
-    width: 75%;
-  }
 `;
 
 export const CardType = styled.div`
@@ -322,11 +317,12 @@ export const CardType = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  width: 19%;
-  height: 95%;
+  width: 100%;
+  height: 100%;
   background: var(--white);
   box-shadow: 0px 4px 6px rgba(163, 163, 163, 0.28);
   border-radius: 20px;
+  padding: 5px;
 
   p {
     margin-top: 1rem;
@@ -342,24 +338,21 @@ export const CardType = styled.div`
     color: var(--blue-700);
   }
 
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      p {
-        font-size: 0.8rem;
-      }
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    p {
+      font-size: 0.9rem;
+    }
 
-      span {
-        font-size: 20px;
-      }
+    span {
+      font-size: 1.2rem;
     }
   }
 
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 18%;
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
     p {
-      font-size: 0.7rem;
+      font-size: 0.8rem;
     }
 
     span {
@@ -367,15 +360,14 @@ export const CardType = styled.div`
     }
   }
 
-  /*Responsive 1280px*/
-  @media (max-width: 1280px) {
-    @media (max-height: 1024px) {
-      width: 19%;
-      height: 80%;
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    p {
+      font-size: 0.7rem;
     }
 
-    @media (max-height: 800px) {
-      height: 95%;
+    span {
+      font-size: 0.8rem;
     }
   }
 `;
@@ -384,23 +376,35 @@ export const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 45%;
-  height: 25%;
+  width: 5.5rem;
+  height: 5.5rem;
   border-radius: 50%;
   background: var(--white-90);
+
+  /*Responsive 1680px*/
+  @media (max-width: 1680px) {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
 
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
     @media (max-height: 900px) {
-      width: 41%;
-      height: 24%;
+      width: 4rem;
+      height: 4rem;
     }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 3rem;
+    height: 3rem;
   }
 `;
 
 export const ChartContainer = styled.div`
   display: flex;
-  width: 30%;
+  width: 25%;
   height: 100%;
   padding: 1rem;
   margin-left: 1rem;
@@ -479,14 +483,14 @@ export const FooterContainer = styled.footer`
   display: flex;
   align-items: end;
   width: 100%;
-  height: 40%;
+  height: 15%;
 
   footer {
     display: flex;
     align-items: end;
     justify-content: space-between;
     width: 100%;
-    height: 15%;
+    height: 30%;
     border-top: 1px solid var(--gray-25);
 
     span {

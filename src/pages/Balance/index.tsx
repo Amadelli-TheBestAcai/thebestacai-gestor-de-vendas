@@ -94,7 +94,7 @@ const Balance: React.FC = () => {
         label: (
           <TabPaneContainer tab_id={3}>
             <LabelCardTab>
-              <p>Faturamento</p>
+              <p>Faturamento Total</p>
               <span>R$ {currencyFormater(+payload?.billing?.total)}</span>
             </LabelCardTab>
           </TabPaneContainer>
@@ -107,40 +107,127 @@ const Balance: React.FC = () => {
     if (!total) {
       return 100;
     }
+
     return +((+number * 100) / total).toFixed(2);
   };
 
+  const getPercentBilling = (
+    value_delivery: number,
+    value_store: number,
+    total: number
+  ): number => {
+    if (!total) {
+      return 100;
+    }
+
+    return +(((+value_delivery + +value_store) * 100) / total).toFixed(2);
+  };
+
   const createPaymentsPie = (tab: string, payload?: BalanceModel) => {
-    return [
-      {
-        id: "Dinheiro",
-        value: getPercent(payload[tab]?.money, payload[tab]?.total),
-        color: "var(--blue-700)",
-      },
-      {
-        id: "Crédito",
-        value: getPercent(payload[tab]?.credit, payload[tab]?.total),
-        color: "var(--blue-350)",
-      },
-      {
-        id: "Débito",
-        value: getPercent(payload[tab]?.debit, payload[tab]?.total),
-        color: "var(--blue-500)",
-      },
-      {
-        id: "Pix",
-        value: getPercent(payload[tab]?.pix, payload[tab]?.total),
-        color: "var(--orange-700)",
-      },
-      {
-        id: tab === "store" ? "Ticket" : "Online",
-        value: getPercent(
-          tab === "store" ? payload[tab]?.ticket : payload[tab]?.online,
-          payload[tab].total
-        ),
-        color: tab === "store" ? "var(--purple-450)" : "var(--orange-400)",
-      },
-    ];
+    const response = [];
+
+    if (tab === "store" || tab === "delivery") {
+      response.push(
+        {
+          id: "Dinheiro",
+          value: getPercent(payload[tab]?.money, payload[tab]?.total),
+          color: "var(--blue-700)",
+        },
+        {
+          id: "Crédito",
+          value: getPercent(payload[tab]?.credit, payload[tab]?.total),
+          color: "var(--blue-350)",
+        },
+        {
+          id: "Débito",
+          value: getPercent(payload[tab]?.debit, payload[tab]?.total),
+          color: "var(--blue-500)",
+        },
+        {
+          id: "Pix",
+          value: getPercent(payload[tab]?.pix, payload[tab]?.total),
+          color: "var(--orange-700)",
+        },
+        {
+          id: tab === "store" ? "Ticket" : "Online",
+          value: getPercent(
+            tab === "store" ? payload[tab]?.ticket : payload[tab]?.online,
+            payload[tab].total
+          ),
+          color: tab === "store" ? "var(--purple-450)" : "var(--orange-400)",
+        }
+      );
+    }
+
+    if (tab === "billing") {
+      response.push(
+        {
+          id: "Dinheiro",
+          value: getPercentBilling(
+            payload["delivery"]?.money,
+            payload["store"]?.money,
+            payload[tab]?.total
+          ),
+          color: "var(--blue-700)",
+        },
+        {
+          id: "Crédito",
+          value: getPercentBilling(
+            payload["delivery"]?.credit,
+            payload["store"]?.credit,
+            payload[tab]?.total
+          ),
+          color: "var(--blue-350)",
+        },
+        {
+          id: "Débito",
+          value: getPercentBilling(
+            payload["delivery"]?.debit,
+            payload["store"]?.debit,
+            payload[tab]?.total
+          ),
+          color: "var(--blue-500)",
+        },
+        {
+          id: "Pix",
+          value: getPercentBilling(
+            payload["delivery"]?.pix,
+            payload["store"]?.pix,
+            payload[tab]?.total
+          ),
+          color: "var(--orange-700)",
+        },
+        {
+          id: "Ticket",
+          value: getPercentBilling(
+            0,
+            payload["store"]?.ticket,
+            payload[tab]?.total
+          ),
+          color: "var(--purple-450)",
+        },
+        {
+          id: "Online",
+          value: getPercentBilling(
+            0,
+            payload["delivery"]?.online,
+            payload[tab]?.total
+          ),
+          color: "var(--orange-400)",
+        }
+      );
+    }
+
+    return response;
+  };
+
+  const getTotalByType = (
+    value_delivery: number,
+    value_store: number
+  ): number => {
+    const result = value_delivery + value_store;
+
+    return result;
   };
 
   const createAmountTypePayments = (tab: string, payload: BalanceModel) => {
@@ -197,33 +284,66 @@ const Balance: React.FC = () => {
       response.push(
         {
           id: 7,
+          icon: <MoneyIcon />,
+          type: "TOTAL DINHEIRO",
+          value: getTotalByType(
+            payload["delivery"].money,
+            payload["store"].money
+          ),
+        },
+        {
+          id: 8,
+          icon: <CreditIcon />,
+          type: "TOTAL CRÉDITO",
+          value: getTotalByType(
+            payload["delivery"].credit,
+            payload["store"].credit
+          ),
+        },
+        {
+          id: 9,
+          icon: <DebitIcon />,
+          type: "TOTAL DÉBITO",
+          value: getTotalByType(
+            payload["delivery"].debit,
+            payload["store"].debit
+          ),
+        },
+        {
+          id: 10,
+          icon: <PixIcon src={pixImg} />,
+          type: "TOTAL PIX",
+          value: getTotalByType(payload["delivery"].pix, payload["store"].pix),
+        },
+        {
+          id: 11,
+          icon: <OnlineIcon />,
+          type: "TOTAL ONLINE",
+          value: payload["delivery"].online,
+        },
+        {
+          id: 12,
+          icon: <TicketIcon />,
+          type: "TOTAL TICKET",
+          value: payload["store"].ticket,
+        },
+        {
+          id: 13,
           icon: <MinusIcon />,
           type: "VENDAS",
           value: payload[tab].sales,
         },
         {
-          id: 8,
+          id: 14,
           icon: <MinusIcon />,
           type: "VENDAS DELIVERY",
           value: payload[tab].delivery_sales,
         },
         {
-          id: 9,
+          id: 15,
           icon: <MinusIcon />,
           type: "VENDAS LOJA",
           value: payload[tab].store_sales,
-        },
-        {
-          id: 10,
-          icon: <MinusIcon />,
-          type: "TICKET MÉDIO DELIVERY",
-          value: payload[tab].delivery_ticket,
-        },
-        {
-          id: 11,
-          icon: <MinusIcon />,
-          type: "TICKET MÉDIO LOJA",
-          value: payload[tab].store_ticket,
         }
       );
     }
@@ -296,14 +416,15 @@ const Balance: React.FC = () => {
                                     </span>
                                   ) : (
                                     <>
-                                      {typePayment.id === 10 ||
-                                      typePayment.id === 11 ? (
+                                      {typePayment.id === 13 ||
+                                      typePayment.id === 14 ||
+                                      typePayment.id === 15 ? (
+                                        <span>{+typePayment.value}</span>
+                                      ) : (
                                         <span>
                                           R${" "}
                                           {currencyFormater(+typePayment.value)}
                                         </span>
-                                      ) : (
-                                        <span>{+typePayment.value}</span>
                                       )}
                                     </>
                                   )}
