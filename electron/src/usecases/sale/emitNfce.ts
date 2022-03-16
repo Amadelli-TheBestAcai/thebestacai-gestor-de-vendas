@@ -123,7 +123,7 @@ class EmitNfce implements IUseCaseFactory {
     } catch (error: any) {
       return {
         error: true,
-        message: error?.response?.data?.mensagem.includes("XML")
+        message: error?.response?.data?.mensagem?.includes("XML")
           ? "Produtos com dados tributários inválidos ou serviço indisponível. Contate o suporte"
           : error?.response?.data?.mensagem
           ? error.response.data.mensagem
