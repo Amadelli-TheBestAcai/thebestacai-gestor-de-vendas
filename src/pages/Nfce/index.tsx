@@ -218,7 +218,7 @@ const Nfce: React.FC = () => {
     setProductsNfe(updatedProducts);
   };
 
-  const handleEmit = () => {
+  const handleEmit = async () => {
     let payload = form.getFieldsValue();
     if (!productsNfe.length) {
       return notification.warning({
@@ -250,12 +250,12 @@ const Nfce: React.FC = () => {
 
     console.log(JSON.stringify(nfcePayload));
     setEmitingNfe(true);
-    const nfce = window.Main.sale.emitNfce(nfcePayload);
+    const nfce = await window.Main.sale.emitNfce(nfcePayload);
     setEmitingNfe(false);
-    if (!nfce) {
+    if (nfce.response.error === true) {
       return notification.error({
         message: "Oops! Não foi possível emitir a NFCe.",
-        description: `Tente novamente, caso o problem persista, contate o suporte através do chat.`,
+        description: `Tente novamente, caso o problema persista, contate o suporte através do chat.`,
         duration: 5,
       });
     } else {
@@ -542,7 +542,7 @@ const Nfce: React.FC = () => {
                                     />
                                   </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={6}>
                                   <FormItem
                                     label="Operação"
                                     name="formaPagamento"
@@ -562,7 +562,7 @@ const Nfce: React.FC = () => {
                                     </Select>
                                   </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={6}>
                                   <FormItem
                                     label="Tipo"
                                     name="indicadorFormaPagamento"
@@ -589,7 +589,20 @@ const Nfce: React.FC = () => {
                                     </Select>
                                   </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={6}>
+                                  <FormItem
+                                    label="Troco"
+                                    name="troco"
+                                    rules={[{ required: true }]}
+                                  >
+                                    <InputMonetary
+                                      getValue={(value) =>
+                                        handleUpdateNfe("troco", +value)
+                                      }
+                                    />
+                                  </FormItem>
+                                </Col>
+                                <Col span={6}>
                                   <FormItem
                                     label="CPF / CNPJ"
                                     name="CPFDestinatario"
@@ -661,7 +674,6 @@ const Nfce: React.FC = () => {
         width={500}
         footer={[
           <NFCeButton onClick={() => newNfce()}>Emitir outra</NFCeButton>,
-          <NFCeButton>Imprimir</NFCeButton>,
         ]}
       >
         Nota fiscal emitida com sucesso.

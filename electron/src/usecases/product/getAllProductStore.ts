@@ -7,9 +7,6 @@ import odinApi from "../../providers/odinApi";
 
 class GetAllProductStore implements IUseCaseFactory {
   constructor(
-    private productRepository = new BaseRepository<ProductDto>(
-      StorageNames.Product
-    ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
   ) {}
 

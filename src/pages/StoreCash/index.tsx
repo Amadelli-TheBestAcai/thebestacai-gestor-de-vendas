@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import AmountModal from "../../components/AmountModal";
 import { currencyFormater } from "../../helpers/currencyFormater";
+import moment from "moment";
 
+import AmountModal from "../../components/AmountModal";
 import Cash from "../../components/StoreCash";
 import Spinner from "../../components/Spinner";
 
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
-import { Balance as BalanceModel } from "../../models/balance";
+import { Balance as BalanceModel } from "../../models/dtos/balance";
 
 import { Modal, notification } from "antd";
 
@@ -34,6 +35,24 @@ import {
 import { useSale } from "../../hooks/useSale";
 
 interface IProp extends RouteComponentProps {}
+
+moment.locale("pt-br");
+moment.updateLocale("pt", {
+  months: [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ],
+});
 
 const StoreCash: React.FC<IProp> = ({ history }) => {
   const { storeCash, setStoreCash } = useSale();
@@ -93,7 +112,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       setLoading(false);
       if (
         _storeCashHistory !== undefined &&
-        +_storeCashHistory.in_result !== 0 &&
+        +_storeCashHistory.result_cash !== 0 &&
         !_storeCashHistory?.observation &&
         _storeCashHistory.closed_at !== null
       ) {
@@ -121,18 +140,29 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     _balance: BalanceModel,
     _storeCashHistory?: StoreCashHistoryDTO
   ) => {
-    return [
+    const response = [];
+
+    if (!storeCash?.is_opened) {
+      response.push(
+        {
+          id: 2,
+          label: "Entradas",
+          value: currencyFormater(+_storeCashHistory?.in_result),
+        },
+
+        {
+          id: 5,
+          label: "Saídas",
+          value: currencyFormater(+_storeCashHistory?.out_result),
+        }
+      );
+    }
+
+    response.push(
       {
         id: 1,
         label: "Abertura",
         value: currencyFormater(+_storeCashHistory?.amount_on_open),
-      },
-      {
-        id: 2,
-        label: "Entradas",
-        value: storeCash?.is_opened
-          ? "0,00"
-          : currencyFormater(+_storeCashHistory?.in_result),
       },
       {
         id: 3,
@@ -147,13 +177,6 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         value: currencyFormater(+_storeCashHistory?.amount_on_close),
       },
       {
-        id: 5,
-        label: "Saídas",
-        value: storeCash?.is_opened
-          ? "0,00"
-          : currencyFormater(+_storeCashHistory?.out_result),
-      },
-      {
         id: 6,
         label: "Vendas - Crédito",
         value: currencyFormater(
@@ -162,10 +185,17 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       },
       {
         id: 7,
-        label: "Balanço",
-        value: currencyFormater(+_storeCashHistory?.result_cash),
+        label: "Delivery - Online",
+        value: currencyFormater(_balance?.delivery?.online),
       },
-    ];
+      {
+        id: 8,
+        label: "Resultado",
+        value: currencyFormater(+_storeCashHistory?.result_cash),
+      }
+    );
+
+    return response;
   };
 
   const updateStoreCashObservation = async () => {
@@ -270,16 +300,28 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>
                   </Status>
-                  <span>{storeCash?.created_at}</span>
+                  {!storeCash?.is_opened && (
+                    <span>
+                      {moment(
+                        storeCash?.created_at,
+                        "yyyy-MM-DDTHH:mm:ss"
+                      ).format("DD [de] MMMM [de] YYYY  HH:mm")}
+                    </span>
+                  )}
                 </StatusCash>
               </HeaderStatus>
 
               <ContentStatusCash>
                 {createClosedStatus(balance, storeCashHistory).map(
                   (amoutStatus) => (
-                    <CardStatus id_card={amoutStatus.id} key={amoutStatus.id}>
+                    <CardStatus
+                      id_card={amoutStatus.id}
+                      key={amoutStatus.id}
+                      amount_open={+storeCashHistory?.amount_on_open}
+                      result_cash={+storeCashHistory?.result_cash}
+                    >
                       <label>{amoutStatus.label}</label>
-                      R$ {amoutStatus.value}
+                      <span> R$ {amoutStatus.value}</span>
                     </CardStatus>
                   )
                 )}

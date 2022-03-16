@@ -66,7 +66,7 @@ const ProductsContainer: React.FC = () => {
   ): ProductByCategory => {
     if (pattern && pattern.length) {
       const products = payload.products.filter((_product) =>
-        _product.product.name.toLowerCase().includes(pattern.toLowerCase())
+        _product.product.name.toLowerCase()?.includes(pattern.toLowerCase())
       );
       return {
         category: payload.category,

@@ -9,6 +9,6 @@ export interface IBaseRepository<T> {
     payload: Partial<T>
   ): Promise<T | undefined>;
   getAll(): Promise<T[]>;
-  getOne(): Promise<T | undefined>;
+  getOne(criteria?: Partial<T>): Promise<T | undefined>;
   clear(): Promise<void>;
 }

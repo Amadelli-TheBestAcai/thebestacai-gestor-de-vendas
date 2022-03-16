@@ -10,7 +10,7 @@ import HandlerItem from "../../components/HandlerItem";
 import { Handler as HandlerModel } from "../../models/dtos/handler";
 import notHandler from "../../assets/svg/notHandler.svg";
 
-import { Empty, message, Modal, notification } from "antd";
+import { Empty, Modal, notification } from "antd";
 
 import {
   Container,

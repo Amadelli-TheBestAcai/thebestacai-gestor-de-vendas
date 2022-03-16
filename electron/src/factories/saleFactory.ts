@@ -21,7 +21,7 @@ import {
   emitNfce,
   deleteSaleDelivery,
 } from "../usecases/sale";
-import { SaleDto, ProductDto, EmitNfceDto } from "../models/gestor";
+import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
 
 export const saleFactory = {
@@ -76,8 +76,11 @@ export const saleFactory = {
     }
   },
   emitNfce: async (nfe: NfeDTO, saleIdToUpdate?: number) =>
-    await useCaseFactory.execute<EmitNfceDto>(emitNfce, {
-      nfe,
-      saleIdToUpdate,
-    }),
+    await useCaseFactory.execute<{ error: boolean; message: string }>(
+      emitNfce,
+      {
+        nfe,
+        saleIdToUpdate,
+      }
+    ),
 };

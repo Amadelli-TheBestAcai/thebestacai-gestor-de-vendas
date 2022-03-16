@@ -4,17 +4,17 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import { v4 } from "uuid";
+import moment from "moment";
 
 import apiNfce from "../../providers/apiNfe";
 import midasApi from "../../providers/midasApi";
 
-import { getCurrentSale, addItem, onlineIntegration } from "./index";
+import { onlineIntegration, buildNewSale } from "./index";
 import {
   SaleDto,
   StoreCashDto,
   StoreDto,
   ProductDto,
-  EmitNfceDto,
 } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
 
@@ -33,15 +33,20 @@ class EmitNfce implements IUseCaseFactory {
     ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
+    private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
+      StorageNames.Not_Integrated_Sale
+    ),
     private productRepository = new BaseRepository<ProductDto>(
       StorageNames.Product
     ),
-    private getCurrentSaleUseCase = getCurrentSale,
-    private addItemUseCase = addItem,
-    private onlineIntegrationUseCase = onlineIntegration
+    private onlineIntegrationUseCase = onlineIntegration,
+    private buildNewSaleUseCase = buildNewSale
   ) {}
 
-  async execute({ nfe, saleIdToUpdate }: Request): Promise<EmitNfceDto> {
+  async execute({
+    nfe,
+    saleIdToUpdate,
+  }: Request): Promise<{ error: boolean; message: string }> {
     const hasInternet = await checkInternet();
     if (!hasInternet) {
       return {
@@ -62,20 +67,14 @@ class EmitNfce implements IUseCaseFactory {
       };
     }
 
-    let sale = {
-      cash_code: storeCash.code,
-      store_id: store?.company_id,
-      cash_id: storeCash.cash_id,
-      cash_history_id: storeCash.history_id,
-      type: "STORE",
-      discount: 0,
-      total: 0,
-      quantity: nfe.produtos.length,
-      to_integrate: false,
-      is_current: false,
-      nfce_id: null,
-      nfce_url: null,
-    };
+    const { response: saleResponse, has_internal_error: errorOnBuildNewSale } =
+      await useCaseFactory.execute<SaleDto>(this.buildNewSaleUseCase, {
+        withPersistence: false,
+      });
+
+    if (errorOnBuildNewSale || !saleResponse) {
+      throw new Error("Erro ao criar uma nova venda para NFC-e");
+    }
 
     try {
       console.log({
@@ -113,15 +112,12 @@ class EmitNfce implements IUseCaseFactory {
             "Serviço temporariamente indisponível. Tente novamente mais tarde",
         };
       }
-      sale = {
-        ...sale,
-        nfce_id,
-        nfce_url,
-      };
+      saleResponse.nfce_url = nfce_url;
+      saleResponse.nfce_id = nfce_id;
     } catch (error: any) {
       return {
         error: true,
-        message: error?.response?.data?.mensagem.includes("XML")
+        message: error?.response?.data?.mensagem?.includes("XML")
           ? "Produtos com dados tributários inválidos ou serviço indisponível. Contate o suporte"
           : error?.response?.data?.mensagem
           ? error.response.data.mensagem
@@ -129,58 +125,35 @@ class EmitNfce implements IUseCaseFactory {
       };
     }
 
-    const {
-      response: saleResponse,
-      has_internal_error: errorOnGetCurrentSale,
-    } = await useCaseFactory.execute<SaleDto>(this.getCurrentSaleUseCase);
-
-    if (errorOnGetCurrentSale) {
-      throw new Error("Erro ao integrar venda");
-    }
-    if (!sale) {
-      throw new Error("Nenhuma venda encontrada");
-    }
-
     if (!saleIdToUpdate) {
       try {
         await Promise.all(
           nfe.produtos.map(async (produto) => {
-            const product = await this.productRepository.getById(
-              produto.codigo
-            );
+            const product = await this.productRepository.getOne({
+              product_id: +produto.codigo,
+            });
 
             if (!product) {
               throw new Error("Produto não encontrado");
             }
-
-            const payload = {
-              name: product?.product.name,
-              price_unit: product?.product?.price_sell,
-              product_id: product?.product_id,
-              product_store_id: product?.store_id,
-              category_id: product?.product.category_id,
+            saleResponse?.items.push({
+              created_at: moment(new Date()).format("DD/MM/yyyy HH:mm:ss"),
+              product: product.product,
               quantity: produto.quantidadeComercial,
-              sale_id: v4(),
-              items: product?.product,
+              storeProduct: product,
+              store_product_id: product.id,
               total:
                 +produto.quantidadeComercial *
                 +(product?.product?.price_sell || 0),
-            };
-
-            const itens = payload.items;
-            const quantity = payload.quantity;
-
-            await useCaseFactory.execute<SaleDto>(this.addItemUseCase, {
-              itens,
-              quantity,
+              update_stock: false,
+              id: v4(),
             });
           })
         );
-
-        await this.saleRepository.update(saleResponse?.id, {
-          to_integrate: true,
-        });
-
+        saleResponse.to_integrate = true;
+        saleResponse.is_current = false;
+        console.log({ saleResponse });
+        await this.notIntegratedSaleRepository.create(saleResponse);
         await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
       } catch (error) {
         console.log(error);
@@ -188,13 +161,13 @@ class EmitNfce implements IUseCaseFactory {
     } else {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
-          nfce_id: sale.nfce_id,
-          nfce_url: sale.nfce_url,
+          nfce_id: saleResponse.nfce_id,
+          nfce_url: saleResponse.nfce_url,
         });
       } catch {
         return {
           error: true,
-          message: `Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${sale.nfce_id}`,
+          message: `Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${saleResponse.nfce_id}`,
         };
       }
     }

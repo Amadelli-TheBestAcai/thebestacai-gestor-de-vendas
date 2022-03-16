@@ -1,4 +1,3 @@
-
 import { BaseRepository } from "../repository/baseRepository";
 import { StorageNames } from "../repository/storageNames";
 import { IUseCaseFactory } from "./useCaseFactory.interface";
@@ -28,10 +27,10 @@ class UseCaseFactory {
         has_internal_error: false,
       };
     } catch (error: any) {
-      let error_message = error.message
+      let error_message = error.message;
       if (error?.response) {
         if (error?.response?.data?.message) {
-          error_message = error?.response?.data?.message
+          error_message = error?.response?.data?.message;
         }
       }
 
@@ -52,7 +51,7 @@ class UseCaseFactory {
       return {
         response: undefined,
         has_internal_error: true,
-        error_message
+        error_message,
       };
     }
   }

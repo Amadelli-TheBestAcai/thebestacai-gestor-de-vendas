@@ -1,7 +1,7 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { StoreDto, StoreCashDto, SettingsDto } from "../../models/gestor";
+import { StoreDto, SettingsDto } from "../../models/gestor";
 import { SaleFromApiDTO } from "../../models/dtos/salesFromApi";
 import { replaceSpecialChars } from '../../helpers/replaceSpecialChars'
 import {
@@ -17,9 +17,6 @@ interface Request {
 class PrintSale implements IUseCaseFactory {
   printerFormater: ThermalPrinter
   constructor(
-    private storeCashRepository = new BaseRepository<StoreCashDto>(
-      StorageNames.StoreCash
-    ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private settingsRepository = new BaseRepository<SettingsDto>(StorageNames.Settings)
   ) {
@@ -36,7 +33,6 @@ class PrintSale implements IUseCaseFactory {
   }
 
   async execute({ sale }: Request): Promise<void> {
-    const storeCash = await this.storeCashRepository.getOne()
     const store = await this.storeRepository.getOne()
     const settings = await this.settingsRepository.getOne()
 

@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import moment from "moment";
 import { currencyFormater } from "../../helpers/currencyFormater";
-import DisconectedForm from "../../containers/DisconectedForm";
+
 import SalesHistory from "../../containers/SalesHistory";
 import Centralizer from "../../containers/Centralizer";
-import RouterDescription from "../../components/RouterDescription";
+import NfeForm from "../../containers/NfeForm";
 import Spinner from "../../components/Spinner";
-import SaleItem from "../../components/Sale";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SalesTypes } from "../../models/enums/salesTypes";
@@ -32,21 +31,22 @@ import {
   HeaderCollapse,
   PrinterIcon,
   RemoveIcon,
-  RestoreIcon,
+  NfceIcon,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
-const Sale: React.FC<IProps> = ({ history }) => {
+const Sale: React.FC<IProps> = () => {
   const [shouldSearch, setShouldSearch] = useState(true);
   const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [pendingSales, setPendingSales] = useState<number>(0);
-  const [isIntegrating, setIsIntegrating] = useState<boolean>(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
-  const [isConected, setIsConected] = useState<boolean>(true);
+  const [filteredSale, setFiltered] = useState<SaleFromApi[] | undefined>(
+    undefined
+  );
   const { hasPermission } = useUser();
+  const [nfceModal, setNfceModal] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -75,10 +75,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
       }
       setSales(payload);
       setIsLoading(false);
-      // ipcRenderer.send('integrate:status')
-      // ipcRenderer.once('integrate:status:response', (event, { sales }) => {
-      //   setPendingSales(sales?.length)
-      // })
       setShouldSearch(false);
     }
     if (shouldSearch) {
@@ -105,9 +101,6 @@ const Sale: React.FC<IProps> = ({ history }) => {
             });
           }
 
-          //  const _sale = await window.Main.sale.getSaleFromApi();
-          //  setSales(_sale);
-
           return notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
@@ -116,33 +109,18 @@ const Sale: React.FC<IProps> = ({ history }) => {
           console.log(error);
         } finally {
           setIsLoading(false);
-          setShouldSearch(false);
+          setShouldSearch(true);
         }
       },
     });
   };
 
-  // const handleIntegrate = () => {
-  //   setIsIntegrating(true)
-  //   ipcRenderer.send('integrate:integrate')
-  //   ipcRenderer.once('integrate:integrate:response', (event, status) => {
-  //     setIsIntegrating(false)
-  //     if (status) {
-  //       Modal.confirm({
-  //         title: 'Integração de vendas concluida.',
-  //         content:
-  //           'As vendas foram enviadas com sucesso e estão sendo processadas. Pode levar alguns minutos até que todas sejam processadas e salvas pelo servidor.',
-  //         onOk() {
-  //           return history.push('/home')
-  //         },
-  //         cancelButtonProps: { hidden: true },
-  //       })
-  //     } else {
-  //       message.error('Houve um erro na tentativa de integrar as vendas.')
-  //     }
-  //     setPendingSales(sales?.length)
-  //   })
-  // }
+  const findSale = ({ target: { value } }) => {
+    const filteredSale = sales.filter((_sale) =>
+      _sale?.id?.toString()?.includes(value)
+    );
+    setFiltered(filteredSale);
+  };
 
   return (
     <Container>
@@ -157,7 +135,10 @@ const Sale: React.FC<IProps> = ({ history }) => {
                   <h2>Vendas</h2>
                 </Header>
                 <SearchContainer>
-                  <Input placeholder="Digite a identificação da venda" />
+                  <Input
+                    placeholder="Digite a identificação da venda"
+                    onChange={findSale}
+                  />
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
@@ -199,11 +180,15 @@ const Sale: React.FC<IProps> = ({ history }) => {
                                     />
                                   </Tooltip>
                                 )}
-                              {selectedSale.deleted_at && (
-                                <Tooltip title="Restaurar" placement="bottom">
-                                  <RestoreIcon />
-                                </Tooltip>
-                              )}
+                              {hasPermission("sales.emit_nfce") &&
+                                !selectedSale.nfce_id &&
+                                selectedSale.type === 0 && (
+                                  <Tooltip title="NFc-e" placement="bottom">
+                                    <NfceIcon
+                                      onClick={() => setNfceModal(true)}
+                                    />
+                                  </Tooltip>
+                                )}
                               <Tooltip title="Imprimir" placement="bottom">
                                 <PrinterIcon
                                   onClick={() =>
@@ -264,6 +249,7 @@ const Sale: React.FC<IProps> = ({ history }) => {
                   <SalesHistory
                     sales={sales}
                     setSelectedSale={setSelectedSale}
+                    filteredSales={filteredSale}
                   />
                 </SalesHistoryContainer>
               </>
@@ -281,6 +267,12 @@ const Sale: React.FC<IProps> = ({ history }) => {
           </>
         )}
       </PageContent>
+      <NfeForm
+        setShouldSearch={setShouldSearch}
+        modalState={nfceModal}
+        setModalState={setNfceModal}
+        sale={selectedSale}
+      />
     </Container>
   );
 };

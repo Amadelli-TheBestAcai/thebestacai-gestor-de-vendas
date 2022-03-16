@@ -1,15 +1,16 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import axios from "axios";
 import { v4 } from "uuid";
-import { onlyNumbers } from "../../helpers/onlyNumber";
 import { cleanObject } from "../../helpers/cleanObject";
 
-import { Divider, message as messageAnt } from "antd";
+import { Divider, message as messageAnt, notification } from "antd";
 
 import { Nfe } from "../../models/dtos/nfe";
 
 import {
   Container,
+  Footer,
+  ButtonSave,
+  ButtonCancel,
   Form,
   Row,
   Col,
@@ -17,17 +18,18 @@ import {
   FormItem,
   Select,
   Option,
-  InputMask,
+  TotalValue,
 } from "./styles";
 
 import { ProductNfe } from "../../models/dtos/productNfe";
-import { SaleDto } from "../../models/dtos/sale";
+import { SaleFromApi } from "../../models/dtos/salesFromApi";
+import { InputMonetary } from "../../pages/Nfce/styles";
 
 type IProps = {
   modalState: boolean;
   setModalState: Dispatch<SetStateAction<boolean>>;
   setShouldSearch?: Dispatch<SetStateAction<boolean>>;
-  sale: SaleDto;
+  sale: SaleFromApi;
 };
 const NfeForm: React.FC<IProps> = ({
   modalState,
@@ -95,7 +97,7 @@ const NfeForm: React.FC<IProps> = ({
         }
       });
 
-      const getTotalSold = (sale: SaleDto) => {
+      const getTotalSold = (sale: SaleFromApi) => {
         return (
           (sale.payments?.reduce(
             (total, payment) => total + +payment.amount,
@@ -121,30 +123,6 @@ const NfeForm: React.FC<IProps> = ({
     }
   }, [sale, modalState]);
 
-  const handleCep = async (cep: string) => {
-    if (cep.length === 8) {
-      const {
-        data: { logradouro, bairro, localidade, uf },
-      } = await axios({
-        method: "GET",
-        url: `https://viacep.com.br/ws/${cep}/json/`,
-      });
-      setNfe((oldValues) => ({
-        ...oldValues,
-        municipioDestinatario: localidade,
-        logradouroDestinatario: logradouro,
-        bairroDestinatario: bairro,
-        UFDestinatario: uf,
-      }));
-      form.setFieldsValue({
-        municipioDestinatario: localidade,
-        logradouroDestinatario: logradouro,
-        bairroDestinatario: bairro,
-        UFDestinatario: uf,
-      });
-    }
-  };
-
   const handleUpdateNfe = (name, value) => {
     setNfe((oldValues) => ({ ...oldValues, [name]: value }));
   };
@@ -169,10 +147,22 @@ const NfeForm: React.FC<IProps> = ({
     { id: 2, value: "Outros" },
   ];
 
-  const handleEmit = () => {
+  const handleEmit = async () => {
+    let payload = form.getFieldsValue();
     if (!productsNfe.length) {
-      messageAnt.warning("Adicione pelo menos um produto");
-      return;
+      return notification.warning({
+        message: "Oops! O carrinho está vazio.",
+        description: `Selecione algum item para continuar com a emissão da nota.`,
+        duration: 5,
+      });
+    }
+
+    if (!payload.formaPagamento || !payload.indicadorFormaPagamento) {
+      return notification.warning({
+        message: "Operação e Tipo são obrigatórios.",
+        description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
+        duration: 5,
+      });
     }
     const nfcePayload = {
       ...cleanObject(nfe),
@@ -184,44 +174,81 @@ const NfeForm: React.FC<IProps> = ({
         quantidadeTributavel: props.quantidadeComercial,
       })),
     };
+    console.log(JSON.stringify(nfcePayload));
     setEmitingNfe(true);
-    // ipcRenderer.send("sale:nfe", { nfce: nfcePayload, sale_id: sale.id });
-    // ipcRenderer.once("sale:nfe:response", (event, { error, message }) => {
-    //   setEmitingNfe(false);
-    //   if (error) {
-    //     messageAnt.error(message || "Falha ao emitir NFCe, contate o suporte.");
-    //   } else {
-    //     setModalState(false);
-    //     setShouldSearch(true);
-    //     messageAnt.success(message || "NFCe emitida com sucesso");
-    //   }
-    // });
+    const nfce = await window.Main.sale.emitNfce(nfcePayload, sale.id);
+    setEmitingNfe(false);
+    if (nfce.response.error === true) {
+      return notification.error({
+        message: "Oops! Não foi possível emitir a NFCe.",
+        description: `Tente novamente, caso o problema persista, contate o suporte através do chat.`,
+        duration: 5,
+      });
+    } else {
+      setModalState(false);
+      setShouldSearch(true);
+      notification.success({
+        message: "NFc-e emitida com sucesso!",
+        duration: 5,
+      });
+    }
   };
 
   return (
     <Container
       title="Nfe"
       visible={modalState}
-      onOk={handleEmit}
+      destroyOnClose={true}
       closable={false}
-      onCancel={() => setModalState(false)}
       width={650}
       confirmLoading={emitingNfe}
       okButtonProps={{ disabled: !isValid }}
-      destroyOnClose={true}
+      centered
+      footer={
+        <Footer>
+          <ButtonCancel onClick={() => setModalState(false)}>
+            Cancelar
+          </ButtonCancel>
+          <ButtonSave onClick={() => handleEmit()}>Emitir</ButtonSave>
+        </Footer>
+      }
     >
       <Form layout="vertical" form={form}>
         <Divider orientation="left" plain>
           Pagamento
         </Divider>
         <Row>
-          <Col span={5}>
+          <Col span={24}>
+            <FormItem name="Valor">
+              <TotalValue disabled className="valorPagamento" />
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem
+              label="Operação"
+              name="formaPagamento"
+              rules={[{ required: true }]}
+            >
+              <Select
+                placeholder="Escolha a opção"
+                onChange={(value) => handleUpdateNfe("formaPagamento", value)}
+              >
+                {formasPagamento.map((formaPagamento) => (
+                  <Option key={formaPagamento.id}>
+                    {formaPagamento.value}
+                  </Option>
+                ))}
+              </Select>
+            </FormItem>
+          </Col>
+          <Col span={12}>
             <FormItem
               label="Tipo"
               name="indicadorFormaPagamento"
               rules={[{ required: true }]}
             >
               <Select
+                placeholder="Escolha a opção"
                 onChange={(value) =>
                   handleUpdateNfe("indicadorFormaPagamento", +value)
                 }
@@ -234,53 +261,15 @@ const NfeForm: React.FC<IProps> = ({
               </Select>
             </FormItem>
           </Col>
-          <Col span={9}>
-            <FormItem
-              label="Forma"
-              name="formaPagamento"
-              rules={[{ required: true }]}
-            >
-              <Select
-                onChange={(value) => handleUpdateNfe("formaPagamento", value)}
-              >
-                {formasPagamento.map((formaPagamento) => (
-                  <Option key={formaPagamento.id}>
-                    {formaPagamento.value}
-                  </Option>
-                ))}
-              </Select>
-            </FormItem>
-          </Col>
-          <Col span={5}>
-            <FormItem label="Valor" name="valorPagamento">
-              <Input disabled />
-            </FormItem>
-          </Col>
-          <Col span={5}>
-            <FormItem label="Troco" name="troco">
-              <Input disabled />
-            </FormItem>
-          </Col>
-        </Row>
-        <Divider orientation="left" plain>
-          Destinatário
-        </Divider>
-        <Row>
-          <Col span={24}>
-            <FormItem label="Nome" name="nomeDestinatario">
-              <Input
-                onChange={({ target: { value } }) =>
-                  handleUpdateNfe("nomeDestinatario", value)
-                }
-              />
-            </FormItem>
-          </Col>
-        </Row>
-        <Row>
           <Col span={12}>
-            <FormItem label="CPF" name="CPFDestinatario">
-              <InputMask
-                mask="999.999.999-99"
+            <FormItem label="Troco" name="troco" rules={[{ required: true }]}>
+              <Input disabled />
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem label="CPF / CNPJ" name="CPFDestinatario">
+              <Input
+                placeholder="CPF/CNPJ"
                 className="ant-input"
                 onChange={({ target: { value } }) =>
                   handleUpdateNfe("CPFDestinatario", value)
@@ -288,61 +277,12 @@ const NfeForm: React.FC<IProps> = ({
               />
             </FormItem>
           </Col>
-          <Col span={12}>
-            <FormItem label="CEP">
-              <InputMask
-                mask="99999-999"
-                className="ant-input"
-                onChange={({ target: { value } }) =>
-                  handleCep(onlyNumbers(value)?.toString())
-                }
-              />
-            </FormItem>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <FormItem label="Municipio" name="municipioDestinatario">
-              <Input disabled />
-            </FormItem>
-          </Col>
-          <Col span={12}>
-            <FormItem label="Logradouro" name="logradouroDestinatario">
-              <Input disabled />
-            </FormItem>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <FormItem label="Bairro" name="bairroDestinatario">
-              <Input disabled />
-            </FormItem>
-          </Col>
-          <Col span={6}>
-            <FormItem label="Número" name="numeroDestinatario">
-              <Input
-                onChange={({ target: { value } }) =>
-                  handleUpdateNfe("numeroDestinatario", value)
-                }
-              />
-            </FormItem>
-          </Col>
-          <Col span={6}>
-            <FormItem label="UF" name="UFDestinatario">
-              <Input disabled />
-            </FormItem>
-          </Col>
-        </Row>
-        <Divider orientation="left" plain>
-          Adicionais
-        </Divider>
-        <Row>
           <Col span={24}>
             <FormItem
               label="Informações Adicionais"
               name="informacoesAdicionaisFisco"
             >
-              <Input
+              <Input.TextArea
                 onChange={({ target: { value } }) =>
                   handleUpdateNfe("informacoesAdicionaisFisco", value)
                 }

@@ -6,6 +6,8 @@ import { Input as InputAnt } from "antd";
 
 interface ICardStatus {
   id_card: number;
+  result_cash: number;
+  amount_open: number;
 }
 interface IStatusCash {
   is_opened: boolean;
@@ -230,6 +232,33 @@ export const CardStatus = styled.div<ICardStatus>`
           color: var(--teal-400);
         `;
       }
+      if (id_card === 7) {
+        return css`
+          color: var(--orange-400);
+        `;
+      }
+
+      return css`
+        color: var(--grey-100);
+      `;
+    }}
+  }
+
+  span {
+    ${({ id_card, result_cash, amount_open }) => {
+      if (id_card === 8) {
+        if (result_cash > amount_open) {
+          return css`
+            color: var(--green-200);
+          `;
+        }
+        if (result_cash < amount_open) {
+          return css`
+            color: var(--red-600);
+          `;
+        }
+      }
+
       return css`
         color: var(--grey-100);
       `;
