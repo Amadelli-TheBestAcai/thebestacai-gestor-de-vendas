@@ -263,9 +263,7 @@ const NfeForm: React.FC<IProps> = ({
           </Col>
           <Col span={12}>
             <FormItem label="Troco" name="troco" rules={[{ required: true }]}>
-              <InputMonetary
-                getValue={(value) => handleUpdateNfe("troco", +value)}
-              />
+              <Input disabled />
             </FormItem>
           </Col>
           <Col span={12}>
