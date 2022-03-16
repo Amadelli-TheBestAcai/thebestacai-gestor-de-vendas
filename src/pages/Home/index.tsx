@@ -30,14 +30,7 @@ import {
 import { PaymentType } from "../../models/enums/paymentType";
 
 const Home: React.FC = () => {
-  const {
-    sale,
-    setSale,
-    loadingSale,
-    onRegisterSale,
-    discountModalHandler,
-    onAddItem,
-  } = useSale();
+  const { sale, setSale, onRegisterSale, discountModalHandler } = useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);

@@ -26,15 +26,11 @@ import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
-const SideBar: React.FC<IProps> = ({ history, location }) => {
+const SideBar: React.FC<IProps> = ({ history }) => {
   const { hasPermission } = useUser();
 
   const handleClick = (route: string): void => {
     history.push(route);
-  };
-
-  const isRoute = (route: string): boolean => {
-    return location.pathname === route;
   };
 
   const tab = () => {

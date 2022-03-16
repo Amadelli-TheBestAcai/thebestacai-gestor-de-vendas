@@ -3,17 +3,10 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
-import {
-  StoreDto,
-  StoreCashDto,
-  AvailableStoreCashesDto,
-} from "../../models/gestor";
+import { StoreDto, AvailableStoreCashesDto } from "../../models/gestor";
 
 class GetAvailableStoreCashes implements IUseCaseFactory {
   constructor(
-    private storeCashRepository = new BaseRepository<StoreCashDto>(
-      StorageNames.StoreCash
-    ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
   ) {}
 

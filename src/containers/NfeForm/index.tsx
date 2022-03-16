@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import axios from "axios";
 import { v4 } from "uuid";
 import { cleanObject } from "../../helpers/cleanObject";
 
@@ -148,7 +147,7 @@ const NfeForm: React.FC<IProps> = ({
     { id: 2, value: "Outros" },
   ];
 
-  const handleEmit = () => {
+  const handleEmit = async () => {
     let payload = form.getFieldsValue();
     if (!productsNfe.length) {
       return notification.warning({
@@ -177,12 +176,12 @@ const NfeForm: React.FC<IProps> = ({
     };
     console.log(JSON.stringify(nfcePayload));
     setEmitingNfe(true);
-    const nfce = window.Main.sale.emitNfce(nfcePayload, sale.id);
+    const nfce = await window.Main.sale.emitNfce(nfcePayload, sale.id);
     setEmitingNfe(false);
-    if (!nfce) {
+    if (nfce.response.error === true) {
       return notification.error({
         message: "Oops! Não foi possível emitir a NFCe.",
-        description: `Tente novamente, caso o problem persista, contate o suporte através do chat.`,
+        description: `Tente novamente, caso o problema persista, contate o suporte através do chat.`,
         duration: 5,
       });
     } else {

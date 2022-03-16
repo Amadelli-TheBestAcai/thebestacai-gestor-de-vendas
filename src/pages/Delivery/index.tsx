@@ -16,7 +16,7 @@ import { SalesTypes } from "../../models/enums/salesTypes";
 import { PaymentType } from "../../models/enums/paymentType";
 import { IntegrateAppSalesDTO } from "../../models/dtos/integrateAppSales";
 
-import { Modal, notification, Tooltip } from "antd";
+import { Modal, notification } from "antd";
 
 import {
   Container,
@@ -44,13 +44,12 @@ import {
   ButtonConfirm,
   ButtonCancel,
   OrdersListContainer,
-  CheckAll,
   HeaderRight,
 } from "./styles";
 
 type ComponentProps = RouteComponentProps;
 
-const Delivery: React.FC<ComponentProps> = ({ history }) => {
+const Delivery: React.FC<ComponentProps> = () => {
   const { storeCash } = useSale();
   const [sale, setSale] = useState<SaleDto | null>(null);
   const [deliveries, setDeliveries] = useState<SaleDto[]>([]);

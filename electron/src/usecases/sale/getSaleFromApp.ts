@@ -6,10 +6,6 @@ import odinApi from "../../providers/odinApi";
 import { StoreCashDto } from "../../models/gestor";
 import { AppSaleDTO } from "../../models/dtos/appSale";
 
-interface Request {
-  withClosedCash: false;
-}
-
 class GetSaleFromApp implements IUseCaseFactory {
   constructor(
     private storeCashRepository = new BaseRepository<StoreCashDto>(
@@ -26,13 +22,11 @@ class GetSaleFromApp implements IUseCaseFactory {
     const currentCash = await this.storeCashRepository.getOne();
     if (!currentCash || !currentCash?.is_opened) {
       return undefined;
-      throw new Error("Caixa fechado");
     }
 
     const { store_id } = currentCash;
     if (!store_id) {
       return undefined;
-      throw new Error("Id da loja não encontrado");
     }
 
     const {

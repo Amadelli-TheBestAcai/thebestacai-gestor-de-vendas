@@ -8,7 +8,7 @@ import Cash from "../../components/StoreCash";
 import Spinner from "../../components/Spinner";
 
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
-import { Balance as BalanceModel } from "../../models/balance";
+import { Balance as BalanceModel } from "../../models/dtos/balance";
 
 import { Modal, notification } from "antd";
 

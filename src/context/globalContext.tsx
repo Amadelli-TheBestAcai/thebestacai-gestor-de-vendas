@@ -5,7 +5,6 @@ import { notification } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
 import { SalesTypes } from "../models/enums/salesTypes";
-import { PaymentType } from "../models/enums/paymentType";
 import { SettingsDto } from "../models/dtos/settings";
 import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";

@@ -21,7 +21,7 @@ import {
   emitNfce,
   deleteSaleDelivery,
 } from "../usecases/sale";
-import { SaleDto, ProductDto, EmitNfceDto } from "../models/gestor";
+import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
 
 export const saleFactory = {

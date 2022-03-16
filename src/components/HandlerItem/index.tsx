@@ -15,10 +15,6 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
   const { id, type, amount, created_at, reason } = handler;
   const time = created_at.split(" ")[1];
 
-  // const onPrint = (_handler: HandlerModel) => {
-  //   ipcRenderer.send("handler:print", _handler);
-  // };
-
   return (
     <Container>
       <Column span={4}>{id}</Column>
