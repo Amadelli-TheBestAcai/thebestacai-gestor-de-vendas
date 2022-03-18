@@ -300,11 +300,11 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       {storeCash?.is_opened ? "Aberto" : "Fechado"}
                     </Right>
                   </Status>
-                  {!storeCash?.is_opened && (
+                  {!storeCash?.is_opened && storeCash?.created_at && (
                     <span>
                       {moment(
                         storeCash?.created_at,
-                        "yyyy-MM-DDTHH:mm:ss"
+                        "yyyy-MM-DDHH:mm:ss"
                       ).format("DD [de] MMMM [de] YYYY  HH:mm")}
                     </span>
                   )}
