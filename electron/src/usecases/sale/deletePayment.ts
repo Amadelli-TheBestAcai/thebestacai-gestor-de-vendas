@@ -32,6 +32,12 @@ class DeletePayment implements IUseCaseFactory {
       .reduce((total, payment) => +payment.amount + total, 0)
       .toFixed(2);
 
+    sale.change_amount = +(
+      sale.total_paid -
+      sale.total_sold +
+      sale.discount
+    ).toFixed(2);
+
     await this.saleRepository.update(sale.id, sale);
     return sale;
   }

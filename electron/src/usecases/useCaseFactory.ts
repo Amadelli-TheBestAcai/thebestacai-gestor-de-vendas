@@ -8,20 +8,20 @@ import { UseCaseFactoryResponse } from "./useCaseFactoryResponse.interface";
 class UseCaseFactory {
   constructor(
     private errorsRepository = new BaseRepository<ErrorDto>(StorageNames.Errors)
-  ) { }
+  ) {}
 
   async execute<T>(
     useCase: IUseCaseFactory,
     params?: any
   ): Promise<UseCaseFactoryResponse<T>> {
-    elasticApm.start()
+    elasticApm.start();
     try {
-      const response = await useCase.execute(params);
+      const response = await useCase?.execute(params);
       elasticApm.finish({
-        useCase: useCase.constructor.name,
+        useCase: useCase?.constructor.name,
         success: true,
-        params
-      })
+        params,
+      });
       return {
         response,
         has_internal_error: false,
@@ -35,7 +35,7 @@ class UseCaseFactory {
       }
 
       await this.errorsRepository.create({
-        useCase: useCase.constructor.name,
+        useCase: useCase?.constructor.name,
         error: {
           error_message,
           trace: JSON.stringify(error.stack),
@@ -43,11 +43,11 @@ class UseCaseFactory {
       });
 
       elasticApm.finish({
-        useCase: useCase.constructor.name,
+        useCase: useCase?.constructor.name,
         error_message,
         success: false,
-        error
-      })
+        error,
+      });
       return {
         response: undefined,
         has_internal_error: true,
