@@ -20,7 +20,7 @@ class IntegrationItemOutCart implements IUseCaseFactory {
     ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
     private hasRegistrationUseCase = hasRegistration
-  ) { }
+  ) {}
 
   async execute(): Promise<void> {
     const hasInternet = await checkInternet();
@@ -51,19 +51,21 @@ class IntegrationItemOutCart implements IUseCaseFactory {
 
     if (items.length) {
       await Promise.all(
-        items.map(async item => {
+        items.map(async (item) => {
           try {
             await odinApi.post(
-              `/items_out_cart/${item.store_id}-${item.cash_code || storeCash.code}`,
+              `/items_out_cart/${item.store_id}-${
+                item.cash_code || storeCash.code
+              }`,
               items
             );
             await this.integratedItemOutCartRepository.create(item);
             await this.notIntegratedItemOutCartRepository.deleteById(item.id);
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         })
-      )
+      );
     }
   }
 }

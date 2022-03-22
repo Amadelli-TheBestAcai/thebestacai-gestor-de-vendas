@@ -16,9 +16,9 @@ class UseCaseFactory {
   ): Promise<UseCaseFactoryResponse<T>> {
     elasticApm.start();
     try {
-      const response = await useCase?.execute(params);
+      const response = await useCase.execute(params);
       elasticApm.finish({
-        useCase: useCase?.constructor.name,
+        useCase: useCase.constructor.name,
         success: true,
         params,
       });
@@ -35,7 +35,7 @@ class UseCaseFactory {
       }
 
       await this.errorsRepository.create({
-        useCase: useCase?.constructor.name,
+        useCase: useCase.constructor.name,
         error: {
           error_message,
           trace: JSON.stringify(error.stack),
@@ -43,7 +43,7 @@ class UseCaseFactory {
       });
 
       elasticApm.finish({
-        useCase: useCase?.constructor.name,
+        useCase: useCase.constructor.name,
         error_message,
         success: false,
         error,
