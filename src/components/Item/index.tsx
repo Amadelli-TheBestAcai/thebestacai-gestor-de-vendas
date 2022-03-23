@@ -40,6 +40,7 @@ const Item: React.FC<IProps> = ({ item }) => {
     }
     await window.Main.itemOutCart.create(reasson, item.product.id);
     await onDecressItem(item.id);
+    setModalState(false);
   };
 
   return (
