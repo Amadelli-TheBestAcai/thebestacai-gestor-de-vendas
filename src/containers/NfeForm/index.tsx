@@ -23,7 +23,6 @@ import {
 
 import { ProductNfe } from "../../models/dtos/productNfe";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
-import { InputMonetary } from "../../pages/Nfce/styles";
 
 type IProps = {
   modalState: boolean;
@@ -94,6 +93,7 @@ const NfeForm: React.FC<IProps> = ({
               ", "
             )}`
           );
+          setModalState(false);
         }
       });
 
@@ -102,9 +102,7 @@ const NfeForm: React.FC<IProps> = ({
           (sale.payments?.reduce(
             (total, payment) => total + +payment.amount,
             0
-          ) || 0) -
-          (+sale.discount || 0) -
-          (+sale.change_amount || 0)
+          ) || 0) - (+sale.change_amount || 0)
         )
           .toFixed(2)
           .replace(".", ",");
@@ -219,7 +217,7 @@ const NfeForm: React.FC<IProps> = ({
         </Divider>
         <Row>
           <Col span={24}>
-            <FormItem name="Valor">
+            <FormItem name="valorPagamento">
               <TotalValue disabled className="valorPagamento" />
             </FormItem>
           </Col>

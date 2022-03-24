@@ -4,7 +4,7 @@ import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 
-import { integrationItemOutCart } from "./index";
+import { integrationItemOutCart } from "./integrationItemOutCart";
 import { ItemOutCartDto, StoreCashDto, StoreDto } from "../../models/gestor";
 
 interface Request {
@@ -23,15 +23,13 @@ class InsertItemOutCart implements IUseCaseFactory {
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
-    private storeRepository = new BaseRepository<StoreDto>(
-      StorageNames.Store
-    ),
-    private integrateItemOutCartUseCase = integrationItemOutCart,
-  ) { }
+    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
+    private integrateItemOutCartUseCase = integrationItemOutCart
+  ) {}
 
   async execute({ product_id, reason }: Request): Promise<ItemOutCartDto> {
-    const storeCash = await this.storeCashRepository.getOne()
-    const store = await this.storeRepository.getOne()
+    const storeCash = await this.storeCashRepository.getOne();
+    const store = await this.storeRepository.getOne();
 
     const newItem: ItemOutCartDto = {
       id: v4(),
@@ -46,9 +44,7 @@ class InsertItemOutCart implements IUseCaseFactory {
 
     await this.notIntegratedItemOutCartRepository.create(newItem);
 
-    await useCaseFactory.execute<ItemOutCartDto | undefined>(
-      this.integrateItemOutCartUseCase
-    );
+    await useCaseFactory.execute<void>(this.integrateItemOutCartUseCase);
 
     return newItem;
   }
