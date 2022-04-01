@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { SaleDto } from "../../models/dtos/sale";
+import { PaymentType } from "../../models/enums/paymentType";
 
 import moment from "moment";
 
@@ -75,6 +76,11 @@ const OrderProgressList: React.FC<IProps> = ({
                 )
               )}
             </span>
+            {_delivery.payments.map((_payments) => (
+              <label style={{ fontWeight: "bold" }}>
+                {PaymentType[_payments.type]}
+              </label>
+            ))}
           </Content>
         </CardOrder>
       ))}

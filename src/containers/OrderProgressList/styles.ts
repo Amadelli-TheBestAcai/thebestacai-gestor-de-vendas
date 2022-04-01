@@ -79,7 +79,7 @@ export const Content = styled.div`
   label {
     text-transform: uppercase;
     font-weight: normal;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--grey-100);
   }
 

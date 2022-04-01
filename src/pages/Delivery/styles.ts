@@ -414,7 +414,7 @@ export const HeaderRight = styled.div`
 
 export const OrdersListContainer = styled.div`
   width: 100%;
-  height: 63%;
+  height: 65%;
   overflow-y: scroll;
 `;
 
