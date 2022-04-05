@@ -61,13 +61,20 @@ const Home: React.FC = () => {
   }, []);
 
   const addPayment = async () => {
-    if (!currentPayment) {
+    const payment = sale.total_paid + currentPayment;
+    if (
+      !currentPayment ||
+      (paymentType !== 0 && currentPayment > sale.total_sold) ||
+      (paymentType !== 0 && payment > sale.total_sold) ||
+      (paymentType === 0 && sale.total_paid >= sale.total_sold)
+    ) {
       return notification.error({
         message: "Pagamento inválido!",
         description: `Valor incorreto para pagamento.`,
         duration: 5,
       });
     }
+
     const { response: updatedSale, has_internal_error: errorOnAddPayment } =
       await window.Main.sale.addPayment(currentPayment, paymentType);
     if (errorOnAddPayment) {
