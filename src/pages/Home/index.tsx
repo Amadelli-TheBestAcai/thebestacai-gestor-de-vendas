@@ -66,7 +66,7 @@ const Home: React.FC = () => {
       !currentPayment ||
       (paymentType !== 0 && currentPayment > sale.total_sold) ||
       (paymentType !== 0 && payment > sale.total_sold) ||
-      (paymentType === 0 && sale.total_paid >= sale.total_sold)
+      sale.total_paid >= sale.total_sold
     ) {
       return notification.error({
         message: "Pagamento inválido!",
