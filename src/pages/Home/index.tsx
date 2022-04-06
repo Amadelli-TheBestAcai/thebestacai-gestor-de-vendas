@@ -64,9 +64,9 @@ const Home: React.FC = () => {
     const payment = sale.total_paid + currentPayment;
     if (
       !currentPayment ||
-      (paymentType !== 0 && currentPayment > sale.total_sold) ||
-      (paymentType !== 0 && payment > sale.total_sold) ||
-      sale.total_paid >= sale.total_sold
+      (paymentType !== 0 && currentPayment > sale.total_sold - sale.discount) ||
+      (paymentType !== 0 && payment > sale.total_sold - sale.discount) ||
+      sale.total_paid >= sale.total_sold - sale.discount
     ) {
       return notification.warning({
         message: "Pagamento inválido!",
