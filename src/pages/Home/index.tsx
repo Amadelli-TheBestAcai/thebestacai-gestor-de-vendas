@@ -61,13 +61,20 @@ const Home: React.FC = () => {
   }, []);
 
   const addPayment = async () => {
-    if (!currentPayment) {
-      return notification.error({
+    const payment = sale.total_paid + currentPayment;
+    if (
+      !currentPayment ||
+      (paymentType !== 0 && currentPayment > sale.total_sold - sale.discount) ||
+      (paymentType !== 0 && payment > sale.total_sold - sale.discount) ||
+      sale.total_paid >= sale.total_sold - sale.discount
+    ) {
+      return notification.warning({
         message: "Pagamento inválido!",
-        description: `Valor incorreto para pagamento.`,
+        description: `Não é possível adicionar um valor de pagamento maior que o valor total da venda.`,
         duration: 5,
       });
     }
+
     const { response: updatedSale, has_internal_error: errorOnAddPayment } =
       await window.Main.sale.addPayment(currentPayment, paymentType);
     if (errorOnAddPayment) {
