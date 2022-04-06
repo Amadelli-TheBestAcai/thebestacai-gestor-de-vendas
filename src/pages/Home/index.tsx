@@ -68,9 +68,9 @@ const Home: React.FC = () => {
       (paymentType !== 0 && payment > sale.total_sold) ||
       sale.total_paid >= sale.total_sold
     ) {
-      return notification.error({
+      return notification.warning({
         message: "Pagamento inválido!",
-        description: `Valor incorreto para pagamento.`,
+        description: `Não é possível adicionar um valor de pagamento maior que o valor total da venda.`,
         duration: 5,
       });
     }
