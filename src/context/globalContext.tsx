@@ -245,7 +245,7 @@ export function GlobalProvider({ children }) {
     if (sale.payments.length > 0) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
-        description: `A venda já possui pagamento(s). Desconto pode ser aplicado somente a venda sem pagamento(s).`,
+        description: `A venda já possui pagamento(s).`,
         duration: 5,
       });
     }
