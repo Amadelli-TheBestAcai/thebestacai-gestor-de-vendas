@@ -2,7 +2,12 @@ import styled, { css } from "styled-components";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import { Modal as ModalAnt, Col } from "antd";
+import {
+  Modal as ModalAnt,
+  Col,
+  Select as SelectAnt,
+  Form as FormAnt,
+} from "antd";
 
 import {
   MoneyBillAlt,
@@ -266,4 +271,14 @@ export const PixIcon = styled.img`
 export const OnlineIcon = styled(CheckboxChecked)`
   ${IconCSS}
   zoom: 1.3;
+`;
+
+export const Select = styled(SelectAnt)`
+  width: 100%;
+`;
+
+export const Option = styled(SelectAnt.Option)``;
+
+export const FormItem = styled(FormAnt.Item)`
+  margin: 5px;
 `;

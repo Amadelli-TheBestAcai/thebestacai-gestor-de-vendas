@@ -11,6 +11,7 @@ import moment from "moment";
 interface Request {
   amount: number;
   type: number;
+  flag_card?: number;
 }
 
 class AddPayment implements IUseCaseFactory {
@@ -19,7 +20,7 @@ class AddPayment implements IUseCaseFactory {
     private getCurrentSaleUseCase = getCurrentSale
   ) {}
 
-  async execute({ amount, type }: Request): Promise<SaleDto> {
+  async execute({ amount, type, flag_card }: Request): Promise<SaleDto> {
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
       await useCaseFactory.execute<SaleDto>(this.getCurrentSaleUseCase);
 
@@ -30,13 +31,24 @@ class AddPayment implements IUseCaseFactory {
       throw new Error("Nenhuma venda encontrada");
     }
 
-    sale.payments.push({
-      id: v4(),
-      amount,
-      type,
-      formated_type: PaymentType[type],
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-    });
+    if (type === 1 || type === 2) {
+      sale.payments.push({
+        id: v4(),
+        amount,
+        type,
+        flag_card,
+        formated_type: PaymentType[type],
+        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      });
+    } else {
+      sale.payments.push({
+        id: v4(),
+        amount,
+        type,
+        formated_type: PaymentType[type],
+        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      });
+    }
 
     const total_paid = +sale.payments
       .reduce((total, payment) => +payment.amount + total, 0)
@@ -52,7 +64,8 @@ class AddPayment implements IUseCaseFactory {
       ).toFixed(2);
     }
 
-    await this.saleRepository.update(sale.id, sale);
+    const t = await this.saleRepository.update(sale.id, sale);
+    console.log({ sale, t });
     return sale;
   }
 }

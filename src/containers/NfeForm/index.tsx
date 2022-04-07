@@ -1,10 +1,6 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { v4 } from "uuid";
+import { Divider, notification } from "antd";
 import { cleanObject } from "../../helpers/cleanObject";
-
-import { Divider, message as messageAnt, notification } from "antd";
-
-import { Nfe } from "../../models/dtos/nfe";
 
 import {
   Container,
@@ -16,13 +12,14 @@ import {
   Col,
   Input,
   FormItem,
-  Select,
-  Option,
-  TotalValue,
 } from "./styles";
 
+import { Nfe } from "../../models/dtos/nfe";
 import { ProductNfe } from "../../models/dtos/productNfe";
+import { PaymentNfe } from "../../models/dtos/paymentNfe";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
+
+import { useStore } from "../../hooks/useStore";
 
 type IProps = {
   modalState: boolean;
@@ -36,293 +33,253 @@ const NfeForm: React.FC<IProps> = ({
   sale,
   setShouldSearch,
 }) => {
-  // const [isValid, setIsValid] = useState(true);
-  // const [emitingNfe, setEmitingNfe] = useState(false);
-  // const [nfe, setNfe] = useState<Nfe | null>(null);
-  // const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
-  // const [form] = Form.useForm();
+  const [isValid] = useState(true);
+  const [emitingNfe, setEmitingNfe] = useState(false);
+  const [nfe, setNfe] = useState<Nfe | null>(null);
+  const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
+  const [paymentsNfe, setPaymentsNfe] = useState<PaymentNfe[]>([]);
+  const [form] = Form.useForm();
+  const { store } = useStore();
 
-  // useEffect(() => {
-  //   if (modalState) {
-  //     const products = sale.items.map((product) => ({
-  //       id: v4(),
-  //       idItem: product.storeProduct.product_id,
-  //       codigo: +product.storeProduct.product_id,
-  //       descricao: product.product.name,
-  //       ncm: product.product.cod_ncm?.toString(),
-  //       cfop: product.storeProduct.cfop,
-  //       unidadeComercial: product.storeProduct.unity_taxable?.toString(),
-  //       quantidadeComercial: +product.quantity,
-  //       valorUnitarioComercial: +product.storeProduct.price_unit,
-  //       unidadeTributaria: product.storeProduct.unity_taxable?.toString(),
-  //       quantidadeTributavel: +product.quantity,
-  //       valorUnitarioTributario: +product.storeProduct.price_unit,
-  //       origem: +product.storeProduct.icms_origin,
-  //       informacoesAdicionais: product.storeProduct.additional_information,
-  //       PISCOFINSST: false,
-  //       csosn: 102,
-  //       cEAN: "SEM GTIN",
-  //       cEANTrib: "SEM GTIN",
-  //     }));
+  useEffect(() => {
+    if (modalState) {
+      const products = sale.items.map((product) => ({
+        id: product.product_id,
+        name: product.product.name,
+        product_store_id: product.product_store_id,
+        price_sell: +product.price_unit * product.quantity,
+        quantity: product.quantity || 1,
+      }));
 
-  //     products.forEach((product) => {
-  //       const errors: string[] = [];
-  //       if (!product.ncm) {
-  //         errors.push("NCM");
-  //       }
-  //       if (!product.cfop) {
-  //         errors.push("CFOP");
-  //       }
-  //       if (!product.unidadeComercial) {
-  //         errors.push("Unidade Tributável");
-  //       }
-  //       if (!product.valorUnitarioComercial) {
-  //         errors.push("Valor de Venda");
-  //       }
-  //       if (!product.origem && product.origem !== 0) {
-  //         errors.push("Origem");
-  //       }
-  //       if (!product.csosn) {
-  //         errors.push("Situação Tributária");
-  //       }
+      const payments = sale.payments.map((payment) => ({
+        amount: payment.amount,
+        type: payment.type,
+        flag_card:
+          payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
+      }));
 
-  //       if (errors.length) {
-  //         setIsValid(false);
-  //         messageAnt.warning(
-  //           `O produto ${product.descricao} não possui os dados ${errors.join(
-  //             ", "
-  //           )}`
-  //         );
-  //         setModalState(false);
-  //       }
-  //     });
+      setProductsNfe(products);
+      setPaymentsNfe(payments);
 
-  //     const getTotalSold = (sale: SaleFromApi) => {
-  //       return (
-  //         (sale.payments?.reduce(
-  //           (total, payment) => total + +payment.amount,
-  //           0
-  //         ) || 0) - (+sale.change_amount || 0)
-  //       )
-  //         .toFixed(2)
-  //         .replace(".", ",");
-  //     };
+      form.setFieldsValue({
+        total_sold: sale.total_sold.toFixed(2).replace(".", ","),
+        discount: (+sale.discount).toFixed(2).replace(".", ","),
+      });
 
-  //     setProductsNfe(products);
-  //     form.setFieldsValue({
-  //       valorPagamento: getTotalSold(sale),
-  //       troco: (+sale.change_amount).toFixed(2).replace(".", ","),
-  //     });
-  //     setNfe((oldValues) => ({
-  //       ...oldValues,
-  //       troco: +sale.change_amount,
-  //       valorPagamento: +sale.total_sold,
-  //     }));
-  //   }
-  // }, [sale, modalState]);
+      setNfe((oldValues) => ({
+        ...oldValues,
+        discount: +sale.discount,
+        total: sale.total_sold,
+        store_id: 1,
+      }));
+    }
+  }, [sale, modalState]);
 
-  // const handleUpdateNfe = (name, value) => {
-  //   setNfe((oldValues) => ({ ...oldValues, [name]: value }));
-  // };
+  const handleUpdateNfe = (name, value) => {
+    setNfe((oldValues) => ({ ...oldValues, [name]: value }));
+  };
 
-  // const formasPagamento = [
-  //   { id: "01", value: "Dinheiro" },
-  //   { id: "02", value: "Cheque" },
-  //   { id: "03", value: "Cartão de Crédito" },
-  //   { id: "04", value: "Cartão de Débito" },
-  //   { id: "05", value: "Crédito Loja" },
-  //   { id: "10", value: "Vale Alimentação" },
-  //   { id: "11", value: "Vale Refeição" },
-  //   { id: "12", value: "Vale Presente" },
-  //   { id: "13", value: "Vale Combustível" },
-  //   { id: "15", value: "Boleto Bancário" },
-  //   { id: "99", value: "Outros" },
-  // ];
+  const formasPagamento = [
+    { id: 0, value: "Dinheiro" },
+    { id: 1, value: "Cartão de Crédito" },
+    { id: 2, value: "Cartão de Débito" },
+    { id: 3, value: "Ticket" },
+    { id: 5, value: "Boleto" },
+    { id: 6, value: "Pix" },
+    { id: 7, value: "Transferencia" },
+  ];
 
-  // const indicadoresFormaPagamento = [
-  //   { id: 0, value: "À vista" },
-  //   { id: 1, value: "À prazo" },
-  //   { id: 2, value: "Outros" },
-  // ];
+  const handleEmit = async () => {
+    let payload = form.getFieldsValue();
+    if (!productsNfe.length) {
+      return notification.warning({
+        message: "Oops! O carrinho está vazio.",
+        description: `Selecione algum item para continuar com a emissão da nota.`,
+        duration: 5,
+      });
+    }
 
-  // const handleEmit = async () => {
-  //   let payload = form.getFieldsValue();
-  //   if (!productsNfe.length) {
-  //     return notification.warning({
-  //       message: "Oops! O carrinho está vazio.",
-  //       description: `Selecione algum item para continuar com a emissão da nota.`,
-  //       duration: 5,
-  //     });
-  //   }
+    if (!payload.cpf) {
+      return notification.warning({
+        message: "CPF é obrigatório.",
+        description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
+        duration: 5,
+      });
+    }
 
-  //   if (!payload.formaPagamento || !payload.indicadorFormaPagamento) {
-  //     return notification.warning({
-  //       message: "Operação e Tipo são obrigatórios.",
-  //       description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
-  //       duration: 5,
-  //     });
-  //   }
-  //   const nfcePayload = {
-  //     ...cleanObject(nfe),
-  //     informacoesAdicionaisFisco:
-  //       nfe.informacoesAdicionaisFisco || "Sem informacoes adicionais",
-  //     produtos: productsNfe.map(({ id, ...props }, index) => ({
-  //       ...props,
-  //       idItem: index + 1,
-  //       quantidadeTributavel: props.quantidadeComercial,
-  //     })),
-  //   };
-  //   console.log(JSON.stringify(nfcePayload));
-  //   setEmitingNfe(true);
-  //   const nfce = await window.Main.sale.emitNfce(nfcePayload, sale.id);
-  //   setEmitingNfe(false);
-  //   if (nfce.response.error === true) {
-  //     return notification.error({
-  //       message: "Oops! Não foi possível emitir a NFCe.",
-  //       description: `Tente novamente, caso o problema persista, contate o suporte através do chat.`,
-  //       duration: 5,
-  //     });
-  //   } else {
-  //     setModalState(false);
-  //     setShouldSearch(true);
-  //     notification.success({
-  //       message: "NFc-e emitida com sucesso!",
-  //       duration: 5,
-  //     });
-  //   }
-  // };
+    const nfcePayload = {
+      ...cleanObject(nfe),
+      items: productsNfe.map((productNfe) => ({
+        product_store_id: productNfe.product_store_id,
+        price_sell: productNfe.price_sell,
+        quantity: productNfe.quantity,
+      })),
+      payments: paymentsNfe.map((paymentNfe) => ({
+        amount: paymentNfe.amount,
+        type: paymentNfe.type,
+        flag_card:
+          paymentNfe.type === 1 || paymentNfe.type === 2
+            ? paymentNfe.flag_card
+            : null,
+      })),
+    };
+
+    setEmitingNfe(true);
+
+    console.log(JSON.stringify(nfcePayload));
+
+    const {
+      response,
+      has_internal_error: errorOnEmitNfce,
+      error_message,
+    } = await window.Main.sale.emitNfce(nfcePayload, sale.id);
+    if (errorOnEmitNfce) {
+      notification.error({
+        message: error_message || "Erro ao emitir NFCe",
+        duration: 5,
+      });
+      return;
+    } else {
+      setEmitingNfe(false);
+      setModalState(false);
+      setShouldSearch(true);
+
+      notification.success({
+        message: response,
+        duration: 5,
+      });
+    }
+  };
 
   return (
-    <div>todo</div>
-    // <Container
-    //   title="Nfe"
-    //   visible={modalState}
-    //   destroyOnClose={true}
-    //   closable={false}
-    //   width={650}
-    //   confirmLoading={emitingNfe}
-    //   okButtonProps={{ disabled: !isValid }}
-    //   centered
-    //   footer={
-    //     <Footer>
-    //       <ButtonCancel onClick={() => setModalState(false)}>
-    //         Cancelar
-    //       </ButtonCancel>
-    //       <ButtonSave onClick={() => handleEmit()}>Emitir</ButtonSave>
-    //     </Footer>
-    //   }
-    // >
-    //   <Form layout="vertical" form={form}>
-    //     <Divider orientation="left" plain>
-    //       Pagamento
-    //     </Divider>
-    //     <Row>
-    //       <Col span={24}>
-    //         <FormItem name="valorPagamento">
-    //           <TotalValue disabled className="valorPagamento" />
-    //         </FormItem>
-    //       </Col>
-    //       <Col span={12}>
-    //         <FormItem
-    //           label="Operação"
-    //           name="formaPagamento"
-    //           rules={[{ required: true }]}
-    //         >
-    //           <Select
-    //             placeholder="Escolha a opção"
-    //             onChange={(value) => handleUpdateNfe("formaPagamento", value)}
-    //           >
-    //             {formasPagamento.map((formaPagamento) => (
-    //               <Option key={formaPagamento.id}>
-    //                 {formaPagamento.value}
-    //               </Option>
-    //             ))}
-    //           </Select>
-    //         </FormItem>
-    //       </Col>
-    //       <Col span={12}>
-    //         <FormItem
-    //           label="Tipo"
-    //           name="indicadorFormaPagamento"
-    //           rules={[{ required: true }]}
-    //         >
-    //           <Select
-    //             placeholder="Escolha a opção"
-    //             onChange={(value) =>
-    //               handleUpdateNfe("indicadorFormaPagamento", +value)
-    //             }
-    //           >
-    //             {indicadoresFormaPagamento.map((indicadorFormaPagamento) => (
-    //               <Option key={indicadorFormaPagamento.id}>
-    //                 {indicadorFormaPagamento.value}
-    //               </Option>
-    //             ))}
-    //           </Select>
-    //         </FormItem>
-    //       </Col>
-    //       <Col span={12}>
-    //         <FormItem label="Troco" name="troco" rules={[{ required: true }]}>
-    //           <Input disabled />
-    //         </FormItem>
-    //       </Col>
-    //       <Col span={12}>
-    //         <FormItem label="CPF / CNPJ" name="CPFDestinatario">
-    //           <Input
-    //             placeholder="CPF/CNPJ"
-    //             className="ant-input"
-    //             onChange={({ target: { value } }) =>
-    //               handleUpdateNfe("CPFDestinatario", value)
-    //             }
-    //           />
-    //         </FormItem>
-    //       </Col>
-    //       <Col span={24}>
-    //         <FormItem
-    //           label="Informações Adicionais"
-    //           name="informacoesAdicionaisFisco"
-    //         >
-    //           <Input.TextArea
-    //             onChange={({ target: { value } }) =>
-    //               handleUpdateNfe("informacoesAdicionaisFisco", value)
-    //             }
-    //           />
-    //         </FormItem>
-    //       </Col>
-    //     </Row>
-    //     <Divider orientation="left" plain>
-    //       Produtos
-    //     </Divider>
-    //     {productsNfe?.map((productNfe) => (
-    //       <Row key={productNfe.id}>
-    //         <Col span={12}>
-    //           <FormItem label="Produto">
-    //             <Input disabled defaultValue={productNfe.descricao} />
-    //           </FormItem>
-    //         </Col>
-    //         <Col span={6}>
-    //           <FormItem label="Valor">
-    //             <Input
-    //               disabled
-    //               defaultValue={productNfe.valorUnitarioComercial
-    //                 ?.toFixed(2)
-    //                 .replace(".", ",")}
-    //             />
-    //           </FormItem>
-    //         </Col>
-    //         <Col span={6}>
-    //           <FormItem label="Qtd.">
-    //             <Input
-    //               disabled
-    //               defaultValue={productNfe.quantidadeComercial
-    //                 ?.toFixed(2)
-    //                 .replace(".", ",")}
-    //             />
-    //           </FormItem>
-    //         </Col>
-    //       </Row>
-    //     ))}
-    //   </Form>
-    // </Container>
+    <Container
+      title="Nfe"
+      visible={modalState}
+      destroyOnClose={true}
+      closable={false}
+      width={650}
+      confirmLoading={emitingNfe}
+      okButtonProps={{ disabled: !isValid }}
+      centered
+      footer={
+        <Footer>
+          <ButtonCancel onClick={() => setModalState(false)}>
+            Cancelar
+          </ButtonCancel>
+          <ButtonSave onClick={() => handleEmit()}>Emitir</ButtonSave>
+        </Footer>
+      }
+    >
+      <Form layout="vertical" form={form}>
+        <Divider orientation="left" plain>
+          Informação
+        </Divider>
+        <Row>
+          <Col span={12}>
+            <FormItem
+              label="CPF / CNPJ"
+              name="cpf"
+              rules={[{ required: true }]}
+            >
+              <Input
+                placeholder="CPF/CNPJ"
+                className="ant-input"
+                onChange={({ target: { value } }) =>
+                  handleUpdateNfe("cpf", value)
+                }
+              />
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem label="Email" name="email">
+              <Input
+                placeholder="Email"
+                className="ant-input"
+                onChange={({ target: { value } }) =>
+                  handleUpdateNfe("email", value)
+                }
+              />
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem
+              label="Total da Venda"
+              name="total_sold"
+              rules={[{ required: true }]}
+            >
+              <Input disabled />
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem
+              label="Desconto"
+              name="discount"
+              rules={[{ required: true }]}
+            >
+              <Input disabled />
+            </FormItem>
+          </Col>
+        </Row>
+        <Divider orientation="left" plain>
+          Produtos
+        </Divider>
+        {productsNfe?.map((productNfe) => (
+          <Row key={productNfe.id}>
+            <Col span={12}>
+              <FormItem label="Produto">
+                <Input disabled defaultValue={productNfe.name} />
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem label="Valor">
+                <Input
+                  disabled
+                  defaultValue={productNfe.price_sell
+                    ?.toFixed(2)
+                    .replace(".", ",")}
+                />
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem label="Qtd.">
+                <Input
+                  disabled
+                  defaultValue={productNfe.quantity
+                    ?.toFixed(3)
+                    .replace(".", ",")}
+                />
+              </FormItem>
+            </Col>
+          </Row>
+        ))}
+        <Divider orientation="left" plain>
+          Pagamentos
+        </Divider>
+        {paymentsNfe?.map((paymentNfe) => (
+          <Row>
+            <Col span={12}>
+              <FormItem label="Valor do pagamento">
+                <Input
+                  disabled
+                  defaultValue={paymentNfe.amount?.toFixed(2).replace(".", ",")}
+                />
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem label="Forma de Pagamento">
+                <Input
+                  disabled
+                  defaultValue={
+                    formasPagamento.find((type) => type.id === paymentNfe.type)
+                      .value
+                  }
+                />
+              </FormItem>
+            </Col>
+          </Row>
+        ))}
+      </Form>
+    </Container>
   );
 };
 

@@ -7,7 +7,6 @@ import {
   Row as RowAnt,
   Col as ColAnt,
   Input as InputAnt,
-  Select as SelectAnt,
 } from "antd";
 
 export const Container = styled(ModalAnt)`
@@ -113,31 +112,4 @@ export const Row = styled(RowAnt)`
 
 export const Input = styled(InputAnt)``;
 
-export const Select = styled(SelectAnt)`
-  width: 100%;
-`;
-
-export const Option = styled(SelectAnt.Option)``;
-
 export const InputMask = styled(MaskInput)``;
-
-export const TotalValue = styled(InputAnt)`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  height: 2.5rem;
-  background: var(--white-40);
-  border: 1px solid var(--grey-70);
-  padding: 1rem;
-
-  strong {
-    margin-left: 3px;
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    height: 2.3rem;
-    font-size: 0.8rem;
-  }
-`;

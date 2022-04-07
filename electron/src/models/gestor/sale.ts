@@ -88,6 +88,7 @@ export interface SaleDto {
     id: string;
     amount: number;
     formated_type?: string;
+    flag_card?: number;
     type: number;
     created_at?: string;
     deleted_at?: string;

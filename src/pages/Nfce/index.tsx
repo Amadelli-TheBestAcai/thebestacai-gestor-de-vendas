@@ -59,8 +59,8 @@ import {
   DeleteIcon,
   ModalNFCe,
   NFCeButton,
-  QuantityInput,
 } from "./styles";
+import { FlagCard } from "../../models/enums/flagCard";
 
 const Nfce: React.FC = () => {
   const [cashIsOpen, setCashIsOpen] = useState<boolean>(false);
@@ -73,6 +73,7 @@ const Nfce: React.FC = () => {
   const [isConected, setIsConected] = useState(false);
   const [modalState, setModalState] = useState(false);
   const [shouldSearch, setShouldSearch] = useState(true);
+  const [paymentType, setPaymentType] = useState<number>(0);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -214,6 +215,10 @@ const Nfce: React.FC = () => {
         {
           amount: totalSold,
           type: +payload.formaPagamento,
+          flag_card:
+            paymentType === 1 || paymentType === 2
+              ? +payload.bandeira_operadora
+              : null,
         },
       ],
     };
@@ -459,8 +464,9 @@ const Nfce: React.FC = () => {
                                     <Select
                                       placeholder="Escolha a opção"
                                       onChange={(value) =>
-                                        handleUpdateNfe("formaPagamento", value)
+                                        setPaymentType(+value)
                                       }
+                                      value={paymentType}
                                     >
                                       {formasPagamento.map((formaPagamento) => (
                                         <Option key={formaPagamento.id}>
@@ -470,6 +476,31 @@ const Nfce: React.FC = () => {
                                     </Select>
                                   </FormItem>
                                 </Col>
+                                {(paymentType === 1 || paymentType === 2) && (
+                                  <Col span={6}>
+                                    <FormItem
+                                      label="Bandeira do cartão"
+                                      name="bandeira_operadora"
+                                      rules={[{ required: true }]}
+                                    >
+                                      <Select
+                                        placeholder="Escolha a opção"
+                                        onChange={(value) =>
+                                          handleUpdateNfe(
+                                            "bandeira_operadora",
+                                            value
+                                          )
+                                        }
+                                      >
+                                        {FlagCard.map((_flagCard) => (
+                                          <Option key={_flagCard.id}>
+                                            {_flagCard.value}
+                                          </Option>
+                                        ))}
+                                      </Select>
+                                    </FormItem>
+                                  </Col>
+                                )}
                                 <Col span={6}>
                                   <FormItem
                                     label="Desconto"

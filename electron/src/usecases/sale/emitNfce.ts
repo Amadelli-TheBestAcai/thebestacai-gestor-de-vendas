@@ -38,21 +38,20 @@ class EmitNfce implements IUseCaseFactory {
     ),
     private onlineIntegrationUseCase = onlineIntegration,
     private buildNewSaleUseCase = buildNewSale
-  ) { }
+  ) {}
 
-  async execute({
-    nfe,
-    saleIdToUpdate,
-  }: Request): Promise<string> {
+  async execute({ nfe, saleIdToUpdate }: Request): Promise<string> {
     const hasInternet = await checkInternet();
     if (!hasInternet) {
-      throw new Error("Dispositivo sem conexão")
+      throw new Error("Dispositivo sem conexão");
     }
 
     const storeCash = await this.storeCashRepository.getOne();
 
     if (!storeCash || !storeCash.is_opened) {
-      throw new Error("Caixa atualmente fechado. Abra o caixa para realizar a emissão")
+      throw new Error(
+        "Caixa atualmente fechado. Abra o caixa para realizar a emissão"
+      );
     }
 
     const { response: saleResponse, has_internal_error: errorOnBuildNewSale } =
@@ -64,7 +63,12 @@ class EmitNfce implements IUseCaseFactory {
       throw new Error("Erro ao criar uma nova venda para NFC-e");
     }
 
-    const { data: { nfce: data } } = await midasApi.post("/nfce", nfe/*{ ...nfe, store_id: storeCash.store_id }*/);
+    const {
+      data: { nfce: data },
+    } = await midasApi.post(
+      "/nfce",
+      nfe /*{ ...nfe, store_id: storeCash.store_id }*/
+    );
 
     saleResponse.nfce_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
@@ -73,7 +77,7 @@ class EmitNfce implements IUseCaseFactory {
       await Promise.all(
         nfe.items.map(async (produto) => {
           const product = await this.productRepository.getOne({
-            id: produto.product_store_id
+            id: produto.product_store_id,
           });
 
           if (!product) {
@@ -85,9 +89,7 @@ class EmitNfce implements IUseCaseFactory {
             quantity: produto.quantity,
             storeProduct: product,
             store_product_id: product.id,
-            total:
-              +produto.quantity *
-              +(product?.product?.price_sell || 0),
+            total: +produto.quantity * +(product?.product?.price_sell || 0),
             update_stock: false,
             id: v4(),
           });
@@ -100,10 +102,16 @@ class EmitNfce implements IUseCaseFactory {
       await this.notIntegratedSaleRepository.create(saleResponse);
       await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
     } else {
-      await midasApi.put(`/sales/${saleIdToUpdate}`, {
-        nfce_id: saleResponse.nfce_id,
-      });
-      throw new Error('`Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${saleResponse.nfce_id}`')
+      try {
+        await midasApi.put(`/sales/${saleIdToUpdate}`, {
+          nfce_id: saleResponse.nfce_id,
+          nfce_url: saleResponse.nfce_url,
+        });
+      } catch {
+        throw new Error(
+          `Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${saleResponse.nfce_id}`
+        );
+      }
     }
 
     return data.mensagem_sefaz;

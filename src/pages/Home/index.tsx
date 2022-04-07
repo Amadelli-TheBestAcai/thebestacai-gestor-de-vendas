@@ -34,6 +34,7 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
+  const [flagCard, setFlagCard] = useState<number | null>(null);
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
@@ -68,18 +69,48 @@ const Home: React.FC = () => {
         duration: 5,
       });
     }
-    const { response: updatedSale, has_internal_error: errorOnAddPayment } =
-      await window.Main.sale.addPayment(currentPayment, paymentType);
-    if (errorOnAddPayment) {
-      return notification.error({
-        message: "Erro ao adicionar pagamento",
+
+    if ((paymentType === 1 || paymentType === 2) && !flagCard) {
+      return notification.warning({
+        message: "A bandeira do cartão é obrigatória",
+        description: `Selecione uma opção para continuar com o pagamento`,
         duration: 5,
       });
     }
-    setSale(updatedSale);
 
-    setCurrentPayment(0);
-    setPaymentModal(false);
+    if (flagCard) {
+      console.log(flagCard);
+      const { response: updatedSale, has_internal_error: errorOnAddPayment } =
+        await window.Main.sale.addPayment(
+          currentPayment,
+          paymentType,
+          flagCard
+        );
+      if (errorOnAddPayment) {
+        return notification.error({
+          message: "Erro ao adicionar pagamento",
+          duration: 5,
+        });
+      }
+      setSale(updatedSale);
+
+      setCurrentPayment(0);
+      setFlagCard(null);
+      setPaymentModal(false);
+    } else {
+      const { response: updatedSale, has_internal_error: errorOnAddPayment } =
+        await window.Main.sale.addPayment(currentPayment, paymentType);
+      if (errorOnAddPayment) {
+        return notification.error({
+          message: "Erro ao adicionar pagamento",
+          duration: 5,
+        });
+      }
+      setSale(updatedSale);
+
+      setCurrentPayment(0);
+      setPaymentModal(false);
+    }
   };
 
   const removePayment = async (id: string) => {
@@ -94,8 +125,13 @@ const Home: React.FC = () => {
     setSale(updatedSale);
   };
 
-  const handleOpenPayment = (type: number, title: string): void => {
+  const handleOpenPayment = (
+    type: number,
+    title: string,
+    flagCard?: number
+  ): void => {
     setPaymentType(type);
+    setFlagCard(flagCard);
     setPaymentModal(true);
     setPaymentModalTitle(title);
   };
@@ -189,6 +225,8 @@ const Home: React.FC = () => {
                           handleOpenPayment={handleOpenPayment}
                           shouldViewValues={true}
                           shouldDisableButtons={true}
+                          flagCard={flagCard}
+                          setFlagCard={setFlagCard}
                         />
                       </PaymentsContent>
 

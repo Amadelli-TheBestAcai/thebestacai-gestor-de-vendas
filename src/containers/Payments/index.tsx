@@ -27,14 +27,20 @@ import {
   Header,
   Column,
   OnlineIcon,
+  Select,
+  Option,
+  FormItem,
 } from "./styles";
+import { FlagCard } from "../../models/enums/flagCard";
 
 interface IProps {
   sale: SaleDto;
   removePayment: (id: string) => Promise<void>;
   addPayment: () => Promise<void>;
-  handleOpenPayment: (type: number, title: string) => void;
+  handleOpenPayment: (type: number, title: string, flag_card?: number) => void;
   setCurrentPayment: Dispatch<SetStateAction<number>>;
+  setFlagCard?: Dispatch<SetStateAction<number>>;
+  flagCard?: number;
   setModalState: Dispatch<SetStateAction<boolean>>;
   modalState: boolean;
   modalTitle: string;
@@ -49,12 +55,14 @@ const PaymentsContainer: React.FC<IProps> = ({
   addPayment,
   setModalState,
   modalState,
-  handleOpenPayment,
   setCurrentPayment,
+  handleOpenPayment,
   modalTitle,
   shouldViewValues,
   shouldDisableButtons,
   usingDelivery,
+  setFlagCard,
+  flagCard,
 }) => {
   const onModalCancel = (): void => {
     setModalState(false);
@@ -75,13 +83,15 @@ const PaymentsContainer: React.FC<IProps> = ({
       icon: <CreditIcon />,
       label: "Crédito [S]",
       background: "var(--blue-300)",
-      action: () => handleOpenPayment(PaymentType.CREDITO, "C. Crédito"),
+      action: () =>
+        handleOpenPayment(PaymentType.CREDITO, "C. Crédito", flagCard),
     },
     {
       icon: <DebitIcon />,
       label: "Débito [D]",
       background: "var(--blue-400)",
-      action: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito"),
+      action: () =>
+        handleOpenPayment(PaymentType.DEBITO, "C. Débito", flagCard),
     },
     {
       icon: usingDelivery ? <OnlineIcon /> : <TicketIcon />,
@@ -206,6 +216,22 @@ const PaymentsContainer: React.FC<IProps> = ({
               : 0
           }
         />
+        {(modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
+          <>
+            Bandeira:
+            <br />
+            <FormItem rules={[{ required: true }]}>
+              <Select
+                placeholder="Escolha a opção"
+                onChange={(value) => setFlagCard(+value)}
+              >
+                {FlagCard.map((_flagCard) => (
+                  <Option key={_flagCard.id}>{_flagCard.value}</Option>
+                ))}
+              </Select>
+            </FormItem>
+          </>
+        )}
       </Modal>
     </Container>
   );
