@@ -7,6 +7,7 @@ import {
   Row as RowAnt,
   Col as ColAnt,
   Input as InputAnt,
+  Button,
 } from "antd";
 
 export const Container = styled(ModalAnt)`
@@ -77,17 +78,24 @@ export const ButtonCancel = styled.button`
   }
 `;
 
-export const ButtonSave = styled.button`
-  padding: 3px 7px;
-  font-weight: 500;
+export const ButtonSave = styled(Button)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 1rem;
-  font-size: 0.9rem;
+  transition: 0.5s;
+  font-weight: 500;
   background: var(--orange-250);
   color: white;
-  transition: 0.5s;
+  padding: 3px 7px;
+  font-size: 0.9rem;
 
-  :hover {
+  :hover,
+  :active,
+  :focus {
     background: var(--orange-200);
+    border: none;
+    color: white;
   }
 
   /*Responsive 1366px*/

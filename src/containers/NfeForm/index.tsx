@@ -35,6 +35,7 @@ const NfeForm: React.FC<IProps> = ({
 }) => {
   const [isValid] = useState(true);
   const [emitingNfe, setEmitingNfe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [nfe, setNfe] = useState<Nfe | null>(null);
   const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
   const [paymentsNfe, setPaymentsNfe] = useState<PaymentNfe[]>([]);
@@ -42,6 +43,7 @@ const NfeForm: React.FC<IProps> = ({
   const { store } = useStore();
 
   useEffect(() => {
+    setIsLoading(true);
     if (modalState) {
       const products = sale.items.map((product) => ({
         id: product.product_id,
@@ -72,6 +74,7 @@ const NfeForm: React.FC<IProps> = ({
         total: sale.total_sold,
         store_id: 1,
       }));
+      setIsLoading(false);
     }
   }, [sale, modalState]);
 
@@ -124,30 +127,36 @@ const NfeForm: React.FC<IProps> = ({
       })),
     };
 
-    setEmitingNfe(true);
+    try {
+      setEmitingNfe(true);
+      setIsLoading(true);
 
-    console.log(JSON.stringify(nfcePayload));
+      console.log(JSON.stringify(nfcePayload));
 
-    const {
-      response,
-      has_internal_error: errorOnEmitNfce,
-      error_message,
-    } = await window.Main.sale.emitNfce(nfcePayload, sale.id);
-    if (errorOnEmitNfce) {
-      notification.error({
-        message: error_message || "Erro ao emitir NFCe",
-        duration: 5,
-      });
-      return;
-    } else {
-      setEmitingNfe(false);
-      setModalState(false);
-      setShouldSearch(true);
+      const {
+        response,
+        has_internal_error: errorOnEmitNfce,
+        error_message,
+      } = await window.Main.sale.emitNfce(nfcePayload, sale.id);
+
+      if (errorOnEmitNfce) {
+        return notification.error({
+          message: error_message || "Erro ao emitir NFCe",
+          duration: 5,
+        });
+      }
 
       notification.success({
         message: response,
         duration: 5,
       });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setEmitingNfe(false);
+      setModalState(false);
+      setIsLoading(false);
+      setShouldSearch(true);
     }
   };
 
@@ -166,7 +175,9 @@ const NfeForm: React.FC<IProps> = ({
           <ButtonCancel onClick={() => setModalState(false)}>
             Cancelar
           </ButtonCancel>
-          <ButtonSave onClick={() => handleEmit()}>Emitir</ButtonSave>
+          <ButtonSave onClick={() => handleEmit()} loading={isLoading}>
+            Emitir
+          </ButtonSave>
         </Footer>
       }
     >
