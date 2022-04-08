@@ -64,8 +64,7 @@ class AddPayment implements IUseCaseFactory {
       ).toFixed(2);
     }
 
-    const t = await this.saleRepository.update(sale.id, sale);
-    console.log({ sale, t });
+    await this.saleRepository.update(sale.id, sale);
     return sale;
   }
 }

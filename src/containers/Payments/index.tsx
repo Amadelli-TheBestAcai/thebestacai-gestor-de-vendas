@@ -29,9 +29,9 @@ import {
   OnlineIcon,
   Select,
   Option,
-  FormItem,
 } from "./styles";
 import { FlagCard } from "../../models/enums/flagCard";
+import { Form } from "antd";
 
 interface IProps {
   sale: SaleDto;
@@ -219,8 +219,7 @@ const PaymentsContainer: React.FC<IProps> = ({
         {(modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
           <>
             Bandeira:
-            <br />
-            <FormItem rules={[{ required: true }]}>
+            <Form.Item>
               <Select
                 placeholder="Escolha a opção"
                 onChange={(value) => setFlagCard(+value)}
@@ -229,7 +228,7 @@ const PaymentsContainer: React.FC<IProps> = ({
                   <Option key={_flagCard.id}>{_flagCard.value}</Option>
                 ))}
               </Select>
-            </FormItem>
+            </Form.Item>
           </>
         )}
       </Modal>

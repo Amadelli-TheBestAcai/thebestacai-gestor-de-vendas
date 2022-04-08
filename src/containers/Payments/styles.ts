@@ -2,12 +2,7 @@ import styled, { css } from "styled-components";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import {
-  Modal as ModalAnt,
-  Col,
-  Select as SelectAnt,
-  Form as FormAnt,
-} from "antd";
+import { Modal as ModalAnt, Col, Select as SelectAnt } from "antd";
 
 import {
   MoneyBillAlt,
@@ -231,6 +226,26 @@ export const Modal = styled(ModalAnt)`
     input {
       height: 3.7rem;
     }
+
+    .ant-select-selector,
+    .ant-form-item-control-input {
+      align-items: center;
+      border-radius: 0.7rem;
+      height: 3.4rem;
+      outline: none !important;
+      border: none !important;
+      box-shadow: 0 0 0 0 !important;
+      border: none !important;
+      background: var(--white-70);
+
+      :focus,
+      :active,
+      :hover {
+        outline: none;
+        border: none;
+        box-shadow: 0 0 0 0;
+      }
+    }
   }
 
   /*Responsive 1600px*/
@@ -278,7 +293,3 @@ export const Select = styled(SelectAnt)`
 `;
 
 export const Option = styled(SelectAnt.Option)``;
-
-export const FormItem = styled(FormAnt.Item)`
-  margin: 5px;
-`;

@@ -79,7 +79,6 @@ const Home: React.FC = () => {
     }
 
     if (flagCard) {
-      console.log(flagCard);
       const { response: updatedSale, has_internal_error: errorOnAddPayment } =
         await window.Main.sale.addPayment(
           currentPayment,
