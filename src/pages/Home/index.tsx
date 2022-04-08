@@ -108,6 +108,7 @@ const Home: React.FC = () => {
       setSale(updatedSale);
 
       setCurrentPayment(0);
+      setFlagCard(null);
       setPaymentModal(false);
     }
   };
@@ -160,10 +161,12 @@ const Home: React.FC = () => {
   const handlers = {
     money: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
     MONEY: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
-    c_credit: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
-    C_CREDIT: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
-    c_debit: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
-    C_DEBIT: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    c_credit: () =>
+      handleOpenPayment(PaymentType.CREDITO, "C. Crédito", flagCard),
+    C_CREDIT: () =>
+      handleOpenPayment(PaymentType.CREDITO, "C. Crédito", flagCard),
+    c_debit: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito", flagCard),
+    C_DEBIT: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito", flagCard),
     ticket: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     TICKET: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),

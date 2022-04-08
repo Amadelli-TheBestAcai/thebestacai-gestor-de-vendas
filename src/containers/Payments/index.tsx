@@ -66,6 +66,7 @@ const PaymentsContainer: React.FC<IProps> = ({
 }) => {
   const onModalCancel = (): void => {
     setModalState(false);
+    setFlagCard(null);
   };
 
   const getAmount = (amount: number): void => {
