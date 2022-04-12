@@ -1,7 +1,7 @@
 import { ProductNfeDTO } from "./productNfe";
 
 export interface NfeDTO {
-  cpf: string;
+  cpf?: string;
   email?: string;
   store_id: number;
   total: number;

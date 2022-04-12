@@ -65,10 +65,7 @@ class EmitNfce implements IUseCaseFactory {
 
     const {
       data: { nfce: data },
-    } = await midasApi.post(
-      "/nfce",
-      nfe /*{ ...nfe, store_id: storeCash.store_id }*/
-    );
+    } = await midasApi.post("/nfce", { ...nfe, sale_id: saleIdToUpdate });
 
     saleResponse.nfce_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
@@ -105,7 +102,6 @@ class EmitNfce implements IUseCaseFactory {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
           nfce_id: saleResponse.nfce_id,
-          nfce_url: saleResponse.nfce_url,
         });
       } catch {
         throw new Error(

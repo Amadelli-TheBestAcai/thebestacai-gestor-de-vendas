@@ -1,7 +1,7 @@
 import { ProductNfe } from "./productNfe";
 
 export interface Nfe {
-  cpf: string;
+  cpf?: string;
   email?: string;
   store_id: number;
   total: number;
