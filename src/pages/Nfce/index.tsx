@@ -190,14 +190,6 @@ const Nfce: React.FC = () => {
       });
     }
 
-    if (!payload.cpf) {
-      return notification.warning({
-        message: "CPF é obrigatório.",
-        description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
-        duration: 5,
-      });
-    }
-
     const totalSold = +payload.totalProdutos.replace(",", ".");
 
     const nfcePayload = {
@@ -502,11 +494,7 @@ const Nfce: React.FC = () => {
                                   </Col>
                                 )}
                                 <Col span={6}>
-                                  <FormItem
-                                    label="Desconto"
-                                    name="discount"
-                                    rules={[{ required: true }]}
-                                  >
+                                  <FormItem label="Desconto" name="discount">
                                     <InputMonetary
                                       getValue={(value) =>
                                         handleUpdateNfe("discount", value)
