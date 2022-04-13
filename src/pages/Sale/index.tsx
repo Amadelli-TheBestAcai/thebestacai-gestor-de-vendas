@@ -132,7 +132,7 @@ const Sale: React.FC<IProps> = () => {
 
   const openModal = () => {
     console.log({ selectedSale });
-    if (selectedSale.nfce?.status_sefaz === "100") {
+    if (selectedSale.nfce?.status_sefaz === "100" || !selectedSale.nfce) {
       setModalState(false);
     } else {
       setModalState(true);

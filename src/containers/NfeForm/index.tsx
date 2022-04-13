@@ -102,14 +102,6 @@ const NfeForm: React.FC<IProps> = ({
       });
     }
 
-    if (!payload.cpf) {
-      return notification.warning({
-        message: "CPF é obrigatório.",
-        description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
-        duration: 5,
-      });
-    }
-
     const nfcePayload = {
       ...cleanObject(nfe),
       items: productsNfe.map((productNfe) => ({
@@ -187,11 +179,7 @@ const NfeForm: React.FC<IProps> = ({
         </Divider>
         <Row>
           <Col span={12}>
-            <FormItem
-              label="CPF / CNPJ"
-              name="cpf"
-              rules={[{ required: true }]}
-            >
+            <FormItem label="CPF / CNPJ" name="cpf">
               <Input
                 placeholder="CPF/CNPJ"
                 className="ant-input"
