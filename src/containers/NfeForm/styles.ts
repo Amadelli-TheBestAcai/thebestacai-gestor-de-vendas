@@ -7,7 +7,7 @@ import {
   Row as RowAnt,
   Col as ColAnt,
   Input as InputAnt,
-  Select as SelectAnt,
+  Button,
 } from "antd";
 
 export const Container = styled(ModalAnt)`
@@ -78,17 +78,24 @@ export const ButtonCancel = styled.button`
   }
 `;
 
-export const ButtonSave = styled.button`
-  padding: 3px 7px;
-  font-weight: 500;
+export const ButtonSave = styled(Button)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 1rem;
-  font-size: 0.9rem;
+  transition: 0.5s;
+  font-weight: 500;
   background: var(--orange-250);
   color: white;
-  transition: 0.5s;
+  padding: 3px 7px;
+  font-size: 0.9rem;
 
-  :hover {
+  :hover,
+  :active,
+  :focus {
     background: var(--orange-200);
+    border: none;
+    color: white;
   }
 
   /*Responsive 1366px*/
@@ -113,31 +120,4 @@ export const Row = styled(RowAnt)`
 
 export const Input = styled(InputAnt)``;
 
-export const Select = styled(SelectAnt)`
-  width: 100%;
-`;
-
-export const Option = styled(SelectAnt.Option)``;
-
 export const InputMask = styled(MaskInput)``;
-
-export const TotalValue = styled(InputAnt)`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  height: 2.5rem;
-  background: var(--white-40);
-  border: 1px solid var(--grey-70);
-  padding: 1rem;
-
-  strong {
-    margin-left: 3px;
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    height: 2.3rem;
-    font-size: 0.8rem;
-  }
-`;

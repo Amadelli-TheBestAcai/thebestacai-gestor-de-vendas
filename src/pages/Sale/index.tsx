@@ -32,6 +32,12 @@ import {
   PrinterIcon,
   RemoveIcon,
   NfceIcon,
+  ModalNFCe,
+  Footer,
+  ButtonCancel,
+  ButtonSave,
+  Label,
+  NfceLabel,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
 
@@ -47,6 +53,8 @@ const Sale: React.FC<IProps> = () => {
   );
   const { hasPermission } = useUser();
   const [nfceModal, setNfceModal] = useState(false);
+  const [modalState, setModalState] = useState(false);
+  const [emitingNfe, setEmitingNfe] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -122,6 +130,83 @@ const Sale: React.FC<IProps> = () => {
     setFiltered(filteredSale);
   };
 
+  const openModal = () => {
+    console.log({ selectedSale });
+    if (selectedSale.nfce?.status_sefaz === "100") {
+      setModalState(false);
+    } else {
+      setModalState(true);
+    }
+  };
+
+  const handleEmit = async () => {
+    if (!selectedSale.items.length) {
+      return notification.warning({
+        message: "Oops! O carrinho está vazio.",
+        description: `Selecione algum item para continuar com a emissão da nota.`,
+        duration: 5,
+      });
+    }
+
+    const nfcePayload = {
+      cpf: "",
+      email: "",
+      store_id: 1,
+      total: selectedSale.total_sold,
+      discount: +selectedSale.discount,
+      items: selectedSale.items.map((product) => ({
+        product_store_id: product.product_store_id,
+        price_sell: product.total,
+        quantity: product.quantity,
+      })),
+      payments: selectedSale.payments.map((payment) => ({
+        amount: payment.amount,
+        type: payment.type,
+        flag_card:
+          payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
+      })),
+    };
+
+    try {
+      setEmitingNfe(true);
+      setIsLoading(true);
+
+      console.log(JSON.stringify(nfcePayload));
+
+      const {
+        response,
+        has_internal_error: errorOnEmitNfce,
+        error_message,
+      } = await window.Main.sale.emitNfce(nfcePayload, selectedSale.id);
+
+      if (errorOnEmitNfce) {
+        return notification.error({
+          message: error_message || "Erro ao emitir NFCe",
+          duration: 5,
+        });
+      }
+
+      notification.success({
+        message: response,
+        duration: 5,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setEmitingNfe(false);
+      setModalState(false);
+      setIsLoading(false);
+      setShouldSearch(true);
+    }
+  };
+
+  const nfceInfo = () => {
+    return {
+      authorized: <NfceLabel tab_id={1}>Autorizada</NfceLabel>,
+      resend: <NfceLabel tab_id={2}>Reenviar</NfceLabel>,
+    };
+  };
+
   return (
     <Container>
       <PageContent>
@@ -144,9 +229,10 @@ const Sale: React.FC<IProps> = () => {
                   <HeaderTable>
                     <Col sm={4}>ID</Col>
                     <Col sm={4}>VALOR</Col>
-                    <Col sm={4}>QUANTIDADE</Col>
+                    <Col sm={2}>QUANTIDADE</Col>
                     <Col sm={4}>HORA</Col>
-                    <Col sm={4}>TIPO</Col>
+                    <Col sm={3}>TIPO</Col>
+                    <Col sm={3}>NFC-E</Col>
                     <Col sm={4}>AÇÕES</Col>
                   </HeaderTable>
                   {selectedSale && (
@@ -159,13 +245,24 @@ const Sale: React.FC<IProps> = () => {
                               {" "}
                               R$ {currencyFormater(selectedSale.total_sold)}
                             </Col>
-                            <Col sm={4}>{selectedSale.quantity}</Col>
+                            <Col sm={2}>{selectedSale.quantity}</Col>
                             <Col sm={4}>
                               {moment(selectedSale.created_at)
                                 .add(3, "hours")
                                 .format("HH:mm:ss")}
                             </Col>
-                            <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
+                            <Col sm={3}>{SalesTypes[selectedSale.type]}</Col>
+                            {selectedSale.nfce ? (
+                              <Col sm={3} onClick={() => openModal()}>
+                                {selectedSale.nfce?.status_sefaz === "100"
+                                  ? nfceInfo().authorized
+                                  : nfceInfo().resend}
+                              </Col>
+                            ) : (
+                              <Col sm={3} onClick={() => openModal()}>
+                                <h4>Não emitida</h4>
+                              </Col>
+                            )}
                             <Col
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
@@ -273,6 +370,29 @@ const Sale: React.FC<IProps> = () => {
         setModalState={setNfceModal}
         sale={selectedSale}
       />
+
+      <ModalNFCe
+        title="Envio de NFC-e"
+        visible={modalState}
+        closable={false}
+        centered
+        width={500}
+        footer={
+          <Footer>
+            <ButtonCancel onClick={() => setModalState(false)}>
+              Cancelar
+            </ButtonCancel>
+            <ButtonSave onClick={() => handleEmit()} loading={isLoading}>
+              Enviar novemente
+            </ButtonSave>
+          </Footer>
+        }
+      >
+        <Label>
+          A nota não foi enviada com sucesso na sua última tentativa !
+        </Label>
+        Para refazer o envio basta selecionar a opção de reenvio.
+      </ModalNFCe>
     </Container>
   );
 };
