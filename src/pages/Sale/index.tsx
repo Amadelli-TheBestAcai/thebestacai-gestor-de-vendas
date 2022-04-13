@@ -149,7 +149,7 @@ const Sale: React.FC<IProps> = () => {
     }
 
     const nfcePayload = {
-      cpf: "10110396642",
+      cpf: "",
       email: "",
       store_id: 1,
       total: selectedSale.total_sold,
