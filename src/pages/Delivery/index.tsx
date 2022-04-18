@@ -219,7 +219,11 @@ const Delivery: React.FC<ComponentProps> = () => {
       okType: "default",
       cancelText: "Não",
       centered: true,
+      okButtonProps: {
+        loading: loading,
+      },
       async onOk() {
+        setLoading(true);
         const payload = sale;
         payload.quantity = 1;
         payload.type = deliveryType;
@@ -267,6 +271,7 @@ const Delivery: React.FC<ComponentProps> = () => {
                         Não esqueça de confirmar a venda em andamento, após ser finalizada.`,
           duration: 5,
         });
+        setLoading(false);
       },
     });
   };
