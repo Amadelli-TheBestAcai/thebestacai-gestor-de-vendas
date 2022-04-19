@@ -1,6 +1,9 @@
 import { SaleDto, StoreCashDto } from "../models/gestor";
 
-export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[], storeCash: StoreCashDto) => {
+export const salesFormaterToIntegrate = (
+  payload: SaleDto | SaleDto[],
+  storeCash: StoreCashDto
+) => {
   if (Array.isArray(payload)) {
     return payload.map((_payload) => ({
       quantity: _payload.quantity,
@@ -15,6 +18,10 @@ export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[], storeCash
       payments: _payload.payments.map((_payment) => ({
         amount: +_payment.amount,
         type: +_payment.type,
+        flag_card:
+          +_payment.type === 1 || +_payment.type === 1
+            ? +(_payment.flag_card || 99)
+            : null,
       })),
       items: _payload.items.map((_item) => ({
         name: _item.product.name,
@@ -103,6 +110,10 @@ export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[], storeCash
       payments: payload.payments.map((_payment) => ({
         amount: +_payment.amount,
         type: +_payment.type,
+        flag_card:
+          +_payment.type === 1 || +_payment.type === 1
+            ? +(_payment.flag_card || 99)
+            : null,
       })),
       items: payload.items.map((_item) => ({
         name: _item.product.name,

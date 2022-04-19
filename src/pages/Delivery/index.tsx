@@ -62,6 +62,7 @@ const Delivery: React.FC<ComponentProps> = () => {
   const [amount, setAmount] = useState<number>(0);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [paymentModal, setPaymentModal] = useState(false);
+  const [flagCard, setFlagCard] = useState<number | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -122,23 +123,55 @@ const Delivery: React.FC<ComponentProps> = () => {
   const addPayment = async () => {
     if (!amount) {
       //TODO: ADICIONAR VALIDAÇÃO
-      return;
+      return notification.warning({
+        message: "Valor inválido!",
+        description: `Informe um valor para o delivery.`,
+        duration: 5,
+      });
     }
 
-    const newPayment = {
-      id: v4(),
-      amount,
-      type: paymentType,
-      created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-    };
+    if ((paymentType === 1 || paymentType === 2) && !flagCard) {
+      return notification.warning({
+        message: "A bandeira do cartão é obrigatória",
+        description: `Selecione uma opção para continuar com o pagamento`,
+        duration: 5,
+      });
+    }
 
-    const updatedSale = sale;
-    updatedSale?.payments?.push(newPayment);
+    if (flagCard) {
+      const newPayment = {
+        id: v4(),
+        amount,
+        type: paymentType,
+        flag_card: flagCard,
+        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      };
 
-    setSale(updatedSale);
+      const updatedSale = sale;
+      updatedSale?.payments?.push(newPayment);
 
-    setAmount(0);
-    setPaymentModal(false);
+      setSale(updatedSale);
+
+      setAmount(0);
+      setFlagCard(null);
+      setPaymentModal(false);
+    } else {
+      const newPayment = {
+        id: v4(),
+        amount,
+        type: paymentType,
+        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+      };
+
+      const updatedSale = sale;
+      updatedSale?.payments?.push(newPayment);
+
+      setSale(updatedSale);
+
+      setAmount(0);
+      setFlagCard(null);
+      setPaymentModal(false);
+    }
   };
 
   const removePayment = async (id: string) => {
@@ -150,8 +183,13 @@ const Delivery: React.FC<ComponentProps> = () => {
     setPaymentModal(false);
   };
 
-  const handleOpenPayment = (type: number, title: string): void => {
+  const handleOpenPayment = (
+    type: number,
+    title: string,
+    flagCard?: number
+  ): void => {
     setPaymentType(type);
+    setFlagCard(flagCard);
     setPaymentModal(true);
     setPaymentModalTitle(title);
   };
@@ -181,7 +219,11 @@ const Delivery: React.FC<ComponentProps> = () => {
       okType: "default",
       cancelText: "Não",
       centered: true,
+      okButtonProps: {
+        loading: loading,
+      },
       async onOk() {
+        setLoading(true);
         const payload = sale;
         payload.quantity = 1;
         payload.type = deliveryType;
@@ -229,6 +271,7 @@ const Delivery: React.FC<ComponentProps> = () => {
                         Não esqueça de confirmar a venda em andamento, após ser finalizada.`,
           duration: 5,
         });
+        setLoading(false);
       },
     });
   };
@@ -391,10 +434,12 @@ const Delivery: React.FC<ComponentProps> = () => {
   const handlers = {
     money: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
     MONEY: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
-    c_credit: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
-    C_CREDIT: () => handleOpenPayment(PaymentType.CREDITO, "Crédito"),
-    c_debit: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
-    C_DEBIT: () => handleOpenPayment(PaymentType.DEBITO, "Débito"),
+    c_credit: () =>
+      handleOpenPayment(PaymentType.CREDITO, "C. Crédito", flagCard),
+    C_CREDIT: () =>
+      handleOpenPayment(PaymentType.CREDITO, "C. Crédito", flagCard),
+    c_debit: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito", flagCard),
+    C_DEBIT: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito", flagCard),
     online: () => handleOpenPayment(PaymentType.ONLINE, "Online"),
     ONLINE: () => handleOpenPayment(PaymentType.ONLINE, "Online"),
     pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),
@@ -536,6 +581,8 @@ const Delivery: React.FC<ComponentProps> = () => {
                                   setModalState={setPaymentModal}
                                   handleOpenPayment={handleOpenPayment}
                                   usingDelivery={true}
+                                  flagCard={flagCard}
+                                  setFlagCard={setFlagCard}
                                 />
                               </PaymentsContainer>
 

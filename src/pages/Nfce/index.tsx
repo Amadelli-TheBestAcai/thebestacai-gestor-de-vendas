@@ -60,6 +60,7 @@ import {
   ModalNFCe,
   NFCeButton,
 } from "./styles";
+import { FlagCard } from "../../models/enums/flagCard";
 
 const Nfce: React.FC = () => {
   const [cashIsOpen, setCashIsOpen] = useState<boolean>(false);
@@ -72,6 +73,7 @@ const Nfce: React.FC = () => {
   const [isConected, setIsConected] = useState(false);
   const [modalState, setModalState] = useState(false);
   const [shouldSearch, setShouldSearch] = useState(true);
+  const [paymentType, setPaymentType] = useState<number>(0);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -112,7 +114,7 @@ const Nfce: React.FC = () => {
 
     const quantity = +(selfServiceAmount / +selfService?.price_unit).toFixed(4);
 
-    handleSelectProduct(selfService, selfServiceAmount, quantity);
+    handleSelectProduct(selfService, quantity);
   };
 
   const handleUpdateNfe = (name, value) => {
@@ -121,11 +123,7 @@ const Nfce: React.FC = () => {
 
   const calculateTotal = (productsNfe: ProductNfe[]): string => {
     const total = productsNfe.reduce(
-      (total, product) =>
-        +product.quantidadeComercial && +product.valorUnitarioComercial
-          ? +product.quantidadeComercial * +product.valorUnitarioComercial +
-            total
-          : total,
+      (total, product) => +product.quantity * +product.price_sell + total,
       0
     );
     form.setFieldsValue({
@@ -136,81 +134,45 @@ const Nfce: React.FC = () => {
     return total.toFixed(2).replace(".", ",");
   };
 
-  const isValidProduct = (product: ProductDto) => {
-    const errors: string[] = [];
-    if (!product.product.cod_ncm) {
-      errors.push("NCM");
-    }
-    if (!product.cfop) {
-      errors.push("CFOP");
-    }
-    if (!product.unity_taxable) {
-      errors.push("Unidade Tributável");
-    }
-    if (!product.price_unit) {
-      errors.push("Valor de Venda");
-    }
-    if (!product.icms_origin && product.icms_origin !== 0) {
-      errors.push("Origem");
-    }
-    if (!product.icms_tax_situation) {
-      errors.push("Situação Tributária");
-    }
-
-    if (errors.length) {
-      return {
-        valid: false,
-        message: `O produto ${
-          product.product.name
-        } não possui os dados ${errors.join(", ")}`,
-      };
-    }
-    return { valid: true, message: null };
-  };
-
-  const handleSelectProduct = (
-    product: ProductDto,
-    price?: number,
-    quantity?: number
-  ) => {
+  const handleSelectProduct = (product: ProductDto, quantity?: number) => {
     let _productsNfe = productsNfe;
 
-    const productNfe: ProductNfe = {
-      id: v4(),
-      idItem: product.product_id,
-      codigo: product.product_id,
-      descricao: product.product.name,
-      ncm: product.product.cod_ncm.toString(),
-      cfop: product.cfop,
-      unidadeComercial: product.unity_taxable?.toString(),
-      quantidadeComercial: quantity || 1,
-      valorUnitarioComercial: +product.price_unit,
-      unidadeTributaria: product.unity_taxable?.toString(),
-      quantidadeTributavel: quantity || 1,
-      valorUnitarioTributario: +product.price_unit,
-      origem: product.icms_origin,
-      informacoesAdicionais: product.additional_information,
-      PISCOFINSST: false,
-      csosn: 102,
-      cEAN: "SEM GTIN",
-      cEANTrib: "SEM GTIN",
-    };
-
-    if (product.product.category_id === 1) {
+    const registredProductNfe = productsNfe.find(
+      (productNfce) => productNfce.id === product.product_id
+    );
+    if (registredProductNfe) {
+      registredProductNfe.quantity += 1;
       _productsNfe = [
-        ..._productsNfe.filter(
-          (productNfe) => productNfe.idItem !== product.product_id
+        ...productsNfe.filter(
+          (productNfce) => productNfce.id !== product.product_id
         ),
-        productNfe,
+        registredProductNfe,
       ];
     } else {
-      _productsNfe = [..._productsNfe, productNfe];
+      const productNfe: ProductNfe = {
+        id: product.product_id,
+        name: product.product.name,
+        product_store_id: product.id,
+        price_sell: +product.price_unit,
+        quantity: quantity || 1,
+      };
+
+      if (product.product.category_id === 1) {
+        _productsNfe = [
+          ..._productsNfe.filter(
+            (productNfe) => productNfe.id !== product.product_id
+          ),
+          productNfe,
+        ];
+      } else {
+        _productsNfe = [..._productsNfe, productNfe];
+      }
     }
     calculateTotal(_productsNfe);
     setProductsNfe(_productsNfe);
   };
 
-  const handlerRemoveProduct = (id: string) => {
+  const handlerRemoveProduct = (id: number) => {
     const updatedProducts = productsNfe.filter(
       (productNfe) => productNfe.id !== id
     );
@@ -228,58 +190,55 @@ const Nfce: React.FC = () => {
       });
     }
 
-    if (!payload.formaPagamento || !payload.indicadorFormaPagamento) {
-      return notification.warning({
-        message: "Operação e Tipo são obrigatórios.",
-        description: `Preencha os campos corretamente, para finalizar a emissão da nota.`,
-        duration: 5,
-      });
-    }
+    const totalSold = +payload.totalProdutos.replace(",", ".");
 
     const nfcePayload = {
-      ...cleanObject(nfe),
-      informacoesAdicionaisFisco:
-        nfe.informacoesAdicionaisFisco || "Sem informacoes adicionais",
-      valorPagamento: +calculateTotal(productsNfe).replace(",", "."),
-      produtos: productsNfe.map(({ id, ...props }, index) => ({
-        ...props,
-        idItem: index + 1,
-        quantidadeTributavel: props.quantidadeComercial,
+      cpf: payload.cpf,
+      email: payload.email,
+      store_id: 1,
+      total: totalSold,
+      discount: nfe.discount || 0,
+      items: productsNfe.map((productNfe) => ({
+        product_store_id: productNfe.product_store_id,
+        price_sell: productNfe.price_sell,
+        quantity: productNfe.quantity,
       })),
+      payments: [
+        {
+          amount: totalSold,
+          type: +payload.formaPagamento,
+          flag_card:
+            paymentType === 1 || paymentType === 2
+              ? +payload.bandeira_operadora
+              : null,
+        },
+      ],
     };
 
-    console.log(JSON.stringify(nfcePayload));
     setEmitingNfe(true);
-    const nfce = await window.Main.sale.emitNfce(nfcePayload);
-    setEmitingNfe(false);
-    if (nfce.response.error === true) {
-      return notification.error({
-        message: "Oops! Não foi possível emitir a NFCe.",
-        description: `Tente novamente, caso o problema persista, contate o suporte através do chat.`,
+
+    console.log({ nfce_payload: JSON.stringify(nfcePayload) });
+
+    const {
+      response,
+      has_internal_error: errorOnEmitNfce,
+      error_message,
+    } = await window.Main.sale.emitNfce(nfcePayload);
+    if (errorOnEmitNfce) {
+      notification.error({
+        message: error_message || "Erro ao emitir NFCe",
         duration: 5,
       });
-    } else {
-      setModalState(true);
-    }
-  };
-
-  const handleUpdateProduct = (id: string, value: number) => {
-    if (value <= 0) {
-      handlerRemoveProduct(id);
       return;
     }
-    const _productsNfe = productsNfe;
-    const productToUpdate = _productsNfe.find(
-      (productNfe) => productNfe.id === id
-    );
-    productToUpdate.quantidadeComercial = value;
 
-    const updatedProducts = [
-      ..._productsNfe.filter((productNfe) => productNfe.id !== id),
-      productToUpdate,
-    ];
-    calculateTotal(updatedProducts);
-    setProductsNfe(updatedProducts);
+    notification.success({
+      message: response,
+      duration: 5,
+    });
+
+    setEmitingNfe(false);
+    setModalState(true);
   };
 
   const productsFormater = (payload) => {
@@ -311,23 +270,13 @@ const Nfce: React.FC = () => {
   };
 
   const formasPagamento = [
-    { id: "01", value: "Dinheiro" },
-    { id: "02", value: "Cheque" },
-    { id: "03", value: "Cartão de Crédito" },
-    { id: "04", value: "Cartão de Débito" },
-    { id: "05", value: "Crédito Loja" },
-    { id: "10", value: "Vale Alimentação" },
-    { id: "11", value: "Vale Refeição" },
-    { id: "12", value: "Vale Presente" },
-    { id: "13", value: "Vale Combustível" },
-    { id: "15", value: "Boleto Bancário" },
-    { id: "99", value: "Outros" },
-  ];
-
-  const indicadoresFormaPagamento = [
-    { id: 0, value: "À vista" },
-    { id: 1, value: "À prazo" },
-    { id: 2, value: "Outros" },
+    { id: 0, value: "Dinheiro" },
+    { id: 1, value: "Cartão de Crédito" },
+    { id: 2, value: "Cartão de Débito" },
+    { id: 3, value: "Ticket" },
+    { id: 5, value: "Boleto" },
+    { id: 6, value: "Pix" },
+    { id: 7, value: "Transferencia" },
   ];
 
   const newNfce = () => {
@@ -409,36 +358,11 @@ const Nfce: React.FC = () => {
                                           )}
                                         </ColumnProduct>
                                         <ColumnProduct span={5}>
-                                          {isValidProduct(product).valid ? (
-                                            <>
-                                              {!productsNfe.some(
-                                                (productNfe) =>
-                                                  productNfe.idItem ===
-                                                  product.product_id
-                                              ) && (
-                                                <Tooltip
-                                                  title="Adicionar"
-                                                  placement="right"
-                                                >
-                                                  <AddIcon
-                                                    onClick={() =>
-                                                      handleSelectProduct(
-                                                        product
-                                                      )
-                                                    }
-                                                  />
-                                                </Tooltip>
-                                              )}
-                                            </>
-                                          ) : (
-                                            <Popover
-                                              content={
-                                                isValidProduct(product).message
-                                              }
-                                            >
-                                              <InfoIcon />
-                                            </Popover>
-                                          )}
+                                          <AddIcon
+                                            onClick={() =>
+                                              handleSelectProduct(product)
+                                            }
+                                          />
                                         </ColumnProduct>
                                       </ProductContent>
                                     ))}
@@ -467,35 +391,19 @@ const Nfce: React.FC = () => {
                               <ProductsContent>
                                 {productsNfe.map((product) => (
                                   <Product key={product.id}>
-                                    <ProductColumn
-                                      span={10}
-                                      style={{ textTransform: "lowercase" }}
-                                    >
-                                      <span>{product.descricao}</span>
+                                    <ProductColumn span={10}>
+                                      <span>{product.name}</span>
                                     </ProductColumn>
                                     <ProductColumn span={4}>
-                                      {product.idItem === 1 ? (
-                                        <span>
-                                          {product.quantidadeComercial}KG
-                                        </span>
+                                      {product.id === 1 ? (
+                                        <span>{product.quantity}KG</span>
                                       ) : (
-                                        <Input
-                                          type="number"
-                                          defaultValue={
-                                            product.quantidadeComercial
-                                          }
-                                          onChange={({ target: { value } }) =>
-                                            handleUpdateProduct(
-                                              product.id,
-                                              +value
-                                            )
-                                          }
-                                        />
+                                        <span>{product.quantity}</span>
                                       )}
                                     </ProductColumn>
                                     <ProductColumn span={4}>
                                       <span>
-                                        {product.valorUnitarioComercial
+                                        {product.price_sell
                                           .toFixed(2)
                                           .replace(".", ",")}
                                       </span>
@@ -503,10 +411,7 @@ const Nfce: React.FC = () => {
                                     <ProductColumn span={4}>
                                       <span>
                                         R${" "}
-                                        {(
-                                          product.valorUnitarioComercial *
-                                          product.quantidadeComercial
-                                        )
+                                        {(product.price_sell * product.quantity)
                                           .toFixed(2)
                                           .replace(".", ",")}
                                       </span>
@@ -544,15 +449,16 @@ const Nfce: React.FC = () => {
                                 </Col>
                                 <Col span={6}>
                                   <FormItem
-                                    label="Operação"
+                                    label="Forma de Pagamento"
                                     name="formaPagamento"
                                     rules={[{ required: true }]}
                                   >
                                     <Select
                                       placeholder="Escolha a opção"
                                       onChange={(value) =>
-                                        handleUpdateNfe("formaPagamento", value)
+                                        setPaymentType(+value)
                                       }
+                                      value={paymentType}
                                     >
                                       {formasPagamento.map((formaPagamento) => (
                                         <Option key={formaPagamento.id}>
@@ -562,50 +468,46 @@ const Nfce: React.FC = () => {
                                     </Select>
                                   </FormItem>
                                 </Col>
-                                <Col span={6}>
-                                  <FormItem
-                                    label="Tipo"
-                                    name="indicadorFormaPagamento"
-                                    rules={[{ required: true }]}
-                                  >
-                                    <Select
-                                      placeholder="Escolha a opção"
-                                      onChange={(value) =>
-                                        handleUpdateNfe(
-                                          "indicadorFormaPagamento",
-                                          +value
-                                        )
-                                      }
+                                {(paymentType === 1 || paymentType === 2) && (
+                                  <Col span={6}>
+                                    <FormItem
+                                      label="Bandeira do cartão"
+                                      name="bandeira_operadora"
+                                      rules={[{ required: true }]}
                                     >
-                                      {indicadoresFormaPagamento.map(
-                                        (indicadorFormaPagamento) => (
-                                          <Option
-                                            key={indicadorFormaPagamento.id}
-                                          >
-                                            {indicadorFormaPagamento.value}
+                                      <Select
+                                        placeholder="Escolha a opção"
+                                        onChange={(value) =>
+                                          handleUpdateNfe(
+                                            "bandeira_operadora",
+                                            value
+                                          )
+                                        }
+                                      >
+                                        {FlagCard.map((_flagCard) => (
+                                          <Option key={_flagCard.id}>
+                                            {_flagCard.value}
                                           </Option>
-                                        )
-                                      )}
-                                    </Select>
-                                  </FormItem>
-                                </Col>
+                                        ))}
+                                      </Select>
+                                    </FormItem>
+                                  </Col>
+                                )}
                                 <Col span={6}>
-                                  <FormItem
-                                    label="Troco"
-                                    name="troco"
-                                    rules={[{ required: true }]}
-                                  >
+                                  <FormItem label="Desconto" name="discount">
                                     <InputMonetary
                                       getValue={(value) =>
-                                        handleUpdateNfe("troco", +value)
+                                        handleUpdateNfe("discount", value)
                                       }
                                     />
                                   </FormItem>
                                 </Col>
+
                                 <Col span={6}>
                                   <FormItem
                                     label="CPF / CNPJ"
-                                    name="CPFDestinatario"
+                                    name="cpf"
+                                    rules={[{ required: true }]}
                                   >
                                     <Input
                                       placeholder="CPF/CNPJ"
@@ -619,17 +521,13 @@ const Nfce: React.FC = () => {
                                     />
                                   </FormItem>
                                 </Col>
-                                <Col span={24}>
-                                  <FormItem
-                                    label="Informações Adicionais"
-                                    name="informacoesAdicionaisFisco"
-                                  >
-                                    <Input.TextArea
+                                <Col span={6}>
+                                  <FormItem label="Email" name="email">
+                                    <Input
+                                      placeholder="Email"
+                                      className="ant-input"
                                       onChange={({ target: { value } }) =>
-                                        handleUpdateNfe(
-                                          "informacoesAdicionaisFisco",
-                                          value
-                                        )
+                                        handleUpdateNfe("email", value)
                                       }
                                     />
                                   </FormItem>
