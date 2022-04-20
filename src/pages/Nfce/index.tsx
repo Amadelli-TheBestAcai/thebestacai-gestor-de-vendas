@@ -61,6 +61,7 @@ import {
   NFCeButton,
 } from "./styles";
 import { FlagCard } from "../../models/enums/flagCard";
+import { useStore } from "../../hooks/useStore";
 
 const Nfce: React.FC = () => {
   const [cashIsOpen, setCashIsOpen] = useState<boolean>(false);
@@ -75,6 +76,7 @@ const Nfce: React.FC = () => {
   const [shouldSearch, setShouldSearch] = useState(true);
   const [paymentType, setPaymentType] = useState<number>(0);
   const [form] = Form.useForm();
+  const { store } = useStore();
 
   useEffect(() => {
     async function init() {
@@ -195,7 +197,7 @@ const Nfce: React.FC = () => {
     const nfcePayload = {
       cpf: payload.cpf,
       email: payload.email,
-      store_id: 1,
+      store_id: store.company_id,
       total: totalSold,
       discount: nfe.discount || 0,
       items: productsNfe.map((productNfe) => ({

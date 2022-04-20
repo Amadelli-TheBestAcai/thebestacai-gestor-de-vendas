@@ -40,6 +40,7 @@ import {
   NfceLabel,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
+import { useStore } from "../../hooks/useStore";
 
 type IProps = RouteComponentProps;
 
@@ -55,6 +56,7 @@ const Sale: React.FC<IProps> = () => {
   const [nfceModal, setNfceModal] = useState(false);
   const [modalState, setModalState] = useState(false);
   const [emitingNfe, setEmitingNfe] = useState(false);
+  const { store } = useStore();
 
   useEffect(() => {
     async function init() {
@@ -150,7 +152,7 @@ const Sale: React.FC<IProps> = () => {
     const nfcePayload = {
       cpf: "",
       email: "",
-      store_id: 1,
+      store_id: store.company_id,
       total: selectedSale.total_sold,
       discount: +selectedSale.discount,
       items: selectedSale.items.map((product) => ({
