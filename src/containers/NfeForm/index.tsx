@@ -72,7 +72,7 @@ const NfeForm: React.FC<IProps> = ({
         ...oldValues,
         discount: +sale.discount,
         total: sale.total_sold,
-        store_id: 1,
+        store_id: store.company_id,
       }));
       setIsLoading(false);
     }
