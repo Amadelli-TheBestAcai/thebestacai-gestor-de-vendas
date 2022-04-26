@@ -38,7 +38,7 @@ class EmitNfce implements IUseCaseFactory {
     ),
     private onlineIntegrationUseCase = onlineIntegration,
     private buildNewSaleUseCase = buildNewSale
-  ) {}
+  ) { }
 
   async execute({ nfe, saleIdToUpdate }: Request): Promise<string> {
     const hasInternet = await checkInternet();
@@ -67,7 +67,7 @@ class EmitNfce implements IUseCaseFactory {
       data: { nfce: data },
     } = await midasApi.post("/nfce", { ...nfe, sale_id: saleIdToUpdate });
 
-    saleResponse.nfce_id = data.id;
+    saleResponse.nfce_focus_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
 
     if (!saleIdToUpdate) {
