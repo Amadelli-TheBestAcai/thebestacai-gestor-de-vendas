@@ -155,6 +155,7 @@ const Sale: React.FC<IProps> = () => {
       store_id: store.company_id,
       total: selectedSale.total_sold,
       discount: +selectedSale.discount,
+      change_amount: +selectedSale.change_amount,
       items: selectedSale.items.map((product) => ({
         product_store_id: product.product_store_id,
         price_sell: product.total,
@@ -279,7 +280,7 @@ const Sale: React.FC<IProps> = () => {
                                   </Tooltip>
                                 )}
                               {hasPermission("sales.emit_nfce") &&
-                                !selectedSale.nfce_id &&
+                                !selectedSale.nfce_focus_id &&
                                 selectedSale.type === 0 && (
                                   <Tooltip title="NFc-e" placement="bottom">
                                     <NfceIcon

@@ -11,6 +11,7 @@ export type SaleDto = {
   formated_type?: string;
   discount: number;
   nfce_id?: number;
+  nfce_focus_id?: number;
   nfce_url?: string;
   created_at?: string;
   deleted_at?: string;

@@ -19,8 +19,8 @@ export const salesFormaterToIntegrate = (
         amount: +_payment.amount,
         type: +_payment.type,
         flag_card:
-          +_payment.type === 1 || +_payment.type === 1
-            ? +(_payment.flag_card || 99)
+          _payment.type === 1 || _payment.type === 2
+            ? _payment.flag_card
             : null,
       })),
       items: _payload.items.map((_item) => ({
@@ -111,8 +111,8 @@ export const salesFormaterToIntegrate = (
         amount: +_payment.amount,
         type: +_payment.type,
         flag_card:
-          +_payment.type === 1 || +_payment.type === 1
-            ? +(_payment.flag_card || 99)
+          _payment.type === 1 || _payment.type === 2
+            ? _payment.flag_card
             : null,
       })),
       items: payload.items.map((_item) => ({
