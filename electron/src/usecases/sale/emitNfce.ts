@@ -38,7 +38,7 @@ class EmitNfce implements IUseCaseFactory {
     ),
     private onlineIntegrationUseCase = onlineIntegration,
     private buildNewSaleUseCase = buildNewSale
-  ) { }
+  ) {}
 
   async execute({ nfe, saleIdToUpdate }: Request): Promise<string> {
     const hasInternet = await checkInternet();
@@ -101,11 +101,11 @@ class EmitNfce implements IUseCaseFactory {
     } else {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
-          nfce_id: saleResponse.nfce_id,
+          nfce_focus_id: saleResponse.nfce_focus_id,
         });
       } catch {
         throw new Error(
-          `Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${saleResponse.nfce_id}`
+          `Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${saleResponse.nfce_focus_id}`
         );
       }
     }
