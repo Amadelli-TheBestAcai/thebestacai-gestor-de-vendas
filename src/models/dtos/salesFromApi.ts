@@ -80,6 +80,7 @@ export interface SaleFromApi {
   type: number;
   discount: string;
   nfce_id?: number;
+  nfce_focus_id?: number;
   nfce_url?: string;
   nfce?: {
     id?: number;

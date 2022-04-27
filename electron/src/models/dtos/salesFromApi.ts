@@ -79,6 +79,7 @@ export interface SaleFromApiDTO {
   type: number;
   discount: string;
   nfce_id?: number;
+  nfce_focus_id?: number;
   nfce_url?: string;
   created_at: string;
   deleted_at?: string;

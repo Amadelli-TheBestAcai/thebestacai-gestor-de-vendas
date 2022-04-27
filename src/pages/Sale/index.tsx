@@ -280,7 +280,7 @@ const Sale: React.FC<IProps> = () => {
                                   </Tooltip>
                                 )}
                               {hasPermission("sales.emit_nfce") &&
-                                !selectedSale.nfce_id &&
+                                !selectedSale.nfce_focus_id &&
                                 selectedSale.type === 0 && (
                                   <Tooltip title="NFc-e" placement="bottom">
                                     <NfceIcon
