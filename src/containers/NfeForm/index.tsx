@@ -71,6 +71,7 @@ const NfeForm: React.FC<IProps> = ({
       setNfe((oldValues) => ({
         ...oldValues,
         discount: +sale.discount,
+        change_amount: +sale.change_amount,
         total: sale.total_sold,
         store_id: store.company_id,
       }));

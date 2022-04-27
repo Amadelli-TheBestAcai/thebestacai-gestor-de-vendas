@@ -155,6 +155,7 @@ const Sale: React.FC<IProps> = () => {
       store_id: store.company_id,
       total: selectedSale.total_sold,
       discount: +selectedSale.discount,
+      change_amount: +selectedSale.change_amount,
       items: selectedSale.items.map((product) => ({
         product_store_id: product.product_store_id,
         price_sell: product.total,

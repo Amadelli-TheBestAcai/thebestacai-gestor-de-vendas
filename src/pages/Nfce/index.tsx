@@ -202,7 +202,7 @@ const Nfce: React.FC = () => {
       discount: nfe.discount || 0,
       items: productsNfe.map((productNfe) => ({
         product_store_id: productNfe.product_store_id,
-        price_sell: productNfe.price_sell,
+        price_sell: productNfe.price_sell * productNfe.quantity,
         quantity: productNfe.quantity,
       })),
       payments: [
@@ -506,11 +506,7 @@ const Nfce: React.FC = () => {
                                 </Col>
 
                                 <Col span={6}>
-                                  <FormItem
-                                    label="CPF / CNPJ"
-                                    name="cpf"
-                                    rules={[{ required: true }]}
-                                  >
+                                  <FormItem label="CPF / CNPJ" name="cpf">
                                     <Input
                                       placeholder="CPF/CNPJ"
                                       className="ant-input"
