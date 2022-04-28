@@ -67,6 +67,7 @@ const Nfce: React.FC = () => {
   const [cashIsOpen, setCashIsOpen] = useState<boolean>(false);
   const [selfServiceAmount, setSelfServiceAmount] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nfe, setNfe] = useState<Nfe | null>(null);
   const [emitingNfe, setEmitingNfe] = useState(false);
   const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
@@ -80,6 +81,7 @@ const Nfce: React.FC = () => {
 
   useEffect(() => {
     async function init() {
+      setIsLoading(true);
       const { response: products, has_internal_error: errorOnProducts } =
         await window.Main.product.getProducts();
       if (errorOnProducts) {
@@ -97,6 +99,7 @@ const Nfce: React.FC = () => {
         setCashIsOpen(true);
         setLoading(false);
         setShouldSearch(false);
+        setIsLoading(false);
       } else {
         setCashIsOpen(false);
       }
@@ -217,30 +220,36 @@ const Nfce: React.FC = () => {
       ],
     };
 
-    setEmitingNfe(true);
+    try {
+      setEmitingNfe(true);
+      setIsLoading(true);
 
-    console.log({ nfce_payload: JSON.stringify(nfcePayload) });
+      console.log({ nfce_payload: JSON.stringify(nfcePayload) });
 
-    const {
-      response,
-      has_internal_error: errorOnEmitNfce,
-      error_message,
-    } = await window.Main.sale.emitNfce(nfcePayload);
-    if (errorOnEmitNfce) {
-      notification.error({
-        message: error_message || "Erro ao emitir NFCe",
+      const {
+        response,
+        has_internal_error: errorOnEmitNfce,
+        error_message,
+      } = await window.Main.sale.emitNfce(nfcePayload);
+      if (errorOnEmitNfce) {
+        notification.error({
+          message: error_message || "Erro ao emitir NFCe",
+          duration: 5,
+        });
+        return;
+      }
+
+      notification.success({
+        message: response,
         duration: 5,
       });
-      return;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setEmitingNfe(false);
+      setIsLoading(false);
+      setModalState(true);
     }
-
-    notification.success({
-      message: response,
-      duration: 5,
-    });
-
-    setEmitingNfe(false);
-    setModalState(true);
   };
 
   const productsFormater = (payload) => {
@@ -535,6 +544,7 @@ const Nfce: React.FC = () => {
                                 <Button
                                   type="primary"
                                   onClick={() => handleEmit()}
+                                  loading={isLoading}
                                 >
                                   Emitir Nota [F1]
                                 </Button>
