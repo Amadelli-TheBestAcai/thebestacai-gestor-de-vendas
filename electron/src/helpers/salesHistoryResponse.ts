@@ -8,6 +8,7 @@ export interface SalesHistory {
   created_at: string;
   deleted_at?: number;
   nfce_id?: number;
+  nfce_focus_id?: number;
   SalesHistory?: number;
   nfce_url?: string;
   payments: PaymentResponse[];

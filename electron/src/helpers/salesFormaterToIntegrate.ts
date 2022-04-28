@@ -14,6 +14,7 @@ export const salesFormaterToIntegrate = (
       user_id: _payload.user_id,
       cash_history_id: _payload.cash_history_id || storeCash.history_id,
       nfce_id: _payload.nfce_id,
+      nfce_focus_id: _payload.nfce_focus_id,
       nfce_url: _payload.nfce_url,
       payments: _payload.payments.map((_payment) => ({
         amount: +_payment.amount,
@@ -106,6 +107,7 @@ export const salesFormaterToIntegrate = (
       user_id: payload.user_id,
       cash_history_id: payload.cash_history_id,
       nfce_id: payload.nfce_id,
+      nfce_focus_id: payload.nfce_focus_id,
       nfce_url: payload.nfce_url,
       payments: payload.payments.map((_payment) => ({
         amount: +_payment.amount,
