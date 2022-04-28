@@ -86,7 +86,7 @@ class EmitNfce implements IUseCaseFactory {
             quantity: produto.quantity,
             storeProduct: product,
             store_product_id: product.id,
-            total: +produto.quantity * +(product?.product?.price_sell || 0),
+            total: produto.price_sell,
             update_stock: false,
             id: v4(),
           });
@@ -95,7 +95,6 @@ class EmitNfce implements IUseCaseFactory {
 
       saleResponse.to_integrate = true;
       saleResponse.is_current = false;
-
       await this.notIntegratedSaleRepository.create(saleResponse);
       await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
     } else {
