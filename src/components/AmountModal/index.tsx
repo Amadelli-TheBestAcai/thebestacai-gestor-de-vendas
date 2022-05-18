@@ -1,13 +1,15 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { useSale } from "../../hooks/useSale";
 
 import amountCash from "../../models/amountCash.json";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
+import MonetaryInput from "../../components/MonetaryInput";
+
 import { Input, Modal, notification } from "antd";
 
 import { Container, Row, Col, ButtonRegister } from "./styles";
-import { useSale } from "../../hooks/useSale";
 
 interface IProp extends RouteComponentProps {
   storeCashToOpen?: string;
@@ -150,6 +152,20 @@ const AmountModal: React.FC<IProp> = ({
             />
           </Col>
         ))}
+      </Row>
+      <Row>
+        <Col sm={12}>
+          <span>Valor Cheio</span>
+          <MonetaryInput
+            autoFocus={true}
+            getValue={(value) =>
+              setAmount((oldValues) => ({
+                ...oldValues,
+                fullAmount: +value,
+              }))
+            }
+          />
+        </Col>
       </Row>
 
       <Row>
