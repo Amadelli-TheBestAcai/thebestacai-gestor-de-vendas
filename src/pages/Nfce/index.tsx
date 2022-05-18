@@ -69,7 +69,6 @@ const Nfce: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nfe, setNfe] = useState<Nfe | null>(null);
-  const [emitingNfe, setEmitingNfe] = useState(false);
   const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
   const [products, setProducts] = useState<ProductDto[]>([]);
   const [isConected, setIsConected] = useState(false);
@@ -221,7 +220,6 @@ const Nfce: React.FC = () => {
     };
 
     try {
-      setEmitingNfe(true);
       setIsLoading(true);
 
       console.log({ nfce_payload: JSON.stringify(nfcePayload) });
@@ -231,6 +229,7 @@ const Nfce: React.FC = () => {
         has_internal_error: errorOnEmitNfce,
         error_message,
       } = await window.Main.sale.emitNfce(nfcePayload);
+
       if (errorOnEmitNfce) {
         notification.error({
           message: error_message || "Erro ao emitir NFCe",
@@ -243,12 +242,12 @@ const Nfce: React.FC = () => {
         message: response,
         duration: 5,
       });
+
+      setModalState(true);
     } catch (error) {
       console.log(error);
     } finally {
-      setEmitingNfe(false);
       setIsLoading(false);
-      setModalState(true);
     }
   };
 
