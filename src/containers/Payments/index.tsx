@@ -115,7 +115,7 @@ const PaymentsContainer: React.FC<IProps> = ({
     total_paid: number,
     discount: number
   ) => {
-    if (total_paid > total_sold) {
+    if (total_paid + discount > total_sold) {
       const result = (total_paid - total_sold + discount)
         .toFixed(2)
         .replace(".", ",");
@@ -160,6 +160,14 @@ const PaymentsContainer: React.FC<IProps> = ({
 
       {shouldViewValues && (
         <ValuesContainer>
+          <ValueInfo>
+            R$ Diferença <br />{" "}
+            <strong style={{ color: "var(--red-600" }}>
+              {(sale?.total_paid + sale?.discount - sale?.total_sold)
+                .toFixed(2)
+                .replace(".", ",")}
+            </strong>
+          </ValueInfo>
           <ValueInfo>
             R$ Troco <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
