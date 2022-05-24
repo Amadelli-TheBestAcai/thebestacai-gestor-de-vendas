@@ -245,7 +245,7 @@ const Sale: React.FC<IProps> = () => {
                             <Col sm={4}>{selectedSale.id}</Col>
                             <Col sm={4}>
                               {" "}
-                              R$ {currencyFormater(selectedSale.total_sold)}
+                              R$ {currencyFormater(selectedSale?.total_sold)}
                             </Col>
                             <Col sm={2}>{selectedSale.quantity}</Col>
                             <Col sm={4}>

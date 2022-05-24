@@ -178,6 +178,8 @@ export function GlobalProvider({ children }) {
         });
       }
 
+      sale.change_amount = sale.total_paid + sale.discount - sale.total_sold;
+
       setSavingSale(true);
       const { has_internal_error: errorOnFinishSAle } =
         await window.Main.sale.finishSale({
@@ -242,19 +244,12 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    if (sale.payments.length > 0) {
-      return notification.warning({
-        message: "Não é possível aplicar este desconto",
-        description: `A venda já possui pagamento(s).`,
-        duration: 5,
-      });
-    }
-
     const { response: _updatedSale, has_internal_error: errorOnUpdateSale } =
       await window.Main.sale.updateSale(sale.id, {
         ...sale,
         discount: value,
       });
+
     if (errorOnUpdateSale) {
       return notification.error({
         message: "Erro ao aplicar desconto",
