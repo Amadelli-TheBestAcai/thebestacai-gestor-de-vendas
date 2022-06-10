@@ -1,75 +1,54 @@
-import apm from "elastic-apm-node";
 import { checkInternet } from "./internetConnection";
-import winston, { Logger } from "winston";
-import {
-  ElasticsearchTransport,
-  ElasticsearchTransportOptions,
-} from "winston-elasticsearch";
-
 import { BaseRepository } from "../repository/baseRepository";
 import { StorageNames } from "../repository/storageNames";
-import { StoreDto, StoreCashDto } from "../models/gestor";
+import { StoreDto, StoreCashDto, UserDto } from "../models/gestor";
+import env from './env.json'
 import moment from "moment";
-import env from "./env.json";
+import axios from 'axios'
 
-class ElasticApm {
-  private logger: Logger
+class AppInsights {
   private startTime = new Date();
   constructor(
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
+    private userRepository = new BaseRepository<UserDto>(StorageNames.User),
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
     private apmTempRepository = new BaseRepository<any>(StorageNames.Apm_Temp)
-  ) {
-    const esTransportOpts: ElasticsearchTransportOptions = {
-      apm,
-      level: 'info',
-      indexPrefix: 'logs-gestor',
-      indexSuffixPattern: 'YYYY.MM.DD',
-      clientOpts: {
-        cloud: {
-          id: env.ELASTIC_ID,
-          username: env.ELASTIC_USER,
-          password: env.ELASTIC_PASS
-        }
-      },
-    };
-    this.logger = winston.createLogger({
-      transports: [
-        new ElasticsearchTransport(esTransportOpts)
-      ]
-    });
+  ) { }
+
+  private async sendToApi(log) {
+    await axios({
+      url: '/appInsights/log',
+      method: 'POST',
+      baseURL: env.API_DASH,
+      data: log
+    })
   }
 
   start(): void {
     this.startTime = new Date();
   }
 
-  async finish(data: any): Promise<void> {
-    if (env.ELASTIC_SHOULD_LOG !== "true") {
-      return;
-    }
-
+  async finish(name: string, data: any): Promise<void> {
     const endTime = new Date();
     const diff = (endTime.getTime() - this.startTime.getTime()) / 1000;
     const store = await this.storeRepository.getOne();
     const storeCash = await this.storeCashRepository.getOne();
-
     const log = {
+      name,
       store: store?.company.company_name,
       historyId: storeCash?.history_id,
       storeCashId: storeCash?.id,
       storeCash: storeCash?.code,
       duration: +Math.abs(diff).toFixed(4),
-      created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
+      created_at: moment(new Date()).format("DD/MM/YYYY HH:MM:SS"),
       ...data,
     };
-
     const hasInternet = await checkInternet();
 
     if (hasInternet) {
-      this.logger.info(log)
+      await this.sendToApi(log)
 
       const notIntegratedLogs = await this.apmTempRepository.getAll();
 
@@ -85,9 +64,11 @@ class ElasticApm {
     }
   }
 
+
+
   private async integrateTempLogs(payload) {
     try {
-      this.logger.info(payload)
+      await this.sendToApi(payload)
       await this.apmTempRepository.deleteById(payload.id);
     } catch (error) {
       await this.apmTempRepository.create({
@@ -99,4 +80,4 @@ class ElasticApm {
   }
 }
 
-export const elasticApm = new ElasticApm();
+export const appInsights = new AppInsights();

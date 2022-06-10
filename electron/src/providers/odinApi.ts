@@ -7,7 +7,6 @@ import { UserDto } from "../models/gestor";
 
 const API_URL = env.API_DASH;
 
-console.log(API_URL);
 const api = axios.create({
   baseURL: API_URL,
   responseType: "json",
