@@ -1,3 +1,5 @@
+import Bull from 'bull';
+import cron from 'node-cron';
 import { checkInternet } from "./internetConnection";
 import { BaseRepository } from "../repository/baseRepository";
 import { StorageNames } from "../repository/storageNames";
@@ -7,6 +9,7 @@ import moment from "moment";
 import axios from 'axios'
 
 class AppInsights {
+  private queue = new Bull('app_insights_integration');
   private startTime = new Date();
   constructor(
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
@@ -15,7 +18,12 @@ class AppInsights {
       StorageNames.StoreCash
     ),
     private apmTempRepository = new BaseRepository<any>(StorageNames.Apm_Temp)
-  ) { }
+  ) {
+    cron.schedule('* * * * *', async () => {
+      console.log('Integrating logs on App Insights');
+      await this.integrateTempLogs()
+    });
+  }
 
   private async sendToApi(log) {
     await axios({
@@ -37,6 +45,7 @@ class AppInsights {
     const storeCash = await this.storeCashRepository.getOne();
     const log = {
       name,
+      scope: "Gestor de Vendas",
       store: store?.company.company_name,
       historyId: storeCash?.history_id,
       storeCashId: storeCash?.id,
@@ -45,35 +54,28 @@ class AppInsights {
       created_at: moment(new Date()).format("DD/MM/YYYY HH:MM:SS"),
       ...data,
     };
-    const hasInternet = await checkInternet();
 
-    if (hasInternet) {
-      await this.sendToApi(log)
-
-      const notIntegratedLogs = await this.apmTempRepository.getAll();
-
-      if (notIntegratedLogs.length) {
-        await Promise.all(
-          notIntegratedLogs.map(async (nextPayload) => {
-            await this.integrateTempLogs(nextPayload);
-          })
-        );
-      }
-    } else {
-      await this.apmTempRepository.create(log);
-    }
+    await this.apmTempRepository.create(log);
   }
 
 
 
-  private async integrateTempLogs(payload) {
+  private async integrateTempLogs() {
     try {
-      await this.sendToApi(payload)
-      await this.apmTempRepository.deleteById(payload.id);
+      const hasInternet = await checkInternet();
+      if (!hasInternet) {
+        return;
+      }
+      const logs = await this.apmTempRepository.getAll()
+      await Promise.all(
+        logs.map(async log => {
+          await this.sendToApi(log)
+          await this.apmTempRepository.deleteById(log.id);
+        })
+      )
     } catch (error) {
       await this.apmTempRepository.create({
         message: "Falha ao integrar com a cloud",
-        payload,
         error,
       });
     }
