@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import axios from "axios";
 import moment from "moment";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
@@ -33,11 +34,13 @@ import {
   RemoveIcon,
   NfceIcon,
 } from "./styles";
+
 import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = () => {
+  const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
   const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -122,6 +125,111 @@ const Sale: React.FC<IProps> = () => {
     setFiltered(filteredSale);
   };
 
+  const openModal = () => {
+    if (selectedSale.nfce?.status_sefaz === "100") {
+      setModalState(false);
+    } else {
+      setModalState(true);
+    }
+  };
+
+  const handleEmit = async () => {
+    if (!selectedSale.items.length) {
+      return notification.warning({
+        message: "Oops! O carrinho está vazio.",
+        description: `Selecione algum item para continuar com a emissão da nota.`,
+        duration: 5,
+      });
+    }
+
+    const nfcePayload = {
+      cpf: "",
+      email: "",
+      store_id: store.company_id,
+      total: selectedSale.total_sold,
+      discount: +selectedSale.discount,
+      change_amount: +selectedSale.change_amount,
+      items: selectedSale.items.map((product) => ({
+        product_store_id: product.product_store_id,
+        price_sell: product.total,
+        quantity: product.quantity,
+      })),
+      payments: selectedSale.payments.map((payment) => ({
+        amount: payment.amount,
+        type: payment.type,
+        flag_card:
+          payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
+      })),
+    };
+
+    try {
+      setEmitingNfe(true);
+      setIsLoading(true);
+
+      console.log(JSON.stringify(nfcePayload));
+
+      const {
+        response,
+        has_internal_error: errorOnEmitNfce,
+        error_message,
+      } = await window.Main.sale.emitNfce(nfcePayload, selectedSale.id);
+
+      if (errorOnEmitNfce) {
+        return notification.error({
+          message: error_message || "Erro ao emitir NFCe",
+          duration: 5,
+        });
+      }
+
+      notification.success({
+        message: response,
+        duration: 5,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setEmitingNfe(false);
+      setModalState(false);
+      setIsLoading(false);
+      setShouldSearch(true);
+    }
+  };
+
+  const getNfceDanfe = async (sale_id: number) => {
+    const { data } = await axios({
+      method: "GET",
+      url: `${window.Main.env.API_SALES_HANDLER}/nfce/6412762/danfe`,
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    const { data: blob } = await axios({
+      method: "GET",
+      responseType: "blob",
+      url: `data:html;base64,${data.content}`,
+    });
+
+    const blog_url = window.URL.createObjectURL(new Blob([blob]));
+    const link = document.createElement("a");
+    link.href = blog_url;
+    link.setAttribute("download", `${sale_id}.html`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const nfceInfo = () => {
+    return {
+      authorized: (
+        <NfceLabel tab_id={1} style={{ cursor: "pointer" }}>
+          Autorizada
+        </NfceLabel>
+      ),
+      resend: <NfceLabel tab_id={2}>Reenviar</NfceLabel>,
+    };
+  };
+
   return (
     <Container>
       <PageContent>
@@ -165,7 +273,25 @@ const Sale: React.FC<IProps> = () => {
                                 .add(3, "hours")
                                 .format("HH:mm:ss")}
                             </Col>
-                            <Col sm={4}>{SalesTypes[selectedSale.type]}</Col>
+                            <Col sm={3}>{SalesTypes[selectedSale.type]}</Col>
+                            {true ? (
+                              <Col
+                                sm={3}
+                                onClick={() =>
+                                  true
+                                    ? getNfceDanfe(selectedSale.id)
+                                    : openModal()
+                                }
+                              >
+                                {true
+                                  ? nfceInfo().authorized
+                                  : nfceInfo().resend}
+                              </Col>
+                            ) : (
+                              <Col sm={3} onClick={() => openModal()}>
+                                <h4>Não emitida</h4>
+                              </Col>
+                            )}
                             <Col
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
