@@ -11,7 +11,6 @@ class AppInsights {
   private startTime = new Date();
   constructor(
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
-    private userRepository = new BaseRepository<UserDto>(StorageNames.User),
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
