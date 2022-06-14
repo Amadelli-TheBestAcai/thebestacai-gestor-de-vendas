@@ -178,6 +178,8 @@ export function GlobalProvider({ children }) {
         });
       }
 
+      sale.change_amount = sale.total_paid + sale.discount - sale.total_sold;
+
       setSavingSale(true);
       const { has_internal_error: errorOnFinishSAle } =
         await window.Main.sale.finishSale({
@@ -247,6 +249,7 @@ export function GlobalProvider({ children }) {
         ...sale,
         discount: value,
       });
+
     if (errorOnUpdateSale) {
       return notification.error({
         message: "Erro ao aplicar desconto",

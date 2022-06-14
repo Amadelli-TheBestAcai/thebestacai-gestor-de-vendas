@@ -73,14 +73,37 @@ export interface SaleFromApi {
     };
     update_stock: boolean;
   }[];
-  payments: { amount: number; type: number }[];
+  payments: { amount: number; type: number; flag_card?: number }[];
   change_amount: string;
   cash_id: number;
   cash_history_id: number;
   type: number;
   discount: string;
   nfce_id?: number;
+  nfce_focus_id?: number;
   nfce_url?: string;
+  nfce?: {
+    id?: number;
+    cnpj_emitente?: string;
+    ref?: string;
+    status?: string;
+    status_sefaz?: string;
+    mensagem_sefaz?: string;
+    chave_nfe?: string;
+    numero?: string;
+    serie?: string;
+    caminho_xml_nota_fiscal?: string;
+    caminho_danfe?: string;
+    numero_inicial?: string;
+    numero_final?: string;
+    modelo?: string;
+    cnpj?: string;
+    caminho_xml?: string;
+    codigo?: string;
+    mensagem?: string;
+    created_at?: Date;
+    updated_at?: Date;
+  };
   created_at: string;
   deleted_at?: string;
 }

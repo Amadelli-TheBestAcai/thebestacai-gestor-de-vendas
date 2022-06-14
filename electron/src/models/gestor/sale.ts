@@ -8,6 +8,7 @@ export interface SaleDto {
   formated_type?: string;
   discount: number;
   nfce_id?: number;
+  nfce_focus_id?: number;
   nfce_url?: string;
   created_at?: string;
   deleted_at?: string;
@@ -88,6 +89,7 @@ export interface SaleDto {
     id: string;
     amount: number;
     formated_type?: string;
+    flag_card?: number;
     type: number;
     created_at?: string;
     deleted_at?: string;

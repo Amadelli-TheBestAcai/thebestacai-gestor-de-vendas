@@ -468,6 +468,12 @@ export const Product = styled.div`
 
 export const Input = styled(InputAnt)``;
 
+export const QuantityInput = styled(InputAnt)`
+  text-align: center;
+  background: white !important;
+  border: 1px solid #0000005e !important;
+`;
+
 export const FormContainer = styled.div`
   display: flex;
   flex-direction: column;

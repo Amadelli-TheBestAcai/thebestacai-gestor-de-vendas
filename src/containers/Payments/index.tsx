@@ -27,14 +27,20 @@ import {
   Header,
   Column,
   OnlineIcon,
+  Select,
+  Option,
 } from "./styles";
+import { FlagCard } from "../../models/enums/flagCard";
+import { Form } from "antd";
 
 interface IProps {
   sale: SaleDto;
   removePayment: (id: string) => Promise<void>;
   addPayment: () => Promise<void>;
-  handleOpenPayment: (type: number, title: string) => void;
+  handleOpenPayment: (type: number, title: string, flag_card?: number) => void;
   setCurrentPayment: Dispatch<SetStateAction<number>>;
+  setFlagCard?: Dispatch<SetStateAction<number>>;
+  flagCard?: number;
   setModalState: Dispatch<SetStateAction<boolean>>;
   modalState: boolean;
   modalTitle: string;
@@ -49,15 +55,18 @@ const PaymentsContainer: React.FC<IProps> = ({
   addPayment,
   setModalState,
   modalState,
-  handleOpenPayment,
   setCurrentPayment,
+  handleOpenPayment,
   modalTitle,
   shouldViewValues,
   shouldDisableButtons,
   usingDelivery,
+  setFlagCard,
+  flagCard,
 }) => {
   const onModalCancel = (): void => {
     setModalState(false);
+    setFlagCard(null);
   };
 
   const getAmount = (amount: number): void => {
@@ -75,13 +84,15 @@ const PaymentsContainer: React.FC<IProps> = ({
       icon: <CreditIcon />,
       label: "Crédito [S]",
       background: "var(--blue-300)",
-      action: () => handleOpenPayment(PaymentType.CREDITO, "C. Crédito"),
+      action: () =>
+        handleOpenPayment(PaymentType.CREDITO, "C. Crédito", flagCard),
     },
     {
       icon: <DebitIcon />,
       label: "Débito [D]",
       background: "var(--blue-400)",
-      action: () => handleOpenPayment(PaymentType.DEBITO, "C. Débito"),
+      action: () =>
+        handleOpenPayment(PaymentType.DEBITO, "C. Débito", flagCard),
     },
     {
       icon: usingDelivery ? <OnlineIcon /> : <TicketIcon />,
@@ -104,7 +115,7 @@ const PaymentsContainer: React.FC<IProps> = ({
     total_paid: number,
     discount: number
   ) => {
-    if (total_paid > total_sold) {
+    if (total_paid + discount > total_sold) {
       const result = (total_paid - total_sold + discount)
         .toFixed(2)
         .replace(".", ",");
@@ -149,6 +160,14 @@ const PaymentsContainer: React.FC<IProps> = ({
 
       {shouldViewValues && (
         <ValuesContainer>
+          <ValueInfo>
+            R$ Diferença <br />{" "}
+            <strong style={{ color: "var(--red-600" }}>
+              {(sale?.total_paid + sale?.discount - sale?.total_sold)
+                .toFixed(2)
+                .replace(".", ",")}
+            </strong>
+          </ValueInfo>
           <ValueInfo>
             R$ Troco <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
@@ -206,6 +225,21 @@ const PaymentsContainer: React.FC<IProps> = ({
               : 0
           }
         />
+        {(modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
+          <>
+            Bandeira:
+            <Form.Item>
+              <Select
+                placeholder="Escolha a opção"
+                onChange={(value) => setFlagCard(+value)}
+              >
+                {FlagCard.map((_flagCard) => (
+                  <Option key={_flagCard.id}>{_flagCard.value}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </>
+        )}
       </Modal>
     </Container>
   );

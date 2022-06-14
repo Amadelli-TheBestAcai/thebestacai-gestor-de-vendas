@@ -33,9 +33,16 @@ import {
   PrinterIcon,
   RemoveIcon,
   NfceIcon,
+  ModalNFCe,
+  Footer,
+  ButtonCancel,
+  ButtonSave,
+  Label,
+  NfceLabel,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
+import { useStore } from "../../hooks/useStore";
 
 type IProps = RouteComponentProps;
 
@@ -50,6 +57,9 @@ const Sale: React.FC<IProps> = () => {
   );
   const { hasPermission } = useUser();
   const [nfceModal, setNfceModal] = useState(false);
+  const [modalState, setModalState] = useState(false);
+  const [emitingNfe, setEmitingNfe] = useState(false);
+  const { store } = useStore();
 
   useEffect(() => {
     async function init() {
@@ -252,9 +262,10 @@ const Sale: React.FC<IProps> = () => {
                   <HeaderTable>
                     <Col sm={4}>ID</Col>
                     <Col sm={4}>VALOR</Col>
-                    <Col sm={4}>QUANTIDADE</Col>
+                    <Col sm={2}>QUANTIDADE</Col>
                     <Col sm={4}>HORA</Col>
-                    <Col sm={4}>TIPO</Col>
+                    <Col sm={3}>TIPO</Col>
+                    <Col sm={3}>NFC-E</Col>
                     <Col sm={4}>AÇÕES</Col>
                   </HeaderTable>
                   {selectedSale && (
@@ -265,25 +276,25 @@ const Sale: React.FC<IProps> = () => {
                             <Col sm={4}>{selectedSale.id}</Col>
                             <Col sm={4}>
                               {" "}
-                              R$ {currencyFormater(selectedSale.total_sold)}
+                              R$ {currencyFormater(selectedSale?.total_sold)}
                             </Col>
-                            <Col sm={4}>{selectedSale.quantity}</Col>
+                            <Col sm={2}>{selectedSale.quantity}</Col>
                             <Col sm={4}>
                               {moment(selectedSale.created_at)
                                 .add(3, "hours")
                                 .format("HH:mm:ss")}
                             </Col>
                             <Col sm={3}>{SalesTypes[selectedSale.type]}</Col>
-                            {true ? (
+                            {selectedSale.nfce ? (
                               <Col
                                 sm={3}
                                 onClick={() =>
-                                  true
+                                  selectedSale.nfce?.status_sefaz === "100"
                                     ? getNfceDanfe(selectedSale.id)
                                     : openModal()
                                 }
                               >
-                                {true
+                                {selectedSale.nfce?.status_sefaz === "100"
                                   ? nfceInfo().authorized
                                   : nfceInfo().resend}
                               </Col>
@@ -307,7 +318,7 @@ const Sale: React.FC<IProps> = () => {
                                   </Tooltip>
                                 )}
                               {hasPermission("sales.emit_nfce") &&
-                                !selectedSale.nfce_id &&
+                                !selectedSale.nfce_focus_id &&
                                 selectedSale.type === 0 && (
                                   <Tooltip title="NFc-e" placement="bottom">
                                     <NfceIcon
@@ -399,6 +410,29 @@ const Sale: React.FC<IProps> = () => {
         setModalState={setNfceModal}
         sale={selectedSale}
       />
+
+      <ModalNFCe
+        title="Envio de NFC-e"
+        visible={modalState}
+        closable={false}
+        centered
+        width={500}
+        footer={
+          <Footer>
+            <ButtonCancel onClick={() => setModalState(false)}>
+              Cancelar
+            </ButtonCancel>
+            <ButtonSave onClick={() => handleEmit()} loading={isLoading}>
+              Enviar novemente
+            </ButtonSave>
+          </Footer>
+        }
+      >
+        <Label>
+          A nota não foi enviada com sucesso na sua última tentativa !
+        </Label>
+        Para refazer o envio basta selecionar a opção de reenvio.
+      </ModalNFCe>
     </Container>
   );
 };

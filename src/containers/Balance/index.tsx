@@ -114,10 +114,10 @@ const BalanceContainer: React.FC<IProps> = ({
       handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro");
     }
     if (lowerKey === "s") {
-      handleOpenPayment(PaymentType.CREDITO, "Crédito");
+      handleOpenPayment(PaymentType.CREDITO, "C. Crédito");
     }
     if (lowerKey === "d") {
-      handleOpenPayment(PaymentType.DEBITO, "Débito");
+      handleOpenPayment(PaymentType.DEBITO, "C. Débito");
     }
     if (lowerKey === "t") {
       handleOpenPayment(PaymentType.TICKET, "Ticket");

@@ -72,13 +72,14 @@ export interface SaleFromApiDTO {
     };
     update_stock: boolean;
   }[];
-  payments: { amount: number; type: number }[];
+  payments: { amount: number; type: number; flag_card?: number }[];
   change_amount: string;
   cash_id: number;
   cash_history_id: number;
   type: number;
   discount: string;
   nfce_id?: number;
+  nfce_focus_id?: number;
   nfce_url?: string;
   created_at: string;
   deleted_at?: string;

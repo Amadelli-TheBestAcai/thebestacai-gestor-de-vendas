@@ -1,6 +1,9 @@
 import { SaleDto, StoreCashDto } from "../models/gestor";
 
-export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[], storeCash: StoreCashDto) => {
+export const salesFormaterToIntegrate = (
+  payload: SaleDto | SaleDto[],
+  storeCash: StoreCashDto
+) => {
   if (Array.isArray(payload)) {
     return payload.map((_payload) => ({
       quantity: _payload.quantity,
@@ -11,10 +14,15 @@ export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[], storeCash
       user_id: _payload.user_id,
       cash_history_id: _payload.cash_history_id || storeCash.history_id,
       nfce_id: _payload.nfce_id,
+      nfce_focus_id: _payload.nfce_focus_id,
       nfce_url: _payload.nfce_url,
       payments: _payload.payments.map((_payment) => ({
         amount: +_payment.amount,
         type: +_payment.type,
+        flag_card:
+          _payment.type === 1 || _payment.type === 2
+            ? _payment.flag_card
+            : null,
       })),
       items: _payload.items.map((_item) => ({
         name: _item.product.name,
@@ -99,10 +107,15 @@ export const salesFormaterToIntegrate = (payload: SaleDto | SaleDto[], storeCash
       user_id: payload.user_id,
       cash_history_id: payload.cash_history_id,
       nfce_id: payload.nfce_id,
+      nfce_focus_id: payload.nfce_focus_id,
       nfce_url: payload.nfce_url,
       payments: payload.payments.map((_payment) => ({
         amount: +_payment.amount,
         type: +_payment.type,
+        flag_card:
+          _payment.type === 1 || _payment.type === 2
+            ? _payment.flag_card
+            : null,
       })),
       items: payload.items.map((_item) => ({
         name: _item.product.name,
