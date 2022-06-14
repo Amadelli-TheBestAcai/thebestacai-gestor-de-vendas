@@ -2,23 +2,22 @@ import { BaseRepository } from "../repository/baseRepository";
 import { StorageNames } from "../repository/storageNames";
 import { IUseCaseFactory } from "./useCaseFactory.interface";
 import { ErrorDto } from "../models/dtos/error";
-import { elasticApm } from "../providers/elasticApm";
+import { appInsights } from "../providers/appInsights";
 import { UseCaseFactoryResponse } from "./useCaseFactoryResponse.interface";
 
 class UseCaseFactory {
   constructor(
     private errorsRepository = new BaseRepository<ErrorDto>(StorageNames.Errors)
-  ) {}
+  ) { }
 
   async execute<T>(
     useCase: IUseCaseFactory,
     params?: any
   ): Promise<UseCaseFactoryResponse<T>> {
-    elasticApm.start();
+    appInsights.start();
     try {
       const response = await useCase.execute(params);
-      elasticApm.finish({
-        useCase: useCase.constructor.name,
+      await appInsights.finish(useCase.constructor.name, {
         success: true,
         params,
       });
@@ -42,8 +41,7 @@ class UseCaseFactory {
         },
       });
 
-      elasticApm.finish({
-        useCase: useCase.constructor.name,
+      await appInsights.finish(useCase.constructor.name, {
         error_message,
         success: false,
         error,
