@@ -1,4 +1,5 @@
 import { BaseRepository } from "../../repository/baseRepository";
+import database from '../../providers/database'
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
@@ -43,6 +44,25 @@ class OpenStoreCash implements IUseCaseFactory {
 
     const isConnected = await checkInternet();
     if (isConnected) {
+      const dbBackup = await database.backup()
+
+      if (dbBackup) {
+        const formData = new FormData();
+
+        formData.append('file', dbBackup)
+
+        const { data } = await odinApi.post("/upload-gestordb-backup", formData)
+
+        const location = data?.location
+
+        await odinApi.put(
+          `/cash_history/${currentStoreCash?.history_id}`,
+          {
+            backup_url: location,
+          }
+        )
+      }
+
       const currentStore = await this.storeRepository.getOne();
       const {
         data: {

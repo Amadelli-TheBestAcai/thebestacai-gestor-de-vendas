@@ -1,4 +1,3 @@
-import Bull from 'bull';
 import cron from 'node-cron';
 import { checkInternet } from "./internetConnection";
 import { BaseRepository } from "../repository/baseRepository";
@@ -9,7 +8,6 @@ import moment from "moment";
 import axios from 'axios'
 
 class AppInsights {
-  private queue = new Bull('app_insights_integration');
   private startTime = new Date();
   constructor(
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
