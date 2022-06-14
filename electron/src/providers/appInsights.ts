@@ -1,3 +1,4 @@
+import Bull from 'bull';
 import cron from 'node-cron';
 import { checkInternet } from "./internetConnection";
 import { BaseRepository } from "../repository/baseRepository";
@@ -8,6 +9,7 @@ import moment from "moment";
 import axios from 'axios'
 
 class AppInsights {
+  private queue = new Bull('app_insights_integration');
   private startTime = new Date();
   constructor(
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
@@ -18,8 +20,9 @@ class AppInsights {
     private apmTempRepository = new BaseRepository<any>(StorageNames.Apm_Temp)
   ) {
     cron.schedule('* * * * *', async () => {
-      console.log('Integrating logs on App Insights');
-      await this.integrateTempLogs()
+      if (env.API_DASH && env.API_DASH.includes("prd")) {
+        await this.integrateTempLogs()
+      }
     });
   }
 
