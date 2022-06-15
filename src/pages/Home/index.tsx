@@ -34,7 +34,8 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
-  const [flagCard, setFlagCard] = useState<number | null>(null);
+  const [flagCard, setFlagCard] = useState<number | null>(99);
+
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
