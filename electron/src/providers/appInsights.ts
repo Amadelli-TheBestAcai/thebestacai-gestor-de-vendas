@@ -18,7 +18,8 @@ class AppInsights {
   ) {
     cron.schedule('* * * * *', async () => {
       if (env.API_DASH && env.API_DASH.includes("prd")) {
-        await this.integrateTempLogs()
+        console.log("Log was disabled")
+        // await this.integrateTempLogs()
       }
     });
   }
@@ -53,7 +54,8 @@ class AppInsights {
       ...data,
     };
 
-    await this.apmTempRepository.create(log);
+    console.log("Log was disabled");
+    // await this.apmTempRepository.create(log);
   }
 
 
