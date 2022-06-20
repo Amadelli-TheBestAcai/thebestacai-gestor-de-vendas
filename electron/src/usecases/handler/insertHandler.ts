@@ -6,7 +6,7 @@ import { BaseRepository } from "../../repository/baseRepository";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 
-import odinApi from "../../providers/odinApi";
+import mercuryApi from "../../providers/mercuryApi";
 import { getCurrentStoreCash } from "../storeCash/getCurrentStoreCash";
 import { integrateHandler } from "./integrateHandler";
 import { HandlerDto, StoreCashDto } from "../../models/gestor";
@@ -22,7 +22,7 @@ class InsertHandler implements IUseCaseFactory {
     ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
     private integrateHandlerUseCase = integrateHandler
-  ) { }
+  ) {}
 
   async execute({ payload }: Request): Promise<HandlerDto> {
     const { response: currentCash, has_internal_error: errorOnStoreCash } =
@@ -43,7 +43,7 @@ class InsertHandler implements IUseCaseFactory {
     if (hasInternet && payload.sendToShop) {
       const {
         data: { id: orderId },
-      } = await odinApi.post("/purchases", payload.shopOrder);
+      } = await mercuryApi.post("/purchases", payload.shopOrder);
       order_id = orderId;
     }
 
@@ -58,7 +58,9 @@ class InsertHandler implements IUseCaseFactory {
       cash_id: currentCash.is_online ? currentCash.cash_id : undefined,
       cash_code: currentCash.code,
       store_id: currentCash.store_id,
-      cash_history_id: currentCash.is_online ? currentCash?.history_id : undefined,
+      cash_history_id: currentCash.is_online
+        ? currentCash?.history_id
+        : undefined,
       to_integrate: true,
       order_id,
       reason: !payload.cashHandler.reason
