@@ -1,11 +1,11 @@
-import cron from 'node-cron';
+import cron from "node-cron";
 import { checkInternet } from "./internetConnection";
 import { BaseRepository } from "../repository/baseRepository";
 import { StorageNames } from "../repository/storageNames";
 import { StoreDto, StoreCashDto, UserDto } from "../models/gestor";
-import env from './env.json'
+import env from "./env.json";
 import moment from "moment";
-import axios from 'axios'
+import axios from "axios";
 
 class AppInsights {
   private startTime = new Date();
@@ -16,21 +16,21 @@ class AppInsights {
     ),
     private apmTempRepository = new BaseRepository<any>(StorageNames.Apm_Temp)
   ) {
-    cron.schedule('* * * * *', async () => {
+    this.apmTempRepository.clear();
+    cron.schedule("* * * * *", async () => {
       if (env.API_DASH && env.API_DASH.includes("prd")) {
-        console.log("Log was disabled")
-        // await this.integrateTempLogs()
+        await this.integrateTempLogs();
       }
     });
   }
 
   private async sendToApi(log) {
     await axios({
-      url: '/appInsights/log',
-      method: 'POST',
+      url: "/appInsights/log",
+      method: "POST",
       baseURL: env.API_DASH,
-      data: log
-    })
+      data: log,
+    });
   }
 
   start(): void {
@@ -51,14 +51,10 @@ class AppInsights {
       storeCash: storeCash?.code,
       duration: +Math.abs(diff).toFixed(4),
       created_at: moment(new Date()).format("DD/MM/YYYY HH:MM:SS"),
-      ...data,
     };
 
-    console.log("Log was disabled");
-    // await this.apmTempRepository.create(log);
+    await this.apmTempRepository.create(log);
   }
-
-
 
   private async integrateTempLogs() {
     try {
@@ -66,13 +62,13 @@ class AppInsights {
       if (!hasInternet) {
         return;
       }
-      const logs = await this.apmTempRepository.getAll()
+      const logs = await this.apmTempRepository.getAll();
       await Promise.all(
-        logs.map(async log => {
-          await this.sendToApi(log)
+        logs.map(async (log) => {
+          await this.sendToApi(log);
           await this.apmTempRepository.deleteById(log.id);
         })
-      )
+      );
     } catch (error) {
       await this.apmTempRepository.create({
         message: "Falha ao integrar com a cloud",
