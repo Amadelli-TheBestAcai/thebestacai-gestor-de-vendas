@@ -38,9 +38,10 @@ class EmitNfce implements IUseCaseFactory {
     ),
     private onlineIntegrationUseCase = onlineIntegration,
     private buildNewSaleUseCase = buildNewSale
-  ) {}
+  ) { }
 
   async execute({ nfe, saleIdToUpdate }: Request): Promise<string> {
+    console.log({ nfe, saleIdToUpdate })
     const hasInternet = await checkInternet();
     if (!hasInternet) {
       throw new Error("Dispositivo sem conexão");
