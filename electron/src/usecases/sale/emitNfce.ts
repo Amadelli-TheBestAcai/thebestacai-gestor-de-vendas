@@ -101,6 +101,7 @@ class EmitNfce implements IUseCaseFactory {
 
       saleResponse.to_integrate = true;
       saleResponse.is_current = false;
+      saleResponse.abstract_sale = true;
       await this.notIntegratedSaleRepository.create(saleResponse);
       await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
     } else {

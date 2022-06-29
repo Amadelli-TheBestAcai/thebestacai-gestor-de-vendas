@@ -7,6 +7,7 @@ export const salesFormaterToIntegrate = (
   if (Array.isArray(payload)) {
     return payload.map((_payload) => ({
       quantity: _payload.quantity,
+      abstract_sale: _payload.abstract_sale,
       change_amount: _payload.change_amount,
       type: _payload.type,
       discount: _payload.discount,
@@ -100,6 +101,7 @@ export const salesFormaterToIntegrate = (
   } else {
     const response = {
       quantity: payload.quantity,
+      abstract_sale: payload.abstract_sale,
       change_amount: payload.change_amount,
       type: payload.type,
       discount: payload.discount,
