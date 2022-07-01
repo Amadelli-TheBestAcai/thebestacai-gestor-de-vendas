@@ -6,6 +6,7 @@ import {
   Col as ColAnt,
   Select as SelectAnt,
   Input as InputAnt,
+  Button as ButtonAnt,
 } from "antd";
 
 export const Container = styled(ModalAnt)`
@@ -89,7 +90,7 @@ export const ButtonCancel = styled.button`
   }
 `;
 
-export const ButtonSave = styled.button`
+export const ButtonSave = styled(ButtonAnt)`
   padding: 3px 7px;
   font-weight: 500;
   border-radius: 1rem;
@@ -100,6 +101,7 @@ export const ButtonSave = styled.button`
 
   :hover {
     background: var(--orange-200);
+    color: white;
   }
 
   /*Responsive 1366px*/
