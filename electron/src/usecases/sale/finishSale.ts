@@ -31,6 +31,8 @@ class FinishSale implements IUseCaseFactory {
     } else {
       await this.saleRepository.deleteById(payload.id);
     }
+
+    payload.abstract_sale = false
     await this.notIntegratedSaleRepository.create(payload);
 
     const { has_internal_error: errorOnOnlineTntegrate, response } =
