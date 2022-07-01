@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import moment from "moment";
 
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
@@ -79,8 +80,8 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       if (reasontype === "Pagamento fornecedor") {
         shopOrder = {
           store_id: store.company_id,
-          due_date: new Date(),
-          pay_date: new Date(),
+          due_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+          pay_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
           payment_method: 0,
           total: +shopInfo.quantity * +shopInfo.unitary_value,
           observation: shopInfo.observation,
@@ -108,8 +109,8 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         }
         shopOrder = {
           store_id: store.company_id,
-          due_date: new Date(),
-          pay_date: new Date(),
+          due_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+          pay_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
           payment_method: 0,
           total: +shopInfo.quantity * +shopInfo.unitary_value,
           name: "Salarios/Comissões",
@@ -252,7 +253,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       footer={
         <Footer>
           <ButtonCancel onClick={() => handleClose()}>Cancelar</ButtonCancel>
-          <ButtonSave onClick={() => handleSubmit()}>
+          <ButtonSave onClick={() => handleSubmit()} loading={loading}>
             Salvar alteração
           </ButtonSave>
         </Footer>

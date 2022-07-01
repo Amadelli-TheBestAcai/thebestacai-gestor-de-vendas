@@ -4,7 +4,6 @@ import env from "./env.json";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import { getUser } from "../usecases/user";
 import { UserDto } from "../models/gestor";
-
 const API_URL = env.API_MERCURY;
 
 const mercuryApi = axios.create({

@@ -7,4 +7,9 @@ export interface NfeDTO {
   total: number;
   discount: number;
   items: ProductNfeDTO[];
+  payments: {
+    amount: number,
+    flag_card: number,
+    type: number,
+  }[]
 }

@@ -1,4 +1,7 @@
 import Datastore from 'nedb-async'
+import JSZip from 'jszip';
+
+import { StorageNames } from '../repository/storageNames'
 class Database {
   private _storage: {
     key: string,
@@ -17,6 +20,23 @@ class Database {
       this._storage.push(newStorage)
       return newStorage.dataStore
     }
+  }
+
+  async backup(): Promise<any> {
+    const storages = Object.keys(StorageNames)
+
+    const zip = new JSZip();
+
+    await Promise.all(
+      storages.map(async storage => {
+        const content = await this.getConnection<any>(storage).asyncFind({})
+        zip.file(`${storage}.json`, JSON.stringify(content));
+      })
+    )
+
+    const dbBackup = await zip.generateAsync({ type: 'blob' })
+
+    return dbBackup
   }
 }
 

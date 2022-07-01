@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import axios from "axios";
 import moment from "moment";
 import { currencyFormater } from "../../helpers/currencyFormater";
 
@@ -39,12 +40,14 @@ import {
   Label,
   NfceLabel,
 } from "./styles";
+
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
 
 type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = () => {
+  const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
   const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -202,9 +205,37 @@ const Sale: React.FC<IProps> = () => {
     }
   };
 
+  const getNfceDanfe = async (sale_id: number) => {
+    const { data } = await axios({
+      method: "GET",
+      url: `${window.Main.env.API_SALES_HANDLER}/nfce/6412762/danfe`,
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    const { data: blob } = await axios({
+      method: "GET",
+      responseType: "blob",
+      url: `data:html;base64,${data.content}`,
+    });
+
+    const blog_url = window.URL.createObjectURL(new Blob([blob]));
+    const link = document.createElement("a");
+    link.href = blog_url;
+    link.setAttribute("download", `${sale_id}.html`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const nfceInfo = () => {
     return {
-      authorized: <NfceLabel tab_id={1}>Autorizada</NfceLabel>,
+      authorized: (
+        <NfceLabel tab_id={1} style={{ cursor: "pointer" }}>
+          Autorizada
+        </NfceLabel>
+      ),
       resend: <NfceLabel tab_id={2}>Reenviar</NfceLabel>,
     };
   };
@@ -255,7 +286,14 @@ const Sale: React.FC<IProps> = () => {
                             </Col>
                             <Col sm={3}>{SalesTypes[selectedSale.type]}</Col>
                             {selectedSale.nfce ? (
-                              <Col sm={3} onClick={() => openModal()}>
+                              <Col
+                                sm={3}
+                                onClick={() =>
+                                  selectedSale.nfce?.status_sefaz === "100"
+                                    ? getNfceDanfe(selectedSale.id)
+                                    : openModal()
+                                }
+                              >
                                 {selectedSale.nfce?.status_sefaz === "100"
                                   ? nfceInfo().authorized
                                   : nfceInfo().resend}

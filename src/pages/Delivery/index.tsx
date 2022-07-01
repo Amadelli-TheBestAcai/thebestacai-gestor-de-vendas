@@ -62,7 +62,7 @@ const Delivery: React.FC<ComponentProps> = () => {
   const [amount, setAmount] = useState<number>(0);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [paymentModal, setPaymentModal] = useState(false);
-  const [flagCard, setFlagCard] = useState<number | null>(null);
+  const [flagCard, setFlagCard] = useState<number | null>(99);
 
   useEffect(() => {
     async function init() {

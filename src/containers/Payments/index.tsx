@@ -232,6 +232,7 @@ const PaymentsContainer: React.FC<IProps> = ({
               <Select
                 placeholder="Escolha a opção"
                 onChange={(value) => setFlagCard(+value)}
+                defaultValue={"Outros"}
               >
                 {FlagCard.map((_flagCard) => (
                   <Option key={_flagCard.id}>{_flagCard.value}</Option>

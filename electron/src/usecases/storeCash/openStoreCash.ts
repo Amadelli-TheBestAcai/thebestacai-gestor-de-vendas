@@ -1,9 +1,11 @@
 import { BaseRepository } from "../../repository/baseRepository";
+import database from '../../providers/database'
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
 import { StoreDto, StoreCashDto } from "../../models/gestor";
+import env from '../../providers/env.json'
 import { v4 } from "uuid";
 
 interface Request {
@@ -18,6 +20,7 @@ class OpenStoreCash implements IUseCaseFactory {
     ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private saleRepository = new BaseRepository<StoreDto>(StorageNames.Sale),
+    private apmRepository = new BaseRepository<any>(StorageNames.Apm_Temp),
     private integratedSaleRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Sale)
   ) { }
 
@@ -43,6 +46,34 @@ class OpenStoreCash implements IUseCaseFactory {
 
     const isConnected = await checkInternet();
     if (isConnected) {
+      if (env.API_DASH && env.API_DASH.includes("prd")) {
+        const dbBackup = await database.backup()
+
+        if (dbBackup) {
+          try {
+            const formData = new FormData();
+
+            formData.append('file', dbBackup)
+
+            const { data } = await odinApi.post("/upload-gestordb-backup", formData)
+
+            const location = data?.location
+
+            await odinApi.put(
+              `/cash_history/${currentStoreCash?.history_id}`,
+              {
+                backup_url: location,
+              }
+            )
+          } catch (error) {
+            await this.apmRepository.create({
+              name: "Backup database",
+              scope: "Gestor de Vendas",
+              error
+            })
+          }
+        }
+      }
       const currentStore = await this.storeRepository.getOne();
       const {
         data: {
