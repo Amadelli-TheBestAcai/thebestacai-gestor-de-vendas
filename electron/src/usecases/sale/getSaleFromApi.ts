@@ -15,7 +15,7 @@ class GetSaleFromApi implements IUseCaseFactory {
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     )
-  ) {}
+  ) { }
 
   async execute({ withClosedCash }: Request): Promise<SaleFromApiDTO[]> {
     const is_online = await checkInternet();
@@ -38,7 +38,9 @@ class GetSaleFromApi implements IUseCaseFactory {
     }
 
     const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
-    return data;
+
+    const response = data.filter(sale => !sale.abstract_sale)
+    return response;
   }
 }
 
