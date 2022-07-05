@@ -3,7 +3,7 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import midasApi from "../../providers/midasApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { BalanceDto, StoreCashDto } from "../../models/gestor";
+import { BalanceDto, StoreCashDto, SaleDto } from "../../models/gestor";
 import { getBalance } from "../../helpers/BalanceFormater";
 
 interface Request {
@@ -14,8 +14,14 @@ class GetStoreCashBalance implements IUseCaseFactory {
   constructor(
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
+    ),
+    private notIntegratedSalesRepository = new BaseRepository<SaleDto>(
+      StorageNames.Not_Integrated_Sale
+    ),
+    private integratedSalesRepository = new BaseRepository<SaleDto>(
+      StorageNames.Integrated_Sale
     )
-  ) {}
+  ) { }
   async execute({ withClosedCash }: Request): Promise<BalanceDto | undefined> {
     const isConnected = await checkInternet();
     if (!isConnected) {
@@ -31,13 +37,11 @@ class GetStoreCashBalance implements IUseCaseFactory {
       return undefined;
     }
 
-    const { store_id, code } = currentCash;
-    if (!store_id || !code) {
-      return undefined;
-    }
+    const notIntegratedSales = await this.notIntegratedSalesRepository.getAll()
+    const integratedSales = await this.integratedSalesRepository.getAll()
 
-    const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
-    const balance = getBalance(data);
+    const balance = getBalance([...notIntegratedSales, ...integratedSales]);
+
     return balance;
   }
 }

@@ -36,7 +36,7 @@ const ProductsContainer: React.FC = () => {
     async function init() {
       setLoading(true);
       const { response: products, has_internal_error: errorOnProducts } =
-        await window.Main.product.getProducts();
+        await window.Main.product.getProducts(true);
       if (errorOnProducts) {
         notification.error({
           message: "Erro ao encontrar todos produtos",
