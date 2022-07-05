@@ -14,13 +14,13 @@ class UseCaseFactory {
     useCase: IUseCaseFactory,
     params?: any
   ): Promise<UseCaseFactoryResponse<T>> {
-    appInsights.start();
+    // appInsights.start();
     try {
       const response = await useCase.execute(params);
-      await appInsights.finish(useCase.constructor.name, {
-        success: true,
-        params,
-      });
+      // await appInsights.finish(useCase.constructor.name, {
+      //   success: true,
+      //   params,
+      // });
       return {
         response,
         has_internal_error: false,
@@ -33,19 +33,19 @@ class UseCaseFactory {
         }
       }
 
-      await this.errorsRepository.create({
-        useCase: useCase.constructor.name,
-        error: {
-          error_message,
-          trace: JSON.stringify(error.stack),
-        },
-      });
+      // await this.errorsRepository.create({
+      //   useCase: useCase.constructor.name,
+      //   error: {
+      //     error_message,
+      //     trace: JSON.stringify(error.stack),
+      //   },
+      // });
 
-      await appInsights.finish(useCase.constructor.name, {
-        error_message,
-        success: false,
-        error,
-      });
+      // await appInsights.finish(useCase.constructor.name, {
+      //   error_message,
+      //   success: false,
+      //   error,
+      // });
       return {
         response: undefined,
         has_internal_error: true,
