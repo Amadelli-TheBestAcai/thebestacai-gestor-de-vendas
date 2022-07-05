@@ -46,34 +46,34 @@ class OpenStoreCash implements IUseCaseFactory {
 
     const isConnected = await checkInternet();
     if (isConnected) {
-      if (env.API_DASH && env.API_DASH.includes("prd")) {
-        const dbBackup = await database.backup()
+      // if (env.API_DASH && env.API_DASH.includes("prd")) {
+      //   const dbBackup = await database.backup()
 
-        if (dbBackup) {
-          try {
-            const formData = new FormData();
+      //   if (dbBackup) {
+      //     try {
+      //       const formData = new FormData();
 
-            formData.append('file', dbBackup)
+      //       formData.append('file', dbBackup)
 
-            const { data } = await odinApi.post("/upload-gestordb-backup", formData)
+      //       const { data } = await odinApi.post("/upload-gestordb-backup", formData)
 
-            const location = data?.location
+      //       const location = data?.location
 
-            await odinApi.put(
-              `/cash_history/${currentStoreCash?.history_id}`,
-              {
-                backup_url: location,
-              }
-            )
-          } catch (error) {
-            await this.apmRepository.create({
-              name: "Backup database",
-              scope: "Gestor de Vendas",
-              error
-            })
-          }
-        }
-      }
+      //       await odinApi.put(
+      //         `/cash_history/${currentStoreCash?.history_id}`,
+      //         {
+      //           backup_url: location,
+      //         }
+      //       )
+      //     } catch (error) {
+      //       await this.apmRepository.create({
+      //         name: "Backup database",
+      //         scope: "Gestor de Vendas",
+      //         error
+      //       })
+      //     }
+      //   }
+      // }
       const currentStore = await this.storeRepository.getOne();
       const {
         data: {
