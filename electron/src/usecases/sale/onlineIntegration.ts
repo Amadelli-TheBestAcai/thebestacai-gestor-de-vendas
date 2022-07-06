@@ -1,3 +1,4 @@
+import cron from "node-cron";
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
@@ -17,7 +18,12 @@ class OnlineIntegration implements IUseCaseFactory {
     private integrateSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Integrated_Sale
     )
-  ) { }
+  ) {
+    cron.schedule("*/5 * * * *", async () => {
+      await this.execute()
+      console.log("Integration job was finished")
+    });
+  }
 
   async execute(): Promise<void> {
     const is_online = await checkInternet();
@@ -32,7 +38,6 @@ class OnlineIntegration implements IUseCaseFactory {
 
     try {
       const sales: SaleDto[] = await this.notIntegratedSaleRepository.getAll();
-
 
       if (sales.length) {
         await Promise.all(

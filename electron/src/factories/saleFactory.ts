@@ -21,6 +21,7 @@ import {
   emitNfce,
   deleteSaleDelivery,
 } from "../usecases/sale";
+import '../usecases/sale/onlineIntegration'
 import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
 
