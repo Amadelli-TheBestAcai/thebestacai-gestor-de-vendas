@@ -1,4 +1,3 @@
-import { SalesHistory, PaymentResponse } from "./salesHistoryResponse";
 import { BalanceDto, SaleDto, } from "../models/gestor";
 import { PaymentType } from "../models/enums/paymentType";
 
@@ -30,7 +29,7 @@ export const getBalance = (sales: SaleDto[]): BalanceDto => {
     },
   };
 
-  sales.filter(sale => !sale.abstract_sale).forEach((sale) => {
+  sales.filter(sale => !sale.abstract_sale && !sale.deleted_at).forEach((sale) => {
     if (sale.type === 0) {
       const { total, money, credit, debit, pix, ticket } = getPayments(
         sale.payments

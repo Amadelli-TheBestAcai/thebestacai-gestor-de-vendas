@@ -95,7 +95,7 @@ const Sale: React.FC<IProps> = () => {
     }
   }, [shouldSearch]);
 
-  const onDelete = (id: string): void => {
+  const onDelete = (params): void => {
     Modal.confirm({
       content: "Tem certeza que gostaria de remover esta venda",
       okText: "Sim",
@@ -106,7 +106,7 @@ const Sale: React.FC<IProps> = () => {
         try {
           setIsLoading(true);
 
-          const success = await window.Main.sale.deleteSaleFromApi(id);
+          const success = await window.Main.sale.deleteSaleFromApi(params);
           if (!success) {
             return notification.error({
               message: "Oops! Falha ao remover venda.",
@@ -312,7 +312,12 @@ const Sale: React.FC<IProps> = () => {
                                   <Tooltip title="Remover" placement="bottom">
                                     <RemoveIcon
                                       onClick={() =>
-                                        onDelete(selectedSale.id.toString())
+                                        onDelete({
+                                          id: selectedSale.id,
+                                          cash_history_id:
+                                            selectedSale.cash_history_id,
+                                          gv_id: selectedSale.gv_id,
+                                        })
                                       }
                                     />
                                   </Tooltip>

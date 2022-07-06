@@ -72,9 +72,9 @@ export const saleFactory = {
     }),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
-  deleteSaleFromApi: async (id: string) => {
+  deleteSaleFromApi: async (params: { id: number, cash_history: number, gv_id: number }) => {
     try {
-      await useCaseFactory.execute<void>(deleteSaleFromApi, { id });
+      await useCaseFactory.execute<void>(deleteSaleFromApi, params);
       return true;
     } catch {
       return false;

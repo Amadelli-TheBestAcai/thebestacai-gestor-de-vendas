@@ -1,5 +1,6 @@
 export interface SaleFromApi {
   id: number;
+  gv_id?: number;
   client_id?: number;
   quantity: number;
   total_sold: number;
