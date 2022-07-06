@@ -1,5 +1,6 @@
 export interface StoreCashDto {
   id: string;
+  gv_sales: number;
   code: string;
   cash_id?: number;
   history_id?: number;

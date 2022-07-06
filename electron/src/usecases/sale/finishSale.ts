@@ -2,7 +2,7 @@ import { useCaseFactory } from "../useCaseFactory";
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { SaleDto } from "../../models/gestor";
+import { SaleDto, StoreCashDto } from "../../models/gestor";
 
 interface Request {
   payload: SaleDto;
@@ -14,6 +14,9 @@ class FinishSale implements IUseCaseFactory {
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private deliverySaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Delivery_Sale
+    ),
+    private storeCashRepository = new BaseRepository<StoreCashDto>(
+      StorageNames.StoreCash
     ),
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Not_Integrated_Sale
@@ -31,9 +34,13 @@ class FinishSale implements IUseCaseFactory {
     }
 
     payload.abstract_sale = false
-    await this.notIntegratedSaleRepository.create(payload);
 
+    const storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
+    const newGvId = (storeCash?.gv_sales || 0) + 1
+    storeCash.gv_sales = newGvId;
 
+    await this.storeCashRepository.update(storeCash.id, storeCash);
+    await this.notIntegratedSaleRepository.create({ ...payload, gv_id: newGvId });
   }
 }
 

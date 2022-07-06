@@ -30,6 +30,7 @@ class OpenStoreCash implements IUseCaseFactory {
   }: Request): Promise<StoreCashDto | undefined> {
     const payload: StoreCashDto = {
       id: v4(),
+      gv_sales: 0,
       code,
       amount_on_open,
       is_opened: true,
@@ -42,6 +43,7 @@ class OpenStoreCash implements IUseCaseFactory {
 
     if (isOpeningOfflineStoreCash) {
       payload.id = currentStoreCash.id
+      payload.gv_sales = currentStoreCash.gv_sales
     }
 
     const isConnected = await checkInternet();

@@ -1,5 +1,6 @@
 export interface SaleDto {
   id: string;
+  gv_id?: number;
   name?: string;
   user_id?: number;
   abstract_sale?: boolean;
