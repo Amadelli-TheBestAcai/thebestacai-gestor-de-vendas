@@ -205,10 +205,11 @@ const Sale: React.FC<IProps> = () => {
     }
   };
 
-  const getNfceDanfe = async (sale_id: number) => {
+  const getNfceDanfe = async (sale: SaleFromApi) => {
+    console.log(sale);
     const { data } = await axios({
       method: "GET",
-      url: `${window.Main.env.API_SALES_HANDLER}/nfce/6412762/danfe`,
+      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.id}/danfe`,
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
@@ -223,7 +224,7 @@ const Sale: React.FC<IProps> = () => {
     const blog_url = window.URL.createObjectURL(new Blob([blob]));
     const link = document.createElement("a");
     link.href = blog_url;
-    link.setAttribute("download", `${sale_id}.html`);
+    link.setAttribute("download", `${sale.id}.html`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -290,7 +291,7 @@ const Sale: React.FC<IProps> = () => {
                                 sm={3}
                                 onClick={() =>
                                   selectedSale.nfce?.status_sefaz === "100"
-                                    ? getNfceDanfe(selectedSale.id)
+                                    ? getNfceDanfe(selectedSale)
                                     : openModal()
                                 }
                               >
