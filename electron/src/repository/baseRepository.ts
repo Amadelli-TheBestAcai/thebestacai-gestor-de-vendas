@@ -66,7 +66,11 @@ export class BaseRepository<T extends { id?: string | number }>
     return await this.dataStore.asyncFindOne({ id });
   }
 
-  async getAll(): Promise<T[]> {
+  async getAll(payload?: Partial<T>): Promise<T[]> {
+    if (payload) {
+      const response = await this.dataStore.asyncFind(payload);
+      return response || [];
+    }
     const response = await this.dataStore.asyncFind({});
     return response || [];
   }

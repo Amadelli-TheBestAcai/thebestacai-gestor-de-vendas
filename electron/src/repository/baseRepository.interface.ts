@@ -8,7 +8,7 @@ export interface IBaseRepository<T> {
     id: string | number | undefined,
     payload: Partial<T>
   ): Promise<T | undefined>;
-  getAll(): Promise<T[]>;
+  getAll(payload?: Partial<T>): Promise<T[]>;
   getOne(criteria?: Partial<T>): Promise<T | undefined>;
   clear(): Promise<void>;
 }

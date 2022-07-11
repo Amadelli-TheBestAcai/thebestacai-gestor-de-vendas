@@ -26,6 +26,7 @@ class UseCaseFactory {
         has_internal_error: false,
       };
     } catch (error: any) {
+      console.log(error)
       let error_message = error.message;
       if (error?.response) {
         if (error?.response?.data?.message) {
