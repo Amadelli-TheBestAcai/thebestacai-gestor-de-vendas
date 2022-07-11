@@ -40,6 +40,7 @@ const Login: React.FC<IProps> = ({ history }) => {
     password: "",
   });
   const [loading, setLoading] = useState(true);
+  const [version, setVersion] = useState("");
   const [step, setStep] = useState<number>(1);
   const [store, setStore] = useState<number | undefined>(undefined);
   const [stores, setStores] = useState<StoreDto[]>([]);
@@ -53,6 +54,7 @@ const Login: React.FC<IProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       window.Main.send("app_version", async (pkg_version) => {
+        setVersion(pkg_version);
         const { response, has_internal_error: errorOnGetVersion } =
           await window.Main.common.checkForUpdates(pkg_version);
         if (errorOnGetVersion) {
@@ -324,7 +326,7 @@ const Login: React.FC<IProps> = ({ history }) => {
             </FormContainer>
 
             <Footer>
-              <span>Developed by The Best Açai Company v 4.0.0</span>
+              <span>Developed by The Best Açai Company v {version}</span>
             </Footer>
           </RightContent>
         </>
