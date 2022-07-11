@@ -40,7 +40,10 @@ class GetStoreCashBalance implements IUseCaseFactory {
     const notIntegratedSales = await this.notIntegratedSalesRepository.getAll()
     const integratedSales = await this.integratedSalesRepository.getAll()
 
-    const balance = getBalance([...notIntegratedSales, ...integratedSales]);
+    const balance = getBalance(
+      [...notIntegratedSales, ...integratedSales]
+        .filter(sale => !sale.deleted_at && (sale.cash_history_id === currentCash.history_id || !sale.is_online))
+    );
 
     return balance;
   }

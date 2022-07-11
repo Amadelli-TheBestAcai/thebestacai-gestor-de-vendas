@@ -37,9 +37,9 @@ class UpdateBalanceHistory implements IUseCaseFactory {
     })
 
     const sales = [
-      ...notIntegratedSales.filter(sale => !sale.deleted_at),
-      ...integratedSales.filter(sale => !sale.deleted_at)
-    ];
+      ...notIntegratedSales,
+      ...integratedSales
+    ].filter(sale => !sale.deleted_at && (sale.cash_history_id === storeCash.history_id || !sale.is_online));
 
     const response = getBalanceHistory(sales)
 
