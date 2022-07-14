@@ -116,10 +116,6 @@ class PrintSale implements IUseCaseFactory {
       { text: "Valor Total dos Produtos", align: 'LEFT', cols: 40 },
       { text: totalItems, align: 'CENTER', cols: 10 },
     ])
-    this.printerFormater.tableCustom([
-      { text: "Valor Total Pago", align: 'LEFT', cols: 40 },
-      { text: (+totalPaid + +sale.change_amount - +sale.discount).toFixed(2), align: 'CENTER', cols: 10 },
-    ])
 
     if (sale.nfce_url) {
       this.printerFormater.drawLine()
