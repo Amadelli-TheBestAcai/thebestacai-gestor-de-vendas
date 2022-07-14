@@ -101,7 +101,7 @@ const Home: React.FC = () => {
       setSale(updatedSale);
 
       setCurrentPayment(0);
-      setFlagCard(null);
+      setFlagCard(99);
       setPaymentModal(false);
     } else {
       const { response: updatedSale, has_internal_error: errorOnAddPayment } =
@@ -115,7 +115,7 @@ const Home: React.FC = () => {
       setSale(updatedSale);
 
       setCurrentPayment(0);
-      setFlagCard(null);
+      setFlagCard(99);
       setPaymentModal(false);
     }
   };
@@ -135,7 +135,7 @@ const Home: React.FC = () => {
   const handleOpenPayment = (
     type: number,
     title: string,
-    flagCard?: number
+    flagCard = 99
   ): void => {
     setPaymentType(type);
     setFlagCard(flagCard);

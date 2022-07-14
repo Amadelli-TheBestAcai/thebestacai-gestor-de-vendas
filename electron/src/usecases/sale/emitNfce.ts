@@ -8,7 +8,7 @@ import moment from "moment";
 
 import midasApi from "../../providers/midasApi";
 
-import { buildNewSale } from "./index";
+import { buildNewSale, onlineIntegration } from "./index";
 import {
   SaleDto,
   StoreCashDto,
@@ -36,6 +36,7 @@ class EmitNfce implements IUseCaseFactory {
     private productRepository = new BaseRepository<ProductDto>(
       StorageNames.Product
     ),
+    private onlineIntegrationUseCase = onlineIntegration,
     private buildNewSaleUseCase = buildNewSale
   ) { }
 
@@ -102,6 +103,7 @@ class EmitNfce implements IUseCaseFactory {
       saleResponse.is_current = false;
       saleResponse.abstract_sale = true;
       await this.notIntegratedSaleRepository.create(saleResponse);
+      await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
     } else {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {

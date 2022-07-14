@@ -106,6 +106,7 @@ class PrintSale implements IUseCaseFactory {
       }
     })
     this.printerFormater.drawLine()
+    const totalItems = sale.items.reduce((total, item) => total + (+item.price_unit * +item.quantity), 0).toFixed(2).toString()
     const totalPaid = sale.payments.reduce((total, payment) => total + +payment.amount, 0).toFixed(2).toString()
     this.printerFormater.tableCustom([
       { text: "Qtd Total de Itens", align: 'LEFT', cols: 40 },
@@ -113,7 +114,7 @@ class PrintSale implements IUseCaseFactory {
     ])
     this.printerFormater.tableCustom([
       { text: "Valor Total dos Produtos", align: 'LEFT', cols: 40 },
-      { text: totalPaid, align: 'CENTER', cols: 10 },
+      { text: totalItems, align: 'CENTER', cols: 10 },
     ])
     this.printerFormater.tableCustom([
       { text: "Valor Total Pago", align: 'LEFT', cols: 40 },

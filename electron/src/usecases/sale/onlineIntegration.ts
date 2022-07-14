@@ -20,8 +20,8 @@ class OnlineIntegration implements IUseCaseFactory {
     )
   ) {
     cron.schedule("*/5 * * * *", async () => {
-      await this.execute()
-      console.log("Integration job was finished")
+      // await this.execute()
+      // console.log("Integration job was finished")
     });
   }
 

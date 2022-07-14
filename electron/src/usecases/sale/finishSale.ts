@@ -3,6 +3,7 @@ import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { SaleDto, StoreCashDto } from "../../models/gestor";
+import { onlineIntegration } from "./onlineIntegration";
 
 interface Request {
   payload: SaleDto;
@@ -20,7 +21,8 @@ class FinishSale implements IUseCaseFactory {
     ),
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Not_Integrated_Sale
-    )
+    ),
+    private onlineIntegrationUseCase = onlineIntegration
   ) { }
 
   async execute({ payload, fromDelivery }: Request): Promise<void> {
@@ -41,6 +43,15 @@ class FinishSale implements IUseCaseFactory {
 
     await this.storeCashRepository.update(storeCash.id, storeCash);
     await this.notIntegratedSaleRepository.create({ ...payload, gv_id: newGvId });
+
+    const { has_internal_error: errorOnOnlineTntegrate, response } =
+      await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
+
+    if (errorOnOnlineTntegrate) {
+      throw new Error("Erro ao integrar venda online");
+    } else {
+      return response;
+    }
   }
 }
 

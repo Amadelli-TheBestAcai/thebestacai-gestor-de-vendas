@@ -153,7 +153,7 @@ const Delivery: React.FC<ComponentProps> = () => {
       setSale(updatedSale);
 
       setAmount(0);
-      setFlagCard(null);
+      setFlagCard(99);
       setPaymentModal(false);
     } else {
       const newPayment = {
@@ -169,7 +169,7 @@ const Delivery: React.FC<ComponentProps> = () => {
       setSale(updatedSale);
 
       setAmount(0);
-      setFlagCard(null);
+      setFlagCard(99);
       setPaymentModal(false);
     }
   };
@@ -186,7 +186,7 @@ const Delivery: React.FC<ComponentProps> = () => {
   const handleOpenPayment = (
     type: number,
     title: string,
-    flagCard?: number
+    flagCard = 99
   ): void => {
     setPaymentType(type);
     setFlagCard(flagCard);
