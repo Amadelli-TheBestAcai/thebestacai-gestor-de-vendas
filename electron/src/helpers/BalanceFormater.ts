@@ -28,8 +28,7 @@ export const getBalance = (sales: SaleDto[]): BalanceDto => {
       store_ticket: 0,
     },
   };
-
-  sales.filter(sale => !sale.abstract_sale && !sale.deleted_at).forEach((sale) => {
+  sales.forEach((sale) => {
     if (sale.type === 0) {
       const { total, money, credit, debit, pix, ticket } = getPayments(
         sale.payments

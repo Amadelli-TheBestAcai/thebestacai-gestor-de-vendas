@@ -232,7 +232,6 @@ const Balance: React.FC = () => {
 
   const createAmountTypePayments = (tab: string, payload: BalanceModel) => {
     const response = [];
-
     if (tab === "store" || tab === "delivery") {
       response.push(
         {
@@ -382,10 +381,9 @@ const Balance: React.FC = () => {
     <Container>
       {isLoading ? (
         <Spinner />
-      ) : isConected ? (
+      ) : (
         <>
-          {" "}
-          {storeCash?.is_opened ? (
+          {storeCash ? (
             <PageContent>
               <Header>
                 <h2>Balanço</h2>
@@ -485,8 +483,6 @@ const Balance: React.FC = () => {
             <CashNotFound />
           )}
         </>
-      ) : (
-        <DisconectedForm />
       )}
     </Container>
   );
