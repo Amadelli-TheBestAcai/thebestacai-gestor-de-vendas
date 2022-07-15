@@ -64,7 +64,7 @@ export const HeaderCard = styled.div`
 
   span {
     font-weight: normal;
-    font-size: 0.9rem;
+    font-size: 0.6rem;
   }
 `;
 
