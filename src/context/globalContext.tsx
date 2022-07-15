@@ -236,14 +236,10 @@ export function GlobalProvider({ children }) {
   };
 
   const onAddDiscount = async (value: number): Promise<void> => {
-    const totalPaid = sale.payments.reduce(
-      (total, payment) => total + payment.amount,
-      0
-    );
-    if (value > sale.total_sold - totalPaid) {
+    if (value > sale.total_sold) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
-        description: `Para isso: Remova os pagamentos, informe o desconto e adicione o pagamento`,
+        description: `O valor informado é maior que o valor total da venda.`,
         duration: 5,
       });
     }
