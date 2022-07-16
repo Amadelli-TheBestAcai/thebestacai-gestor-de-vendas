@@ -178,7 +178,7 @@ export function GlobalProvider({ children }) {
         });
       }
 
-      sale.change_amount = sale.total_paid + sale.discount - sale.total_sold;
+      sale.change_amount = sale.total_paid - sale.total_sold;
 
       setSavingSale(true);
       const { has_internal_error: errorOnFinishSAle } =
@@ -236,13 +236,30 @@ export function GlobalProvider({ children }) {
   };
 
   const onAddDiscount = async (value: number): Promise<void> => {
-    if (value > sale.total_sold) {
+    const total_paid = sale.payments.reduce(
+      (total, payment) => total + payment.amount,
+      0
+    );
+
+    if (total_paid + (sale.discount || 0) < sale.total_sold) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
-        description: `O valor informado é maior que o valor total da venda.`,
+        description: `O total de pagamentos deve ser maior ou igual ao total vendido para aplicar o desconto.`,
         duration: 5,
       });
     }
+
+    if (value > sale.payments[0].amount) {
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `O do desconto deve ser meior que o primeiro pagamento [${sale.payments[0].amount
+          .toFixed(2)
+          .replace(".", ",")}].`,
+        duration: 5,
+      });
+    }
+
+    sale.payments[0].amount -= value - (sale.discount || 0);
 
     const { response: _updatedSale, has_internal_error: errorOnUpdateSale } =
       await window.Main.sale.updateSale(sale.id, {

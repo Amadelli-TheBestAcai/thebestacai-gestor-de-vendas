@@ -18,7 +18,7 @@ class AddPayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private getCurrentSaleUseCase = getCurrentSale
-  ) {}
+  ) { }
 
   async execute({ amount, type, flag_card }: Request): Promise<SaleDto> {
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
@@ -59,8 +59,7 @@ class AddPayment implements IUseCaseFactory {
     if (total_paid > sale.total_sold) {
       sale.change_amount = +(
         sale.total_paid -
-        sale.total_sold +
-        sale.discount
+        sale.total_sold
       ).toFixed(2);
     }
 
