@@ -1,14 +1,8 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import midasApi from "../../providers/midasApi";
-import { checkInternet } from "../../providers/internetConnection";
 import { BalanceDto, StoreCashDto, SaleDto } from "../../models/gestor";
 import { getBalance } from "../../helpers/BalanceFormater";
-
-interface Request {
-  withClosedCash: false;
-}
 
 class GetStoreCashBalance implements IUseCaseFactory {
   constructor(
@@ -22,18 +16,9 @@ class GetStoreCashBalance implements IUseCaseFactory {
       StorageNames.Integrated_Sale
     )
   ) { }
-  async execute({ withClosedCash }: Request): Promise<BalanceDto | undefined> {
-    const isConnected = await checkInternet();
-    if (!isConnected) {
-      return undefined;
-    }
-
+  async execute(): Promise<BalanceDto | undefined> {
     const currentCash = await this.storeCashRepository.getOne();
     if (!currentCash) {
-      return undefined;
-    }
-
-    if (!withClosedCash && !currentCash?.is_opened) {
       return undefined;
     }
 
@@ -42,7 +27,7 @@ class GetStoreCashBalance implements IUseCaseFactory {
 
     const balance = getBalance(
       [...notIntegratedSales, ...integratedSales]
-        .filter(sale => !sale.deleted_at && (sale.cash_history_id === currentCash.history_id || !sale.is_online))
+        .filter(sale => !sale.deleted_at && (sale.cash_history_id === currentCash.history_id) && !sale.abstract_sale)
     );
 
     return balance;

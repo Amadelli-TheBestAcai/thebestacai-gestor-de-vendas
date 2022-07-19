@@ -13,7 +13,7 @@ class DeletePayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private getCurrentSaleUseCase = getCurrentSale
-  ) {}
+  ) { }
 
   async execute({ id }: Request): Promise<SaleDto> {
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
@@ -34,8 +34,7 @@ class DeletePayment implements IUseCaseFactory {
 
     sale.change_amount = +(
       sale.total_paid -
-      sale.total_sold +
-      sale.discount
+      sale.total_sold
     ).toFixed(2);
 
     await this.saleRepository.update(sale.id, sale);

@@ -32,10 +32,8 @@ export const storeCashFactory = {
       code,
       amount_on_close,
     }),
-  getStoreCashBalance: async (withClosedCash = false) =>
-    await useCaseFactory.execute<BalanceDto>(getStoreCashBalance, {
-      withClosedCash,
-    }),
+  getStoreCashBalance: async () =>
+    await useCaseFactory.execute<BalanceDto>(getStoreCashBalance),
   getStoreCashHistory: async () =>
     await useCaseFactory.execute<StoreCashHistoryDTO | undefined>(
       getStoreCashHistory

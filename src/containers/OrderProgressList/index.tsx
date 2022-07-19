@@ -43,7 +43,7 @@ const OrderProgressList: React.FC<IProps> = ({
           <HeaderCard>
             <span>
               {moment(_delivery.created_at, "yyyy-MM-DDTHH:mm:ss").format(
-                "hh:mm:ss"
+                "DD/MM/YYYY hh:mm:ss"
               )}
             </span>
 
