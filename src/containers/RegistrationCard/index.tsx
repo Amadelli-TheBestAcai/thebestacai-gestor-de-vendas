@@ -1,7 +1,7 @@
 import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { useSale } from "../../hooks/useSale";
 import { SaleDto } from "../../models/dtos/sale";
-
+import moment from "moment";
 import Spinner from "../../components/Spinner";
 
 import { notification } from "antd";
@@ -120,20 +120,26 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
           </AddContainer>
           <ListContainer>
             <Header>
-              <Col sm={8}>Nome Cliente</Col>
-              <Col sm={6}>Nº Comanda</Col>
+              <Col sm={5}>Nome Cliente</Col>
+              <Col sm={6}>Data</Col>
+              <Col sm={5}>Nº Comanda</Col>
               <Col sm={6}>Qtd. itens</Col>
-              <Col sm={4}>Ação</Col>
+              <Col sm={2}>Ação</Col>
             </Header>
 
             <Content>
               {stepSales.map((_stepSale, index) => (
                 <React.Fragment key={_stepSale.id}>
                   <Card>
-                    <Col sm={8}>{_stepSale.name}</Col>
-                    <Col sm={6}>{index + 1}</Col>
+                    <Col sm={5}>{_stepSale.name}</Col>
+                    <Col sm={6}>
+                      {moment(_stepSale.created_at).format(
+                        "DD/MM/YYYY HH:mm:SS"
+                      )}
+                    </Col>
+                    <Col sm={5}>{index + 1}</Col>
                     <Col sm={6}>{_stepSale.quantity}</Col>
-                    <Col sm={4}>
+                    <Col sm={2}>
                       <RestoreIcon
                         onClick={() => handleRestore(_stepSale.id)}
                       />
