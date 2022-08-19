@@ -49,12 +49,12 @@ export {
   RemoveShoppingCart,
   Payments,
 } from "@styled-icons/material-outlined";
-
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export {
   ArrowLeftRight,
   CreditCard2Back,
   CheckCircleFill,
+  FileEarmarkPdf
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
