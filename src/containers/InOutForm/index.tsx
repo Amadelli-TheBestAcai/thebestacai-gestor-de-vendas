@@ -80,8 +80,8 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       if (reasontype === "Pagamento fornecedor") {
         shopOrder = {
           store_id: store.company_id,
-          due_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-          pay_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+          due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+          pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
           total: +shopInfo.quantity * +shopInfo.unitary_value,
           observation: shopInfo.observation,
@@ -109,8 +109,8 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         }
         shopOrder = {
           store_id: store.company_id,
-          due_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-          pay_date: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
+          due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+          pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
           total: +shopInfo.quantity * +shopInfo.unitary_value,
           name: "Salarios/Comissões",
