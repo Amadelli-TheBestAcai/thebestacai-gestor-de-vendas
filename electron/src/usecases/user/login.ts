@@ -15,13 +15,13 @@ interface Request {
 class Login implements IUseCaseFactory {
   constructor(
     private userRepository = new BaseRepository<UserDto>(StorageNames.User)
-  ) {}
+  ) { }
 
   async execute({ password, username }: Request): Promise<UserDto | undefined> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       const {
-        data: { access_token },
+        data: { access_token, modules, permissions },
       } = await janusApi.post("user/login", { username, password });
       if (!access_token) {
         return undefined;
@@ -33,6 +33,8 @@ class Login implements IUseCaseFactory {
         password: hashedPassword,
         token: access_token,
         is_actived: true,
+        modules,
+        permissions
       };
 
       let users = await this.userRepository.getAll();
