@@ -15,7 +15,7 @@ interface Request {
 class Login implements IUseCaseFactory {
   constructor(
     private userRepository = new BaseRepository<UserDto>(StorageNames.User)
-  ) {}
+  ) { }
 
   async execute({ password, username }: Request): Promise<UserDto | undefined> {
     const hasInternet = await checkInternet();

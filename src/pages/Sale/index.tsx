@@ -39,6 +39,7 @@ import {
   ButtonSave,
   Label,
   NfceLabel,
+  PdfIcon,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -205,8 +206,74 @@ const Sale: React.FC<IProps> = () => {
     }
   };
 
+  const printDanfe = async (sale: SaleFromApi) => {
+    const { data } = await axios({
+      method: "GET",
+      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.id}/danfe`,
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    const { data: html } = await axios({
+      method: "GET",
+      responseType: "text",
+      url: `data:pdf;base64,${data.content}`,
+    });
+
+    const reaplaceQrcode = async (_html) => {
+      const [beforeQrcodeDiv, afterQrcodeDiv] = _html.split(
+        `<div id='qr-code0'></div>`
+      );
+      const qrcodeurl = _html.split("http://")[1].split(`"`)[0];
+
+      async function getBase64(url) {
+        const response = await axios.get(url, {
+          responseType: "arraybuffer",
+        });
+        return Buffer.from(response.data, "binary").toString("base64");
+      }
+
+      const qrcode64 = await getBase64(
+        `https://api.qrserver.com/v1/create-qr-code/?data=${qrcodeurl}`
+      );
+      let response =
+        beforeQrcodeDiv +
+        `<img id='barcode'
+          src="data:image/jpeg;base64,${qrcode64}"
+          alt="nfce-qrcode" 
+          title="qrcode" 
+          width="200" 
+          height="200" />` +
+        afterQrcodeDiv;
+
+      const [beforeScriptDiv, afterScriptDiv] = _html.split(
+        `<script type="text/javascript">`
+      );
+
+      const printFunction = `\nfunction step1(){setTimeout('step2()', 10);} \n function step2() {window.print()}`;
+      response =
+        beforeScriptDiv +
+        `<script type="text/javascript"> \n` +
+        printFunction +
+        afterScriptDiv;
+
+      const [beforeBodyTag, afterBodyTag] = response.split(`<body>`);
+
+      response = beforeBodyTag + `<body onload='step1()'>` + afterBodyTag;
+
+      return response;
+    };
+
+    const formatedHtml = await reaplaceQrcode(html);
+    var Pagelink = "about:blank";
+    var pwa = window.open(Pagelink, "_new");
+    pwa.document.open();
+    pwa.document.write(formatedHtml);
+    pwa.document.close();
+  };
+
   const getNfceDanfe = async (sale: SaleFromApi) => {
-    console.log(sale);
     const { data } = await axios({
       method: "GET",
       url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.id}/danfe`,
@@ -218,7 +285,7 @@ const Sale: React.FC<IProps> = () => {
     const { data: blob } = await axios({
       method: "GET",
       responseType: "blob",
-      url: `data:html;base64,${data.content}`,
+      url: `data:pdf;base64,${data.content}`,
     });
 
     const blog_url = window.URL.createObjectURL(new Blob([blob]));
@@ -230,12 +297,23 @@ const Sale: React.FC<IProps> = () => {
     document.body.removeChild(link);
   };
 
-  const nfceInfo = () => {
+  const nfceInfo = (selectedSale: SaleFromApi) => {
     return {
       authorized: (
-        <NfceLabel tab_id={1} style={{ cursor: "pointer" }}>
-          Autorizada
-        </NfceLabel>
+        <>
+          <Col sm={12}>
+            <PrinterIcon
+              style={{ width: "20%" }}
+              onClick={() => printDanfe(selectedSale)}
+            />
+          </Col>
+          <Col sm={12}>
+            <PdfIcon
+              style={{ width: "20%" }}
+              onClick={() => getNfceDanfe(selectedSale)}
+            />
+          </Col>
+        </>
       ),
       resend: <NfceLabel tab_id={2}>Reenviar</NfceLabel>,
     };
@@ -291,13 +369,13 @@ const Sale: React.FC<IProps> = () => {
                                 sm={3}
                                 onClick={() =>
                                   selectedSale.nfce?.status_sefaz === "100"
-                                    ? getNfceDanfe(selectedSale)
+                                    ? null
                                     : openModal()
                                 }
                               >
                                 {selectedSale.nfce?.status_sefaz === "100"
-                                  ? nfceInfo().authorized
-                                  : nfceInfo().resend}
+                                  ? nfceInfo(selectedSale).authorized
+                                  : nfceInfo(selectedSale).resend}
                               </Col>
                             ) : (
                               <Col sm={3} onClick={() => openModal()}>

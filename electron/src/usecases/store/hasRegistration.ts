@@ -16,12 +16,19 @@ class HasRegistration implements IUseCaseFactory {
       return undefined;
     }
 
-    const { data } = await janusApi.get(`/companyUser/${store.id}`)
+    try {
+      const { data } = await janusApi.get(`/companyUser/${store.id}`)
 
-    if (data?.content) {
-      await this.storeRepository.clear();
-      await this.storeRepository.create(data.content);
-      return data.content
+      if (data?.content) {
+        await this.storeRepository.clear();
+        await this.storeRepository.create(data.content);
+        return data.content
+      }
+    } catch (error) {
+      console.log({
+        message: 'Falha ao obter loja',
+        error
+      })
     }
 
     return store;

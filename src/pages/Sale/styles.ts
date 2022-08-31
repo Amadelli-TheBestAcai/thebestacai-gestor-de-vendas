@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-import { Trash, RepeatOutline, Printer, FileInvoice } from "../../styles/Icons";
+import { Trash, RepeatOutline, Printer, FileInvoice, FileEarmarkPdf } from "../../styles/Icons";
 
 import {
   Input as InputAnt,
@@ -185,6 +185,10 @@ export const RestoreIcon = styled(RepeatOutline)`
   ${IconCSS}
 `;
 export const PrinterIcon = styled(Printer)`
+  ${IconCSS}
+`;
+
+export const PdfIcon = styled(FileEarmarkPdf)`
   ${IconCSS}
 `;
 export const NfceIcon = styled(FileInvoice)`
