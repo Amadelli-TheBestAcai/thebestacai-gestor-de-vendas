@@ -21,7 +21,7 @@ class Login implements IUseCaseFactory {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       const {
-        data: { access_token, modules, permissions },
+        data: { access_token },
       } = await janusApi.post("user/login", { username, password });
       if (!access_token) {
         return undefined;
@@ -33,8 +33,6 @@ class Login implements IUseCaseFactory {
         password: hashedPassword,
         token: access_token,
         is_actived: true,
-        modules,
-        permissions
       };
 
       let users = await this.userRepository.getAll();
