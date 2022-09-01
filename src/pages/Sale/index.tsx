@@ -469,6 +469,7 @@ const Sale: React.FC<IProps> = () => {
                 <SalesHistoryContainer>
                   <SalesHistory
                     sales={sales}
+                    selectedSale={selectedSale}
                     setSelectedSale={setSelectedSale}
                     filteredSales={filteredSale}
                   />
