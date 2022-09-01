@@ -104,7 +104,10 @@ export const ListContainer = styled.div<IListContainer>`
   }}
 `;
 
-export const CardSale = styled(Row)`
+interface ICardSale {
+  isSelected: boolean;
+}
+export const CardSale = styled(Row)<ICardSale>`
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -129,6 +132,17 @@ export const CardSale = styled(Row)`
     height: 60px;
     font-size: 0.9rem;
   }
+  :hover {
+    border: 1px var(--orange-450) solid;
+  }
+
+  ${({ isSelected }) => {
+    if (isSelected) {
+      return css`
+        border: 1px var(--orange-200) solid;
+      `;
+    }
+  }}
 `;
 
 export const Col = styled(ColAnt)`
