@@ -343,6 +343,12 @@ const Balance: React.FC = () => {
           icon: <MinusIcon />,
           type: "VENDAS LOJA",
           value: payload[tab].store_sales,
+        },
+        {
+          id: 16,
+          icon: <MinusIcon />,
+          type: "DESCONTO",
+          value: payload[tab].discount,
         }
       );
     }

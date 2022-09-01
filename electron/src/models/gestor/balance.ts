@@ -22,5 +22,6 @@ export interface BalanceDto {
     store_sales: number;
     delivery_ticket: number;
     store_ticket: number;
+    discount: number;
   };
 }
