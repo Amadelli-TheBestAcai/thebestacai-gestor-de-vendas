@@ -1,4 +1,4 @@
-import { BalanceDto, SaleDto, } from "../models/gestor";
+import { BalanceDto, SaleDto } from "../models/gestor";
 import { PaymentType } from "../models/enums/paymentType";
 
 export const getBalance = (sales: SaleDto[]): BalanceDto => {
@@ -26,6 +26,7 @@ export const getBalance = (sales: SaleDto[]): BalanceDto => {
       store_sales: 0,
       delivery_ticket: 0,
       store_ticket: 0,
+      discount: 0,
     },
   };
   sales.forEach((sale) => {
@@ -54,6 +55,9 @@ export const getBalance = (sales: SaleDto[]): BalanceDto => {
     }
   });
 
+  balance.billing.discount = +sales
+    .reduce((total, sale) => total + +(sale.discount || 0), 0)
+    .toFixed(2);
   balance.billing.sales = sales.length;
   balance.billing.total = +(
     balance.store.total + balance.delivery.total
