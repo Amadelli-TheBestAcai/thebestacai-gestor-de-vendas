@@ -10,7 +10,7 @@ import HandlerItem from "../../components/HandlerItem";
 import { Handler as HandlerModel } from "../../models/dtos/handler";
 import notHandler from "../../assets/svg/notHandler.svg";
 
-import { Empty, Modal, notification } from "antd";
+import { Empty, Modal, notification, Row } from "antd";
 
 import {
   Container,
@@ -21,6 +21,11 @@ import {
   HeaderList,
   Col,
   HandlerContentList,
+  ButtonMoreInfo,
+  ContainerHeader,
+  ModalMoreInfo,
+  RowModal,
+  ColModal,
 } from "./styles";
 
 const { confirm } = Modal;
@@ -30,6 +35,7 @@ const Handler: React.FC = () => {
   const [handlers, setHandlers] = useState<HandlerModel[]>([]);
   const [isConected, setIsConected] = useState(true);
   const [historyId, setHistoryId] = useState<number | null>(null);
+  const [modalMoreInfo, setModalMoreInfo] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -131,9 +137,18 @@ const Handler: React.FC = () => {
               <>
                 <Header>
                   <h2>Movimentações</h2>
-                  <ButtonDownloader onClick={() => onPdf()}>
-                    BAIXAR PDF
-                  </ButtonDownloader>
+                  <ContainerHeader>
+                    <ButtonDownloader onClick={() => onPdf()}>
+                      BAIXAR PDF
+                    </ButtonDownloader>
+                    <ButtonMoreInfo
+                      onClick={() => {
+                        setModalMoreInfo(true);
+                      }}
+                    >
+                      Mais Informações
+                    </ButtonMoreInfo>
+                  </ContainerHeader>
                 </Header>
                 <Content>
                   <HeaderList>
@@ -171,6 +186,52 @@ const Handler: React.FC = () => {
           <DisconectedForm />
         )}
       </PageContent>
+
+      <ModalMoreInfo
+        title="Mais Informações"
+        visible={modalMoreInfo}
+        destroyOnClose={true}
+        closable={true}
+        onCancel={() => setModalMoreInfo(false)}
+        centered
+        width={1000}
+        footer={false}
+      >
+        <Content>
+          <span className="saida">Saídas</span>
+          <HeaderList>
+            <ColModal span={8}>Sangria</ColModal>
+            <ColModal span={8}>Pagamento Freelance</ColModal>
+            <ColModal span={8}>Pagamento Fornecedor</ColModal>
+          </HeaderList>
+          <RowModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+          </RowModal>
+          <HeaderList>
+            <ColModal span={8}>Troco</ColModal>
+            <ColModal span={8}>Outros</ColModal>
+            <ColModal span={8}>Total Saídas</ColModal>
+          </HeaderList>
+          <RowModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+          </RowModal>
+          <span className="entrada">Entradas</span>
+          <HeaderList>
+            <ColModal span={8}>Troco</ColModal>
+            <ColModal span={8}>Outros</ColModal>
+            <ColModal span={8}>Total Entradas</ColModal>
+          </HeaderList>
+          <RowModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>R$:00.00</ColModal>
+          </RowModal>
+        </Content>
+      </ModalMoreInfo>
     </Container>
   );
 };
