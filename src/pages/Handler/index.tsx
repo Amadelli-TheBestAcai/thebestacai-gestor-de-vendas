@@ -30,9 +30,23 @@ import {
 
 const { confirm } = Modal;
 
+interface HandlerTotal {
+  id?: string;
+  cash_id?: number;
+  cash_code?: string;
+  store_id?: number;
+  cash_history_id?: number;
+  type: string;
+  reason: string;
+  amount: number;
+  to_integrate?: boolean;
+  order_id?: number;
+}
+
 const Handler: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [handlers, setHandlers] = useState<HandlerModel[]>([]);
+  const [handlersTotal, setHandlersTotal] = useState<HandlerTotal[]>([]);
   const [isConected, setIsConected] = useState(true);
   const [historyId, setHistoryId] = useState<number | null>(null);
   const [modalMoreInfo, setModalMoreInfo] = useState(false);
@@ -54,6 +68,7 @@ const Handler: React.FC = () => {
       setHandlers(handlers.handlers);
       setIsLoading(false);
     }
+
     init();
   }, []);
 
@@ -126,6 +141,58 @@ const Handler: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  async function handlerLocal() {
+    const { response: handlersTotal, has_internal_error: errorOnGetHandler } =
+      await window.Main.handler.getLocalCashHandlers();
+    if (errorOnGetHandler) {
+      return notification.error({
+        message: "Erro ao obter movimentações",
+        duration: 5,
+      });
+    }
+
+    const totalTransactions = handlersTotal.map((cashHandle) => {
+      return cashHandle.cashHandler;
+    });
+    setHandlersTotal(totalTransactions);
+  }
+
+  const totalInOutByTypeReason = (
+    type: string,
+    reason: string,
+    cashHandlers: HandlerTotal[]
+  ) => {
+    let sumType: HandlerTotal[];
+    let sumReason: HandlerTotal[];
+    let total: number;
+
+    sumType = cashHandlers.filter((cashHandlers) => cashHandlers.type == type);
+
+    if (reason == "total") {
+      return sumType
+        .reduce((sum, sumType) => sum + sumType.amount, 0)
+        .toFixed(2);
+    }
+    if (reason == "Outros") {
+      sumReason = sumType.filter(
+        (sumType) =>
+          sumType.reason == "Outros" ||
+          (sumType.reason != "Troco" &&
+            sumType.reason != "Sangria" &&
+            sumType.reason != "Pagamento fornecedor" &&
+            sumType.reason != "Pagamento freelance")
+      );
+      total = sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
+
+      return total;
+    }
+
+    sumReason = sumType.filter((sumType) => sumType.reason == reason);
+    total = sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
+
+    return total;
+  };
+
   return (
     <Container>
       <PageContent>
@@ -144,6 +211,7 @@ const Handler: React.FC = () => {
                     <ButtonMoreInfo
                       onClick={() => {
                         setModalMoreInfo(true);
+                        handlerLocal();
                       }}
                     >
                       Mais Informações
@@ -205,9 +273,26 @@ const Handler: React.FC = () => {
             <ColModal span={8}>Pagamento Fornecedor</ColModal>
           </HeaderList>
           <RowModal>
-            <ColModal span={8}>R$:00.00</ColModal>
-            <ColModal span={8}>R$:00.00</ColModal>
-            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>
+              R$:
+              {totalInOutByTypeReason("saida", "Sangria", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:
+              {totalInOutByTypeReason(
+                "saida",
+                "Pagamento freelance",
+                handlersTotal
+              )}
+            </ColModal>
+            <ColModal span={8}>
+              R$:
+              {totalInOutByTypeReason(
+                "saida",
+                "Pagamento fornecedor",
+                handlersTotal
+              )}
+            </ColModal>
           </RowModal>
           <HeaderList>
             <ColModal span={8}>Troco</ColModal>
@@ -215,9 +300,15 @@ const Handler: React.FC = () => {
             <ColModal span={8}>Total Saídas</ColModal>
           </HeaderList>
           <RowModal>
-            <ColModal span={8}>R$:00.00</ColModal>
-            <ColModal span={8}>R$:00.00</ColModal>
-            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("saida", "Troco", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("saida", "Outros", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("saida", "total", handlersTotal)}
+            </ColModal>
           </RowModal>
           <span className="entrada">Entradas</span>
           <HeaderList>
@@ -226,9 +317,15 @@ const Handler: React.FC = () => {
             <ColModal span={8}>Total Entradas</ColModal>
           </HeaderList>
           <RowModal>
-            <ColModal span={8}>R$:00.00</ColModal>
-            <ColModal span={8}>R$:00.00</ColModal>
-            <ColModal span={8}>R$:00.00</ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("entrada", "Troco", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("entrada", "Outros", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("entrada", "total", handlersTotal)}
+            </ColModal>
           </RowModal>
         </Content>
       </ModalMoreInfo>
