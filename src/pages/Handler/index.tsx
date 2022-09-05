@@ -8,6 +8,7 @@ import Spinner from "../../components/Spinner";
 import HandlerItem from "../../components/HandlerItem";
 
 import { Handler as HandlerModel } from "../../models/dtos/handler";
+import { HandlerTotal } from "../../models/dtos/HandlerTotal";
 import notHandler from "../../assets/svg/notHandler.svg";
 
 import { Empty, Modal, notification, Row } from "antd";
@@ -29,19 +30,6 @@ import {
 } from "./styles";
 
 const { confirm } = Modal;
-
-interface HandlerTotal {
-  id?: string;
-  cash_id?: number;
-  cash_code?: string;
-  store_id?: number;
-  cash_history_id?: number;
-  type: string;
-  reason: string;
-  amount: number;
-  to_integrate?: boolean;
-  order_id?: number;
-}
 
 const Handler: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
