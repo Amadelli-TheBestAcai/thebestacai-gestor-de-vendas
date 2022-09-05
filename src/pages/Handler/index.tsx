@@ -164,7 +164,6 @@ const Handler: React.FC = () => {
   ) => {
     let sumType: HandlerTotal[];
     let sumReason: HandlerTotal[];
-    let total: number;
 
     sumType = cashHandlers.filter((cashHandlers) => cashHandlers.type == type);
 
@@ -182,15 +181,11 @@ const Handler: React.FC = () => {
             sumType.reason != "Pagamento fornecedor" &&
             sumType.reason != "Pagamento freelance")
       );
-      total = sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
-
-      return total;
+      return sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
     }
 
     sumReason = sumType.filter((sumType) => sumType.reason == reason);
-    total = sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
-
-    return total;
+    return sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
   };
 
   return (
