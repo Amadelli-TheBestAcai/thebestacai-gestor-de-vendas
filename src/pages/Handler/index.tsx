@@ -169,11 +169,15 @@ const Handler: React.FC = () => {
             sumType.reason != "Pagamento fornecedor" &&
             sumType.reason != "Pagamento freelance")
       );
-      return sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
+      return sumReason
+        .reduce((sum, sumReason) => sum + sumReason.amount, 0)
+        .toFixed(2);
     }
 
     sumReason = sumType.filter((sumType) => sumType.reason == reason);
-    return sumReason.reduce((sum, sumReason) => sum + sumReason.amount, 0);
+    return sumReason
+      .reduce((sum, sumReason) => sum + sumReason.amount, 0)
+      .toFixed(2);
   };
 
   return (
