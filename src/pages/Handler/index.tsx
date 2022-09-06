@@ -8,9 +8,10 @@ import Spinner from "../../components/Spinner";
 import HandlerItem from "../../components/HandlerItem";
 
 import { Handler as HandlerModel } from "../../models/dtos/handler";
+import { HandlerTotal } from "../../models/dtos/HandlerTotal";
 import notHandler from "../../assets/svg/notHandler.svg";
 
-import { Empty, Modal, notification } from "antd";
+import { Empty, Modal, notification, Row } from "antd";
 
 import {
   Container,
@@ -21,6 +22,11 @@ import {
   HeaderList,
   Col,
   HandlerContentList,
+  ButtonMoreInfo,
+  ContainerHeader,
+  ModalMoreInfo,
+  RowModal,
+  ColModal,
 } from "./styles";
 
 const { confirm } = Modal;
@@ -28,8 +34,10 @@ const { confirm } = Modal;
 const Handler: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [handlers, setHandlers] = useState<HandlerModel[]>([]);
+  const [handlersTotal, setHandlersTotal] = useState<HandlerTotal[]>([]);
   const [isConected, setIsConected] = useState(true);
   const [historyId, setHistoryId] = useState<number | null>(null);
+  const [modalMoreInfo, setModalMoreInfo] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -48,6 +56,7 @@ const Handler: React.FC = () => {
       setHandlers(handlers.handlers);
       setIsLoading(false);
     }
+
     init();
   }, []);
 
@@ -120,6 +129,57 @@ const Handler: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  async function handlerLocal() {
+    const { response: handlersTotal, has_internal_error: errorOnGetHandler } =
+      await window.Main.handler.getLocalCashHandlers();
+    if (errorOnGetHandler) {
+      return notification.error({
+        message: "Erro ao obter movimentações",
+        duration: 5,
+      });
+    }
+
+    const totalTransactions = handlersTotal.map((cashHandle) => {
+      return cashHandle.cashHandler;
+    });
+    setHandlersTotal(totalTransactions);
+  }
+
+  const totalInOutByTypeReason = (
+    type: string,
+    reason: string,
+    cashHandlers: HandlerTotal[]
+  ) => {
+    let sumType: HandlerTotal[];
+    let sumReason: HandlerTotal[];
+
+    sumType = cashHandlers.filter((cashHandlers) => cashHandlers.type == type);
+
+    if (reason == "total") {
+      return sumType
+        .reduce((sum, sumType) => sum + sumType.amount, 0)
+        .toFixed(2);
+    }
+    if (reason == "Outros") {
+      sumReason = sumType.filter(
+        (sumType) =>
+          sumType.reason == "Outros" ||
+          (sumType.reason != "Troco" &&
+            sumType.reason != "Sangria" &&
+            sumType.reason != "Pagamento fornecedor" &&
+            sumType.reason != "Pagamento freelance")
+      );
+      return sumReason
+        .reduce((sum, sumReason) => sum + sumReason.amount, 0)
+        .toFixed(2);
+    }
+
+    sumReason = sumType.filter((sumType) => sumType.reason == reason);
+    return sumReason
+      .reduce((sum, sumReason) => sum + sumReason.amount, 0)
+      .toFixed(2);
+  };
+
   return (
     <Container>
       <PageContent>
@@ -131,9 +191,19 @@ const Handler: React.FC = () => {
               <>
                 <Header>
                   <h2>Movimentações</h2>
-                  <ButtonDownloader onClick={() => onPdf()}>
-                    BAIXAR PDF
-                  </ButtonDownloader>
+                  <ContainerHeader>
+                    <ButtonDownloader onClick={() => onPdf()}>
+                      BAIXAR PDF
+                    </ButtonDownloader>
+                    <ButtonMoreInfo
+                      onClick={() => {
+                        setModalMoreInfo(true);
+                        handlerLocal();
+                      }}
+                    >
+                      Mais Informações
+                    </ButtonMoreInfo>
+                  </ContainerHeader>
                 </Header>
                 <Content>
                   <HeaderList>
@@ -171,6 +241,81 @@ const Handler: React.FC = () => {
           <DisconectedForm />
         )}
       </PageContent>
+
+      <ModalMoreInfo
+        title="Mais Informações"
+        visible={modalMoreInfo}
+        destroyOnClose={true}
+        closable={true}
+        onCancel={() => setModalMoreInfo(false)}
+        centered
+        width={1000}
+        footer={false}
+      >
+        <Content>
+          <span className="saida">Saídas</span>
+          <HeaderList>
+            <ColModal span={8}>Sangria</ColModal>
+            <ColModal span={8}>Pagamento Freelance</ColModal>
+            <ColModal span={8}>Pagamento Fornecedor</ColModal>
+          </HeaderList>
+          <RowModal>
+            <ColModal span={8}>
+              R$:
+              {totalInOutByTypeReason("saida", "Sangria", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:
+              {totalInOutByTypeReason(
+                "saida",
+                "Pagamento freelance",
+                handlersTotal
+              )}
+            </ColModal>
+            <ColModal span={8}>
+              R$:
+              {totalInOutByTypeReason(
+                "saida",
+                "Pagamento fornecedor",
+                handlersTotal
+              )}
+            </ColModal>
+          </RowModal>
+          <HeaderList>
+            <ColModal span={8}>Troco</ColModal>
+            <ColModal span={8}>Outros</ColModal>
+            <ColModal span={8}>Total Saídas</ColModal>
+          </HeaderList>
+          <RowModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("saida", "Troco", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("saida", "Outros", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("saida", "total", handlersTotal)}
+            </ColModal>
+          </RowModal>
+          <span className="entrada">Entradas</span>
+          <HeaderList>
+            <ColModal span={8}>Troco</ColModal>
+            <ColModal span={8}>Outros</ColModal>
+            <ColModal span={8}>Total Entradas</ColModal>
+          </HeaderList>
+          <RowModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("entrada", "Troco", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("entrada", "Outros", handlersTotal)}
+            </ColModal>
+            <ColModal span={8}>
+              R$:{totalInOutByTypeReason("entrada", "total", handlersTotal)}
+            </ColModal>
+          </RowModal>
+        </Content>
+      </ModalMoreInfo>
     </Container>
   );
 };
