@@ -39,8 +39,7 @@ class GetSaleFromApi implements IUseCaseFactory {
 
     const { data } = await midasApi.get(`/sales/${store_id}-${code}/history`);
 
-    const response = data.filter(sale => !sale.abstract_sale)
-    return response;
+    return data;
   }
 }
 

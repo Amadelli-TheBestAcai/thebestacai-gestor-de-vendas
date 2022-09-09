@@ -55,7 +55,7 @@ const IconCSS = css`
   }
 `;
 
-export const GridIcon = styled(Grid3x2GapFill)<IListContainer>`
+export const GridIcon = styled(Grid3x2GapFill) <IListContainer>`
   ${IconCSS}
 
   ${({ listView }) => {
@@ -70,7 +70,7 @@ export const GridIcon = styled(Grid3x2GapFill)<IListContainer>`
   }}
 `;
 
-export const ListIcon = styled(ViewList)<IListContainer>`
+export const ListIcon = styled(ViewList) <IListContainer>`
   ${IconCSS}
 
   ${({ listView }) => {
@@ -106,8 +106,9 @@ export const ListContainer = styled.div<IListContainer>`
 
 interface ICardSale {
   isSelected: boolean;
+  isAbstract: boolean;
 }
-export const CardSale = styled(Row)<ICardSale>`
+export const CardSale = styled(Row) <ICardSale>`
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -135,6 +136,14 @@ export const CardSale = styled(Row)<ICardSale>`
   :hover {
     border: 1px var(--orange-450) solid;
   }
+
+  ${({ isAbstract }) => {
+    if (isAbstract) {
+      return css`
+        border: 1px #0000ff54 solid;
+      `;
+    }
+  }}
 
   ${({ isSelected }) => {
     if (isSelected) {

@@ -43,6 +43,7 @@ const SalesHistory: React.FC<IProps> = ({
               <CardSale
                 key={index}
                 isSelected={sales[index] == selectedSale ? true : false}
+                isAbstract={sales[index].abstract_sale}
                 onClick={() => setSelectedSale(sale)}
               >
                 <Col sm={5}>
@@ -65,6 +66,7 @@ const SalesHistory: React.FC<IProps> = ({
               <CardSale
                 key={index}
                 isSelected={sales[index] == selectedSale ? true : false}
+                isAbstract={sales[index].abstract_sale}
                 onClick={() => setSelectedSale(sale)}
               >
                 <Col sm={24}>
