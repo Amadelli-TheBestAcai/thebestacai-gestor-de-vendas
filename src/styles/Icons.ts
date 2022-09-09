@@ -48,6 +48,7 @@ export {
   AddShoppingCart,
   RemoveShoppingCart,
   Payments,
+  Cancel
 } from "@styled-icons/material-outlined";
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export {

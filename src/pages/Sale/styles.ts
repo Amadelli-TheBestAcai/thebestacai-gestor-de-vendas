@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-import { Trash, RepeatOutline, Printer, FileInvoice, FileEarmarkPdf } from "../../styles/Icons";
+import { Trash, RepeatOutline, Printer, FileInvoice, FileEarmarkPdf, Cancel } from "../../styles/Icons";
 
 import {
   Input as InputAnt,
@@ -191,6 +191,11 @@ export const PrinterIcon = styled(Printer)`
 export const PdfIcon = styled(FileEarmarkPdf)`
   ${IconCSS}
 `;
+
+export const CancelIcon = styled(Cancel)`
+  ${IconCSS}
+`;
+
 export const NfceIcon = styled(FileInvoice)`
   width: 5%;
   height: 7%;
