@@ -19,3 +19,4 @@ export * from "./recouverStepSales";
 export * from "./decressItem";
 export * from "./emitNfce";
 export * from "./deleteSaleDelivery";
+export * from "./cancelNfce";

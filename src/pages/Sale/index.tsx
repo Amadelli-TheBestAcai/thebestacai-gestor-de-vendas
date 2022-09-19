@@ -40,6 +40,7 @@ import {
   Label,
   NfceLabel,
   PdfIcon,
+  CancelIcon,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -50,6 +51,7 @@ type IProps = RouteComponentProps;
 const Sale: React.FC<IProps> = () => {
   const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
+  const [nfceCancelJustify, setNfceCancelJustify] = useState("");
   const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [sales, setSales] = useState<SaleFromApi[]>([]);
@@ -206,6 +208,40 @@ const Sale: React.FC<IProps> = () => {
     }
   };
 
+  const cancelNfce = async (sale: SaleFromApi) => {
+    Modal.confirm({
+      title: "Deseja prosseguir e cancelar esta nota fiscal?",
+      content: (
+        <Input
+          id="nfceJustifyInput"
+          placeholder="Justificativa"
+          style={{ width: "100%" }}
+          onChange={({ target: { value } }) =>
+            setNfceCancelJustify(value || "")
+          }
+        />
+      ),
+      async onOk() {
+        //@ts-ignore
+        const justify = document.getElementById("nfceJustifyInput")?.value;
+        const { error_message, has_internal_error: errorOnCancelNfce } =
+          await window.Main.sale.cancelNfce(sale.id, justify || "");
+        if (errorOnCancelNfce) {
+          notification.warning({
+            message: error_message,
+            duration: 5,
+          });
+          return;
+        }
+        notification.success({
+          message: "Nota fiscal cancelada com sucesso",
+          duration: 5,
+        });
+        setShouldSearch(true);
+      },
+    });
+  };
+
   const printDanfe = async (sale: SaleFromApi) => {
     const { data } = await axios({
       method: "GET",
@@ -301,15 +337,21 @@ const Sale: React.FC<IProps> = () => {
     return {
       authorized: (
         <>
-          <Col sm={12}>
+          <Col sm={8}>
             <PrinterIcon
-              style={{ width: "20%" }}
+              style={{ width: "30%" }}
               onClick={() => printDanfe(selectedSale)}
             />
           </Col>
-          <Col sm={12}>
+          <Col sm={8}>
+            <CancelIcon
+              style={{ width: "30%" }}
+              onClick={() => cancelNfce(selectedSale)}
+            />
+          </Col>
+          <Col sm={8}>
             <PdfIcon
-              style={{ width: "20%" }}
+              style={{ width: "30%" }}
               onClick={() => getNfceDanfe(selectedSale)}
             />
           </Col>
@@ -469,6 +511,7 @@ const Sale: React.FC<IProps> = () => {
                 <SalesHistoryContainer>
                   <SalesHistory
                     sales={sales}
+                    selectedSale={selectedSale}
                     setSelectedSale={setSelectedSale}
                     filteredSales={filteredSale}
                   />

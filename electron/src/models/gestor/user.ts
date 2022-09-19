@@ -9,4 +9,11 @@ export interface UserDto {
   token: string;
   is_actived: boolean;
   permissions: string[];
+  modules: {
+    id: number,
+    image: string,
+    name: string,
+    description: string,
+    url: string
+  }[]
 }

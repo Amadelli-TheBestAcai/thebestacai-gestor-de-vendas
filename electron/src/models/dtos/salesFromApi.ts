@@ -1,6 +1,7 @@
 export interface SaleFromApiDTO {
   id: number;
   client_id?: number;
+  abstract_sale: boolean
   quantity: number;
   items: {
     name: string;

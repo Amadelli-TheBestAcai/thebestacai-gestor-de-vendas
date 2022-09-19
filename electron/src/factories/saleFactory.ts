@@ -20,6 +20,7 @@ import {
   decressItem,
   emitNfce,
   deleteSaleDelivery,
+  cancelNfce
 } from "../usecases/sale";
 import '../usecases/sale/onlineIntegration'
 import { SaleDto, ProductDto } from "../models/gestor";
@@ -86,6 +87,15 @@ export const saleFactory = {
       {
         nfe,
         saleIdToUpdate,
+      }
+    ),
+  cancelNfce: async (sale_id: number,
+    justify: string) =>
+    await useCaseFactory.execute(
+      cancelNfce,
+      {
+        sale_id,
+        justify,
       }
     ),
 };

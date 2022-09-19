@@ -21,7 +21,8 @@ class OpenStoreCash implements IUseCaseFactory {
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private saleRepository = new BaseRepository<StoreDto>(StorageNames.Sale),
     private apmRepository = new BaseRepository<any>(StorageNames.Apm_Temp),
-    private integratedSaleRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Sale)
+    private integratedSaleRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Sale),
+    private integratedHandlerRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Handler)
   ) { }
 
   async execute({
@@ -94,6 +95,7 @@ class OpenStoreCash implements IUseCaseFactory {
     }
     await this.saleRepository.clear();
     await this.integratedSaleRepository.clear();
+    await this.integratedHandlerRepository.clear();
     if (isOpeningOfflineStoreCash) {
       await this.storeCashRepository.update(payload.id, payload);
     } else {

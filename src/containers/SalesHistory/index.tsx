@@ -15,11 +15,13 @@ import {
 
 interface IProps {
   sales: SaleFromApi[];
+  selectedSale: SaleFromApi;
   setSelectedSale: Dispatch<SetStateAction<SaleFromApi | null>>;
   filteredSales: SaleFromApi[];
 }
 const SalesHistory: React.FC<IProps> = ({
   sales,
+  selectedSale,
   setSelectedSale,
   filteredSales,
 }) => {
@@ -38,7 +40,12 @@ const SalesHistory: React.FC<IProps> = ({
         {listView ? (
           <>
             {(filteredSales || sales).map((sale, index) => (
-              <CardSale key={index} onClick={() => setSelectedSale(sale)}>
+              <CardSale
+                key={index}
+                isSelected={sales[index] == selectedSale ? true : false}
+                isAbstract={sales[index].abstract_sale}
+                onClick={() => setSelectedSale(sale)}
+              >
                 <Col sm={5}>
                   <span>{index + 1}</span>
                 </Col>
@@ -56,7 +63,12 @@ const SalesHistory: React.FC<IProps> = ({
         ) : (
           <>
             {(filteredSales || sales).map((sale, index) => (
-              <CardSale key={index} onClick={() => setSelectedSale(sale)}>
+              <CardSale
+                key={index}
+                isSelected={sales[index] == selectedSale ? true : false}
+                isAbstract={sales[index].abstract_sale}
+                onClick={() => setSelectedSale(sale)}
+              >
                 <Col sm={24}>
                   Horário:
                   <span>
