@@ -34,6 +34,8 @@ type ShopInfo = {
   category_id?: number;
   product_id?: number;
   unitary_value?: number;
+  additional_value?: number;
+  discount_value?: number;
   quantity?: number;
   observation?: string;
 };
@@ -83,9 +85,13 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
-          total: +shopInfo.quantity * +shopInfo.unitary_value,
+          total: (+shopInfo.quantity * +shopInfo.unitary_value) + 
+                 (+shopInfo.additional_value || 0) - 
+                 (+shopInfo.discount_value || 0),
           observation: shopInfo.observation,
           name: "Pagamento fornecedor",
+          additional_value: +shopInfo.additional_value,
+          discount_value: +shopInfo.discount_value,
           purchasesItems: [
             {
               product_id: +shopInfo.product_id,
@@ -112,9 +118,13 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
-          total: +shopInfo.quantity * +shopInfo.unitary_value,
+          total: (+shopInfo.quantity * +shopInfo.unitary_value) + 
+                 (+shopInfo.additional_value || 0) - 
+                 (+shopInfo.discount_value || 0),
           name: "Salarios/Comissões",
           observation: shopInfo.observation,
+          additional_value: +shopInfo.additional_value,
+          discount_value: +shopInfo.discount_value,
           purchasesItems: [
             {
               product_id: +product.id,
@@ -151,7 +161,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       handler: {
         type,
         reason: reasontype === "Outros" ? reasson : reasontype,
-        amount: +shopOrder?.total || value,
+        amount: (+shopOrder?.total || value) 
       },
       shopOrder,
       sendToShop,
@@ -306,10 +316,12 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                   reasontype === ReasonOutValue.PAG_FREELA) ? (
                   <Input
                     placeholder={currencyFormater(
-                      (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
+                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) + 
+                      (+shopInfo?.additional_value || 0) - (+shopInfo?.discount_value || 0)
                     )}
                     value={currencyFormater(
-                      (shopInfo?.unitary_value || 0) * (shopInfo?.quantity || 0)
+                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) + 
+                      (+shopInfo?.additional_value || 0) - (+shopInfo?.discount_value || 0)
                     )}
                     disabled
                   />
@@ -476,6 +488,48 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           />
                         </Form.Item>
                       </Col>
+
+                      <Col sm={12}>
+                        <Form.Item
+                          label="Valor Adicional"
+                          name="additional_value"
+                          rules={[
+                            {
+                              required: false,
+                              message: "Campo é obrigatório",
+                            },
+                          ]}
+                        >
+                          <MonetaryInput
+                            autoFocus={false}
+                            getValue={(value) =>
+                              handleShopInfo("additional_value", +value)
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      <Col sm={12}>
+                        <Form.Item
+                          label="Desconto"
+                          name="discount_value"
+                          rules={[
+                            {
+                              required: false,
+                              message: "Campo é obrigatório",
+                            },
+                          ]}
+                        >
+                          <MonetaryInput
+                            autoFocus={false}
+                            getValue={(value) =>
+                              handleShopInfo("discount_value", +value)
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      
 
                       <Col sm={24}>
                         <Form.Item

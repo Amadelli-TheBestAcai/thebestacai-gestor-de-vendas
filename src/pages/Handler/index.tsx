@@ -261,20 +261,20 @@ const Handler: React.FC = () => {
           </HeaderList>
           <RowModal>
             <ColModal span={8}>
-              R$:
-              {totalInOutByTypeReason("saida", "Sangria", handlersTotal)}
+              R$ 
+               {totalInOutByTypeReason("saida", "Sangria", handlersTotal)}
             </ColModal>
             <ColModal span={8}>
-              R$:
-              {totalInOutByTypeReason(
+              R$ 
+               {totalInOutByTypeReason(
                 "saida",
                 "Pagamento freelance",
                 handlersTotal
               )}
             </ColModal>
             <ColModal span={8}>
-              R$:
-              {totalInOutByTypeReason(
+              R$ 
+               {totalInOutByTypeReason(
                 "saida",
                 "Pagamento fornecedor",
                 handlersTotal
@@ -288,13 +288,13 @@ const Handler: React.FC = () => {
           </HeaderList>
           <RowModal>
             <ColModal span={8}>
-              R$:{totalInOutByTypeReason("saida", "Troco", handlersTotal)}
+              R$ {totalInOutByTypeReason("saida", "Troco", handlersTotal)}
             </ColModal>
             <ColModal span={8}>
-              R$:{totalInOutByTypeReason("saida", "Outros", handlersTotal)}
+              R$ {totalInOutByTypeReason("saida", "Outros", handlersTotal)}
             </ColModal>
             <ColModal span={8}>
-              R$:{totalInOutByTypeReason("saida", "total", handlersTotal)}
+              R$ {totalInOutByTypeReason("saida", "total", handlersTotal)}
             </ColModal>
           </RowModal>
           <span className="entrada">Entradas</span>
@@ -305,13 +305,13 @@ const Handler: React.FC = () => {
           </HeaderList>
           <RowModal>
             <ColModal span={8}>
-              R$:{totalInOutByTypeReason("entrada", "Troco", handlersTotal)}
+              R$ {totalInOutByTypeReason("entrada", "Troco", handlersTotal)}
             </ColModal>
             <ColModal span={8}>
-              R$:{totalInOutByTypeReason("entrada", "Outros", handlersTotal)}
+              R$ {totalInOutByTypeReason("entrada", "Outros", handlersTotal)}
             </ColModal>
             <ColModal span={8}>
-              R$:{totalInOutByTypeReason("entrada", "total", handlersTotal)}
+              R$ {totalInOutByTypeReason("entrada", "total", handlersTotal)}
             </ColModal>
           </RowModal>
         </Content>
