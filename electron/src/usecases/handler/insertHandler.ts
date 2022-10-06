@@ -22,7 +22,7 @@ class InsertHandler implements IUseCaseFactory {
     ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
     private integrateHandlerUseCase = integrateHandler
-  ) {}
+  ) { }
 
   async execute({ payload }: Request): Promise<HandlerDto> {
     const { response: currentCash, has_internal_error: errorOnStoreCash } =
@@ -42,7 +42,7 @@ class InsertHandler implements IUseCaseFactory {
     let order_id = undefined;
     if (hasInternet && payload.sendToShop) {
       const {
-        data: { id: orderId },
+        data: { content: { id: orderId } },
       } = await mercuryApi.post("/purchases", payload.shopOrder);
       order_id = orderId;
     }
