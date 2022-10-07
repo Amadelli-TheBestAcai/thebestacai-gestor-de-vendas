@@ -9,7 +9,7 @@ import odinApi from "../../providers/odinApi";
 import { getCurrentStoreCash } from "../storeCash";
 import { hasRegistration } from "../store";
 import { StoreCashDto, ItemOutCartDto, StoreDto } from "../../models/gestor";
-
+import moment from 'moment'
 class IntegrationItemOutCart implements IUseCaseFactory {
   constructor(
     private integratedItemOutCartRepository = new BaseRepository<ItemOutCartDto>(
@@ -20,7 +20,7 @@ class IntegrationItemOutCart implements IUseCaseFactory {
     ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
     private hasRegistrationUseCase = hasRegistration
-  ) {}
+  ) { }
 
   async execute(): Promise<void> {
     const hasInternet = await checkInternet();
@@ -54,10 +54,12 @@ class IntegrationItemOutCart implements IUseCaseFactory {
         items.map(async (item) => {
           try {
             await odinApi.post(
-              `/items_out_cart/${item.store_id}-${
-                item.cash_code || storeCash.code
+              `/items_out_cart/${item.store_id}-${item.cash_code || storeCash.code
               }`,
-              items
+              [{
+                ...item,
+                created_at: moment(item.created_at || new Date()).format("DD-MM-YYYY HH:mm:ss")
+              }]
             );
             await this.integratedItemOutCartRepository.create(item);
             await this.notIntegratedItemOutCartRepository.deleteById(item.id);
