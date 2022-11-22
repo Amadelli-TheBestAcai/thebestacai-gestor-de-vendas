@@ -12,7 +12,6 @@ import { Input, Modal, notification } from "antd";
 import { Container, Row, Col, ButtonRegister } from "./styles";
 
 interface IProp extends RouteComponentProps {
-  storeCashToOpen?: string;
   visible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
 }
@@ -20,7 +19,6 @@ interface IProp extends RouteComponentProps {
 const AmountModal: React.FC<IProp> = ({
   visible,
   setVisible,
-  storeCashToOpen,
   history,
 }) => {
   const { storeCash, setStoreCash } = useSale();
@@ -98,7 +96,7 @@ const AmountModal: React.FC<IProp> = ({
           return history.push("/home");
         } else {
           const { response: _storeCash, has_internal_error: errorOnStoreCash } =
-            await window.Main.storeCash.openStoreCash(storeCashToOpen, total);
+            await window.Main.storeCash.openStoreCash(total);
           if (errorOnStoreCash) {
             notification.error({
               message: "Erro ao abrir o caixa",

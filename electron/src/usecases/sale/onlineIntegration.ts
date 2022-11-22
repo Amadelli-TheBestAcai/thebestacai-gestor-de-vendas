@@ -6,6 +6,8 @@ import { checkInternet } from "../../providers/internetConnection";
 import midasApi from "../../providers/midasApi";
 import { SaleDto, StoreCashDto } from "../../models/gestor";
 import { salesFormaterToIntegrate } from "../../helpers/salesFormaterToIntegrate";
+import { openOnlineStoreCash } from "../storeCash";
+import { useCaseFactory } from "../useCaseFactory";
 
 class OnlineIntegration implements IUseCaseFactory {
   constructor(
@@ -17,7 +19,8 @@ class OnlineIntegration implements IUseCaseFactory {
     ),
     private integrateSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Integrated_Sale
-    )
+    ),
+    private openOnlineStoreCashUseCase = openOnlineStoreCash
   ) {
     cron.schedule("*/5 * * * *", async () => {
       // await this.execute()
@@ -30,10 +33,19 @@ class OnlineIntegration implements IUseCaseFactory {
     if (!is_online) {
       return;
     }
-    const storeCash = await this.storeCashRepository.getOne()
 
-    if (!storeCash?.is_opened || !storeCash?.is_online) {
-      return;
+    let storeCash = await this.storeCashRepository.getOne() as StoreCashDto
+
+    const isOpeningOfflineStoreCash = storeCash?.is_opened && !storeCash?.is_online
+
+    if (isOpeningOfflineStoreCash) {
+      const { response: openedOnlineStoreCash, has_internal_error: errorOnOpenOnlineStoreCash, error_message } =
+        await useCaseFactory.execute<StoreCashDto>(this.openOnlineStoreCashUseCase);
+
+      if (errorOnOpenOnlineStoreCash) {
+        throw new Error(error_message || "Falha ao abrir caixa online");
+      }
+      storeCash = openedOnlineStoreCash as StoreCashDto
     }
 
     try {
