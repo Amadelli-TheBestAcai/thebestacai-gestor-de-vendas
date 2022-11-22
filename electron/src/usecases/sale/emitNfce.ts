@@ -17,9 +17,6 @@ import {
 } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
 
-import env from "../../providers/env.json";
-const ambiente = env.NFCe_AMBIENTE;
-
 interface Request {
   nfe: NfeDTO;
   saleIdToUpdate?: number;

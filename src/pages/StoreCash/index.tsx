@@ -26,15 +26,16 @@ import {
   ContentStatusCash,
   CardStatus,
   CloseCashContatiner,
-  CloseButton,
+  OpenCloseButton,
   Input,
   Footer,
   ButtonCancel,
   ButtonSave,
+  StatusWrapper
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 
-interface IProp extends RouteComponentProps {}
+interface IProp extends RouteComponentProps { }
 
 moment.locale("pt-br");
 moment.updateLocale("pt", {
@@ -268,7 +269,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
           <Spinner />
         ) : (
           <>
-            {(!storeCash?.is_opened ||
+            {/* {(!storeCash?.is_opened ||
               (storeCash?.is_opened &&
                 !storeCash?.is_online &&
                 isConnected)) && (
@@ -288,27 +289,34 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   />
                 ))}
               </CashContainer>
-            )}
+            )} */}
 
             <CashStatusContainer>
               <HeaderStatus>
                 <h2>Status do Caixa</h2>
-                <StatusCash>
-                  <Status>
-                    <Left>Caixa {storeCash?.code}</Left>
-                    <Right is_opened={storeCash?.is_opened}>
-                      {storeCash?.is_opened ? "Aberto" : "Fechado"}
-                    </Right>
-                  </Status>
-                  {!storeCash?.is_opened && storeCash?.created_at && (
-                    <span>
-                      {moment(
-                        storeCash?.created_at,
-                        "yyyy-MM-DDHH:mm:ss"
-                      ).format("DD [de] MMMM [de] YYYY  HH:mm")}
-                    </span>
-                  )}
-                </StatusCash>
+                <StatusWrapper>
+                  <StatusCash>
+                    <Status>
+                      <Left>Caixa {storeCash?.code}</Left>
+                      <Right is_opened={storeCash?.is_opened}>
+                        {storeCash?.is_opened ? "Aberto" : "Fechado"}
+                      </Right>
+                    </Status>
+                    {!storeCash?.is_opened && storeCash?.created_at && (
+                      <span>
+                        {moment(
+                          storeCash?.created_at,
+                          "yyyy-MM-DDHH:mm:ss"
+                        ).format("DD [de] MMMM [de] YYYY  HH:mm")}
+                      </span>
+                    )}
+                  </StatusCash>
+                  <CloseCashContatiner>
+                    <OpenCloseButton onClick={() => setAmountModal(true)} _type={storeCash?.is_opened ? "close" : "open"}>
+                      {storeCash?.is_opened ? "Fechar Caixa" : "Abrir Caixa"}
+                    </OpenCloseButton>
+                  </CloseCashContatiner>
+                </StatusWrapper>
               </HeaderStatus>
 
               <ContentStatusCash>
@@ -326,14 +334,6 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   )
                 )}
               </ContentStatusCash>
-
-              {storeCash?.is_opened && (
-                <CloseCashContatiner>
-                  <CloseButton onClick={() => setAmountModal(true)}>
-                    Fechar Caixa
-                  </CloseButton>
-                </CloseCashContatiner>
-              )}
             </CashStatusContainer>
           </>
         )}
