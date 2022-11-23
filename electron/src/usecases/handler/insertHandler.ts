@@ -4,9 +4,7 @@ import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { BaseRepository } from "../../repository/baseRepository";
 import { StorageNames } from "../../repository/storageNames";
-import { checkInternet } from "../../providers/internetConnection";
 
-import mercuryApi from "../../providers/mercuryApi";
 import { getCurrentStoreCash } from "../storeCash/getCurrentStoreCash";
 import { integrateHandler } from "./integrateHandler";
 import { HandlerDto, StoreCashDto } from "../../models/gestor";
@@ -37,16 +35,6 @@ class InsertHandler implements IUseCaseFactory {
       throw new Error("Erro ao obter caixa atual");
     }
 
-    const hasInternet = await checkInternet();
-
-    let order_id = undefined;
-    if (hasInternet && payload.sendToShop) {
-      const {
-        data: { content: { id: orderId } },
-      } = await mercuryApi.post("/purchases", payload.shopOrder);
-      order_id = orderId;
-    }
-
     const newHandler: HandlerDto = {
       id: v4(),
       ...payload,
@@ -55,18 +43,22 @@ class InsertHandler implements IUseCaseFactory {
     newHandler.cashHandler = {
       ...newHandler.cashHandler,
       id: v4(),
-      cash_id: currentCash.is_online ? currentCash.cash_id : undefined,
-      cash_code: currentCash.code,
-      store_id: currentCash.store_id,
-      cash_history_id: currentCash.is_online
-        ? currentCash?.history_id
-        : undefined,
+      cash_id: undefined,
+      cash_code: undefined,
+      store_id: undefined,
+      cash_history_id: undefined,
       to_integrate: true,
-      order_id,
       reason: !payload.cashHandler.reason
         ? "Outros"
         : payload.cashHandler.reason,
     };
+
+    if(currentCash.is_opened && currentCash.is_online) {
+      newHandler.cashHandler.cash_id = currentCash.cash_id
+      newHandler.cashHandler.cash_code = currentCash.code
+      newHandler.cashHandler.store_id = currentCash.store_id
+      newHandler.cashHandler.cash_history_id = currentCash.history_id
+    }
 
     await this.handlerRepository.create(newHandler);
 

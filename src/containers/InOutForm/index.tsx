@@ -38,6 +38,7 @@ type ShopInfo = {
   discount_value?: number;
   quantity?: number;
   observation?: string;
+  name?: string;
 };
 
 const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
@@ -77,7 +78,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         reasontype === "Pagamento freelance");
 
     let shopOrder = null;
-
+    console.log(shopInfo)
     if (type !== "entrada" && sendToShop) {
       if (reasontype === "Pagamento fornecedor") {
         shopOrder = {
@@ -157,6 +158,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         duration: 5,
       });
     }
+    
     const payload = {
       handler: {
         type,
@@ -426,7 +428,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                   <Col sm={24}>
                     <Form.Item
                       label="Nome Freelancer"
-                      name="name"
+                      name="observation"
                       rules={[
                         {
                           required: true,
@@ -437,7 +439,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                       <Input
                         placeholder="Nome Freelancer"
                         onChange={({ target: { value } }) =>
-                          handleShopInfo("name", value)
+                          handleShopInfo("observation", value)
                         }
                       />
                     </Form.Item>

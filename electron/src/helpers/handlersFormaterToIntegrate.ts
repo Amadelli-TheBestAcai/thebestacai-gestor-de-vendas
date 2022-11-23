@@ -1,3 +1,5 @@
+import { StoreCashDto } from "../models/gestor";
+
 type Request = {
   id?: string;
   cash_id?: number;
@@ -24,18 +26,17 @@ type Response = {
 
 export const formatHandlesToIntegrate = (
   handlers: Request[],
-  cash_id?: number,
-  cash_history_id?: number
+  storeCash: StoreCashDto
 ): Response[] => {
   const formatedHandlers = handlers.map((handler) => ({
     type: handler.type,
     reason: handler.reason,
     amount: handler.amount,
-    store_id: handler.store_id,
-    cash_id: handler.cash_id || cash_id,
-    cash_code: handler.cash_code,
-    cash_history_id: handler.cash_history_id || cash_history_id,
     order_id: handler.order_id,
+    cash_id: handler.cash_id || storeCash.cash_id,
+    cash_code: handler.cash_code || storeCash.code,
+    store_id: handler.store_id || storeCash.store_id,
+    cash_history_id: handler.cash_history_id || storeCash.history_id,
   }));
   return formatedHandlers;
 };
