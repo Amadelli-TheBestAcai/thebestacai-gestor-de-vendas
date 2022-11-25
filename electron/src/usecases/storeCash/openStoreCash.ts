@@ -2,6 +2,7 @@ import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { StoreDto, StoreCashDto } from "../../models/gestor";
+import {backupDatabase} from '../common/backupDatabase'
 import { v4 } from "uuid";
 
 interface Request {
@@ -30,9 +31,7 @@ class OpenStoreCash implements IUseCaseFactory {
       is_online: false,
     };
 
-    /*
-      TODO: Implementar logs de backup do banco antes do reset
-    */
+    backupDatabase.execute()
 
     await this.saleRepository.clear();
     await this.integratedSaleRepository.clear();
