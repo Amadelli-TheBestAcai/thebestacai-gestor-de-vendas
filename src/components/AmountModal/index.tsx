@@ -74,6 +74,13 @@ const AmountModal: React.FC<IProp> = ({
       centered: true,
       async onOk() {
         if (storeCash?.is_opened) {
+          if(!storeCash?.is_online){
+            notification.error({
+              message: "Para fechar o caixa, o mesmo deverá estar Online",
+              duration: 5,
+            });
+            return;
+          }
           const { response: _storeCash, has_internal_error: errorOnStoreCash } =
             await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
           if (errorOnStoreCash) {
