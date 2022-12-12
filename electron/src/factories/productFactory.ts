@@ -14,8 +14,8 @@ export const productFactory = {
     await useCaseFactory.execute<ProductDto[]>(getProducts, { local }),
   getSelfService: async () =>
     await useCaseFactory.execute<ProductDto>(getSelfService),
-  getAllPurchaseProducts: async () =>
-    await useCaseFactory.execute<PurchaseProductDto[]>(getAllPurchaseProducts),
+  getAllPurchaseProducts: async (local = true) =>
+    await useCaseFactory.execute<PurchaseProductDto[]>(getAllPurchaseProducts, { local }),
   getAllProductStore: async () =>
     await useCaseFactory.execute<ProductDto[]>(getAllProductStore),
   GetProductStoreHistory: async (id: number, page: number, size: number) =>

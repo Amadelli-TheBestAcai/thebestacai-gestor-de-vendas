@@ -78,15 +78,31 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         });
         return;
       }
-      const {
-        response: _storeCashHistory,
-        has_internal_error: errorOnGetCashHistory,
-      } = await window.Main.storeCash.getStoreCashHistory();
-      if (errorOnGetCashHistory) {
-        notification.error({
-          message: "Erro ao obter Histórico do caixa",
-          duration: 5,
-        });
+      console.log({_currentStoreCash})
+
+      if (!_currentStoreCash.is_opened) {
+        const {
+          response: _storeCashHistory,
+          has_internal_error: errorOnGetCashHistory,
+        } = await window.Main.storeCash.getStoreCashHistory();
+        if (errorOnGetCashHistory) {
+          notification.error({
+            message: "Erro ao obter Histórico do caixa",
+            duration: 5,
+          });
+        }
+        
+        setStoreCashHistory(_storeCashHistory);
+
+        if (
+          _storeCashHistory !== undefined &&
+          +_storeCashHistory.result_cash !== 0 &&
+          !_storeCashHistory?.observation &&
+          _storeCashHistory.closed_at !== null
+        ) {
+          setModalJustify(true);
+        }
+
       }
 
       const { response: _balance, has_internal_error: errorOnBalance } =
@@ -99,17 +115,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       }
 
       setBalance(_balance);
-      setStoreCashHistory(_storeCashHistory);
       setStoreCash(_currentStoreCash);
       setLoading(false);
-      if (
-        _storeCashHistory !== undefined &&
-        +_storeCashHistory.result_cash !== 0 &&
-        !_storeCashHistory?.observation &&
-        _storeCashHistory.closed_at !== null
-      ) {
-        setModalJustify(true);
-      }
     }
     init();
   }, []);

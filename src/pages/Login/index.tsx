@@ -125,7 +125,10 @@ const Login: React.FC<IProps> = ({ history }) => {
       if (storeContext) {
         setLoading(false);
         window.Main.message("balance:connect");
+       
         await window.Main.product.getProducts();
+        await window.Main.product.getAllPurchaseProducts(false);
+       
         return history.push("/home");
       } else {
         const { response: stores, has_internal_error: errorOnStore } =
@@ -173,6 +176,7 @@ const Login: React.FC<IProps> = ({ history }) => {
     }
     setContextStore(_store);
     window.Main.message("balance:connect");
+    await window.Main.product.getAllPurchaseProducts(false);
     await window.Main.product.getProducts();
     return history.push("/home");
   };
