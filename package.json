@@ -48,7 +48,7 @@
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
     "dev:react": "cross-env BROWSER=none yarn start",
     "dev:electron": "tsc -p electron && electron .",
-    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish always",
+    "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish never",
     "eject": "react-scripts eject"
   },
   "build": {
