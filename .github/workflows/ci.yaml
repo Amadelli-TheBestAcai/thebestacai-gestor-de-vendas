@@ -32,8 +32,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NODE_OPTIONS: "--max_old_space_size=4096"
-        run: yarn build && tsc -p electron && electron-builder build --win --publish never
-      - name: Push build to Azure Storage
-        run: node pushToAzure.js
+        run: |
+          yarn build && tsc -p electron && electron-builder build --win --publish never
+          node pushToAzure.js
       - name: Update version
         run: node updateManagerVersion.js

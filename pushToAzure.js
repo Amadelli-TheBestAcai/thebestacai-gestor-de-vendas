@@ -39,8 +39,11 @@ async function pushFilesToAzure() {
 }
 
 async function boostrap() {
+    console.log("Starting zip files")
     await zipBuildFiles()
+    console.log("Starting push to Azure")
     await pushFilesToAzure()
+    console.log("Done.")
 }
 
 boostrap()
