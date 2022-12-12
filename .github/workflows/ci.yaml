@@ -28,12 +28,10 @@ jobs:
           msbuild-architecture: x64
       - name: Install dependencies
         run: yarn install --network-timeout 600000
-      - name: Set to not push release
-        run: ./neverPublish.sh
       - name: Build Electron
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NODE_OPTIONS: "--max_old_space_size=4096"
-        run: yarn electron:build
+        run: yarn build && tsc -p electron && electron-builder build --win --publish never
       - name: Push build to Azure Storage
         run: node pushToAzure.js
