@@ -78,9 +78,9 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         });
         return;
       }
-      console.log({_currentStoreCash})
+      console.log({ _currentStoreCash })
 
-      if (!_currentStoreCash.is_opened) {
+      if (!_currentStoreCash?.is_opened) {
         const {
           response: _storeCashHistory,
           has_internal_error: errorOnGetCashHistory,
@@ -91,7 +91,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
             duration: 5,
           });
         }
-        
+
         setStoreCashHistory(_storeCashHistory);
 
         if (
