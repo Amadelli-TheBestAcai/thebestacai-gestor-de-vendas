@@ -20,6 +20,7 @@ import { NfeDTO } from "../../models/dtos/nfe";
 interface Request {
   nfe: NfeDTO;
   saleIdToUpdate?: number;
+  local_update?: boolean;
 }
 
 class EmitNfce implements IUseCaseFactory {
@@ -30,6 +31,9 @@ class EmitNfce implements IUseCaseFactory {
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Not_Integrated_Sale
     ),
+    private saleRepository = new BaseRepository<SaleDto>(
+      StorageNames.Sale
+    ),
     private productRepository = new BaseRepository<ProductDto>(
       StorageNames.Product
     ),
@@ -37,7 +41,7 @@ class EmitNfce implements IUseCaseFactory {
     private buildNewSaleUseCase = buildNewSale
   ) { }
 
-  async execute({ nfe, saleIdToUpdate }: Request): Promise<string> {
+  async execute({ nfe, saleIdToUpdate, local_update }: Request): Promise<string> {
     console.log({ nfe, saleIdToUpdate })
     const hasInternet = await checkInternet();
     if (!hasInternet) {
@@ -63,12 +67,17 @@ class EmitNfce implements IUseCaseFactory {
 
     const {
       data: { nfce: data },
-    } = await midasApi.post("/nfce", { ...nfe, sale_id: saleIdToUpdate });
+    } = await midasApi.post("/nfce", { ...nfe, sale_id: local_update ? null : saleIdToUpdate });
 
     saleResponse.nfce_focus_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
 
-    if (!saleIdToUpdate) {
+    if (local_update) {
+      await this.saleRepository.update(saleIdToUpdate, {
+        nfce_focus_id: data.id,
+        nfce_url: `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`,
+      })
+    } else if (!saleIdToUpdate && !local_update) {
       nfe.payments.forEach(payment => saleResponse.payments.push({
         id: v4(),
         ...payment,
@@ -112,6 +121,7 @@ class EmitNfce implements IUseCaseFactory {
         );
       }
     }
+
 
     return data.mensagem_sefaz;
   }

@@ -81,12 +81,13 @@ export const saleFactory = {
       return false;
     }
   },
-  emitNfce: async (nfe: NfeDTO, saleIdToUpdate?: number) =>
-    await useCaseFactory.execute<{ error: boolean; message: string }>(
+  emitNfce: async (nfe: NfeDTO, saleIdToUpdate?: number | string, local_update?: boolean) =>
+    await useCaseFactory.execute<string>(
       emitNfce,
       {
         nfe,
         saleIdToUpdate,
+        local_update
       }
     ),
   cancelNfce: async (sale_id: number,

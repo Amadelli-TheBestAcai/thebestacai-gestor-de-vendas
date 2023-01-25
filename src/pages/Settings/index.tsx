@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import CardSettings from "../../components/CardSettings";
-
 import { Modal, notification } from "antd";
 import {
   Container,
@@ -118,6 +117,28 @@ const Settings: React.FC = () => {
                 setSettings((oldValues) => ({
                   ...oldValues,
                   should_use_printer: !settings.should_use_printer,
+                }))
+              }
+            />
+            <span>
+              {!settings.should_use_printer ? "DESABILITADO" : "HABILITADO"}
+            </span>
+          </ActionContainer>
+        </CardSettings>
+
+        <CardSettings title="Emissão de nfce por venda">
+          <span style={{ padding: "2%" }}>
+            Ao habilitar, a cada venda feita sera feito uma tentativa de emissão
+            de nota fiscal.
+          </span>
+          <ActionContainer>
+            <Switch
+              checked={settings.should_emit_nfce_per_sale}
+              onChange={() =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  should_emit_nfce_per_sale:
+                    !settings.should_emit_nfce_per_sale,
                 }))
               }
             />

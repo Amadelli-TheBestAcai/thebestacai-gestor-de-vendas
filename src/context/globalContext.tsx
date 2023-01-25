@@ -181,6 +181,54 @@ export function GlobalProvider({ children }) {
       sale.change_amount = sale.total_paid - sale.total_sold;
 
       setSavingSale(true);
+
+      if (settings.should_emit_nfce_per_sale) {
+        const total = sale.items.reduce(
+          (total, item) => +item.total + total,
+          0
+        );
+        const nfePayload = {
+          discount: +sale.discount,
+          change_amount: +sale.change_amount,
+          total: total,
+          store_id: +store.company_id,
+          items: sale.items.map((item) => ({
+            product_store_id: +item.store_product_id,
+            price_sell: +item.total,
+            quantity: +item.quantity,
+          })),
+          payments: sale.payments.map((payment) => ({
+            amount: +payment.amount,
+            type: +payment.type,
+            flag_card: +payment.flag_card,
+          })),
+        };
+
+        const {
+          response,
+          has_internal_error: errorOnEmitNfce,
+          error_message,
+        } = await window.Main.sale.emitNfce(nfePayload, sale.id, true);
+
+        if (errorOnEmitNfce) {
+          notification.error({
+            message: error_message || "Erro ao emitir NFCe",
+            duration: 5,
+          });
+        }
+
+        const successOnSefaz = response === "Autorizado o uso da NF-e";
+        notification[successOnSefaz ? "success" : "warning"]({
+          message: response,
+          duration: 5,
+        });
+
+        const { response: updatedSale } =
+          await window.Main.sale.getCurrentSale();
+        sale.nfce_focus_id = updatedSale.nfce_focus_id;
+        sale.nfce_url = updatedSale.nfce_url;
+      }
+
       const { has_internal_error: errorOnFinishSAle } =
         await window.Main.sale.finishSale({
           ...sale,
