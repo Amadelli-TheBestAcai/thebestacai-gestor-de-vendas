@@ -55,6 +55,15 @@ export function useSale() {
     (globalContext) => globalContext.onDecressItem
   );
 
+  const cupomModalState = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.cupomModalState
+  );
+  const setCupomModalState = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.setCupomModalState
+  );
+
   return {
     sale,
     setSale,
@@ -69,5 +78,7 @@ export function useSale() {
     onDecressItem,
     onRegisterSale,
     onAddToQueue,
+    cupomModalState,
+    setCupomModalState
   };
 }

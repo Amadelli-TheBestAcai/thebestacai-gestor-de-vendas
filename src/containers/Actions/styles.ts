@@ -6,6 +6,7 @@ import {
   DocumentBulletList,
   LogOutCircle,
   Chatbubbles,
+  Discount
 } from "../../styles/Icons";
 
 const BasicCSS = css`
@@ -19,8 +20,8 @@ const ButtonCSS = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 11rem;
-  height: 4.4rem;
+  width: 9rem;
+  height: 4rem;
   border: 1px solid var(--gray-50);
   box-sizing: border-box;
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
@@ -39,37 +40,37 @@ const ButtonCSS = css`
 
   /* Responsive 1680 */
   @media (max-width: 1680px) {
-    width: 10rem;
+    width: 8rem;
   }
 
   /* Responsive 1600 */
   @media (max-width: 1600px) {
-    width: 9.5rem;
-    height: 4rem;
+    width: 7.5rem;
+    height: 3.5rem;
 
     @media (max-height: 900px) {
-      height: 3.7rem;
+      height: 3.2rem;
       font-size: 0.9rem;
     }
   }
 
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
-    width: 8.8rem;
-    height: 3.6rem;
+    width: 6.8rem;
+    height: 2.8rem;
   }
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
-    width: 8.3rem;
-    height: 3.2rem;
+    width: 6.3rem;
+    height: 2.4rem;
     font-size: 0.8rem;
   }
 
   /*Responsive 1280px*/
   @media (max-width: 1280px) {
-    width: 8rem;
-    height: 3.7rem;
+    width: 6rem;
+    height: 2rem;
 
     @media (max-height: 800px) {
       height: 3.2rem;
@@ -213,6 +214,10 @@ export const OutputIcon = styled(LogOutCircle)`
 `;
 
 export const ListIcon = styled(DocumentBulletList)`
+  ${IconCSS}
+`;
+
+export const DiscountIcon = styled(Discount)`
   ${IconCSS}
 `;
 

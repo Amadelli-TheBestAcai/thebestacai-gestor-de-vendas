@@ -3,6 +3,7 @@ import { useUser } from "../../hooks/useUser";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import RegistrationCard from "../RegistrationCard";
+import CupomModal from "../CupomModal";
 import DiscountForm from "../DiscountForm";
 import InOutForm from "../InOutForm";
 
@@ -22,6 +23,7 @@ import {
   ChatContainer,
   ChatIcon,
   UserPhoto,
+  DiscountIcon,
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
@@ -30,7 +32,7 @@ import { useStore } from "../../hooks/useStore";
 type ComponentProps = RouteComponentProps;
 
 const Actions: React.FC<ComponentProps> = ({ history }) => {
-  const { discountModalHandler } = useSale();
+  const { discountModalHandler, setCupomModalState } = useSale();
   const { store } = useStore();
   const { user } = useUser();
   const [cash, setCash] = useState<string | undefined>("");
@@ -50,6 +52,17 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   return (
     <Container>
       <ActionButtons>
+        <Button
+          onClick={() =>
+            setCupomModalState((oldValue) => {
+              return !oldValue;
+            })
+          }
+        >
+          <DiscountIcon />
+          Cupom [C]
+        </Button>
+
         <Button onClick={() => discountModalHandler.openDiscoundModal()}>
           <OfferIcon />
           Desconto [R]
@@ -97,6 +110,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       </InfosAndChat>
 
       <DiscountForm />
+      <CupomModal />
 
       <RegistrationCard
         modalState={commandState}

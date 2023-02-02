@@ -30,7 +30,13 @@ import {
 import { PaymentType } from "../../models/enums/paymentType";
 
 const Home: React.FC = () => {
-  const { sale, setSale, onRegisterSale, discountModalHandler } = useSale();
+  const {
+    sale,
+    setSale,
+    onRegisterSale,
+    discountModalHandler,
+    setCupomModalState,
+  } = useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
@@ -163,6 +169,8 @@ const Home: React.FC = () => {
     FOCUS_BALANCE: "B",
     insert_discount: "r",
     INSERT_DISCOUNT: "R",
+    insert_cupom: "c",
+    INSERT_CUPOM: "C",
   };
 
   const handlers = {
@@ -183,6 +191,8 @@ const Home: React.FC = () => {
     FOCUS_BALANCE: () => sendFocusToBalance(),
     insert_discount: () => discountModalHandler.openDiscoundModal(),
     INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
+    insert_cupom: () => setCupomModalState(true),
+    INSERT_CUPOM: () => setCupomModalState(true),
   };
 
   return (

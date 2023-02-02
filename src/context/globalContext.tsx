@@ -20,7 +20,6 @@ type GlobalContextType = {
   setStoreCash: Dispatch<SetStateAction<StoreCashDto>>;
   loading: boolean;
   savingSale: boolean;
-  discountModalState: boolean;
   onAddItem: (
     product: ProductDto,
     quantity: number,
@@ -30,10 +29,13 @@ type GlobalContextType = {
   onAddDiscount: (value: number) => Promise<void>;
   onAddToQueue: (name: string) => Promise<void>;
   onRegisterSale: () => Promise<void>;
+  discountModalState: boolean;
   discountModalHandler: {
     openDiscoundModal: () => void;
     closeDiscoundModal: () => void;
   };
+  cupomModalState: boolean;
+  setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
   setUser: Dispatch<SetStateAction<UserDto | null>>;
   store: StoreDto | null;
@@ -49,6 +51,7 @@ export function GlobalProvider({ children }) {
   const [settings, setSettings] = useState<SettingsDto>();
   const [savingSale, setSavingSale] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [cupomModalState, setCupomModalState] = useState(false);
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
@@ -353,6 +356,8 @@ export function GlobalProvider({ children }) {
         hasPermission,
         store,
         setStore,
+        cupomModalState,
+        setCupomModalState,
       }}
     >
       {children}
