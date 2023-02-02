@@ -63,6 +63,10 @@ export function useSale() {
     GlobalContext,
     (globalContext) => globalContext.setCupomModalState
   );
+  const updateSale = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.updateSale
+  );
 
   return {
     sale,
@@ -79,6 +83,7 @@ export function useSale() {
     onRegisterSale,
     onAddToQueue,
     cupomModalState,
-    setCupomModalState
+    setCupomModalState,
+    updateSale
   };
 }

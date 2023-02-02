@@ -6,7 +6,7 @@ import { notification } from "antd";
 import { useSale } from "../../hooks/useSale";
 
 const CupomModal: React.FC = () => {
-  const { sale, setSale, cupomModalState, setCupomModalState } = useSale();
+  const { sale, updateSale, cupomModalState, setCupomModalState } = useSale();
   const [cupom, seCupom] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
 
@@ -40,15 +40,34 @@ const CupomModal: React.FC = () => {
 
       if (has_internal_error) {
         return notification.error({
-          message: error_message || "Erro ao criar movimentação",
+          message: error_message || "Erro ao obter voucher",
           duration: 5,
         });
       }
 
-      setSale((oldValues) => ({
-        ...oldValues,
+      const newTotal = sale.items.reduce((total, item) => {
+        const cupomItem = response.voucher.products.find(
+          (voucherProduct) => voucherProduct.product_id === item.product.id
+        );
+
+        if (cupomItem) {
+          return +cupomItem.price_sell * item.quantity + total;
+        } else {
+          return item.total + total;
+        }
+      }, 0);
+
+      const { error } = await updateSale({
         customerVoucher: response,
-      }));
+        total_sold: newTotal,
+      });
+
+      if (error) {
+        return notification.error({
+          message: error,
+          duration: 5,
+        });
+      }
 
       notification.success({
         message: "Cupom aplicado com sucesso",
@@ -63,18 +82,37 @@ const CupomModal: React.FC = () => {
     }
   };
 
-  const onCancel = (): void => {
-    setSale((oldValues) => ({
-      ...oldValues,
-      customerVoucher: null,
-    }));
+  const onCancel = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      const newTotal = sale.items.reduce(
+        (total, item) => item.total + total,
+        0
+      );
 
-    notification.success({
-      message: "Cupom removido com sucesso",
-      duration: 5,
-    });
+      const { error } = await updateSale({
+        customerVoucher: null,
+        total_sold: newTotal,
+      });
 
-    setCupomModalState(false);
+      if (error) {
+        return notification.error({
+          message: error,
+          duration: 5,
+        });
+      }
+
+      notification.success({
+        message: "Cupom removido com sucesso",
+        duration: 5,
+      });
+
+      setCupomModalState(false);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -119,7 +157,16 @@ const CupomModal: React.FC = () => {
           />
         </Col>
       </Row>
-
+      <span>
+        <strong>Obs:</strong>O cupom deve ser aplicado antes de finalizar a
+        venda
+      </span>
+      <br />
+      <span>
+        <strong>Para recalcular o valor total:</strong>
+      </span>
+      <br />
+      <span>Remova os pagamentos</span>
       {sale.customerVoucher ? (
         <Button
           htmlType="submit"
@@ -135,6 +182,7 @@ const CupomModal: React.FC = () => {
           type="primary"
           loading={loading}
           onClick={onFinish}
+          disabled={!!sale.payments.length}
         >
           Resgatar
         </Button>

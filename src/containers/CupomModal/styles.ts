@@ -8,7 +8,11 @@ import {
   Modal as ModalAnt,
 } from "antd";
 
-export const Container = styled(ModalAnt)``;
+export const Container = styled(ModalAnt)`
+  span {
+    font-size: 10px;
+  }
+`;
 
 export const Row = styled(RowAnt)`
   width: 100%;
