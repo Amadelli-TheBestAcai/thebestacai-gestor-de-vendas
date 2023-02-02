@@ -1,5 +1,6 @@
 import { ItemDto } from "./item";
 import { PaymentDto } from "./payment";
+import { CustomerVoucherDto } from "./customerVoucher";
 
 export type SaleDto = {
   id: string;
@@ -26,4 +27,5 @@ export type SaleDto = {
   total_sold: number;
   items: ItemDto[];
   payments: PaymentDto[];
+  customerVoucher?: CustomerVoucherDto;
 };

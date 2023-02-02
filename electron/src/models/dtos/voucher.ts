@@ -1,4 +1,4 @@
-export type Voucher = {
+export type VoucherDTO = {
   id: number,
   name: string,
   quantity: number,

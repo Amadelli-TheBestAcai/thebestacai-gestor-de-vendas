@@ -20,11 +20,12 @@ import {
   decressItem,
   emitNfce,
   deleteSaleDelivery,
-  cancelNfce
+  cancelNfce,
+  getVoucher
 } from "../usecases/sale";
 import '../usecases/sale/onlineIntegration'
 import { SaleDto, ProductDto } from "../models/gestor";
-import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
+import { SaleFromApiDTO, AppSaleDTO, NfeDTO, CustomerVoucherDTO } from "../models/dtos";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -73,6 +74,8 @@ export const saleFactory = {
     }),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
+  getVoucher: async (hash_code: string) =>
+    await useCaseFactory.execute<CustomerVoucherDTO>(getVoucher, { hash_code }),
   deleteSaleFromApi: async (params: { id: number, cash_history: number, gv_id: number }) => {
     try {
       await useCaseFactory.execute<void>(deleteSaleFromApi, params);

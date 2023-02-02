@@ -1,6 +1,6 @@
-import { Voucher } from './voucher'
+import { VoucherDTO } from './voucher'
 
-export type CustomerVoucherDto = {
+export type CustomerVoucherDTO = {
   id: number,
   voucher_id: number,
   company_id: number,
@@ -10,5 +10,5 @@ export type CustomerVoucherDto = {
   created_at: string,
   updated_at: string,
   deleted_at: null,
-  voucher: Voucher
+  voucher: VoucherDTO
 };
