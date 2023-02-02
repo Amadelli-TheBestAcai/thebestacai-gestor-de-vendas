@@ -42,7 +42,6 @@ class EmitNfce implements IUseCaseFactory {
   ) { }
 
   async execute({ nfe, saleIdToUpdate, local_update }: Request): Promise<string> {
-    console.log({ nfe, saleIdToUpdate })
     const hasInternet = await checkInternet();
     if (!hasInternet) {
       throw new Error("Dispositivo sem conexão");
@@ -76,13 +75,13 @@ class EmitNfce implements IUseCaseFactory {
       await this.saleRepository.update(saleIdToUpdate, {
         nfce_focus_id: data.id,
         nfce_url: `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`,
-      })
+      });
     } else if (!saleIdToUpdate && !local_update) {
       nfe.payments.forEach(payment => saleResponse.payments.push({
         id: v4(),
         ...payment,
         created_at: moment(new Date()).toString()
-      }))
+      }));
       await Promise.all(
         nfe.items.map(async (produto) => {
           const product = await this.productRepository.getOne({
@@ -114,6 +113,7 @@ class EmitNfce implements IUseCaseFactory {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
           nfce_focus_id: saleResponse.nfce_focus_id,
+          ref: data.ref
         });
       } catch {
         throw new Error(
