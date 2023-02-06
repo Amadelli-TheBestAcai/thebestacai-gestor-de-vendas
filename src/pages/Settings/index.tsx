@@ -13,6 +13,7 @@ import {
   Select,
   SelectsContainer,
   Switch,
+  InputPortCOM,
 } from "./styles";
 
 import { useSettings } from "../../hooks/useSettings";
@@ -20,6 +21,7 @@ import { useSettings } from "../../hooks/useSettings";
 const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { settings, setSettings } = useSettings();
+  const [port, setPort] = useState(' ');
 
   const ports = ["COM1", "COM2", "COM3", "COM4", "COM5"];
 
@@ -59,21 +61,19 @@ const Settings: React.FC = () => {
         </Header>
         <CardSettings title="Integração de Balança">
           <SelectsContainer>
-            <Select
+            <InputPortCOM
               disabled={!settings.should_use_balance}
               placeholder="Porta da balança"
-              value={settings.balance_port}
-              onChange={(balance_port) =>
+              type="number"
+              defaultValue={settings.balance_port}
+              onChange={(value) =>
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  balance_port: balance_port.toString(),
-                }))
+                  balance_port: 'COM' + value.target.value,
+                })
+                )
               }
-            >
-              {ports.map((port) => (
-                <Option key={port}>{port}</Option>
-              ))}
-            </Select>
+            />
           </SelectsContainer>
 
           <ActionContainer>
