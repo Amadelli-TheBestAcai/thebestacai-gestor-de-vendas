@@ -63,14 +63,14 @@ class EmitNfce implements IUseCaseFactory {
     if (errorOnBuildNewSale || !saleResponse) {
       throw new Error("Erro ao criar uma nova venda para NFC-e");
     }
-
+    
     const {
       data: { nfce: data },
     } = await midasApi.post("/nfce", { ...nfe, sale_id: local_update ? null : saleIdToUpdate });
 
     saleResponse.nfce_focus_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
-
+  
     if (local_update) {
       await this.saleRepository.update(saleIdToUpdate, {
         nfce_focus_id: data.id,

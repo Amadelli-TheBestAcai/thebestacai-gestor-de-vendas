@@ -202,6 +202,7 @@ export function GlobalProvider({ children }) {
             type: +payment.type,
             flag_card: +payment.flag_card,
           })),
+          ref: sale.id 
         };
 
         const {
