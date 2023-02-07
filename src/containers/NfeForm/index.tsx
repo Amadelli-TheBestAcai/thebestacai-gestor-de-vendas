@@ -124,8 +124,6 @@ const NfeForm: React.FC<IProps> = ({
       setEmitingNfe(true);
       setIsLoading(true);
 
-      console.log(JSON.stringify(nfcePayload));
-
       const {
         response,
         has_internal_error: errorOnEmitNfce,

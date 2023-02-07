@@ -50,13 +50,11 @@ class OnlineIntegration implements IUseCaseFactory {
 
     try {
       const sales: SaleDto[] = await this.notIntegratedSaleRepository.getAll();
-      console.log(sales)
       if (sales.length) {
         await Promise.all(
           sales.map(async salePayload => {
             try {
               const payload = salesFormaterToIntegrate(salePayload, storeCash);
-              console.log(payload);
               await midasApi.post("/sales", payload);
               await this.notIntegratedSaleRepository.deleteById(salePayload.id);
               await this.integrateSaleRepository.create({

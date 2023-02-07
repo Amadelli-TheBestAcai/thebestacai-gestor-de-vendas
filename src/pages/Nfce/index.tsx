@@ -93,8 +93,6 @@ const Nfce: React.FC = () => {
           });
           return;
         }
-        // setSaleRef(_sale);
-        console.log(_sale);
       } catch (error) {
         console.log(error, "ERRO NO GET DE SALES");
       }
@@ -241,14 +239,10 @@ const Nfce: React.FC = () => {
               : null,
         },
       ],
-      ref: v4(),
     };
 
     try {
       setIsLoading(true);
-
-      console.log({ nfce_payload: JSON.stringify(nfcePayload) });
-
       const {
         response,
         has_internal_error: errorOnEmitNfce,

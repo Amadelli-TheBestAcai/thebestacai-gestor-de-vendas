@@ -36,7 +36,7 @@ class FinishSale implements IUseCaseFactory {
     }
 
     payload.abstract_sale = false;
-    payload.ref = payload.id;
+  
     const storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
     const newGvId = (storeCash?.gv_sales || 0) + 1;
     storeCash.gv_sales = newGvId;
