@@ -12,7 +12,6 @@ import { buildNewSale, onlineIntegration } from "./index";
 import {
   SaleDto,
   StoreCashDto,
-  StoreDto,
   ProductDto,
 } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
@@ -63,14 +62,14 @@ class EmitNfce implements IUseCaseFactory {
     if (errorOnBuildNewSale || !saleResponse) {
       throw new Error("Erro ao criar uma nova venda para NFC-e");
     }
-    
+
     const {
       data: { nfce: data },
     } = await midasApi.post("/nfce", { ...nfe, sale_id: local_update ? null : saleIdToUpdate });
 
     saleResponse.nfce_focus_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
-  
+
     if (local_update) {
       await this.saleRepository.update(saleIdToUpdate, {
         nfce_focus_id: data.id,
@@ -101,6 +100,8 @@ class EmitNfce implements IUseCaseFactory {
             update_stock: false,
             id: v4(),
           });
+          saleResponse.ref = data?.ref;
+          console.log(data?.ref);
         })
       );
 
@@ -113,7 +114,6 @@ class EmitNfce implements IUseCaseFactory {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
           nfce_focus_id: saleResponse.nfce_focus_id,
-          ref: data.ref
         });
       } catch {
         throw new Error(

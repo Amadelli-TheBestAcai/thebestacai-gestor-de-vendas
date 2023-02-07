@@ -35,10 +35,10 @@ class FinishSale implements IUseCaseFactory {
       await this.saleRepository.deleteById(payload.id);
     }
 
-    payload.abstract_sale = false
-
+    payload.abstract_sale = false;
+    payload.ref = payload.id;
     const storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
-    const newGvId = (storeCash?.gv_sales || 0) + 1
+    const newGvId = (storeCash?.gv_sales || 0) + 1;
     storeCash.gv_sales = newGvId;
 
     await this.storeCashRepository.update(storeCash.id, storeCash);
