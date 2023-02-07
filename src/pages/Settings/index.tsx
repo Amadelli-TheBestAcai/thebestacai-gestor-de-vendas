@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CardSettings from "../../components/CardSettings";
 import { Modal, notification } from "antd";
@@ -21,9 +21,6 @@ import { useSettings } from "../../hooks/useSettings";
 const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { settings, setSettings } = useSettings();
-  const [port, setPort] = useState(' ');
-
-  const ports = ["COM1", "COM2", "COM3", "COM4", "COM5"];
 
   const handleSave = () => {
     Modal.confirm({
@@ -53,6 +50,7 @@ const Settings: React.FC = () => {
       },
     });
   };
+
   return (
     <Container>
       <PageContent>
@@ -63,12 +61,7 @@ const Settings: React.FC = () => {
           <SelectsContainer>
             <InputPortCOM
               disabled={!settings.should_use_balance}
-              placeholder="Porta da balança"
-              maxLength={100}
-
               type="number"
-              value={settings.balance_port}
-              defaultValue={settings.balance_port}
               onChange={(value) =>
                 setSettings((oldValues) => ({
                   ...oldValues,
@@ -76,8 +69,10 @@ const Settings: React.FC = () => {
                 })
                 )
               }
+              placeholder={settings.balance_port !== "" ? settings.balance_port : "Porta da balança"}
             />
           </SelectsContainer>
+
 
           <ActionContainer>
             <Switch
