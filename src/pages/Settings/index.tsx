@@ -64,7 +64,10 @@ const Settings: React.FC = () => {
             <InputPortCOM
               disabled={!settings.should_use_balance}
               placeholder="Porta da balança"
+              maxLength={100}
+
               type="number"
+              value={settings.balance_port}
               defaultValue={settings.balance_port}
               onChange={(value) =>
                 setSettings((oldValues) => ({
