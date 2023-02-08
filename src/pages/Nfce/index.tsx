@@ -81,26 +81,6 @@ const Nfce: React.FC = () => {
   const { store } = useStore();
 
   useEffect(() => {
-    const useSale = async () => {
-      try {
-        setLoading(true);
-        const { response: _sale, has_internal_error: errorOnSale } =
-          await window.Main.sale.getCurrentSale();
-        if (errorOnSale) {
-          notification.error({
-            message: "Erro ao obter venda atual",
-            duration: 5,
-          });
-          return;
-        }
-      } catch (error) {
-        console.log(error, "ERRO NO GET DE SALES");
-      }
-    };
-    useSale();
-  }, []);
-
-  useEffect(() => {
     async function init() {
       setIsLoading(true);
       const { response: products, has_internal_error: errorOnProducts } =
