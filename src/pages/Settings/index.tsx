@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CardSettings from "../../components/CardSettings";
 import { Modal, notification } from "antd";
@@ -13,6 +13,7 @@ import {
   Select,
   SelectsContainer,
   Switch,
+  InputPortCOM,
 } from "./styles";
 
 import { useSettings } from "../../hooks/useSettings";
@@ -20,8 +21,6 @@ import { useSettings } from "../../hooks/useSettings";
 const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { settings, setSettings } = useSettings();
-
-  const ports = ["COM1", "COM2", "COM3", "COM4", "COM5"];
 
   const handleSave = () => {
     Modal.confirm({
@@ -51,6 +50,7 @@ const Settings: React.FC = () => {
       },
     });
   };
+
   return (
     <Container>
       <PageContent>
@@ -59,22 +59,20 @@ const Settings: React.FC = () => {
         </Header>
         <CardSettings title="Integração de Balança">
           <SelectsContainer>
-            <Select
+            <InputPortCOM
               disabled={!settings.should_use_balance}
-              placeholder="Porta da balança"
-              value={settings.balance_port}
-              onChange={(balance_port) =>
+              type="number"
+              onChange={(value) =>
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  balance_port: balance_port.toString(),
-                }))
+                  balance_port: 'COM' + value.target.value,
+                })
+                )
               }
-            >
-              {ports.map((port) => (
-                <Option key={port}>{port}</Option>
-              ))}
-            </Select>
+              placeholder={settings.balance_port !== "" ? settings.balance_port : "Porta da balança"}
+            />
           </SelectsContainer>
+
 
           <ActionContainer>
             <Switch

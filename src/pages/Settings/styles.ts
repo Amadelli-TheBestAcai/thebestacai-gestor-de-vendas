@@ -4,6 +4,7 @@ import {
   Select as SelectAnt,
   Switch as SwitchAnt,
   Button as ButtonAnt,
+  Input as InputAnt
 } from "antd";
 
 export const Container = styled.div`
@@ -99,6 +100,9 @@ export const SelectsContainer = styled.div`
 
 export const Select = styled(SelectAnt)`
   width: 100%;
+`;
+
+export const InputPortCOM = styled(InputAnt)`
 `;
 
 export const Option = styled(SelectAnt.Option)``;
