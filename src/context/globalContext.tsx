@@ -201,7 +201,7 @@ export function GlobalProvider({ children }) {
             amount: +payment.amount,
             type: +payment.type,
             flag_card: +payment.flag_card,
-          })),
+          }))
         };
 
         const {
@@ -227,6 +227,7 @@ export function GlobalProvider({ children }) {
           await window.Main.sale.getCurrentSale();
         sale.nfce_focus_id = updatedSale.nfce_focus_id;
         sale.nfce_url = updatedSale.nfce_url;
+        sale.ref = updatedSale.ref;
       }
 
       const { has_internal_error: errorOnFinishSAle } =

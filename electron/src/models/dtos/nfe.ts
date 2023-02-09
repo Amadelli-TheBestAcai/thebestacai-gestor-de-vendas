@@ -11,5 +11,6 @@ export interface NfeDTO {
     amount: number,
     flag_card: number,
     type: number,
-  }[]
+  }[];
+  ref?: string;
 }

@@ -26,4 +26,5 @@ export type SaleDto = {
   total_sold: number;
   items: ItemDto[];
   payments: PaymentDto[];
+  ref?: string;
 };

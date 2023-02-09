@@ -12,7 +12,6 @@ import { buildNewSale, onlineIntegration } from "./index";
 import {
   SaleDto,
   StoreCashDto,
-  StoreDto,
   ProductDto,
 } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
@@ -42,7 +41,6 @@ class EmitNfce implements IUseCaseFactory {
   ) { }
 
   async execute({ nfe, saleIdToUpdate, local_update }: Request): Promise<string> {
-    console.log({ nfe, saleIdToUpdate })
     const hasInternet = await checkInternet();
     if (!hasInternet) {
       throw new Error("Dispositivo sem conexão");
@@ -67,7 +65,7 @@ class EmitNfce implements IUseCaseFactory {
 
     const {
       data: { nfce: data },
-    } = await midasApi.post("/nfce", { ...nfe, sale_id: local_update ? null : saleIdToUpdate });
+    } = await midasApi.post("/nfce", { ...nfe, ref: v4() ,sale_id: local_update ? null : saleIdToUpdate });
 
     saleResponse.nfce_focus_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
@@ -76,13 +74,14 @@ class EmitNfce implements IUseCaseFactory {
       await this.saleRepository.update(saleIdToUpdate, {
         nfce_focus_id: data.id,
         nfce_url: `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`,
-      })
+        ref: data.ref
+      });
     } else if (!saleIdToUpdate && !local_update) {
       nfe.payments.forEach(payment => saleResponse.payments.push({
         id: v4(),
         ...payment,
         created_at: moment(new Date()).toString()
-      }))
+      }));
       await Promise.all(
         nfe.items.map(async (produto) => {
           const product = await this.productRepository.getOne({
@@ -102,6 +101,7 @@ class EmitNfce implements IUseCaseFactory {
             update_stock: false,
             id: v4(),
           });
+          saleResponse.ref = data?.ref;
         })
       );
 
@@ -114,6 +114,7 @@ class EmitNfce implements IUseCaseFactory {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
           nfce_focus_id: saleResponse.nfce_focus_id,
+          ref: data.ref
         });
       } catch {
         throw new Error(

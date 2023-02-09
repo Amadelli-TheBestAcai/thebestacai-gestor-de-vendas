@@ -45,6 +45,7 @@ import {
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
+import { v4 } from "uuid";
 
 type IProps = RouteComponentProps;
 
@@ -81,9 +82,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-              (total, _payment) => total + _payment.amount,
-              0
-            ),
+            (total, _payment) => total + _payment.amount,
+            0
+          ),
       }));
 
       if (_sales.length) {
@@ -108,7 +109,6 @@ const Sale: React.FC<IProps> = () => {
       async onOk() {
         try {
           setIsLoading(true);
-
           const success = await window.Main.sale.deleteSaleFromApi(params);
           if (!success) {
             return notification.error({
@@ -172,28 +172,25 @@ const Sale: React.FC<IProps> = () => {
         type: payment.type,
         flag_card:
           payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
-      })),
+      }))
     };
 
     try {
       setEmitingNfe(true);
       setIsLoading(true);
 
-      console.log(JSON.stringify(nfcePayload));
-
       const {
         response,
         has_internal_error: errorOnEmitNfce,
         error_message,
       } = await window.Main.sale.emitNfce(nfcePayload, selectedSale.id);
-
       if (errorOnEmitNfce) {
         return notification.error({
           message: error_message || "Erro ao emitir NFCe",
           duration: 5,
         });
-      }
 
+      }
       notification.success({
         message: response,
         duration: 5,
@@ -432,14 +429,14 @@ const Sale: React.FC<IProps> = () => {
                                 !selectedSale.deleted_at && (
                                   <Tooltip title="Remover" placement="bottom">
                                     <RemoveIcon
-                                      onClick={() =>
+                                      onClick={() => {
                                         onDelete({
                                           id: selectedSale.id,
                                           cash_history_id:
                                             selectedSale.cash_history_id,
                                           gv_id: selectedSale.gv_id,
-                                        })
-                                      }
+                                        });
+                                      }}
                                     />
                                   </Tooltip>
                                 )}
@@ -494,7 +491,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                        +_item.storeProduct.price_unit
+                                      +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>
