@@ -1,5 +1,5 @@
 import { BaseRepository } from "../../repository/baseRepository";
-import database from '../../providers/database'
+import database from '../../providers/database';
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
@@ -15,13 +15,14 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
   ) { }
 
   async execute(): Promise<StoreCashDto | undefined> {
-    const hasConnection = await checkInternet()
-    if(!hasConnection) {
-      return undefined
+    const hasConnection = await checkInternet();
+    if (!hasConnection) {
+      return undefined;
     }
 
     const storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
     const store = await this.storeRepository.getOne() as StoreDto;
+
 
     const {
       data: { data },
@@ -33,11 +34,12 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
 
     const cashes: string[] = closed.map((cash) => cash.split("-")[1]);
 
-    if(!cashes.length) {
-      throw new Error("Nenhum caixa disponível para abertura");
+    if (!cashes.length) {
+      throw new Error(`Nenhum caixa está disponível 
+      para abertura, entre em contato com o suporte`);
     }
 
-    const code = cashes[0]
+    const code = cashes[0];
 
     const {
       data: {
@@ -49,7 +51,6 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
         amount_on_open: storeCash.amount_on_open.toString() || "0",
       }
     );
-
     storeCash.code = code;
     storeCash.cash_id = cash_id;
     storeCash.history_id = history_id;

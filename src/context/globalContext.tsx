@@ -230,16 +230,22 @@ export function GlobalProvider({ children }) {
         sale.ref = updatedSale.ref;
       }
 
-      const { has_internal_error: errorOnFinishSAle } =
+      const { has_internal_error: errorOnFinishSAle, error_message } =
         await window.Main.sale.finishSale({
           ...sale,
           formated_type: SalesTypes[sale.type],
         });
       if (errorOnFinishSAle) {
-        return notification.error({
+        setSavingSale(false);
+        error_message ? notification.warning({
+          message: error_message,
+          duration: 5,
+        }) : notification.error({
           message: "Erro ao finalizar venda",
           duration: 5,
         });
+
+
       }
 
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
@@ -251,7 +257,6 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
-
       setSale(_newSale);
       setSavingSale(false);
       notification.success({
