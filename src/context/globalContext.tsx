@@ -100,6 +100,8 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
+      _settings.should_open_casher = true;
+      
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);
@@ -235,6 +237,7 @@ export function GlobalProvider({ children }) {
           ...sale,
           formated_type: SalesTypes[sale.type],
         });
+
       if (errorOnFinishSAle) {
         setSavingSale(false);
         error_message ? notification.warning({
@@ -244,9 +247,9 @@ export function GlobalProvider({ children }) {
           message: "Erro ao finalizar venda",
           duration: 5,
         });
-
-
       }
+
+
 
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
         await window.Main.sale.buildNewSale();

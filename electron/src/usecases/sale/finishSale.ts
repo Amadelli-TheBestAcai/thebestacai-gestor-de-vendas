@@ -49,7 +49,7 @@ class FinishSale implements IUseCaseFactory {
 
     if (errorOnOnlineTntegrate) {
       if (error_message === "Network Error") {
-        throw new Error("O gestor está offline");
+        throw new Error("O sistema está offline");
       }
       throw new Error(error_message || "Erro ao integrar venda online");
     } else {
