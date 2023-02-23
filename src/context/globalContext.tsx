@@ -100,8 +100,7 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
-      _settings.should_open_casher = true;
-      
+           
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);

@@ -48,9 +48,6 @@ class FinishSale implements IUseCaseFactory {
       await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
 
     if (errorOnOnlineTntegrate) {
-      if (error_message === "Network Error") {
-        throw new Error("O sistema está offline");
-      }
       throw new Error(error_message || "Erro ao integrar venda online");
     } else {
       return response;

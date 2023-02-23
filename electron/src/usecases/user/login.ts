@@ -59,12 +59,13 @@ class Login implements IUseCaseFactory {
         await this.userRepository.createMany([...users, userPayload]);
       }
       const settings = await this.settingsRepository.getOne();
-      // if (settings?.should_open_casher === false) {
-      //   await this.settingsRepository.update(settings?.id, {
-      //     should_open_casher: true
-      //   });
-      // }
+
+      await this.settingsRepository.update(settings?.id, {
+        should_open_casher: true
+      });
+
       return userPayload;
+
     } else {
       let users = await this.userRepository.getAll();
       users = users.map((_user) => ({
