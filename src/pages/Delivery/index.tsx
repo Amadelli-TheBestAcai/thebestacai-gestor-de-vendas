@@ -287,14 +287,17 @@ const Delivery: React.FC<ComponentProps> = () => {
       async onOk() {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
 
-        const { has_internal_error: errorOnFinishSAle } =
+        const { has_internal_error: errorOnFinishSAle, error_message } =
           await window.Main.sale.finishSale(
             { ...payload, formated_type: SalesTypes[payload.type] },
             true
           );
         if (errorOnFinishSAle) {
-          return notification.error({
-            message: "Erro ao finalizar uma venda",
+          error_message ? notification.warning({
+            message: error_message,
+            duration: 5,
+          }) : notification.error({
+            message: "Erro ao finalizar venda",
             duration: 5,
           });
         }
