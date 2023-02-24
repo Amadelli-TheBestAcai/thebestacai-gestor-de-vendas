@@ -1,8 +1,8 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { StoreDto, StoreCashDto } from "../../models/gestor";
-import {backupDatabase} from '../common/backupDatabase'
+import { StoreDto, StoreCashDto, OldCashHistoryDto } from "../../models/gestor";
+import { backupDatabase } from '../common/backupDatabase';
 import { v4 } from "uuid";
 
 interface Request {
@@ -16,7 +16,8 @@ class OpenStoreCash implements IUseCaseFactory {
     ),
     private saleRepository = new BaseRepository<StoreDto>(StorageNames.Sale),
     private integratedSaleRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Sale),
-    private integratedHandlerRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Handler)
+    private integratedHandlerRepository = new BaseRepository<StoreDto>(StorageNames.Integrated_Handler),
+    private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(StorageNames.Old_Cash_History),
   ) { }
 
   async execute({
@@ -31,7 +32,7 @@ class OpenStoreCash implements IUseCaseFactory {
       is_online: false,
     };
 
-    backupDatabase.execute()
+    backupDatabase.execute();
 
     await this.saleRepository.clear();
     await this.integratedSaleRepository.clear();
@@ -39,6 +40,7 @@ class OpenStoreCash implements IUseCaseFactory {
 
     await this.storeCashRepository.clear();
     await this.storeCashRepository.create(payload);
+    await this.oldCashHistoryRepository.clear();
     return payload;
   }
 }

@@ -85,7 +85,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         const {
           response: _storeCashHistory,
           has_internal_error: errorOnGetCashHistory,
-        } = await window.Main.storeCash.getStoreCashHistory();
+        } = await window.Main.storeCash.getOldCashHistory();
         if (errorOnGetCashHistory) {
           notification.error({
             message: "Erro ao obter Histórico do caixa",
@@ -223,7 +223,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       });
     }
     setOpeningOnlineStoreCash(true);
-    const { has_internal_error, error_message } =
+    const { has_internal_error, error_message, response } =
       await window.Main.storeCash.openOnlineStoreCash();
     if (has_internal_error) {
       notification.error({
@@ -233,6 +233,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       setOpeningOnlineStoreCash(false);
       return;
     }
+    setStoreCash(response);
     notification.success({
       message: "Caixa online aberto com sucesso",
       duration: 5,
