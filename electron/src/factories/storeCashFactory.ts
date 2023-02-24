@@ -8,6 +8,7 @@ import {
   getAvailableStoreCashes,
   getStoreCashHistory,
   updateStoreCashObservation,
+  openOnlineStoreCash
 } from "../usecases/storeCash";
 import {
   BalanceDto,
@@ -19,6 +20,10 @@ export const storeCashFactory = {
   getAvailableStoreCashes: async () =>
     await useCaseFactory.execute<AvailableStoreCashesDto[]>(
       getAvailableStoreCashes
+    ),
+  openOnlineStoreCash: async () =>
+    await useCaseFactory.execute<void>(
+      openOnlineStoreCash
     ),
   getCurrent: async () =>
     await useCaseFactory.execute<StoreCashDto>(getCurrentStoreCash),

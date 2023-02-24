@@ -60,6 +60,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [amountModal, setAmountModal] = useState<boolean>(false);
   const [balance, setBalance] = useState<BalanceModel>();
   const [loading, setLoading] = useState(true);
+  const [openingOnlineStoreCash, setOpeningOnlineStoreCash] = useState(false);
 
   const [modalJustify, setModalJustify] = useState(false);
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
@@ -78,7 +79,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         });
         return;
       }
-      console.log({ _currentStoreCash })
+      console.log({ _currentStoreCash });
 
       if (!_currentStoreCash?.is_opened) {
         const {
@@ -208,6 +209,37 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     setModalJustify(false);
   };
 
+  const openOnlineStoreCash = async (code?: string) => {
+    if (openingOnlineStoreCash) {
+      return notification.warning({
+        message: "Aguarde que estamos abrindo um caixa pra você",
+        duration: 5
+      });
+    }
+    if (code !== 'OFFLINE') {
+      return notification.warning({
+        message: "Caixa online já está aberto",
+        duration: 5
+      });
+    }
+    setOpeningOnlineStoreCash(true);
+    const { has_internal_error, error_message } =
+      await window.Main.storeCash.openOnlineStoreCash();
+    if (has_internal_error) {
+      notification.error({
+        message: error_message || "Falha ao abrir o caixa",
+        duration: 5,
+      });
+      setOpeningOnlineStoreCash(false);
+      return;
+    }
+    notification.success({
+      message: "Caixa online aberto com sucesso",
+      duration: 5,
+    });
+    setOpeningOnlineStoreCash(false);
+  };
+
   return (
     <Container>
       <PageContent>
@@ -224,7 +256,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                 <StatusWrapper>
                   <StatusCash>
                     <Status>
-                      <Left>Caixa {storeCash?.code}</Left>
+                      <Left onClick={() => openOnlineStoreCash(storeCash?.code)}>Caixa {storeCash?.code}</Left>
                       <Right is_opened={storeCash?.is_opened}>
                         {storeCash?.is_opened ? "Aberto" : "Fechado"}
                       </Right>
