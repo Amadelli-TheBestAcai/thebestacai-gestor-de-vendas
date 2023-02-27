@@ -15,7 +15,6 @@ interface Request {
 class Login implements IUseCaseFactory {
   constructor(
     private userRepository = new BaseRepository<UserDto>(StorageNames.User),
-    private settingsRepository = new BaseRepository<SettingsDto>(StorageNames.Settings)
   ) { }
 
   async execute({ password, username }: Request): Promise<UserDto | undefined> {
@@ -58,12 +57,6 @@ class Login implements IUseCaseFactory {
         await this.userRepository.clear();
         await this.userRepository.createMany([...users, userPayload]);
       }
-      const settings = await this.settingsRepository.getOne();
-
-      await this.settingsRepository.update(settings?.id, {
-        should_open_casher: true
-      });
-
       return userPayload;
 
     } else {

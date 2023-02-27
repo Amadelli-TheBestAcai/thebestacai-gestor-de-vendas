@@ -100,7 +100,6 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
-           
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);
