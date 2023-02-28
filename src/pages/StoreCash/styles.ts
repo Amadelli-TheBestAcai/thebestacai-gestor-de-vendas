@@ -141,7 +141,6 @@ export const Status = styled.div`
 
 export const Left = styled.label`
   display: flex;
-  cursor: pointer;
   align-items: center;
   justify-content: center;
   width: 50%;
