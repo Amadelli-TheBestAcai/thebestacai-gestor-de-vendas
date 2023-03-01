@@ -27,8 +27,7 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
     const settings = await this.settingsRepository.getOne() as SettingsDto;
 
     if (settings.should_open_casher === false) {
-      throw new Error(`Nenhum caixa está disponível 
-      para abertura, entre em contato com o suporte`);
+      throw new Error("Nenhum caixa está disponível para abertura, entre em contato com o suporte");
     }
 
     const {
@@ -42,11 +41,7 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
     const cashes: string[] = closed.map((cash) => cash.split("-")[1]);
 
     if (!cashes.length) {
-      await this.settingsRepository.update(settings?.id, {
-        should_open_casher: false
-      });
-      throw new Error(`Nenhum caixa está disponível 
-      para abertura, entre em contato com o suporte`);
+      throw new Error("Nenhum caixa está disponível para abertura, entre em contato com o suporte");
     }
 
     const code = cashes[0];

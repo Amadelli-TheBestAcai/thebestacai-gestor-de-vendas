@@ -32,6 +32,7 @@ import {
   StatusWrapper
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
+import { useSettings } from "../../hooks/useSettings";
 
 interface IProp extends RouteComponentProps { }
 
@@ -65,6 +66,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [modalJustify, setModalJustify] = useState(false);
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
+  const { settings, setSettings } = useSettings();
 
   useEffect(() => {
     async function init() {
@@ -223,22 +225,58 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       });
     }
     setOpeningOnlineStoreCash(true);
+
+    if (settings.should_open_casher === false) {
+      const { response: updatedSettings, has_internal_error: errorOnSettings } =
+        await window.Main.settings.update(settings.id, {
+          ...settings,
+          should_open_casher: true
+        });
+
+      if (errorOnSettings) {
+        return notification.error({
+          message: "Erro ao atualizar as configurações",
+          duration: 5,
+        });
+      }
+
+      setSettings(updatedSettings);
+    }
+
     const { has_internal_error, error_message, response } =
       await window.Main.storeCash.openOnlineStoreCash();
+
     if (has_internal_error) {
-      notification.error({
-        message: error_message || "Falha ao abrir o caixa",
+      error_message ? notification.warning({
+        message: error_message,
+        duration: 5,
+      }) : notification.error({
+        message: "Erro ao finalizar venda",
         duration: 5,
       });
+
       setOpeningOnlineStoreCash(false);
+
       return;
     }
     setStoreCash(response);
+
     notification.success({
       message: "Caixa online aberto com sucesso",
       duration: 5,
     });
+
     setOpeningOnlineStoreCash(false);
+
+    const { has_internal_error: internalErrorOnOnlineIntegrate, error_message: errorMessageOnOnlineTntegrate } =
+      await window.Main.sale.onlineIntegration();
+
+    if (internalErrorOnOnlineIntegrate) {
+      notification.error({
+        message: errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
+        duration: 5,
+      });
+    }
   };
 
   return (
@@ -257,7 +295,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                 <StatusWrapper>
                   <StatusCash>
                     <Status>
-                      <Left onClick={() => openOnlineStoreCash(storeCash?.code)}>Caixa {storeCash?.code}</Left>
+                      <Left>Caixa {storeCash?.code}</Left>
                       <Right is_opened={storeCash?.is_opened}>
                         {storeCash?.is_opened ? "Aberto" : "Fechado"}
                       </Right>
@@ -272,8 +310,10 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                     )}
                   </StatusCash>
                   <CloseCashContatiner>
-                    <OpenCloseButton onClick={() => setAmountModal(true)} _type={storeCash?.is_opened ? "close" : "open"}>
-                      {storeCash?.is_opened ? "Fechar Caixa" : "Abrir Caixa"}
+                    <OpenCloseButton onClick={() => storeCash?.is_opened && !storeCash?.is_online ? openOnlineStoreCash(storeCash?.code)
+                      : setAmountModal(true)} _type={storeCash?.is_opened && storeCash?.is_online ? "close" : "open"}>
+                      {storeCash?.is_opened && storeCash?.is_online ? "Fechar Caixa"
+                        : storeCash?.is_opened && !storeCash?.is_online ? "Abrir caixa online" : "Abrir Caixa"}
                     </OpenCloseButton>
                   </CloseCashContatiner>
                 </StatusWrapper>
