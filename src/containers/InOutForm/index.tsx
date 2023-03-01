@@ -78,7 +78,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         reasontype === "Pagamento freelance");
 
     let shopOrder = null;
-    console.log(shopInfo)
+    console.log(shopInfo);
     if (type !== "entrada" && sendToShop) {
       if (reasontype === "Pagamento fornecedor") {
         shopOrder = {
@@ -86,9 +86,9 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
-          total: (+shopInfo.quantity * +shopInfo.unitary_value) + 
-                 (+shopInfo.additional_value || 0) - 
-                 (+shopInfo.discount_value || 0),
+          total: (+shopInfo.quantity * +shopInfo.unitary_value) +
+            (+shopInfo.additional_value || 0) -
+            (+shopInfo.discount_value || 0),
           observation: shopInfo.observation,
           name: "Pagamento fornecedor",
           additional_value: +shopInfo.additional_value,
@@ -119,9 +119,9 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
-          total: (+shopInfo.quantity * +shopInfo.unitary_value) + 
-                 (+shopInfo.additional_value || 0) - 
-                 (+shopInfo.discount_value || 0),
+          total: (+shopInfo.quantity * +shopInfo.unitary_value) +
+            (+shopInfo.additional_value || 0) -
+            (+shopInfo.discount_value || 0),
           name: "Salarios/Comissões",
           observation: shopInfo.observation,
           additional_value: +shopInfo.additional_value,
@@ -158,12 +158,12 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         duration: 5,
       });
     }
-    
+
     const payload = {
       handler: {
         type,
         reason: reasontype === "Outros" ? reasson : reasontype,
-        amount: (+shopOrder?.total || value) 
+        amount: (+shopOrder?.total || value)
       },
       shopOrder,
       sendToShop,
@@ -171,14 +171,17 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
     setLoading(true);
 
-    const { has_internal_error: errorOnCreateHandler, response: handler } =
+    const { has_internal_error: errorOnCreateHandler, response: handler, error_message } =
       await window.Main.handler.create({
         cashHandler: payload.handler,
         sendToShop: payload.sendToShop,
         shopOrder: payload.shopOrder,
       });
     if (errorOnCreateHandler) {
-      return notification.error({
+      error_message ? notification.warning({
+        message: error_message,
+        duration: 5,
+      }) : notification.error({
         message: "Erro ao criar movimentação",
         duration: 5,
       });
@@ -292,11 +295,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 <Select onChange={handleSelect} placeholder="Escolha a opção">
                   {type === "entrada"
                     ? inValue.map((item) => (
-                        <Option key={item.id}>{item.value}</Option>
-                      ))
+                      <Option key={item.id}>{item.value}</Option>
+                    ))
                     : outValue.map((item) => (
-                        <Option key={item.id}>{item.value}</Option>
-                      ))}
+                      <Option key={item.id}>{item.value}</Option>
+                    ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -313,16 +316,16 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 ]}
               >
                 {type !== "entrada" &&
-                hasInternet &&
-                (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
-                  reasontype === ReasonOutValue.PAG_FREELA) ? (
+                  hasInternet &&
+                  (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
+                    reasontype === ReasonOutValue.PAG_FREELA) ? (
                   <Input
                     placeholder={currencyFormater(
-                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) + 
+                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) +
                       (+shopInfo?.additional_value || 0) - (+shopInfo?.discount_value || 0)
                     )}
                     value={currencyFormater(
-                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) + 
+                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) +
                       (+shopInfo?.additional_value || 0) - (+shopInfo?.discount_value || 0)
                     )}
                     disabled
@@ -531,7 +534,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                         </Form.Item>
                       </Col>
 
-                      
+
 
                       <Col sm={24}>
                         <Form.Item
