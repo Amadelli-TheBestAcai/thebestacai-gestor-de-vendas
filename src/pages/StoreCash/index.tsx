@@ -212,18 +212,13 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   };
 
   const openOnlineStoreCash = async (code?: string) => {
-    if (openingOnlineStoreCash) {
+    if (openingOnlineStoreCash && code !== 'OFFLINE') {
       return notification.warning({
         message: "Aguarde que estamos abrindo um caixa pra você",
         duration: 5
       });
     }
-    if (code !== 'OFFLINE') {
-      return notification.warning({
-        message: "Caixa online já está aberto",
-        duration: 5
-      });
-    }
+
     setOpeningOnlineStoreCash(true);
 
     if (settings.should_open_casher === false) {
@@ -245,8 +240,15 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
 
     const { has_internal_error, error_message, response } =
       await window.Main.storeCash.openOnlineStoreCash();
-
+    console.log(`Aqui mesmo ${JSON.stringify(error_message)}`);
     if (has_internal_error) {
+      if (error_message === "O sistema está offline") {
+        return notification.warning({
+          message: "Não é possivel abrir um caixa online, pois o sistema está offline",
+          duration: 5,
+        });
+      }
+
       error_message ? notification.warning({
         message: error_message,
         duration: 5,
