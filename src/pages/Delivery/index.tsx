@@ -383,11 +383,14 @@ const Delivery: React.FC<ComponentProps> = () => {
       cancelText: "Não",
       centered: true,
       async onOk() {
-        const { has_internal_error: errorOnIntegrateAllSales } =
+        const { has_internal_error: errorOnIntegrateAllSales, error_message } =
           await window.Main.sale.integrateAllSalesFromType(type);
         if (errorOnIntegrateAllSales) {
-          return notification.error({
-            message: "Erro ao integrar todos os delivery",
+          error_message ? notification.warning({
+            message: error_message,
+            duration: 5,
+          }) : notification.error({
+            message: error_message || "Erro ao integrar todos os delivery",
             duration: 5,
           });
         }

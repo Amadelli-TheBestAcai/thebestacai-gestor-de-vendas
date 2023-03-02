@@ -272,8 +272,37 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       await window.Main.sale.onlineIntegration();
 
     if (internalErrorOnOnlineIntegrate) {
-      notification.error({
+      errorMessageOnOnlineTntegrate ? notification.warning({
+        message: errorMessageOnOnlineTntegrate,
+        duration: 5,
+      }) : notification.error({
         message: errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
+        duration: 5,
+      });
+    }
+
+    const { has_internal_error: errorOnIntegrateHandler, error_message: errorMessageOnIntegrateHandler } =
+      await window.Main.handler.integrateHandler();
+
+    if (errorOnIntegrateHandler) {
+      errorMessageOnIntegrateHandler ? notification.warning({
+        message: errorMessageOnIntegrateHandler,
+        duration: 5,
+      }) : notification.error({
+        message: errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
+        duration: 5,
+      });
+    }
+
+    const { has_internal_error: errorOnIntegrateItemOutCart, error_message: errorMessageOnIntegrateItemOutCart } =
+      await window.Main.itemOutCart.integrationItemOutCart();
+
+    if (errorOnIntegrateItemOutCart) {
+      errorMessageOnIntegrateItemOutCart ? notification.warning({
+        message: errorMessageOnIntegrateItemOutCart,
+        duration: 5,
+      }) : notification.error({
+        message: errorMessageOnIntegrateItemOutCart || "Erro ao integrar itens fora do carrinho",
         duration: 5,
       });
     }
