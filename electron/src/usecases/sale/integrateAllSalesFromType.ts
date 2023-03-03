@@ -21,14 +21,6 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
   async execute({ type }: Request): Promise<void> {
     const deliverySales = await this.deliverySaleRepository.getAll();
 
-    const deliveryNotToIntegrate = deliverySales.filter(
-      (_deliverySale) => _deliverySale.type !== type
-    );
-
-    await this.deliverySaleRepository.createManyAndReplace(
-      deliveryNotToIntegrate
-    );
-
     const deliveryToIntegrate = deliverySales.filter(
       (_deliverySale) => _deliverySale.type === type
     );
@@ -51,6 +43,7 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
     if (errorOnOnlineTntegrate) {
       throw new Error(error_message || "Erro ao integrar venda online");
     }
+    await this.deliverySaleRepository.deleteById(payload.id);
   }
 }
 
