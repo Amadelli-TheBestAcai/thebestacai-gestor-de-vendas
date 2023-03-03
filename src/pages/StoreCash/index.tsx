@@ -240,7 +240,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
 
     const { has_internal_error, error_message, response } =
       await window.Main.storeCash.openOnlineStoreCash();
-    console.log(`Aqui mesmo ${JSON.stringify(error_message)}`);
+    
     if (has_internal_error) {
       if (error_message === "O sistema está offline") {
         return notification.warning({
