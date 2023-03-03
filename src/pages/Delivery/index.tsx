@@ -407,12 +407,21 @@ const Delivery: React.FC<ComponentProps> = () => {
         }
         setDeliveries(_updatedDeliverySales);
 
-        notification.success({
-          message: "Vendas integradas com sucesso!",
-          description: `A venda do tipo [${SalesTypes[deliveryType]}] foram integradas com sucesso. 
-                        Não esqueça que após a integração das vendas, pode levar uns minutos até serem processadas pelo servidor.`,
-          duration: 5,
-        });
+        if (sale.is_online === false) {
+          notification.success({
+            message: "Venda salva com sucesso!",
+            description: `Sua venda foi salva com sucesso, porém você precisa abrir um caixa online, para integrá-la`,
+            duration: 5,
+          });
+        } else {
+          notification.success({
+            message: "Vendas integradas com sucesso!",
+            description: `A venda do tipo [${SalesTypes[deliveryType]}] foram integradas com sucesso. 
+                          Não esqueça que após a integração das vendas, pode levar uns minutos até serem processadas pelo servidor.`,
+            duration: 5,
+          });
+        }
+
       },
     });
   };
