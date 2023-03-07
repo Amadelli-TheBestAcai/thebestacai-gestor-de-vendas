@@ -65,14 +65,16 @@ const Settings: React.FC = () => {
               onChange={(value) =>
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  balance_port: 'COM' + value.target.value,
-                })
-                )
+                  balance_port: "COM" + value.target.value,
+                }))
               }
-              placeholder={settings.balance_port !== "" ? settings.balance_port : "Porta da balança"}
+              placeholder={
+                settings.balance_port !== ""
+                  ? settings.balance_port
+                  : "Porta da balança"
+              }
             />
           </SelectsContainer>
-
 
           <ActionContainer>
             <Switch
@@ -141,7 +143,9 @@ const Settings: React.FC = () => {
               }
             />
             <span>
-              {!settings.should_use_printer ? "DESABILITADO" : "HABILITADO"}
+              {!settings.should_emit_nfce_per_sale
+                ? "DESABILITADO"
+                : "HABILITADO"}
             </span>
           </ActionContainer>
         </CardSettings>
