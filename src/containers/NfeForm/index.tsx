@@ -130,9 +130,15 @@ const NfeForm: React.FC<IProps> = ({
         error_message,
       } = await window.Main.sale.emitNfce(nfcePayload, sale.id);
 
+      const messageError = JSON.parse(error_message).erros.map(
+        (error) => error.mensagem
+      );
+
       if (errorOnEmitNfce) {
         return notification.error({
-          message: error_message || "Erro ao emitir NFCe",
+          message:
+            messageError.map((message) => message + ".") ||
+            "Erro ao emitir NFCe",
           duration: 5,
         });
       }
