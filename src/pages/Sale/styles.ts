@@ -106,6 +106,10 @@ export const ListSaleContainer = styled.div`
   .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header {
     padding-left: 0 !important;
     padding-right: 0 !important;
+
+    .ant-collapse-arrow {
+      display: none;
+    }
   }
 `;
 
@@ -155,12 +159,7 @@ export const Row = styled(RowAnt)`
 
 export const Collapse = styled(CollapseAnt)`
   user-select: none;
-  .ant-collapse
-    > .ant-collapse-item
-    > .ant-collapse-header
-    .ant-collapse-arrow {
-    display: none;
-  }
+
   .ant-collapse-item-disabled {
     .ant-col {
       color: var(--black-opaco);
