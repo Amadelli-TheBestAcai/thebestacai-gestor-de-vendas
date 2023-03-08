@@ -53,19 +53,19 @@ class InsertHandler implements IUseCaseFactory {
         : payload.cashHandler.reason,
     };
 
-    if(currentCash.is_opened && currentCash.is_online) {
-      newHandler.cashHandler.cash_id = currentCash.cash_id
-      newHandler.cashHandler.cash_code = currentCash.code
-      newHandler.cashHandler.store_id = currentCash.store_id
-      newHandler.cashHandler.cash_history_id = currentCash.history_id
+    if (currentCash.is_opened && currentCash.is_online) {
+      newHandler.cashHandler.cash_id = currentCash.cash_id;
+      newHandler.cashHandler.cash_code = currentCash.code;
+      newHandler.cashHandler.store_id = currentCash.store_id;
+      newHandler.cashHandler.cash_history_id = currentCash.history_id;
     }
 
     await this.handlerRepository.create(newHandler);
 
-    const { has_internal_error: errorOnItegrateItemOutCart } =
+    const { has_internal_error: errorOnItegrateItemOutCart, error_message } =
       await useCaseFactory.execute<void>(this.integrateHandlerUseCase);
     if (errorOnItegrateItemOutCart) {
-      throw new Error("Falha na conexão");
+      throw new Error(error_message || "Falha na conexão");
     }
     return newHandler;
   }

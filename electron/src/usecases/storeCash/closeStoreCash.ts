@@ -3,8 +3,8 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreDto, StoreCashDto } from "../../models/gestor";
-import { updateBalanceHistory } from './updateBalanceHistory'
+import { StoreDto, StoreCashDto, OldCashHistoryDto } from "../../models/gestor";
+import { updateBalanceHistory } from './updateBalanceHistory';
 import { useCaseFactory } from "../useCaseFactory";
 interface Request {
   code: string;
@@ -17,6 +17,7 @@ class CloseStoreCash implements IUseCaseFactory {
       StorageNames.StoreCash
     ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
+    private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(StorageNames.Old_Cash_History),
     private _updateBalanceHistory = updateBalanceHistory
   ) { }
 
@@ -27,7 +28,7 @@ class CloseStoreCash implements IUseCaseFactory {
     const isConnected = await checkInternet();
     if (isConnected) {
       const { has_internal_error: errorOnUpdateBalanceHistory } =
-        await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory)
+        await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 
       if (errorOnUpdateBalanceHistory) {
         throw new Error("Falha ao atualizar o histórico do caixa");
@@ -47,6 +48,17 @@ class CloseStoreCash implements IUseCaseFactory {
         is_opened: false,
       }
     );
+
+    const { data: { history } } = await odinApi.get(
+      `/current_cash_history/${storeCash?.store_id}-${storeCash?.code}`
+    );
+    const oldCashHistory = await this.oldCashHistoryRepository.getOne();
+    if (oldCashHistory) {
+      await this.oldCashHistoryRepository.update(oldCashHistory.id, { ...history });
+    } else {
+      await this.oldCashHistoryRepository.create({ ...history });
+    }
+
     return updatedStoreCash;
   }
 }
