@@ -53,9 +53,7 @@ const SalesHistory: React.FC<IProps> = ({
                 <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
                 <Col sm={5}>{sale.quantity}</Col>
                 <Col sm={4}>
-                  {moment(sale.created_at)
-                    .add(3, "hours")
-                    .format("DD/MM/YYYY HH:mm:ss")}
+                  {moment(sale.created_at).format("DD/MM/YYYY HH:mm:ss")}
                 </Col>
                 <Col sm={5}>{SalesTypes[sale.type]}</Col>
               </CardSale>
@@ -73,11 +71,7 @@ const SalesHistory: React.FC<IProps> = ({
                 <Row>
                   <Col sm={24}>
                     Horário:
-                    <span>
-                      {moment(sale.created_at)
-                        .add(3, "hours")
-                        .format("HH:mm:ss")}
-                    </span>
+                    <span>{moment(sale.created_at).format("HH:mm:ss")}</span>
                   </Col>
                 </Row>
                 <Row>
