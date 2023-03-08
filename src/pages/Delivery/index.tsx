@@ -287,14 +287,17 @@ const Delivery: React.FC<ComponentProps> = () => {
       async onOk() {
         const payload = deliveries.find((_delivery) => _delivery.id === id);
 
-        const { has_internal_error: errorOnFinishSAle } =
+        const { has_internal_error: errorOnFinishSAle, error_message } =
           await window.Main.sale.finishSale(
             { ...payload, formated_type: SalesTypes[payload.type] },
             true
           );
         if (errorOnFinishSAle) {
-          return notification.error({
-            message: "Erro ao finalizar uma venda",
+          error_message ? notification.warning({
+            message: error_message,
+            duration: 5,
+          }) : notification.error({
+            message: "Erro ao finalizar venda",
             duration: 5,
           });
         }
@@ -380,11 +383,14 @@ const Delivery: React.FC<ComponentProps> = () => {
       cancelText: "Não",
       centered: true,
       async onOk() {
-        const { has_internal_error: errorOnIntegrateAllSales } =
+        const { has_internal_error: errorOnIntegrateAllSales, error_message } =
           await window.Main.sale.integrateAllSalesFromType(type);
         if (errorOnIntegrateAllSales) {
-          return notification.error({
-            message: "Erro ao integrar todos os delivery",
+          error_message ? notification.warning({
+            message: error_message,
+            duration: 5,
+          }) : notification.error({
+            message: error_message || "Erro ao integrar todos os delivery",
             duration: 5,
           });
         }
@@ -401,12 +407,21 @@ const Delivery: React.FC<ComponentProps> = () => {
         }
         setDeliveries(_updatedDeliverySales);
 
-        notification.success({
-          message: "Vendas integradas com sucesso!",
-          description: `A venda do tipo [${SalesTypes[deliveryType]}] foram integradas com sucesso. 
-                        Não esqueça que após a integração das vendas, pode levar uns minutos até serem processadas pelo servidor.`,
-          duration: 5,
-        });
+        if (sale.is_online === false) {
+          notification.success({
+            message: "Venda salva com sucesso!",
+            description: `Sua venda foi salva com sucesso, porém você precisa abrir um caixa online, para integrá-la`,
+            duration: 5,
+          });
+        } else {
+          notification.success({
+            message: "Vendas integradas com sucesso!",
+            description: `A venda do tipo [${SalesTypes[deliveryType]}] foram integradas com sucesso. 
+                          Não esqueça que após a integração das vendas, pode levar uns minutos até serem processadas pelo servidor.`,
+            duration: 5,
+          });
+        }
+
       },
     });
   };

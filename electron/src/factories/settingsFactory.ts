@@ -1,6 +1,6 @@
 import settingsModel from "../models/settings";
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { getSettings, update } from "../usecases/settitngs";
+import { getSettings, update } from "../usecases/settings";
 import { SettingsDto } from "../models/gestor";
 
 export const settingsFactory = {
