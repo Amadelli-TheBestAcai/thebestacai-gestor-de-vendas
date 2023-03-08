@@ -61,7 +61,11 @@ const Settings: React.FC = () => {
           <SelectsContainer>
             <InputPortCOM
               disabled={!settings.should_use_balance}
+              defaultValue={settings.balance_port.replace(/\D/g, "")}
               type="number"
+              prefix={"COM"}
+              min={0}
+              max={99}
               onChange={(value) =>
                 setSettings((oldValues) => ({
                   ...oldValues,
