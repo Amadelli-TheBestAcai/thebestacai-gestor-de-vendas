@@ -55,7 +55,7 @@ const IconCSS = css`
   }
 `;
 
-export const GridIcon = styled(Grid3x2GapFill) <IListContainer>`
+export const GridIcon = styled(Grid3x2GapFill)<IListContainer>`
   ${IconCSS}
 
   ${({ listView }) => {
@@ -70,7 +70,7 @@ export const GridIcon = styled(Grid3x2GapFill) <IListContainer>`
   }}
 `;
 
-export const ListIcon = styled(ViewList) <IListContainer>`
+export const ListIcon = styled(ViewList)<IListContainer>`
   ${IconCSS}
 
   ${({ listView }) => {
@@ -108,11 +108,12 @@ interface ICardSale {
   isSelected: boolean;
   isAbstract: boolean;
 }
-export const CardSale = styled(Row) <ICardSale>`
+export const CardSale = styled(Row)<ICardSale>`
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   width: 100%;
   height: 80px;
   background: var(--white);
