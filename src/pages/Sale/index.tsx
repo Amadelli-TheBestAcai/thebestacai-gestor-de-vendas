@@ -22,6 +22,7 @@ import {
   Header,
   SearchContainer,
   Input,
+  Textarea,
   ListSaleContainer,
   Row,
   Col,
@@ -82,9 +83,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-            (total, _payment) => total + _payment.amount,
-            0
-          ),
+              (total, _payment) => total + _payment.amount,
+              0
+            ),
       }));
 
       if (_sales.length) {
@@ -172,7 +173,7 @@ const Sale: React.FC<IProps> = () => {
         type: payment.type,
         flag_card:
           payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
-      }))
+      })),
     };
 
     try {
@@ -189,7 +190,6 @@ const Sale: React.FC<IProps> = () => {
           message: error_message || "Erro ao emitir NFCe",
           duration: 5,
         });
-
       }
       notification.success({
         message: response,
@@ -209,9 +209,11 @@ const Sale: React.FC<IProps> = () => {
     Modal.confirm({
       title: "Deseja prosseguir e cancelar esta nota fiscal?",
       content: (
-        <Input
+        <Textarea
           id="nfceJustifyInput"
-          placeholder="Justificativa"
+          placeholder="Justificativa - 15 a 255 caracteres"
+          minLength={15}
+          maxLength={255}
           style={{ width: "100%" }}
           onChange={({ target: { value } }) =>
             setNfceCancelJustify(value || "")
@@ -221,6 +223,14 @@ const Sale: React.FC<IProps> = () => {
       async onOk() {
         //@ts-ignore
         const justify = document.getElementById("nfceJustifyInput")?.value;
+
+        if (justify.length < 15 || justify.length > 255) {
+          notification.warning({
+            message: "Justificativa deve ter entre 15 e 255 caracteres",
+            duration: 5,
+          });
+          return;
+        }
         const { error_message, has_internal_error: errorOnCancelNfce } =
           await window.Main.sale.cancelNfce(sale.id, justify || "");
         if (errorOnCancelNfce) {
@@ -491,7 +501,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                      +_item.storeProduct.price_unit
+                                        +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>
