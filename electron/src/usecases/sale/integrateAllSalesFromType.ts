@@ -21,26 +21,18 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
   async execute({ type }: Request): Promise<void> {
     const deliverySales = await this.deliverySaleRepository.getAll();
 
-    const deliveryNotToIntegrate = deliverySales.filter(
-      (_deliverySale) => _deliverySale.type !== type
-    );
-
-    await this.deliverySaleRepository.createManyAndReplace(
-      deliveryNotToIntegrate
-    );
-
     const deliveryToIntegrate = deliverySales.filter(
       (_deliverySale) => _deliverySale.type === type
     );
 
     await deliveryToIntegrate.reduce(async (previousPromise, nextProduct) => {
-      await previousPromise
+      await previousPromise;
       return this.integrateSale(nextProduct);
     }, Promise.resolve());
   }
 
   async integrateSale(payload: SaleDto): Promise<void> {
-    const { has_internal_error: errorOnOnlineTntegrate } =
+    const { has_internal_error: errorOnOnlineTntegrate, error_message } =
       await useCaseFactory.execute<void>(this.finishSaleUseCase,
         {
           payload: {
@@ -49,8 +41,9 @@ class IntegrateAllSalesFromType implements IUseCaseFactory {
           }, fromDelivery: true
         });
     if (errorOnOnlineTntegrate) {
-      throw new Error("Erro ao integrar venda online");
+      throw new Error(error_message || "Erro ao integrar venda online");
     }
+    await this.deliverySaleRepository.deleteById(payload.id);
   }
 }
 

@@ -221,57 +221,57 @@ export const CardStatus = styled.div<ICardStatus>`
     padding: 0;
 
     ${({ id_card }) => {
-      if (id_card === 2) {
-        return css`
+    if (id_card === 2) {
+      return css`
           color: var(--green-400);
         `;
-      }
-      if (id_card === 3) {
-        return css`
+    }
+    if (id_card === 3) {
+      return css`
           color: var(--blue-700);
         `;
-      }
-      if (id_card === 5) {
-        return css`
+    }
+    if (id_card === 5) {
+      return css`
           color: var(--red-600);
         `;
-      }
-      if (id_card === 6) {
-        return css`
+    }
+    if (id_card === 6) {
+      return css`
           color: var(--teal-400);
         `;
-      }
-      if (id_card === 7) {
-        return css`
+    }
+    if (id_card === 7) {
+      return css`
           color: var(--orange-400);
         `;
-      }
+    }
 
-      return css`
+    return css`
         color: var(--grey-100);
       `;
-    }}
+  }}
   }
 
   span {
     ${({ id_card, result_cash, amount_open }) => {
-      if (id_card === 8) {
-        if (result_cash > amount_open) {
-          return css`
+    if (id_card === 8) {
+      if (result_cash > amount_open) {
+        return css`
             color: var(--green-200);
           `;
-        }
-        if (result_cash < amount_open) {
-          return css`
+      }
+      if (result_cash < amount_open) {
+        return css`
             color: var(--red-600);
           `;
-        }
       }
+    }
 
-      return css`
+    return css`
         color: var(--grey-100);
       `;
-    }}
+  }}
   }
 
   /*Responsive 1680px*/
@@ -312,8 +312,8 @@ export const CloseCashContatiner = styled.div`
 `;
 
 type IOpenCloseButton = {
-  _type: "open" | "close"
-}
+  _type: "open" | "close";
+};
 
 export const OpenCloseButton = styled.button<IOpenCloseButton>`
   width: 100%;
@@ -326,16 +326,16 @@ export const OpenCloseButton = styled.button<IOpenCloseButton>`
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   
-  ${({_type}) => {
-    if(_type === "open") {
-      return css `
+  ${({ _type }) => {
+    if (_type === "open") {
+      return css`
         background: var(--green-400);
-      `
+      `;
     }
-    if(_type === "close") {
-      return css `
+    if (_type === "close") {
+      return css`
         background: #c53030;
-      `
+      `;
     }
   }}
 
