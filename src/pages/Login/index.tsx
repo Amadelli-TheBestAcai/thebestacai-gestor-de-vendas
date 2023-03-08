@@ -111,6 +111,7 @@ const Login: React.FC<IProps> = ({ history }) => {
         await window.Main.settings.update(settings.id, {
           ...settings,
           rememberd_user: settings.should_remember_user ? user.username : "",
+          should_open_casher: true
         });
       if (errorOnSettings) {
         notification.error({
@@ -125,10 +126,10 @@ const Login: React.FC<IProps> = ({ history }) => {
       if (storeContext) {
         setLoading(false);
         window.Main.message("balance:connect");
-       
+
         await window.Main.product.getProducts();
         await window.Main.product.getAllPurchaseProducts(false);
-       
+
         return history.push("/home");
       } else {
         const { response: stores, has_internal_error: errorOnStore } =

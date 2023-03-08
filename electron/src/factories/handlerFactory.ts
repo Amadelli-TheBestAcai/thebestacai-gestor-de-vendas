@@ -3,7 +3,8 @@ import {
   deleteCashHandlerFromApiService,
   getCashHandlersByStoreCash,
   insertHandler,
-  getLocalCashHandlers
+  getLocalCashHandlers,
+  integrateHandler
 } from "../usecases/handler";
 import { HandlerDto } from "../models/gestor";
 import { CashHandlerDTO } from "../models/dtos";
@@ -18,5 +19,7 @@ export const handlerFactory = {
       id,
     }),
   getLocalCashHandlers: async () =>
-    await useCaseFactory.execute<HandlerDto[]>(getLocalCashHandlers)
+    await useCaseFactory.execute<HandlerDto[]>(getLocalCashHandlers),
+  integrateHandler: async () =>
+    await useCaseFactory.execute<void>(integrateHandler)
 };

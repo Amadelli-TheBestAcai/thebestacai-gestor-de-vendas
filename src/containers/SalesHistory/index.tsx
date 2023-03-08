@@ -12,6 +12,7 @@ import {
   CardSale,
   Col,
 } from "./styles";
+import { Row } from "antd";
 
 interface IProps {
   sales: SaleFromApi[];
@@ -69,12 +70,22 @@ const SalesHistory: React.FC<IProps> = ({
                 isAbstract={sales[index].abstract_sale}
                 onClick={() => setSelectedSale(sale)}
               >
-                <Col sm={24}>
-                  Horário:
-                  <span>
-                    {moment(sale.created_at).add(3, "hours").format("HH:mm:ss")}
-                  </span>
-                </Col>
+                <Row>
+                  <Col sm={24}>
+                    Horário:
+                    <span>
+                      {moment(sale.created_at)
+                        .add(3, "hours")
+                        .format("HH:mm:ss")}
+                    </span>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col sm={24}>
+                    Valor:
+                    <span>R$:{sale.total_sold.toFixed(2)}</span>
+                  </Col>
+                </Row>
               </CardSale>
             ))}
           </>
