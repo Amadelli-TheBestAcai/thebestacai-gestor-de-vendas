@@ -43,6 +43,7 @@ const SalesHistory: React.FC<IProps> = ({
             {(filteredSales || sales).map((sale, index) => (
               <CardSale
                 key={index}
+                style={{ flexDirection: "row" }}
                 isSelected={sales[index] == selectedSale ? true : false}
                 isAbstract={sales[index].abstract_sale}
                 onClick={() => setSelectedSale(sale)}
