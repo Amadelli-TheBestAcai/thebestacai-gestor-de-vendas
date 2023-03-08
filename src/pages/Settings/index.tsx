@@ -68,11 +68,7 @@ const Settings: React.FC = () => {
                   balance_port: "COM" + value.target.value,
                 }))
               }
-              placeholder={
-                settings.balance_port !== ""
-                  ? settings.balance_port
-                  : "Porta da balança"
-              }
+              placeholder={"Porta da balança"}
             />
           </SelectsContainer>
 
