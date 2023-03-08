@@ -9,7 +9,7 @@ import odinApi from "../../providers/odinApi";
 import { getCurrentStoreCash } from "../storeCash";
 import { hasRegistration } from "../store";
 import { StoreCashDto, ItemOutCartDto, StoreDto } from "../../models/gestor";
-import moment from 'moment'
+import moment from 'moment';
 class IntegrationItemOutCart implements IUseCaseFactory {
   constructor(
     private integratedItemOutCartRepository = new BaseRepository<ItemOutCartDto>(
@@ -52,6 +52,11 @@ class IntegrationItemOutCart implements IUseCaseFactory {
     if (items.length) {
       await Promise.all(
         items.map(async (item) => {
+          if (item.cash_code === "OFFLINE" && storeCash.code !== "OFFLINE") {
+            item.cash_code = storeCash.code;
+            await this.notIntegratedItemOutCartRepository.update(item.id, item);
+          }
+
           try {
             await odinApi.post(
               `/items_out_cart/${item.store_id}-${item.cash_code || storeCash.code

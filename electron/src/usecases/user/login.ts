@@ -1,7 +1,7 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { UserDto } from "../../models/gestor";
+import { SettingsDto, UserDto } from "../../models/gestor";
 import { checkInternet } from "../../providers/internetConnection";
 import janusApi from "../../providers/janusApi";
 import criptography from "../../providers/Criptography";
@@ -14,11 +14,12 @@ interface Request {
 
 class Login implements IUseCaseFactory {
   constructor(
-    private userRepository = new BaseRepository<UserDto>(StorageNames.User)
+    private userRepository = new BaseRepository<UserDto>(StorageNames.User),
   ) { }
 
   async execute({ password, username }: Request): Promise<UserDto | undefined> {
     const hasInternet = await checkInternet();
+
     if (hasInternet) {
       const {
         data: { access_token, modules, permissions },
@@ -26,6 +27,7 @@ class Login implements IUseCaseFactory {
       if (!access_token) {
         return undefined;
       }
+
       const hashedPassword = await criptography.hash(password);
       const userPayload = {
         ...jwt_decode<UserDto>(access_token),
@@ -55,8 +57,8 @@ class Login implements IUseCaseFactory {
         await this.userRepository.clear();
         await this.userRepository.createMany([...users, userPayload]);
       }
-
       return userPayload;
+
     } else {
       let users = await this.userRepository.getAll();
       users = users.map((_user) => ({

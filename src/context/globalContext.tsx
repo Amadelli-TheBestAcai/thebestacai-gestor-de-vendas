@@ -230,13 +230,35 @@ export function GlobalProvider({ children }) {
         sale.ref = updatedSale.ref;
       }
 
-      const { has_internal_error: errorOnFinishSAle } =
+      const { has_internal_error: errorOnFinishSAle, error_message } =
         await window.Main.sale.finishSale({
           ...sale,
           formated_type: SalesTypes[sale.type],
         });
+
       if (errorOnFinishSAle) {
-        return notification.error({
+        if (settings.should_open_casher === true && error_message === "Nenhum caixa está disponível para abertura, entre em contato com o suporte") {
+          const { response: _newSettings, has_internal_error: errorOnSettings } =
+            await window.Main.settings.update(settings.id, {
+              ...settings,
+              should_open_casher: false
+            });
+
+          if (errorOnSettings) {
+            notification.error({
+              message: "Erro ao atualizar as configurações",
+              duration: 5,
+            });
+            return;
+          }
+          setSettings(_newSettings);
+        }
+        setSavingSale(false);
+
+        error_message ? notification.warning({
+          message: error_message,
+          duration: 5,
+        }) : notification.error({
           message: "Erro ao finalizar venda",
           duration: 5,
         });
@@ -251,7 +273,6 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
-
       setSale(_newSale);
       setSavingSale(false);
       notification.success({

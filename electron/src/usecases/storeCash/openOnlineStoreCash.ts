@@ -1,27 +1,34 @@
 import { BaseRepository } from "../../repository/baseRepository";
-import database from '../../providers/database'
+import database from '../../providers/database';
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreDto, StoreCashDto } from "../../models/gestor";
+import { StoreDto, StoreCashDto, SettingsDto } from "../../models/gestor";
 
 class OpenOnlineStoreCash implements IUseCaseFactory {
   constructor(
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
+
     ),
-    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
+    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
+    private settingsRepository = new BaseRepository<SettingsDto>(StorageNames.Settings)
   ) { }
 
   async execute(): Promise<StoreCashDto | undefined> {
-    const hasConnection = await checkInternet()
-    if(!hasConnection) {
-      return undefined
+    const hasConnection = await checkInternet();
+    if (!hasConnection) {
+      throw new Error("O sistema está offline");
     }
 
     const storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
     const store = await this.storeRepository.getOne() as StoreDto;
+    const settings = await this.settingsRepository.getOne() as SettingsDto;
+
+    if (settings.should_open_casher === false) {
+      throw new Error("Nenhum caixa está disponível para abertura, entre em contato com o suporte");
+    }
 
     const {
       data: { data },
@@ -33,11 +40,11 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
 
     const cashes: string[] = closed.map((cash) => cash.split("-")[1]);
 
-    if(!cashes.length) {
-      throw new Error("Nenhum caixa disponível para abertura");
+    if (!cashes.length) {
+      throw new Error("Nenhum caixa está disponível para abertura, entre em contato com o suporte");
     }
 
-    const code = cashes[0]
+    const code = cashes[0];
 
     const {
       data: {
@@ -57,6 +64,7 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
     storeCash.is_online = true;
 
     await this.storeCashRepository.update(storeCash.id, storeCash);
+
     return storeCash;
   }
 }

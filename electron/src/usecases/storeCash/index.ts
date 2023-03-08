@@ -5,4 +5,6 @@ export * from "./openStoreCash";
 export * from "./openOnlineStoreCash";
 export * from "./getStoreCashHistory";
 export * from "./getAvailableStoreCashes";
+export * from "./openOnlineStoreCash";
+export * from "./getOldCashHistory";
 export * from "./updateStoreCashObservation";
