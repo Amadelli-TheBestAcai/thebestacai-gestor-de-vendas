@@ -22,6 +22,7 @@ import {
   Header,
   SearchContainer,
   Input,
+  Textarea,
   ListSaleContainer,
   Row,
   Col,
@@ -208,9 +209,11 @@ const Sale: React.FC<IProps> = () => {
     Modal.confirm({
       title: "Deseja prosseguir e cancelar esta nota fiscal?",
       content: (
-        <Input
+        <Textarea
           id="nfceJustifyInput"
-          placeholder="Justificativa"
+          placeholder="Justificativa - 15 a 255 caracteres"
+          minLength={15}
+          maxLength={255}
           style={{ width: "100%" }}
           onChange={({ target: { value } }) =>
             setNfceCancelJustify(value || "")

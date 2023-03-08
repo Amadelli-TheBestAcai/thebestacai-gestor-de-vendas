@@ -1,6 +1,13 @@
 import styled, { css } from "styled-components";
 
-import { Trash, RepeatOutline, Printer, FileInvoice, FileEarmarkPdf, Cancel } from "../../styles/Icons";
+import {
+  Trash,
+  RepeatOutline,
+  Printer,
+  FileInvoice,
+  FileEarmarkPdf,
+  Cancel,
+} from "../../styles/Icons";
 
 import {
   Input as InputAnt,
@@ -11,6 +18,7 @@ import {
   Button,
 } from "antd";
 
+const { TextArea } = InputAnt;
 interface ITabColor {
   tab_id: number;
 }
@@ -70,6 +78,24 @@ export const SearchContainer = styled.div`
 `;
 
 export const Input = styled(InputAnt)`
+  height: 3.7rem;
+  width: 20%;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.4rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+    font-size: 0.7rem;
+  }
+`;
+export const Textarea = styled(TextArea)`
   height: 3.7rem;
   width: 20%;
 
