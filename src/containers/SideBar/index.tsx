@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import LogoImg from "../../assets/img/logo-login.png";
 
-import { Tooltip } from "antd";
+import { Modal, Tooltip } from "antd";
 
 import {
   Container,
@@ -27,10 +27,26 @@ import { useUser } from "../../hooks/useUser";
 type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history }) => {
+  const [visible, setVisible] = useState(false);
   const { hasPermission } = useUser();
 
-  const handleClick = (route: string): void => {
+  const handleClick = (id: number, route: string): void => {
     history.push(route);
+
+    if (id === 10) {
+      Modal.confirm({
+        title: `Logout`,
+        content: `Tem certeza que gostaria de sair`,
+        visible: visible,
+        okText: "Sim",
+        okType: "default",
+        cancelText: "Não",
+        centered: true,
+        async onOk() {
+          history.push("/login");
+        },
+      });
+    }
   };
 
   const tab = () => {
@@ -106,7 +122,6 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       id: 10,
       icon: <LogOutIcon />,
       label: "Sair",
-      router: "/login",
     });
 
     return response;
@@ -125,7 +140,11 @@ const SideBar: React.FC<IProps> = ({ history }) => {
             title={menu.label}
             color={"var(--orange-250)"}
           >
-            <CardIcon onClick={() => handleClick(menu.router)}>
+            <CardIcon
+              onClick={() => {
+                handleClick(menu.id, menu.router);
+              }}
+            >
               {menu.icon}
             </CardIcon>
           </Tooltip>

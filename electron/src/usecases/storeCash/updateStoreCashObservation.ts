@@ -1,15 +1,20 @@
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import odinApi from "../../providers/odinApi";
-import { StoreCashDto } from "../../models/gestor";
+import { OldCashHistoryDto, StoreCashDto } from "../../models/gestor";
 import { getCurrentStoreCash } from "./getCurrentStoreCash";
 import { useCaseFactory } from "../useCaseFactory";
+import { BaseRepository } from "../../repository/baseRepository";
+import { StorageNames } from "../../repository/storageNames";
 
 interface Request {
   observation: string;
 }
 
 class UpdateStoreCashObservation implements IUseCaseFactory {
-  constructor(private getCurrentStoreCashUseCase = getCurrentStoreCash) {}
+  constructor(private getCurrentStoreCashUseCase = getCurrentStoreCash,
+    private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(
+      StorageNames.Old_Cash_History)
+  ) { }
 
   async execute({ observation }: Request): Promise<void> {
     const { response: cashier, has_internal_error: errorOnStoreCash } =
@@ -27,6 +32,8 @@ class UpdateStoreCashObservation implements IUseCaseFactory {
     await odinApi.put(`/cash_history/${cashier?.history_id}`, {
       observation,
     });
+    const oldCashHistory = await this.oldCashHistoryRepository.getOne();
+    await this.oldCashHistoryRepository.update(oldCashHistory?.id, { observation });
   }
 }
 

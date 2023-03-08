@@ -20,9 +20,10 @@ import {
   decressItem,
   emitNfce,
   deleteSaleDelivery,
-  cancelNfce
+  cancelNfce,
+  onlineIntegration
 } from "../usecases/sale";
-import '../usecases/sale/onlineIntegration'
+
 import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
 
@@ -73,7 +74,7 @@ export const saleFactory = {
     }),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
-  deleteSaleFromApi: async (params: { id: number, cash_history: number, gv_id: number }) => {
+  deleteSaleFromApi: async (params: { id: number, cash_history: number, gv_id: number; }) => {
     try {
       await useCaseFactory.execute<void>(deleteSaleFromApi, params);
       return true;
@@ -99,4 +100,6 @@ export const saleFactory = {
         justify,
       }
     ),
+  onlineIntegration: async () =>
+    await useCaseFactory.execute<void>(onlineIntegration)
 };
