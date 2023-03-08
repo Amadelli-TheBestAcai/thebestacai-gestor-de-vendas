@@ -69,7 +69,7 @@ const Settings: React.FC = () => {
               onChange={(value) =>
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  balance_port: "COM" + value.target.value,
+                  balance_port: "COM" + parseInt(value.target.value),
                 }))
               }
               placeholder={"Porta da balança"}
