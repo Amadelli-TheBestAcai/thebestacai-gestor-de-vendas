@@ -101,12 +101,13 @@ export const StatusCash = styled.div`
   flex-direction: column;
   align-items: end;
   height: 100%;
-  width: 15%;
+  width: 70%;
+  margin: 0 10px;
 
   span {
     margin-top: 4px;
     font-weight: normal;
-    font-size: 0.9em;
+    font-size: 0.7em;
     color: #707171;
     text-transform: uppercase;
   }
@@ -124,10 +125,18 @@ export const StatusCash = styled.div`
   }
 `;
 
+export const StatusWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  height: 100%;
+`;
+
 export const Status = styled.div`
   display: flex;
   width: 100%;
-  height: 85%;
+  height: 100%;
 `;
 
 export const Left = styled.label`
@@ -212,57 +221,57 @@ export const CardStatus = styled.div<ICardStatus>`
     padding: 0;
 
     ${({ id_card }) => {
-      if (id_card === 2) {
-        return css`
+    if (id_card === 2) {
+      return css`
           color: var(--green-400);
         `;
-      }
-      if (id_card === 3) {
-        return css`
+    }
+    if (id_card === 3) {
+      return css`
           color: var(--blue-700);
         `;
-      }
-      if (id_card === 5) {
-        return css`
+    }
+    if (id_card === 5) {
+      return css`
           color: var(--red-600);
         `;
-      }
-      if (id_card === 6) {
-        return css`
+    }
+    if (id_card === 6) {
+      return css`
           color: var(--teal-400);
         `;
-      }
-      if (id_card === 7) {
-        return css`
+    }
+    if (id_card === 7) {
+      return css`
           color: var(--orange-400);
         `;
-      }
+    }
 
-      return css`
+    return css`
         color: var(--grey-100);
       `;
-    }}
+  }}
   }
 
   span {
     ${({ id_card, result_cash, amount_open }) => {
-      if (id_card === 8) {
-        if (result_cash > amount_open) {
-          return css`
+    if (id_card === 8) {
+      if (result_cash > amount_open) {
+        return css`
             color: var(--green-200);
           `;
-        }
-        if (result_cash < amount_open) {
-          return css`
+      }
+      if (result_cash < amount_open) {
+        return css`
             color: var(--red-600);
           `;
-        }
       }
+    }
 
-      return css`
+    return css`
         color: var(--grey-100);
       `;
-    }}
+  }}
   }
 
   /*Responsive 1680px*/
@@ -296,23 +305,39 @@ export const CardStatus = styled.div<ICardStatus>`
 
 export const CloseCashContatiner = styled.div`
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: flex-end;
-  width: 100%;
-  height: 10%;
+  width: 30%;
+  height: 100%;
 `;
 
-export const CloseButton = styled.button`
-  width: 25%;
-  height: 75%;
-  background: #c53030;
+type IOpenCloseButton = {
+  _type: "open" | "close";
+};
+
+export const OpenCloseButton = styled.button<IOpenCloseButton>`
+  width: 100%;
+  height: 70%;
   color: white;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
   font-weight: 500;
   border-radius: 4px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  
+  ${({ _type }) => {
+    if (_type === "open") {
+      return css`
+        background: var(--green-400);
+      `;
+    }
+    if (_type === "close") {
+      return css`
+        background: #c53030;
+      `;
+    }
+  }}
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {

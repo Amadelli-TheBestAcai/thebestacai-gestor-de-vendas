@@ -1,12 +1,13 @@
 {
   "name": "gestor-de-vendas",
-  "version": "7.5.0",
+  "version": "8.0.0",
   "author": "Amabest",
   "homepage": "./",
   "description": "Gestor de Vendas",
   "license": "MIT",
   "main": "build/electron/main.js",
   "dependencies": {
+    "@azure/identity": "^3.1.2",
     "antd": "^4.17.3",
     "applicationinsights": "^2.3.3",
     "axios": "^0.24.0",
@@ -36,7 +37,8 @@
     "styled-components": "^5.3.3",
     "styled-icons": "^10.45.0",
     "use-context-selector": "^1.3.9",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zip-folder": "^1.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -47,6 +49,7 @@
     "dev:react": "cross-env BROWSER=none yarn start",
     "dev:electron": "tsc -p electron && electron .",
     "electron:build": "yarn build && tsc -p electron && electron-builder build --win --publish always",
+    "electron:build:never": "yarn build && tsc -p electron && electron-builder build --win --publish never",
     "eject": "react-scripts eject"
   },
   "build": {
@@ -73,6 +76,7 @@
     }
   },
   "devDependencies": {
+    "@azure/storage-blob": "^12.12.0",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.2",
     "@types/moment": "^2.13.0",

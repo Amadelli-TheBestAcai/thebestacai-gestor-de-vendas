@@ -8,11 +8,14 @@ import {
   getAvailableStoreCashes,
   getStoreCashHistory,
   updateStoreCashObservation,
+  openOnlineStoreCash,
+  getOldCashHistory
 } from "../usecases/storeCash";
 import {
   BalanceDto,
   StoreCashDto,
   AvailableStoreCashesDto,
+  OldCashHistoryDto,
 } from "../models/gestor";
 
 export const storeCashFactory = {
@@ -20,11 +23,18 @@ export const storeCashFactory = {
     await useCaseFactory.execute<AvailableStoreCashesDto[]>(
       getAvailableStoreCashes
     ),
+  openOnlineStoreCash: async () =>
+    await useCaseFactory.execute<StoreCashDto | undefined>(
+      openOnlineStoreCash
+    ),
+  getOldCashHistory: async () =>
+    await useCaseFactory.execute<OldCashHistoryDto | null>(
+      getOldCashHistory
+    ),
   getCurrent: async () =>
     await useCaseFactory.execute<StoreCashDto>(getCurrentStoreCash),
-  openStoreCash: async (code: string, amount_on_open: number) =>
+  openStoreCash: async (amount_on_open: number) =>
     await useCaseFactory.execute<StoreCashDto>(openStoreCash, {
-      code,
       amount_on_open,
     }),
   closeStoreCash: async (code: string, amount_on_close: number) =>

@@ -35,20 +35,20 @@ class FinishSale implements IUseCaseFactory {
       await this.saleRepository.deleteById(payload.id);
     }
 
-    payload.abstract_sale = false
+    payload.abstract_sale = false;
 
     const storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
-    const newGvId = (storeCash?.gv_sales || 0) + 1
+    const newGvId = (storeCash?.gv_sales || 0) + 1;
     storeCash.gv_sales = newGvId;
 
     await this.storeCashRepository.update(storeCash.id, storeCash);
     await this.notIntegratedSaleRepository.create({ ...payload, gv_id: newGvId });
 
-    const { has_internal_error: errorOnOnlineTntegrate, response } =
+    const { has_internal_error: errorOnOnlineTntegrate, response, error_message } =
       await useCaseFactory.execute<void>(this.onlineIntegrationUseCase);
 
     if (errorOnOnlineTntegrate) {
-      throw new Error("Erro ao integrar venda online");
+      throw new Error(error_message || "Erro ao integrar venda online");
     } else {
       return response;
     }

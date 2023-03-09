@@ -4,7 +4,6 @@ import { currencyFormater } from "../../helpers/currencyFormater";
 import moment from "moment";
 
 import AmountModal from "../../components/AmountModal";
-import Cash from "../../components/StoreCash";
 import Spinner from "../../components/Spinner";
 
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
@@ -16,7 +15,6 @@ import {
   Container,
   PageContent,
   Header,
-  CashContainer,
   CashStatusContainer,
   HeaderStatus,
   StatusCash,
@@ -26,15 +24,17 @@ import {
   ContentStatusCash,
   CardStatus,
   CloseCashContatiner,
-  CloseButton,
+  OpenCloseButton,
   Input,
   Footer,
   ButtonCancel,
   ButtonSave,
+  StatusWrapper
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
+import { useSettings } from "../../hooks/useSettings";
 
-interface IProp extends RouteComponentProps {}
+interface IProp extends RouteComponentProps { }
 
 moment.locale("pt-br");
 moment.updateLocale("pt", {
@@ -59,41 +59,53 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [storeCashHistory, setStoreCashHistory] =
     useState<StoreCashHistoryDTO | null>(null);
   const [amountModal, setAmountModal] = useState<boolean>(false);
-  const [isConnected, setIsConnected] = useState<boolean>(true);
   const [balance, setBalance] = useState<BalanceModel>();
-  const [cashes, setCashes] = useState<
-    { store_cash: string; available: boolean }[]
-  >([]);
   const [loading, setLoading] = useState(true);
-  const [storeCashToOpen, setStoreCashToOpen] = useState<string>();
+  const [openingOnlineStoreCash, setOpeningOnlineStoreCash] = useState(false);
 
   const [modalJustify, setModalJustify] = useState(false);
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
+  const { settings, setSettings } = useSettings();
 
   useEffect(() => {
     async function init() {
-      const isConnected = await window.Main.hasInternet();
       const {
-        response: availableStoreCashes,
-        has_internal_error: errorOnStoreCashes,
-      } = await window.Main.storeCash.getAvailableStoreCashes();
-      if (errorOnStoreCashes) {
+        response: _currentStoreCash,
+        has_internal_error: errorOnGetCurrentStoreCash,
+      } = await window.Main.storeCash.getCurrent();
+      if (errorOnGetCurrentStoreCash) {
         notification.error({
-          message: "Erro ao encontrar caixas disponíveis",
+          message: "Erro ao encontrar caixa atual",
           duration: 5,
         });
         return;
       }
-      const {
-        response: _storeCashHistory,
-        has_internal_error: errorOnGetCashHistory,
-      } = await window.Main.storeCash.getStoreCashHistory();
-      if (errorOnGetCashHistory) {
-        notification.error({
-          message: "Erro ao obter Histórico do caixa",
-          duration: 5,
-        });
+      console.log({ _currentStoreCash });
+
+      if (!_currentStoreCash?.is_opened) {
+        const {
+          response: _storeCashHistory,
+          has_internal_error: errorOnGetCashHistory,
+        } = await window.Main.storeCash.getOldCashHistory();
+        if (errorOnGetCashHistory) {
+          notification.error({
+            message: "Erro ao obter Histórico do caixa",
+            duration: 5,
+          });
+        }
+
+        setStoreCashHistory(_storeCashHistory);
+
+        if (
+          _storeCashHistory !== undefined &&
+          +_storeCashHistory.result_cash !== 0 &&
+          !_storeCashHistory?.observation &&
+          _storeCashHistory.closed_at !== null
+        ) {
+          setModalJustify(true);
+        }
+
       }
 
       const { response: _balance, has_internal_error: errorOnBalance } =
@@ -106,32 +118,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       }
 
       setBalance(_balance);
-      setStoreCashHistory(_storeCashHistory);
-      setCashes(availableStoreCashes);
-      setIsConnected(isConnected);
+      setStoreCash(_currentStoreCash);
       setLoading(false);
-      if (
-        _storeCashHistory !== undefined &&
-        +_storeCashHistory.result_cash !== 0 &&
-        !_storeCashHistory?.observation &&
-        _storeCashHistory.closed_at !== null
-      ) {
-        setModalJustify(true);
-      }
-      if (storeCash?.is_opened && !storeCash?.is_online && isConnected) {
-        Modal.confirm({
-          title: "Conexão disponível para sincronizar caixa offline",
-          content:
-            "Selecione um dos caixas disponíveis para sincronizar caixa offline ao servidor",
-          okText: "ok",
-          okType: "default",
-          cancelText: "Não",
-          cancelButtonProps: {
-            hidden: true,
-          },
-          centered: true,
-        });
-      }
     }
     init();
   }, []);
@@ -223,39 +211,103 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     setModalJustify(false);
   };
 
-  const connectOfflineStoreCash = async (cashCode: string) => {
-    Modal.confirm({
-      title: "Conectando caixa offline ao servidor",
-      content: `O caixa ${cashCode} será aberto com o valor ${storeCash.amount_on_open.toFixed(
-        2
-      )}`,
-      okText: "Sim",
-      okType: "default",
-      cancelText: "Não",
-      centered: true,
-      async onOk() {
-        setLoading(true);
-        const { response: _storeCash, has_internal_error: errorOnStoreCash } =
-          await window.Main.storeCash.openStoreCash(
-            cashCode,
-            +storeCash.amount_on_open
-          );
-        if (errorOnStoreCash) {
-          notification.error({
-            message: "Erro ao abrir o caixa",
-            duration: 5,
-          });
-          return;
-        }
-        setStoreCash(_storeCash);
-        notification.success({
-          message: `Caixa offline conectado ao servidor no caixa ${cashCode} com sucesso`,
+  const openOnlineStoreCash = async (code?: string) => {
+    if (openingOnlineStoreCash && code !== 'OFFLINE') {
+      return notification.warning({
+        message: "Aguarde que estamos abrindo um caixa pra você",
+        duration: 5
+      });
+    }
+
+    setOpeningOnlineStoreCash(true);
+
+    if (settings.should_open_casher === false) {
+      const { response: updatedSettings, has_internal_error: errorOnSettings } =
+        await window.Main.settings.update(settings.id, {
+          ...settings,
+          should_open_casher: true
+        });
+
+      if (errorOnSettings) {
+        return notification.error({
+          message: "Erro ao atualizar as configurações",
           duration: 5,
         });
-        setLoading(false);
-        return history.push("/home");
-      },
+      }
+
+      setSettings(updatedSettings);
+    }
+
+    const { has_internal_error, error_message, response } =
+      await window.Main.storeCash.openOnlineStoreCash();
+    
+    if (has_internal_error) {
+      if (error_message === "O sistema está offline") {
+        return notification.warning({
+          message: "Não é possivel abrir um caixa online, pois o sistema está offline",
+          duration: 5,
+        });
+      }
+
+      error_message ? notification.warning({
+        message: error_message,
+        duration: 5,
+      }) : notification.error({
+        message: "Erro ao finalizar venda",
+        duration: 5,
+      });
+
+      setOpeningOnlineStoreCash(false);
+
+      return;
+    }
+    setStoreCash(response);
+
+    notification.success({
+      message: "Caixa online aberto com sucesso",
+      duration: 5,
     });
+
+    setOpeningOnlineStoreCash(false);
+
+    const { has_internal_error: internalErrorOnOnlineIntegrate, error_message: errorMessageOnOnlineTntegrate } =
+      await window.Main.sale.onlineIntegration();
+
+    if (internalErrorOnOnlineIntegrate) {
+      errorMessageOnOnlineTntegrate ? notification.warning({
+        message: errorMessageOnOnlineTntegrate,
+        duration: 5,
+      }) : notification.error({
+        message: errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
+        duration: 5,
+      });
+    }
+
+    const { has_internal_error: errorOnIntegrateHandler, error_message: errorMessageOnIntegrateHandler } =
+      await window.Main.handler.integrateHandler();
+
+    if (errorOnIntegrateHandler) {
+      errorMessageOnIntegrateHandler ? notification.warning({
+        message: errorMessageOnIntegrateHandler,
+        duration: 5,
+      }) : notification.error({
+        message: errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
+        duration: 5,
+      });
+    }
+
+    const { has_internal_error: errorOnIntegrateItemOutCart, error_message: errorMessageOnIntegrateItemOutCart } =
+      await window.Main.itemOutCart.integrationItemOutCart();
+
+    if (errorOnIntegrateItemOutCart) {
+      errorMessageOnIntegrateItemOutCart ? notification.warning({
+        message: errorMessageOnIntegrateItemOutCart,
+        duration: 5,
+      }) : notification.error({
+        message: errorMessageOnIntegrateItemOutCart || "Erro ao integrar itens fora do carrinho",
+        duration: 5,
+      });
+    }
   };
 
   return (
@@ -268,47 +320,34 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
           <Spinner />
         ) : (
           <>
-            {(!storeCash?.is_opened ||
-              (storeCash?.is_opened &&
-                !storeCash?.is_online &&
-                isConnected)) && (
-              <CashContainer>
-                {cashes.map((cash) => (
-                  <Cash
-                    key={cash.store_cash}
-                    cash={cash}
-                    handleCash={(_storeCash) => {
-                      if (storeCash?.is_opened && !storeCash?.is_online) {
-                        connectOfflineStoreCash(_storeCash);
-                      } else {
-                        setStoreCashToOpen(_storeCash);
-                        setAmountModal(true);
-                      }
-                    }}
-                  />
-                ))}
-              </CashContainer>
-            )}
-
             <CashStatusContainer>
               <HeaderStatus>
                 <h2>Status do Caixa</h2>
-                <StatusCash>
-                  <Status>
-                    <Left>Caixa {storeCash?.code}</Left>
-                    <Right is_opened={storeCash?.is_opened}>
-                      {storeCash?.is_opened ? "Aberto" : "Fechado"}
-                    </Right>
-                  </Status>
-                  {!storeCash?.is_opened && storeCash?.created_at && (
-                    <span>
-                      {moment(
-                        storeCash?.created_at,
-                        "yyyy-MM-DDHH:mm:ss"
-                      ).format("DD [de] MMMM [de] YYYY  HH:mm")}
-                    </span>
-                  )}
-                </StatusCash>
+                <StatusWrapper>
+                  <StatusCash>
+                    <Status>
+                      <Left>Caixa {storeCash?.code}</Left>
+                      <Right is_opened={storeCash?.is_opened}>
+                        {storeCash?.is_opened ? "Aberto" : "Fechado"}
+                      </Right>
+                    </Status>
+                    {!storeCash?.is_opened && storeCash?.created_at && (
+                      <span>
+                        {moment(
+                          storeCash?.created_at,
+                          "yyyy-MM-DDHH:mm:ss"
+                        ).format("DD [de] MMMM [de] YYYY  HH:mm")}
+                      </span>
+                    )}
+                  </StatusCash>
+                  <CloseCashContatiner>
+                    <OpenCloseButton onClick={() => storeCash?.is_opened && !storeCash?.is_online ? openOnlineStoreCash(storeCash?.code)
+                      : setAmountModal(true)} _type={storeCash?.is_opened && storeCash?.is_online ? "close" : "open"}>
+                      {storeCash?.is_opened && storeCash?.is_online ? "Fechar Caixa"
+                        : storeCash?.is_opened && !storeCash?.is_online ? "Abrir caixa online" : "Abrir Caixa"}
+                    </OpenCloseButton>
+                  </CloseCashContatiner>
+                </StatusWrapper>
               </HeaderStatus>
 
               <ContentStatusCash>
@@ -326,14 +365,6 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   )
                 )}
               </ContentStatusCash>
-
-              {storeCash?.is_opened && (
-                <CloseCashContatiner>
-                  <CloseButton onClick={() => setAmountModal(true)}>
-                    Fechar Caixa
-                  </CloseButton>
-                </CloseCashContatiner>
-              )}
             </CashStatusContainer>
           </>
         )}
@@ -341,7 +372,6 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       <AmountModal
         visible={amountModal}
         setVisible={setAmountModal}
-        storeCashToOpen={storeCashToOpen}
       />
       <Modal
         title={`Caixa anterior fechado com um valor incorreto. [${currencyFormater(

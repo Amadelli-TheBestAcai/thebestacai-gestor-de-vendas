@@ -181,13 +181,84 @@ export function GlobalProvider({ children }) {
       sale.change_amount = sale.total_paid - sale.total_sold;
 
       setSavingSale(true);
-      const { has_internal_error: errorOnFinishSAle } =
+
+      if (settings.should_emit_nfce_per_sale) {
+        const total = sale.items.reduce(
+          (total, item) => +item.total + total,
+          0
+        );
+        const nfePayload = {
+          discount: +sale.discount,
+          change_amount: +sale.change_amount,
+          total: total,
+          store_id: +store.company_id,
+          items: sale.items.map((item) => ({
+            product_store_id: +item.store_product_id,
+            price_sell: +item.total,
+            quantity: +item.quantity,
+          })),
+          payments: sale.payments.map((payment) => ({
+            amount: +payment.amount,
+            type: +payment.type,
+            flag_card: +payment.flag_card,
+          }))
+        };
+
+        const {
+          response,
+          has_internal_error: errorOnEmitNfce,
+          error_message,
+        } = await window.Main.sale.emitNfce(nfePayload, sale.id, true);
+
+        if (errorOnEmitNfce) {
+          notification.error({
+            message: error_message || "Erro ao emitir NFCe",
+            duration: 5,
+          });
+        }
+
+        const successOnSefaz = response === "Autorizado o uso da NF-e";
+        notification[successOnSefaz ? "success" : "warning"]({
+          message: response,
+          duration: 5,
+        });
+
+        const { response: updatedSale } =
+          await window.Main.sale.getCurrentSale();
+        sale.nfce_focus_id = updatedSale.nfce_focus_id;
+        sale.nfce_url = updatedSale.nfce_url;
+        sale.ref = updatedSale.ref;
+      }
+
+      const { has_internal_error: errorOnFinishSAle, error_message } =
         await window.Main.sale.finishSale({
           ...sale,
           formated_type: SalesTypes[sale.type],
         });
+
       if (errorOnFinishSAle) {
-        return notification.error({
+        if (settings.should_open_casher === true && error_message === "Nenhum caixa está disponível para abertura, entre em contato com o suporte") {
+          const { response: _newSettings, has_internal_error: errorOnSettings } =
+            await window.Main.settings.update(settings.id, {
+              ...settings,
+              should_open_casher: false
+            });
+
+          if (errorOnSettings) {
+            notification.error({
+              message: "Erro ao atualizar as configurações",
+              duration: 5,
+            });
+            return;
+          }
+          setSettings(_newSettings);
+        }
+        setSavingSale(false);
+
+        error_message ? notification.warning({
+          message: error_message,
+          duration: 5,
+        }) : notification.error({
           message: "Erro ao finalizar venda",
           duration: 5,
         });
@@ -202,7 +273,6 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
-
       setSale(_newSale);
       setSavingSale(false);
       notification.success({

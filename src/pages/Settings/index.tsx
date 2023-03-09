@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CardSettings from "../../components/CardSettings";
-
 import { Modal, notification } from "antd";
 import {
   Container,
@@ -14,6 +13,7 @@ import {
   Select,
   SelectsContainer,
   Switch,
+  InputPortCOM,
 } from "./styles";
 
 import { useSettings } from "../../hooks/useSettings";
@@ -21,8 +21,6 @@ import { useSettings } from "../../hooks/useSettings";
 const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { settings, setSettings } = useSettings();
-
-  const ports = ["COM1", "COM2", "COM3", "COM4", "COM5"];
 
   const handleSave = () => {
     Modal.confirm({
@@ -52,6 +50,7 @@ const Settings: React.FC = () => {
       },
     });
   };
+
   return (
     <Container>
       <PageContent>
@@ -60,21 +59,21 @@ const Settings: React.FC = () => {
         </Header>
         <CardSettings title="Integração de Balança">
           <SelectsContainer>
-            <Select
+            <InputPortCOM
               disabled={!settings.should_use_balance}
-              placeholder="Porta da balança"
-              value={settings.balance_port}
-              onChange={(balance_port) =>
+              defaultValue={settings.balance_port.replace(/\D/g, "")}
+              type="number"
+              prefix={"COM"}
+              min={0}
+              max={99}
+              onChange={(value) =>
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  balance_port: balance_port.toString(),
+                  balance_port: "COM" + parseInt(value.target.value),
                 }))
               }
-            >
-              {ports.map((port) => (
-                <Option key={port}>{port}</Option>
-              ))}
-            </Select>
+              placeholder={"Porta da balança"}
+            />
           </SelectsContainer>
 
           <ActionContainer>
@@ -123,6 +122,30 @@ const Settings: React.FC = () => {
             />
             <span>
               {!settings.should_use_printer ? "DESABILITADO" : "HABILITADO"}
+            </span>
+          </ActionContainer>
+        </CardSettings>
+
+        <CardSettings title="Emissão de nfce por venda">
+          <span style={{ padding: "2%" }}>
+            Ao habilitar, a cada venda feita sera feito uma tentativa de emissão
+            de nota fiscal.
+          </span>
+          <ActionContainer>
+            <Switch
+              checked={settings.should_emit_nfce_per_sale}
+              onChange={() =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  should_emit_nfce_per_sale:
+                    !settings.should_emit_nfce_per_sale,
+                }))
+              }
+            />
+            <span>
+              {!settings.should_emit_nfce_per_sale
+                ? "DESABILITADO"
+                : "HABILITADO"}
             </span>
           </ActionContainer>
         </CardSettings>

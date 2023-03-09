@@ -5,6 +5,7 @@ export enum StorageNames {
   Not_Integrated_ItemOutCart = "Not_Integrated_ItemOutCart",
   Integrated_ItemOutCart = "Integrated_ItemOutCart",
   Product = "Product",
+  Purchase_Product = "Purchase_Product",
   Sale = "Sale",
   Not_Integrated_Sale = "Not_Integrated_Sale",
   Integrated_Sale = "Integrated_Sale",
@@ -16,4 +17,5 @@ export enum StorageNames {
   User = "User",
   Errors = "Errors",
   Apm_Temp = "Apm_Temp",
+  Old_Cash_History = "Old_Cash_History"
 }

@@ -6,6 +6,8 @@ import { checkInternet } from "../../providers/internetConnection";
 import midasApi from "../../providers/midasApi";
 import { SaleDto, StoreCashDto } from "../../models/gestor";
 import { salesFormaterToIntegrate } from "../../helpers/salesFormaterToIntegrate";
+import { openOnlineStoreCash } from "../storeCash";
+import { useCaseFactory } from "../useCaseFactory";
 
 class OnlineIntegration implements IUseCaseFactory {
   constructor(
@@ -17,7 +19,8 @@ class OnlineIntegration implements IUseCaseFactory {
     ),
     private integrateSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Integrated_Sale
-    )
+    ),
+    private openOnlineStoreCashUseCase = openOnlineStoreCash
   ) {
     cron.schedule("*/5 * * * *", async () => {
       // await this.execute()
@@ -28,23 +31,31 @@ class OnlineIntegration implements IUseCaseFactory {
   async execute(): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
-      return;
+      throw new Error("O sistema está offline");
     }
-    const storeCash = await this.storeCashRepository.getOne()
 
-    if (!storeCash?.is_opened || !storeCash?.is_online) {
-      return;
+    let storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
+
+    const isOpeningOfflineStoreCash = storeCash?.is_opened && !storeCash?.is_online;
+
+    if (isOpeningOfflineStoreCash) {
+      const { response: openedOnlineStoreCash, has_internal_error: errorOnOpenOnlineStoreCash, error_message } =
+        await useCaseFactory.execute<StoreCashDto>(this.openOnlineStoreCashUseCase);
+
+      if (errorOnOpenOnlineStoreCash) {
+        throw new Error(error_message || "Falha ao abrir caixa online");
+      }
+      storeCash = openedOnlineStoreCash as StoreCashDto;
     }
 
     try {
       const sales: SaleDto[] = await this.notIntegratedSaleRepository.getAll();
-
       if (sales.length) {
         await Promise.all(
           sales.map(async salePayload => {
             try {
               const payload = salesFormaterToIntegrate(salePayload, storeCash);
-              await midasApi.post("/sales", payload)
+              await midasApi.post("/sales", payload);
               await this.notIntegratedSaleRepository.deleteById(salePayload.id);
               await this.integrateSaleRepository.create({
                 ...salePayload,
@@ -52,10 +63,10 @@ class OnlineIntegration implements IUseCaseFactory {
                 cash_id: salePayload.cash_id || storeCash.cash_id
               });
             } catch (error) {
-              console.log(error)
+              console.log(error);
             }
           })
-        )
+        );
       }
     } catch (error) {
       console.log(error);

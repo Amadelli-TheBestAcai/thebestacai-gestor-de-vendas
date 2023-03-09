@@ -22,6 +22,7 @@ import {
   Header,
   SearchContainer,
   Input,
+  Textarea,
   ListSaleContainer,
   Row,
   Col,
@@ -45,6 +46,7 @@ import {
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
+import { v4 } from "uuid";
 
 type IProps = RouteComponentProps;
 
@@ -108,7 +110,6 @@ const Sale: React.FC<IProps> = () => {
       async onOk() {
         try {
           setIsLoading(true);
-
           const success = await window.Main.sale.deleteSaleFromApi(params);
           if (!success) {
             return notification.error({
@@ -179,21 +180,17 @@ const Sale: React.FC<IProps> = () => {
       setEmitingNfe(true);
       setIsLoading(true);
 
-      console.log(JSON.stringify(nfcePayload));
-
       const {
         response,
         has_internal_error: errorOnEmitNfce,
         error_message,
       } = await window.Main.sale.emitNfce(nfcePayload, selectedSale.id);
-
       if (errorOnEmitNfce) {
         return notification.error({
           message: error_message || "Erro ao emitir NFCe",
           duration: 5,
         });
       }
-
       notification.success({
         message: response,
         duration: 5,
@@ -212,9 +209,11 @@ const Sale: React.FC<IProps> = () => {
     Modal.confirm({
       title: "Deseja prosseguir e cancelar esta nota fiscal?",
       content: (
-        <Input
+        <Textarea
           id="nfceJustifyInput"
-          placeholder="Justificativa"
+          placeholder="Justificativa - 15 a 255 caracteres"
+          minLength={15}
+          maxLength={255}
           style={{ width: "100%" }}
           onChange={({ target: { value } }) =>
             setNfceCancelJustify(value || "")
@@ -224,6 +223,14 @@ const Sale: React.FC<IProps> = () => {
       async onOk() {
         //@ts-ignore
         const justify = document.getElementById("nfceJustifyInput")?.value;
+
+        if (justify.length < 15 || justify.length > 255) {
+          notification.warning({
+            message: "Justificativa deve ter entre 15 e 255 caracteres",
+            duration: 5,
+          });
+          return;
+        }
         const { error_message, has_internal_error: errorOnCancelNfce } =
           await window.Main.sale.cancelNfce(sale.id, justify || "");
         if (errorOnCancelNfce) {
@@ -401,9 +408,9 @@ const Sale: React.FC<IProps> = () => {
                             </Col>
                             <Col sm={2}>{selectedSale.quantity}</Col>
                             <Col sm={4}>
-                              {moment(selectedSale.created_at)
-                                .add(3, "hours")
-                                .format("HH:mm:ss")}
+                              {moment(selectedSale.created_at).format(
+                                "HH:mm:ss"
+                              )}
                             </Col>
                             <Col sm={3}>{SalesTypes[selectedSale.type]}</Col>
                             {selectedSale.nfce ? (
@@ -432,14 +439,14 @@ const Sale: React.FC<IProps> = () => {
                                 !selectedSale.deleted_at && (
                                   <Tooltip title="Remover" placement="bottom">
                                     <RemoveIcon
-                                      onClick={() =>
+                                      onClick={() => {
                                         onDelete({
                                           id: selectedSale.id,
                                           cash_history_id:
                                             selectedSale.cash_history_id,
                                           gv_id: selectedSale.gv_id,
-                                        })
-                                      }
+                                        });
+                                      }}
                                     />
                                   </Tooltip>
                                 )}

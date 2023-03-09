@@ -1,7 +1,7 @@
-name: CD
+name: CI
 on:
   push:
-    branches: [main]
+    branches: [homolog]
 jobs:
   build_on_win:
     runs-on: windows-2019
@@ -9,7 +9,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: create env-config
         run: |
-          echo '{"API_DASH":"${{ secrets.API_DASH }}","API_TOKEN":"${{ secrets.API_TOKEN }}","NFCe_Token":"${{ secrets.NFCE_Token }}","NFCe_AMBIENTE":"${{ secrets.NFCE_AMBIENTE }}","API_LOG":"${{ secrets.API_LOG }}","API_AUTH":"${{ secrets.API_AUTH }}","CHAT_DASH":"${{ secrets.CHAT_DASH }}","API_SALES_HANDLER":"${{ secrets.API_SALES_HANDLER }}","ELASTIC_SHOULD_LOG":"${{ secrets.ELASTIC_SHOULD_LOG }}","ELASTIC_ID":"${{ secrets.ELASTIC_ID }}","ELASTIC_USER":"${{ secrets.ELASTIC_USER }}","API_MERCURY":"${{ secrets.API_MERCURY }}", "ELASTIC_PASS":"${{ secrets.ELASTIC_PASS }}"}' > electron/src/providers/env.json
+          echo '{"API_DASH":"${{ secrets.HML_API_DASH }}","API_LOG":"${{ secrets.HML_API_LOG }}","API_TOKEN":"${{ secrets.HML_API_TOKEN }}","API_AUTH":"${{ secrets.HML_API_AUTH }}","CHAT_DASH":"${{ secrets.HML_CHAT_DASH }}","API_SALES_HANDLER":"${{ secrets.HML_API_SALES_HANDLER }}","API_MERCURY":"${{ secrets.HML_API_MERCURY }}"}' > electron/src/providers/env.json
+          echo '{"AZURE_BUCKET":"${{ secrets.AZURE_BUCKET }}","AZURE_CONNECTION":"${{ secrets.AZURE_CONNECTION }}"}' > azure-credentials.json
           echo SKIP_PREFLIGHT_CHECK=true > .env
       - uses: actions/setup-node@master
         with:
@@ -31,6 +32,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NODE_OPTIONS: "--max_old_space_size=4096"
-        run: yarn electron:build
+        run: yarn electron:build:never
+      - name: Push to Azure
+        run: node pushToAzure.js
       - name: Update version
         run: node updateManagerVersion.js

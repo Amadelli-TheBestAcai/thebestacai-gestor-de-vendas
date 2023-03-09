@@ -1,5 +1,5 @@
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { insertItemOutCart } from "../usecases/itemOutCart";
+import { insertItemOutCart, integrationItemOutCart } from "../usecases/itemOutCart";
 import { ItemOutCartDto } from "../models/gestor";
 
 export const itemOutCartFactory = {
@@ -8,4 +8,6 @@ export const itemOutCartFactory = {
       insertItemOutCart,
       { reason, product_id }
     ),
+  integrationItemOutCart: async () =>
+    await useCaseFactory.execute<void>(integrationItemOutCart)
 };

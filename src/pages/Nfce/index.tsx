@@ -62,9 +62,11 @@ import {
 } from "./styles";
 import { FlagCard } from "../../models/enums/flagCard";
 import { useStore } from "../../hooks/useStore";
+import { SaleDto } from "../../models/dtos/sale";
 
 const Nfce: React.FC = () => {
   const [cashIsOpen, setCashIsOpen] = useState<boolean>(false);
+  const [saleRef, setSaleRef] = useState<SaleDto[]>([]);
   const [selfServiceAmount, setSelfServiceAmount] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -221,9 +223,6 @@ const Nfce: React.FC = () => {
 
     try {
       setIsLoading(true);
-
-      console.log({ nfce_payload: JSON.stringify(nfcePayload) });
-
       const {
         response,
         has_internal_error: errorOnEmitNfce,

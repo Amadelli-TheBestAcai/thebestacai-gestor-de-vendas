@@ -75,7 +75,7 @@ export interface SaleFromApi {
     };
     update_stock: boolean;
   }[];
-  payments: { amount: number; type: number; flag_card?: number }[];
+  payments: { amount: number; type: number; flag_card?: number; }[];
   change_amount: string;
   cash_id: number;
   cash_history_id: number;
@@ -106,6 +106,7 @@ export interface SaleFromApi {
     created_at?: Date;
     updated_at?: Date;
   };
+  ref?: string;
   created_at: string;
   deleted_at?: string;
 }
