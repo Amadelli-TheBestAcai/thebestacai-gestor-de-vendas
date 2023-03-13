@@ -150,7 +150,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         id: 1,
         label: "Abertura",
         value: currencyFormater(
-          +_storeCashHistory?.amount_on_open || +storeCash.amount_on_open
+          +_storeCashHistory?.amount_on_open || +storeCash?.amount_on_open
         ),
       },
       {
