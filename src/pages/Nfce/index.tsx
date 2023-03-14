@@ -98,12 +98,12 @@ const Nfce: React.FC = () => {
         await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {
         setCashIsOpen(true);
-        setLoading(false);
         setShouldSearch(false);
         setIsLoading(false);
       } else {
         setCashIsOpen(false);
       }
+      setLoading(false);
     }
 
     if (shouldSearch) {
