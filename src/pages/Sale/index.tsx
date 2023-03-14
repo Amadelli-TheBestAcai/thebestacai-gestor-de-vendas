@@ -345,22 +345,28 @@ const Sale: React.FC<IProps> = () => {
       authorized: (
         <>
           <Col sm={8}>
-            <PrinterIcon
-              style={{ width: "30%" }}
-              onClick={() => printDanfe(selectedSale)}
-            />
+            <Tooltip title="Imprimir Danfe" placement="bottom">
+              <PrinterIcon
+                style={{ width: "30%" }}
+                onClick={() => printDanfe(selectedSale)}
+              />
+            </Tooltip>
           </Col>
           <Col sm={8}>
-            <CancelIcon
-              style={{ width: "30%" }}
-              onClick={() => cancelNfce(selectedSale)}
-            />
+            <Tooltip title="Cancelar NFCe" placement="bottom">
+              <CancelIcon
+                style={{ width: "30%" }}
+                onClick={() => cancelNfce(selectedSale)}
+              />
+            </Tooltip>
           </Col>
           <Col sm={8}>
-            <PdfIcon
-              style={{ width: "30%" }}
-              onClick={() => getNfceDanfe(selectedSale)}
-            />
+            <Tooltip title="Baixar PDF" placement="bottom">
+              <PdfIcon
+                style={{ width: "30%" }}
+                onClick={() => getNfceDanfe(selectedSale)}
+              />
+            </Tooltip>
           </Col>
         </>
       ),
