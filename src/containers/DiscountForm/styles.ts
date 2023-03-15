@@ -2,12 +2,32 @@ import styled from "styled-components";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import { Modal as ModalAnt } from "antd";
+import { Modal as ModalAnt, Select as SelectAnt, Input as InputAnt } from "antd";
 
 export const Container = styled(ModalAnt)`
   .ant-modal-body {
     input {
       height: 3.4rem !important;
+    }
+
+    .ant-select-selector,
+    .ant-form-item-control-input {
+      align-items: center;
+      border-radius: 0.7rem;
+      height: 3.4rem;
+      outline: none !important;
+      border: none !important;
+      box-shadow: 0 0 0 0 !important;
+      border: none !important;
+      background: var(--white-70);
+
+      :focus,
+      :active,
+      :hover {
+        outline: none;
+        border: none;
+        box-shadow: 0 0 0 0;
+      }
     }
   }
 
@@ -17,7 +37,7 @@ export const Container = styled(ModalAnt)`
   }
 `;
 
-export const Input = styled(MonetaryInput)`
+export const InputMask = styled(MonetaryInput)`
   border: none;
 `;
 
@@ -58,3 +78,12 @@ export const ButtonSave = styled.button`
     font-size: 0.7rem;
   }
 `;
+
+export const Select = styled(SelectAnt)`
+  width: 100%;
+  margin: 10px 0;
+`;
+
+export const Option = styled(SelectAnt.Option)``;
+
+export const Input = styled(InputAnt)``;

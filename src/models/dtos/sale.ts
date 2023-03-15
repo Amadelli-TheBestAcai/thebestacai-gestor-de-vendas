@@ -28,4 +28,5 @@ export type SaleDto = {
   items: ItemDto[];
   payments: PaymentDto[];
   customerVoucher?: CustomerVoucherDto;
+  ref?: string;
 };

@@ -98,4 +98,5 @@ export interface SaleDto {
     deleted_at?: string;
   }[];
   customerVoucher?: CustomerVoucherDTO;
+  ref?: string;
 }

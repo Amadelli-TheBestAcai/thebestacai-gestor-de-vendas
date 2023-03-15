@@ -12,6 +12,7 @@ import {
   CardSale,
   Col,
 } from "./styles";
+import { Row } from "antd";
 
 interface IProps {
   sales: SaleFromApi[];
@@ -42,6 +43,7 @@ const SalesHistory: React.FC<IProps> = ({
             {(filteredSales || sales).map((sale, index) => (
               <CardSale
                 key={index}
+                style={{ flexDirection: "row" }}
                 isSelected={sales[index] == selectedSale ? true : false}
                 isAbstract={sales[index].abstract_sale}
                 onClick={() => setSelectedSale(sale)}
@@ -52,9 +54,7 @@ const SalesHistory: React.FC<IProps> = ({
                 <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
                 <Col sm={5}>{sale.quantity}</Col>
                 <Col sm={4}>
-                  {moment(sale.created_at)
-                    .add(3, "hours")
-                    .format("DD/MM/YYYY HH:mm:ss")}
+                  {moment(sale.created_at).format("DD/MM/YYYY HH:mm:ss")}
                 </Col>
                 <Col sm={5}>{SalesTypes[sale.type]}</Col>
               </CardSale>
@@ -69,12 +69,18 @@ const SalesHistory: React.FC<IProps> = ({
                 isAbstract={sales[index].abstract_sale}
                 onClick={() => setSelectedSale(sale)}
               >
-                <Col sm={24}>
-                  Horário:
-                  <span>
-                    {moment(sale.created_at).add(3, "hours").format("HH:mm:ss")}
-                  </span>
-                </Col>
+                <Row>
+                  <Col sm={24}>
+                    Horário:
+                    <span>{moment(sale.created_at).format("HH:mm:ss")}</span>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col sm={24}>
+                    Valor:
+                    <span>R$:{sale.total_sold.toFixed(2)}</span>
+                  </Col>
+                </Row>
               </CardSale>
             ))}
           </>

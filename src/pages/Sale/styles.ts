@@ -1,6 +1,13 @@
 import styled, { css } from "styled-components";
 
-import { Trash, RepeatOutline, Printer, FileInvoice, FileEarmarkPdf, Cancel } from "../../styles/Icons";
+import {
+  Trash,
+  RepeatOutline,
+  Printer,
+  FileInvoice,
+  FileEarmarkPdf,
+  Cancel,
+} from "../../styles/Icons";
 
 import {
   Input as InputAnt,
@@ -11,6 +18,7 @@ import {
   Button,
 } from "antd";
 
+const { TextArea } = InputAnt;
 interface ITabColor {
   tab_id: number;
 }
@@ -87,6 +95,24 @@ export const Input = styled(InputAnt)`
     font-size: 0.7rem;
   }
 `;
+export const Textarea = styled(TextArea)`
+  height: 3.7rem;
+  width: 20%;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.4rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+    font-size: 0.7rem;
+  }
+`;
 
 export const ListSaleContainer = styled.div`
   display: flex;
@@ -94,6 +120,16 @@ export const ListSaleContainer = styled.div`
   width: 100%;
   height: fit-content;
   margin-top: 2rem;
+
+  .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header,
+  .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+
+    .ant-collapse-arrow {
+      display: none;
+    }
+  }
 `;
 
 export const Col = styled(ColAnt)`
@@ -142,6 +178,7 @@ export const Row = styled(RowAnt)`
 
 export const Collapse = styled(CollapseAnt)`
   user-select: none;
+
   .ant-collapse-item-disabled {
     .ant-col {
       color: var(--black-opaco);

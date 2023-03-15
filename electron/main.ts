@@ -1,9 +1,9 @@
 import { app, BrowserWindow, screen, ipcMain } from "electron";
-import { autoUpdater } from 'electron-updater'
+import { autoUpdater } from 'electron-updater';
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
 
-let win: Electron.BrowserWindow | null
+let win: Electron.BrowserWindow | null;
 
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -25,7 +25,7 @@ function createWindow() {
     owner: 'Amadelli-TheBestAcai',
     releaseType: 'release',
     private: false,
-  })
+  });
 
   win.setTitle("Gestor de Vendas");
 
@@ -56,24 +56,24 @@ function createWindow() {
 }
 
 autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = 'Download speed: ' + progressObj.bytesPerSecond
-  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
+  let log_message = 'Download speed: ' + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
   log_message =
-    log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
-  console.log(log_message)
+    log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
+  console.log(log_message);
   win?.webContents.send(
     'download-progress',
     progressObj.transferred.toString()
-  )
-})
+  );
+});
 
 autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
+  autoUpdater.quitAndInstall();
+});
 
 ipcMain.on('check_for_update', function () {
-  autoUpdater.checkForUpdates()
-})
+  autoUpdater.checkForUpdates();
+});
 
 app.whenReady().then(async () => {
   createWindow();
