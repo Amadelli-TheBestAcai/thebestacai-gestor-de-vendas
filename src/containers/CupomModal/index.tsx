@@ -227,7 +227,7 @@ const CupomModal: React.FC = () => {
           loading={loading}
           onClick={onCancel}
         >
-          Cancelar
+          <span className="buttonSpan">Cancelar</span>
         </Button>
       ) : (
         <Button
@@ -237,7 +237,7 @@ const CupomModal: React.FC = () => {
           onClick={onFinish}
           disabled={!!sale.payments.length}
         >
-          Resgatar
+          <span className="buttonSpan">Resgatar</span>
         </Button>
       )}
     </Container>
