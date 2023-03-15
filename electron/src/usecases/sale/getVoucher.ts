@@ -4,6 +4,7 @@ import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import thorApi from "../../providers/thorApi";
 import { StoreCashDto } from "../../models/gestor";
+import { StoreDto } from "../../models/gestor";
 import { CustomerVoucherDTO } from "../../models/dtos/customerVoucher";
 
 interface Request {
@@ -12,6 +13,9 @@ interface Request {
 
 class GetVoucher implements IUseCaseFactory {
   constructor(
+    private storeRepository = new BaseRepository<StoreDto>(
+      StorageNames.Store
+    ),
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     )
@@ -23,7 +27,8 @@ class GetVoucher implements IUseCaseFactory {
       throw new Error("Falha ao validar conexão de internet");
     }
 
-    const { data } = await thorApi.get(`/customerVoucher/hash/${hash_code}`);
+    const store = await this.storeRepository.getOne()
+    const { data } = await thorApi.get(`/customerVoucher/${store?.company_id}/hash/${hash_code}`);
 
     return data.content;
   }

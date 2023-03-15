@@ -97,5 +97,5 @@ export interface SaleDto {
     created_at?: string;
     deleted_at?: string;
   }[];
-  customerVoucherDto?: CustomerVoucherDTO;
+  customerVoucher?: CustomerVoucherDTO;
 }

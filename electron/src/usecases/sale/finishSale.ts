@@ -4,6 +4,8 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { SaleDto, StoreCashDto } from "../../models/gestor";
 import { onlineIntegration } from "./onlineIntegration";
+import thorApi from "../../providers/thorApi";
+import { checkInternet } from "../../providers/internetConnection";
 
 interface Request {
   payload: SaleDto;
@@ -26,6 +28,14 @@ class FinishSale implements IUseCaseFactory {
   ) { }
 
   async execute({ payload, fromDelivery }: Request): Promise<void> {
+    if (payload.customerVoucher?.id) {
+      const is_online = await checkInternet();
+      if (!is_online) {
+        throw new Error('Para finalizar a venda com cupom é necessário estar online')
+      }
+      await thorApi.put(`/customerVoucher/mark-as-used/${payload.customerVoucher?.id}`)
+    }
+
     payload.is_current = false;
     payload.to_integrate = true;
 
