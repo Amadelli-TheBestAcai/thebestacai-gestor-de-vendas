@@ -201,7 +201,7 @@ export function GlobalProvider({ children }) {
             amount: +payment.amount,
             type: +payment.type,
             flag_card: +payment.flag_card,
-          }))
+          })),
         };
 
         const {
@@ -237,12 +237,18 @@ export function GlobalProvider({ children }) {
         });
 
       if (errorOnFinishSAle) {
-        if (settings.should_open_casher === true && error_message === "Nenhum caixa está disponível para abertura, entre em contato com o suporte") {
-          const { response: _newSettings, has_internal_error: errorOnSettings } =
-            await window.Main.settings.update(settings.id, {
-              ...settings,
-              should_open_casher: false
-            });
+        if (
+          settings.should_open_casher === true &&
+          error_message ===
+            "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+        ) {
+          const {
+            response: _newSettings,
+            has_internal_error: errorOnSettings,
+          } = await window.Main.settings.update(settings.id, {
+            ...settings,
+            should_open_casher: false,
+          });
 
           if (errorOnSettings) {
             notification.error({
@@ -255,13 +261,15 @@ export function GlobalProvider({ children }) {
         }
         setSavingSale(false);
 
-        error_message ? notification.warning({
-          message: error_message,
-          duration: 5,
-        }) : notification.error({
-          message: "Erro ao finalizar venda",
-          duration: 5,
-        });
+        error_message
+          ? notification.warning({
+              message: error_message,
+              duration: 5,
+            })
+          : notification.error({
+              message: "Erro ao finalizar venda",
+              duration: 5,
+            });
       }
 
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
@@ -298,7 +306,7 @@ export function GlobalProvider({ children }) {
     setSale(_newSale);
     notification.success({
       message: "Comanda salva com sucesso!",
-      description: `Para que a venda retorne ao carrinho, clique na ação de restaurar a comanda[🔁] do modal anterior.`,
+      description: `Para que a venda retorne ao carrinho, clique na ação de restaurar a comanda[🔁] no menu de comandas.`,
       duration: 5,
     });
 
