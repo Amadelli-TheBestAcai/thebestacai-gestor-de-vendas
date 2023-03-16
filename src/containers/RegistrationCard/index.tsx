@@ -4,7 +4,7 @@ import { SaleDto } from "../../models/dtos/sale";
 import moment from "moment";
 import Spinner from "../../components/Spinner";
 
-import { notification } from "antd";
+import { notification, Tooltip } from "antd";
 
 import {
   Container,
@@ -140,9 +140,11 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
                     <Col sm={5}>{index + 1}</Col>
                     <Col sm={6}>{_stepSale.quantity}</Col>
                     <Col sm={2}>
-                      <RestoreIcon
-                        onClick={() => handleRestore(_stepSale.id)}
-                      />
+                      <Tooltip title={"Retornar a comanda"} placement="bottom">
+                        <RestoreIcon
+                          onClick={() => handleRestore(_stepSale.id)}
+                        />
+                      </Tooltip>
                     </Col>
                   </Card>
                 </React.Fragment>
