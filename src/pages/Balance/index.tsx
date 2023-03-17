@@ -397,7 +397,7 @@ const Balance: React.FC = () => {
 
               <TabContainer>
                 <Tabs
-                  defaultActiveKey="1"
+                  defaultActiveKey="billing"
                   onChange={(id_tab) => setCurrentTab(id_tab)}
                 >
                   {createTabPanes(balance).map((_tab) => (
