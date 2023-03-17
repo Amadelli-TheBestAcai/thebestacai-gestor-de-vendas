@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 import {
   Input as InputAnt,
@@ -10,7 +10,11 @@ import {
 
 export const Container = styled(ModalAnt)`
   span {
-    font-size: 10px;
+    font-size: 0.8rem;
+  }
+  .buttonSpan {
+    font-size: 1.4rem;
+    font-weight: 500;
   }
 `;
 
@@ -24,13 +28,15 @@ export const Row = styled(RowAnt)`
 export const Col = styled(ColAnt)``;
 
 export const Button = styled(ButtonAnt)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 3.7rem;
   width: 100%;
   border-radius: 0.7rem;
   background: var(--orange-250);
   border: none;
-  font-size: 1.4rem;
-  font-weight: 500;
+
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   margin-top: 10px;
   :active,
