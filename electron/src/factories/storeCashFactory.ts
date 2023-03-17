@@ -9,7 +9,8 @@ import {
   getStoreCashHistory,
   updateStoreCashObservation,
   openOnlineStoreCash,
-  getOldCashHistory
+  getOldCashHistory,
+  updateStoreCashIsOpened
 } from "../usecases/storeCash";
 import {
   BalanceDto,
@@ -50,4 +51,6 @@ export const storeCashFactory = {
     ),
   updateStoreCashObservation: async (observation: string) =>
     await useCaseFactory.execute(updateStoreCashObservation, { observation }),
+  updateStoreCashIsOpened: async (id: string) =>
+    await useCaseFactory.execute(updateStoreCashIsOpened, { id }),
 };

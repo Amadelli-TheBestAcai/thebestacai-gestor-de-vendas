@@ -8,3 +8,4 @@ export * from "./getAvailableStoreCashes";
 export * from "./openOnlineStoreCash";
 export * from "./getOldCashHistory";
 export * from "./updateStoreCashObservation";
+export * from "./updateStoreCashIsOpened";

@@ -121,7 +121,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       setLoading(false);
     }
     init();
-  }, []);
+  }, [amountModal]);
 
   const createClosedStatus = (
     _balance: BalanceModel,
