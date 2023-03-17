@@ -66,10 +66,10 @@ import { SaleDto } from "../../models/dtos/sale";
 
 const Nfce: React.FC = () => {
   const [cashIsOpen, setCashIsOpen] = useState<boolean>(false);
-  const [saleRef, setSaleRef] = useState<SaleDto[]>([]);
   const [selfServiceAmount, setSelfServiceAmount] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingButtonSubmit, setLoadingButtonSubmit] =
+    useState<boolean>(false);
   const [nfe, setNfe] = useState<Nfe | null>(null);
   const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
   const [products, setProducts] = useState<ProductDto[]>([]);
@@ -82,7 +82,7 @@ const Nfce: React.FC = () => {
 
   useEffect(() => {
     async function init() {
-      setIsLoading(true);
+      setLoadingButtonSubmit(true);
       const { response: products, has_internal_error: errorOnProducts } =
         await window.Main.product.getProducts(true);
       if (errorOnProducts) {
@@ -98,12 +98,12 @@ const Nfce: React.FC = () => {
         await window.Main.storeCash.getCurrent();
       if (currentStoreCash?.is_opened) {
         setCashIsOpen(true);
-        setLoading(false);
         setShouldSearch(false);
-        setIsLoading(false);
+        setLoadingButtonSubmit(false);
       } else {
         setCashIsOpen(false);
       }
+      setLoading(false);
     }
 
     if (shouldSearch) {
@@ -222,7 +222,7 @@ const Nfce: React.FC = () => {
     };
 
     try {
-      setIsLoading(true);
+      setLoadingButtonSubmit(true);
       const {
         response,
         has_internal_error: errorOnEmitNfce,
@@ -246,7 +246,7 @@ const Nfce: React.FC = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false);
+      setLoadingButtonSubmit(false);
     }
   };
 
@@ -542,7 +542,7 @@ const Nfce: React.FC = () => {
                                 <Button
                                   type="primary"
                                   onClick={() => handleEmit()}
-                                  loading={isLoading}
+                                  loading={loadingButtonSubmit}
                                 >
                                   Emitir Nota [F1]
                                 </Button>
