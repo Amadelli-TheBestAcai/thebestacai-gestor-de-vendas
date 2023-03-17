@@ -51,6 +51,6 @@ export const storeCashFactory = {
     ),
   updateStoreCashObservation: async (observation: string) =>
     await useCaseFactory.execute(updateStoreCashObservation, { observation }),
-  updateStoreCashIsOpened: async (id: string) =>
-    await useCaseFactory.execute(updateStoreCashIsOpened, { id }),
+  updateStoreCashIsOpened: async () =>
+    await useCaseFactory.execute(updateStoreCashIsOpened),
 };

@@ -10,12 +10,9 @@ class UpdateStoreCashIsOpened implements IUseCaseFactory {
             StorageNames.StoreCash)
     ) { }
 
-    async execute(id: string): Promise<void> {
-        console.log('aqui electron', id);
-
-        const a = await this.storeCashRepository.getOne();
-        console.log(a);
-        await this.storeCashRepository.update(a?.id, { is_opened: false });
+    async execute(): Promise<void> {
+        const storeCash = await this.storeCashRepository.getOne();
+        await this.storeCashRepository.update(storeCash?.id, { is_opened: false, is_online: false });
     }
 }
 

@@ -81,7 +81,7 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
             await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
           if (errorOnStoreCash) {
             if (error_message === 'Caixa já esta fechado') {
-              await window.Main.storeCash.updateStoreCashIsOpened(storeCash.id);
+              await window.Main.storeCash.updateStoreCashIsOpened();
               setVisible(false);
               return;
             }
