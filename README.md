@@ -21,7 +21,8 @@ npm install --global node-gyp@latest
 ```
 
 **4-**
-https://www.python.org/downloads/       Instale o python
+
+- [Python 3.11.12 - Click para download]([https://c2rsetup.officeapps.live.com/c2r/downloadVS.aspx?sku=community&channel=Release&source=VSLandingPage&version=VS2022&cid=af6bbbeee0ea48a2a27dca207c291121](https://www.python.org/ftp/python/3.11.2/python-3.11.2-amd64.exe))
 
 **5-**
 
