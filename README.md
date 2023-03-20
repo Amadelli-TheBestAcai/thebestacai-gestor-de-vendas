@@ -71,7 +71,8 @@ O conteúdo do arquivo **env.json** deverá conster as sequintes informações:
   "API_LOG": "${API_LOG}",
   "API_AUTH": "${API_AUTH}",
   "CHAT_DASH": "${CHAT_DASH}",
-  "API_SALES_HANDLER": "${API_SALES_HANDLER}"
+  "API_SALES_HANDLER": "${API_SALES_HANDLER}",
+  "API_MERCURY": "${API_MERCURY}"
 }
 ```
 
