@@ -21,12 +21,15 @@ npm install --global node-gyp@latest
 ```
 
 **4-**
+https://www.python.org/downloads/       Instale o python
+
+**5-**
 
 ```bash
 npm config set python python2.7
 ```
 
-**5-**
+**6-**
 
 - [Build Tools for Visual Studio 2017 - Click para download](https://c2rsetup.officeapps.live.com/c2r/downloadVS.aspx?sku=community&channel=Release&source=VSLandingPage&version=VS2022&cid=af6bbbeee0ea48a2a27dca207c291121)
 
@@ -34,13 +37,13 @@ Com o Build Tools deverá instalar as ferramentas:
 
 **Desenvolvimento para desktop com C++** e **Ferramentas de build do Node.js**
 
-**6-**
+**7-**
 
 ```bash
 npm config set msvs_version 2017
 ```
 
-**7-**
+**8-**
 
 ```bash
 yarn install --network-timeout 600000
