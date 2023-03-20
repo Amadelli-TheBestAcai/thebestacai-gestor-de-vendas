@@ -16,11 +16,7 @@ interface IProp extends RouteComponentProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-const AmountModal: React.FC<IProp> = ({
-  visible,
-  setVisible,
-  history,
-}) => {
+const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   const { storeCash, setStoreCash } = useSale();
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState({
@@ -74,7 +70,7 @@ const AmountModal: React.FC<IProp> = ({
       centered: true,
       async onOk() {
         if (storeCash?.is_opened) {
-          if(!storeCash?.is_online){
+          if (!storeCash?.is_online) {
             notification.error({
               message: "Para fechar o caixa, o mesmo deverá estar Online",
               duration: 5,
@@ -147,7 +143,7 @@ const AmountModal: React.FC<IProp> = ({
             <Input
               type="number"
               min={0}
-              placeholder={_amount.label}
+              placeholder={"0"}
               onChange={({ target: { value } }) =>
                 setAmount((oldValue) => ({
                   ...oldValue,

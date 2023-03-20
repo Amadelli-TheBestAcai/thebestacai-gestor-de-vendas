@@ -78,7 +78,7 @@ const SalesHistory: React.FC<IProps> = ({
                 <Row>
                   <Col sm={24}>
                     Valor:
-                    <span>R$:{sale.total_sold.toFixed(2)}</span>
+                    <span>R$ {sale.total_sold.toFixed(2)}</span>
                   </Col>
                 </Row>
               </CardSale>
