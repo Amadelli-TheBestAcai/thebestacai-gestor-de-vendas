@@ -43,16 +43,29 @@ const ProductsContainer: React.FC = () => {
           duration: 5,
         });
       }
-      const categories = products
+      const sortedProducts = products.sort((a, b) => {
+        const nameA = a.product.name.toLowerCase();
+        const nameB = b.product.name.toLowerCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      });
+
+      const categories = sortedProducts
         ?.filter((_product) => _product.product.category.id !== 1)
         ?.map((_product) => _product.product.category.name)
-        .filter((item, pos, self) => self.indexOf(item) == pos);
+        .filter((item, pos, self) => self.indexOf(item) == pos)
+        .sort();
 
       const payload = categories?.map((_category) => ({
         category: _category,
-        products: products.filter(
-          (_product) => _product.product.category.name === _category
-        ),
+        products: sortedProducts
+          .filter((_product) => _product.product.category.name === _category)
+          .sort((a, b) => a.product.name.localeCompare(b.product.name)),
       }));
       setProducts(payload);
       setLoading(false);
