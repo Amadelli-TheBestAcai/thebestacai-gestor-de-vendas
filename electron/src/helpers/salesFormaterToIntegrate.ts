@@ -98,7 +98,8 @@ export const salesFormaterToIntegrate = (
         },
         update_stock: _item.update_stock,
       })),
-      ref: _payload.ref
+      ref: _payload.ref,
+      created_at: _payload.created_at
     }));
   } else {
     const response = {
@@ -194,7 +195,8 @@ export const salesFormaterToIntegrate = (
         },
         update_stock: _item.update_stock,
       })),
-      ref: payload.ref
+      ref: payload.ref,
+      created_at: payload.created_at
     };
     return [response];
   }
