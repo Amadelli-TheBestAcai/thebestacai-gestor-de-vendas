@@ -115,7 +115,7 @@ const PaymentsContainer: React.FC<IProps> = ({
     total_paid: number,
     discount: number
   ) => {
-    if (total_paid > total_sold) {
+    if (total_paid + discount > total_sold) {
       const result = (total_paid - total_sold + discount)
         .toFixed(2)
         .replace(".", ",");
@@ -176,7 +176,8 @@ const PaymentsContainer: React.FC<IProps> = ({
             </strong>
           </ValueInfo>
           <ValueInfo>
-            R$ Desconto <br />{" "}
+            R$ Desconto
+            <br />{" "}
             <strong style={{ color: "var(--green-600" }}>
               {sale?.discount.toFixed(2).replace(".", ",")}
             </strong>
