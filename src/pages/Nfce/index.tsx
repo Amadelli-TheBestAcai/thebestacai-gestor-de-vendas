@@ -187,7 +187,13 @@ const Nfce: React.FC = () => {
   };
 
   const handleEmit = async () => {
-    let payload = form.getFieldsValue();
+    let payload = await form.getFieldsValue();
+    if (!payload.formaPagamento) {
+      return notification.warning({
+        message: "Selecione a forma de pagamento",
+        duration: 5,
+      });
+    }
     if (!productsNfe.length) {
       return notification.warning({
         message: "Oops! O carrinho está vazio.",
