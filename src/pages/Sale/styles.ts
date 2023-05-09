@@ -136,6 +136,9 @@ export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
+  .buttonText{ 
+    cursor: pointer;
+  }
 `;
 
 export const HeaderTable = styled(RowAnt)`
