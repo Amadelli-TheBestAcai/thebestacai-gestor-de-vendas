@@ -23,12 +23,21 @@ type IProps = {
 };
 
 const Item: React.FC<IProps> = ({ item }) => {
-  const { onDecressItem } = useSale();
+  const { onDecressItem, sale } = useSale();
   const [modalState, setModalState] = useState(false);
   const [disabled, setdisabled] = useState(false);
   const [reasson, setReasson] = useState<string>("");
 
   const removeItem = async (): Promise<void> => {
+    if(sale.discount > 0) {
+      notification.warning({
+        message: "Falha ao remover produto",
+        description:
+          "Para remover um produto é necessário remover o desconto aplicado",
+        duration: 5,
+      });
+      return;
+    }
     setModalState(true);
     if (reasson.length < 3) {
       notification.warning({
