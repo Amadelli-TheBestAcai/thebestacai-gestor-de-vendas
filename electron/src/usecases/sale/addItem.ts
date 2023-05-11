@@ -54,7 +54,7 @@ class AddItem implements IUseCaseFactory {
     }
 
     sale.total_sold = +sale.items
-      .reduce((total, item) => item.total + total, 0)
+      .reduce((total, item) => Math.round(item.total) + total, 0)
       .toFixed(2);
 
     sale.quantity = sale.items.reduce(
