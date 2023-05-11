@@ -258,11 +258,7 @@ const Sale: React.FC<IProps> = () => {
       },
     });
 
-    const { data: html } = await axios({
-      method: "GET",
-      responseType: "text",
-      url: `data:pdf;base64,${data.content}`,
-    });
+    const html = Buffer.from(data.content, 'base64').toString('utf-8');
 
     const reaplaceQrcode = async (_html) => {
       const [beforeQrcodeDiv, afterQrcodeDiv] = _html.split(
