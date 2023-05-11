@@ -4,6 +4,7 @@ import { Container, Column, RemoveIcon, PrinterIcon } from "./styles";
 
 import { Handler as HandlerModel } from "../../models/dtos/handler";
 import { useUser } from "../../hooks/useUser";
+import { Tooltip } from "antd";
 
 type IProps = {
   handler: HandlerModel;
@@ -25,11 +26,14 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
       <>
         <Column span={4}>
           {hasPermission("handler.delete_handler") && (
-            <RemoveIcon onClick={() => onDelete(id)} />
+            <Tooltip title="Remover" placement="bottom">
+              <RemoveIcon onClick={() => onDelete(id)} />
+            </Tooltip>
           )}
-          <PrinterIcon
-            onClick={() => window.Main.common.printHandler(handler)}
-          />
+          <Tooltip title="Imprimir" placement="bottom">
+            <PrinterIcon
+              onClick={() => window.Main.common.printHandler(handler)} />
+          </Tooltip>
         </Column>
       </>
     </Container>
