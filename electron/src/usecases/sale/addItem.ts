@@ -48,13 +48,13 @@ class AddItem implements IUseCaseFactory {
         update_stock: product?.category.id !== 1 ? true : false,
         product,
         storeProduct,
-        total: +(productToAdd.price_unit || 0) * quantity,
+        total: price ? price : + (productToAdd.price_unit || 0) * quantity,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
 
     sale.total_sold = +sale.items
-      .reduce((total, item) => Math.round(item.total) + total, 0)
+      .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
     sale.quantity = sale.items.reduce(
