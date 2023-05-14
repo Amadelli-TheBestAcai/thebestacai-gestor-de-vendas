@@ -386,7 +386,7 @@ export const ButtonCancel = styled.button`
 export const ButtonConfirm = styled.button`
   ${ButtonCSS}
   background: var(--orange-450);
-  color: var(--brown-500);
+  color: var(--black-opaco);
   margin-left: 1rem;
 `;
 
