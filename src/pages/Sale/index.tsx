@@ -414,7 +414,7 @@ const Sale: React.FC<IProps> = () => {
                             </Col>
                             <Col sm={2}>{selectedSale.quantity}</Col>
                             <Col sm={4}>
-                              {moment(selectedSale.created_at).format(
+                              {moment(selectedSale.created_at).add(3, 'hours').format(
                                 "HH:mm:ss"
                               )}
                             </Col>
