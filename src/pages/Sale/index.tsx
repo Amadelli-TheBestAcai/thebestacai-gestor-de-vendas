@@ -340,6 +340,25 @@ const Sale: React.FC<IProps> = () => {
     document.body.removeChild(link);
   };
 
+  const printReceipt = async (sale: SaleFromApi) => {
+    const { response: _settings, has_internal_error: errorOnSettings } =
+      await window.Main.settings.getSettings();
+    if (errorOnSettings) {
+      notification.error({
+        message: "Erro ao encontrar configurações",
+        duration: 5,
+      });
+    }
+
+    if (_settings.should_use_printer === false) {
+      return notification.warning({
+        message: "Habilite a impressora na tela de configurações",
+        duration: 5,
+      });
+    }
+    window.Main.common.printSale(sale);
+  };
+
   const nfceInfo = (selectedSale: SaleFromApi) => {
     return {
       authorized: (
@@ -465,10 +484,9 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-                              <Tooltip title="Imprimir" placement="bottom">
+                              <Tooltip title="Imprimir Cupom fiscal" placement="bottom">
                                 <PrinterIcon
-                                  onClick={() =>
-                                    window.Main.common.printSale(selectedSale)
+                                  onClick={() => printReceipt(selectedSale)
                                   }
                                 />
                               </Tooltip>
