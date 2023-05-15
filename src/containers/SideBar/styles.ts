@@ -77,14 +77,14 @@ export const CardIcon = styled.button`
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
     @media (max-height: 900px) {
-      height: 2.8rem;
+      height: 2.4rem;
       margin-bottom: 1.5rem;
     }
   }
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
-    height: 2.4rem;
+    height: 2rem;
     margin-bottom: 1rem;
   }
 
