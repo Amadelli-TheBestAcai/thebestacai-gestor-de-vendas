@@ -66,6 +66,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [modalJustify, setModalJustify] = useState(false);
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
+
+  const [isMessageValid, setIsMessageValid] = useState(false);
   const { settings, setSettings } = useSettings();
 
   useEffect(() => {
@@ -208,6 +210,10 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       });
       return;
     }
+    notification.success({
+      message: "Motivo atualizado com sucesso",
+      duration: 5,
+    });
     setUpdatingCashObservation(false);
     setModalJustify(false);
   };
@@ -330,6 +336,19 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     }
   };
 
+  const onCancel = () => {
+    if (!isMessageValid) {
+      notification.info({
+        message:
+          "Para prosseguir, digite o motivo da divergência",
+        duration: 5,
+      });
+      return;
+    }
+
+    setIsMessageValid(false);
+  };
+
   return (
     <Container>
       <PageContent>
@@ -411,11 +430,11 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         confirmLoading={updatingCashObservation}
         destroyOnClose={true}
         closable={true}
-        onCancel={() => setModalJustify(false)}
+        onCancel={() => onCancel()}
         centered
         footer={
           <Footer>
-            <ButtonCancel onClick={() => setModalJustify(false)}>
+            <ButtonCancel onClick={() => onCancel()}>
               Cancelar
             </ButtonCancel>
             <ButtonSave onClick={() => updateStoreCashObservation()}>
