@@ -264,7 +264,7 @@ const Sale: React.FC<IProps> = () => {
       const [beforeQrcodeDiv, afterQrcodeDiv] = _html.split(
         `<div id='qr-code0'></div>`
       );
-      const qrcodeurl = _html.split("http://")[1].split(`"`)[0];
+      const qrcodeurl = _html.split("http")[1].split(`"`)[0];
 
       async function getBase64(url) {
         const response = await axios.get(url, {
