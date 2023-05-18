@@ -105,7 +105,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       }
       if (reasontype === "Pagamento freelance") {
         const category = productsCategory.find(
-          (category) => category.name === "Salarios/Comissões"
+          (category) => category.id === 12
         );
         const product = category.products.find(
           (product) =>
