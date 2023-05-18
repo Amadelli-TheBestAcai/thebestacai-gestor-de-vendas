@@ -37,14 +37,14 @@ class DecressItem implements IUseCaseFactory {
       sale.items[itemIndex].total =
         newQuantity * +(sale.items[itemIndex].storeProduct.price_unit || 0);
     }
-    sale.total_sold = sale.items.reduce(
-      (total, item) =>
-        +(item.storeProduct?.price_unit || 0) * item?.quantity + total,
-      0
-    );
+
+    sale.total_sold = +sale.items
+      .reduce((total, item) => item.total + total, 0)
+      .toFixed(2);
 
     sale.quantity = sale.items.reduce(
-      (total, item) => item?.quantity + total,
+      (total, item) =>
+        +item.product?.category.id === 1 ? 1 + total : item.quantity + total,
       0
     );
 
