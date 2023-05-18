@@ -68,12 +68,12 @@ const Balance: React.FC = () => {
   const createTabPanes = (payload?: BalanceModel) => {
     return [
       {
-        id: "delivery",
+        id: "billing",
         label: (
           <TabPaneContainer tab_id={1}>
             <LabelCardTab>
-              <p>Delivery</p>
-              <span>R$ {currencyFormater(+payload?.delivery?.total)}</span>
+              <p>Faturamento Total</p>
+              <span>R$ {currencyFormater(+payload?.billing?.total)}</span>
             </LabelCardTab>
           </TabPaneContainer>
         ),
@@ -90,12 +90,12 @@ const Balance: React.FC = () => {
         ),
       },
       {
-        id: "billing",
+        id: "delivery",
         label: (
           <TabPaneContainer tab_id={3}>
             <LabelCardTab>
-              <p>Faturamento Total</p>
-              <span>R$ {currencyFormater(+payload?.billing?.total)}</span>
+              <p>Delivery</p>
+              <span>R$ {currencyFormater(+payload?.delivery?.total)}</span>
             </LabelCardTab>
           </TabPaneContainer>
         ),
