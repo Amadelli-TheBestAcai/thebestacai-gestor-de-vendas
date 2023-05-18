@@ -236,6 +236,14 @@ const Nfce: React.FC = () => {
       } = await window.Main.sale.emitNfce(nfcePayload);
 
       if (errorOnEmitNfce) {
+        if (error_message === "Store token not found.") {
+          notification.error({
+            message: "O token da nota fiscal não está cadastrado na loja.",
+            duration: 5,
+          });
+          return;
+        }
+
         notification.error({
           message: error_message || "Erro ao emitir NFCe",
           duration: 5,
