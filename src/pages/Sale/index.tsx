@@ -434,7 +434,7 @@ const Sale: React.FC<IProps> = () => {
                               </Col>
                             ) : (
                               <Col sm={3} onClick={() => openModal()}>
-                                <h4>Não emitida</h4>
+                                <h4 className="buttonText">Emitir NFC-e</h4>
                               </Col>
                             )}
                             <Col
