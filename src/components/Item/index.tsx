@@ -39,11 +39,20 @@ const Item: React.FC<IProps> = ({ item }) => {
       return;
     }
     setModalState(true);
+    let errorMessage = '';
+
     if (reasson.length < 3) {
+      errorMessage = 'Digite um motivo válido para a remoção do item de seu carrinho.';
+    }
+
+    if (reasson.length > 100) {
+      errorMessage = 'O motivo não deve ultrapassar 100 caracteres.';
+    }
+
+    if (errorMessage) {
       notification.warning({
-        message: "Oops! ",
-        description:
-          "Digite um motivo válido para a remoção do item de seu carrinho.",
+        message: 'Oops!',
+        description: errorMessage,
         duration: 5,
       });
       return;
