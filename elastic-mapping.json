@@ -358,7 +358,7 @@
                       "type": "float"
                     },
                     "cod_ncm": {
-                      "type": "text"
+                      "type": "float"
                     },
                     "cod_product": {
                       "type": "text",

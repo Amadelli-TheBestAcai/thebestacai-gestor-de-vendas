@@ -62,7 +62,7 @@ export interface SaleFromApiDTO {
       permission_order?: boolean;
       permission_purchase: boolean;
       cod_product: string;
-      cod_ncm: string;
+      cod_ncm: number;
       brand?: string;
       unity?: string;
       weight?: string;

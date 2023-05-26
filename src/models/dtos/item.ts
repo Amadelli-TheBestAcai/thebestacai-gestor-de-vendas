@@ -10,7 +10,7 @@ export type ItemDto = {
     permission_order?: boolean;
     permission_purchase?: boolean;
     cod_product?: string;
-    cod_ncm?: string;
+    cod_ncm?: number;
     brand?: string;
     unity?: number;
     weight?: string;
