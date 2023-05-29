@@ -258,17 +258,13 @@ const Sale: React.FC<IProps> = () => {
       },
     });
 
-    const { data: html } = await axios({
-      method: "GET",
-      responseType: "text",
-      url: `data:pdf;base64,${data.content}`,
-    });
+    const html = Buffer.from(data.content, 'base64').toString('utf-8');
 
     const reaplaceQrcode = async (_html) => {
       const [beforeQrcodeDiv, afterQrcodeDiv] = _html.split(
         `<div id='qr-code0'></div>`
       );
-      const qrcodeurl = _html.split("http://")[1].split(`"`)[0];
+      const qrcodeurl = _html.split("http")[1].split(`"`)[0];
 
       async function getBase64(url) {
         const response = await axios.get(url, {
@@ -338,6 +334,25 @@ const Sale: React.FC<IProps> = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const printReceipt = async (sale: SaleFromApi) => {
+    const { response: _settings, has_internal_error: errorOnSettings } =
+      await window.Main.settings.getSettings();
+    if (errorOnSettings) {
+      notification.error({
+        message: "Erro ao encontrar configurações",
+        duration: 5,
+      });
+    }
+
+    if (_settings.should_use_printer === false) {
+      return notification.warning({
+        message: "Habilite a impressora na tela de configurações",
+        duration: 5,
+      });
+    }
+    window.Main.common.printSale(sale);
   };
 
   const nfceInfo = (selectedSale: SaleFromApi) => {
@@ -414,7 +429,7 @@ const Sale: React.FC<IProps> = () => {
                             </Col>
                             <Col sm={2}>{selectedSale.quantity}</Col>
                             <Col sm={4}>
-                              {moment(selectedSale.created_at).format(
+                              {moment(selectedSale.created_at).add(3, 'hours').format(
                                 "HH:mm:ss"
                               )}
                             </Col>
@@ -434,7 +449,7 @@ const Sale: React.FC<IProps> = () => {
                               </Col>
                             ) : (
                               <Col sm={3} onClick={() => openModal()}>
-                                <h4>Não emitida</h4>
+                                <h4 className="buttonText">Emitir NFC-e</h4>
                               </Col>
                             )}
                             <Col
@@ -465,10 +480,9 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-                              <Tooltip title="Imprimir" placement="bottom">
+                              <Tooltip title="Imprimir Cupom fiscal" placement="bottom">
                                 <PrinterIcon
-                                  onClick={() =>
-                                    window.Main.common.printSale(selectedSale)
+                                  onClick={() => printReceipt(selectedSale)
                                   }
                                 />
                               </Tooltip>

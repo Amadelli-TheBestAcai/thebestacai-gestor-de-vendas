@@ -187,7 +187,13 @@ const Nfce: React.FC = () => {
   };
 
   const handleEmit = async () => {
-    let payload = form.getFieldsValue();
+    let payload = await form.getFieldsValue();
+    if (!payload.formaPagamento) {
+      return notification.warning({
+        message: "Selecione a forma de pagamento",
+        duration: 5,
+      });
+    }
     if (!productsNfe.length) {
       return notification.warning({
         message: "Oops! O carrinho está vazio.",
@@ -230,6 +236,14 @@ const Nfce: React.FC = () => {
       } = await window.Main.sale.emitNfce(nfcePayload);
 
       if (errorOnEmitNfce) {
+        if (error_message === "Store token not found.") {
+          notification.error({
+            message: "O token da nota fiscal não está cadastrado na loja.",
+            duration: 5,
+          });
+          return;
+        }
+
         notification.error({
           message: error_message || "Erro ao emitir NFCe",
           duration: 5,
@@ -243,6 +257,8 @@ const Nfce: React.FC = () => {
       });
 
       setModalState(true);
+      setProductsNfe([]);
+      form.resetFields();
     } catch (error) {
       console.log(error);
     } finally {
@@ -446,7 +462,7 @@ const Nfce: React.FC = () => {
                           </ProductListContainer>
 
                           <FormContainer>
-                            <Form layout="vertical" form={form}>
+                            <Form layout="vertical" form={form} preserve={false}>
                               <Row>
                                 <Col span={24}>
                                   <FormItem name="totalProdutos">

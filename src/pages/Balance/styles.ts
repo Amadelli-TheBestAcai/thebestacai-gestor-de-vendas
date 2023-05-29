@@ -182,8 +182,8 @@ export const TabPaneContainer = styled.div<ITabColor>`
   ${({ tab_id }) => {
     if (tab_id === 1) {
       return css`
-        background-color: #3e6fc8;
-        background-image: url(${deliveryIcon});
+        background-color: #f49345;
+        background-image: url(${fatuIcon});
       `;
     }
     if (tab_id === 2) {
@@ -194,8 +194,8 @@ export const TabPaneContainer = styled.div<ITabColor>`
     }
     if (tab_id === 3) {
       return css`
-        background-color: #f49345;
-        background-image: url(${fatuIcon});
+        background-color: #3e6fc8;
+        background-image: url(${deliveryIcon});
       `;
     }
   }}

@@ -67,6 +67,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
   const { settings, setSettings } = useSettings();
+  const [hasOpenedOnlineStoreCash, setHasOpenedOnlineStoreCash] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -363,8 +364,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   <CloseCashContatiner>
                     <OpenCloseButton
                       onClick={() =>
-                        storeCash?.is_opened && !storeCash?.is_online
-                          ? openOnlineStoreCash(storeCash?.code)
+                        storeCash?.is_opened && !storeCash?.is_online && !hasOpenedOnlineStoreCash
+                          ? (openOnlineStoreCash(storeCash?.code), setHasOpenedOnlineStoreCash(true))
                           : setAmountModal(true)
                       }
                       _type={
