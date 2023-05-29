@@ -257,6 +257,8 @@ const Nfce: React.FC = () => {
       });
 
       setModalState(true);
+      setProductsNfe([]);
+      form.resetFields();
     } catch (error) {
       console.log(error);
     } finally {
@@ -460,7 +462,7 @@ const Nfce: React.FC = () => {
                           </ProductListContainer>
 
                           <FormContainer>
-                            <Form layout="vertical" form={form}>
+                            <Form layout="vertical" form={form} preserve={false}>
                               <Row>
                                 <Col span={24}>
                                   <FormItem name="totalProdutos">
