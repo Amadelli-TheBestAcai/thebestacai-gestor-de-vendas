@@ -78,7 +78,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
         reasontype === "Pagamento freelance");
 
     let shopOrder = null;
-    console.log(shopInfo);
+
     if (type !== "entrada" && sendToShop) {
       if (reasontype === "Pagamento fornecedor") {
         shopOrder = {
@@ -86,7 +86,8 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
-          total: (+shopInfo.quantity * +shopInfo.unitary_value) +
+          total:
+            +shopInfo.quantity * +shopInfo.unitary_value +
             (+shopInfo.additional_value || 0) -
             (+shopInfo.discount_value || 0),
           observation: shopInfo.observation,
@@ -105,11 +106,10 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       }
       if (reasontype === "Pagamento freelance") {
         const category = productsCategory.find(
-          (category) => category.name === "Salarios/Comissões"
+          (category) => category.id === 12
         );
-        const product = category.products.find(
-          (product) =>
-            replaceSpecialChars(product.name.toLowerCase()) === "freelancer"
+        const product = category?.products?.find(
+          (product) => product.name === "freelancer"
         );
         if (!category || !product) {
           sendToShop = false;
@@ -119,7 +119,8 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
-          total: (+shopInfo.quantity * +shopInfo.unitary_value) +
+          total:
+            +shopInfo.quantity * +shopInfo.unitary_value +
             (+shopInfo.additional_value || 0) -
             (+shopInfo.discount_value || 0),
           name: "Salarios/Comissões",
@@ -162,8 +163,13 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     const payload = {
       handler: {
         type,
-        reason: reasontype === "Outros" ? reasson : reasontype,
-        amount: (+shopOrder?.total || value)
+        reason:
+          reasontype === "Outros"
+            ? reasson
+            : reasontype === "Pagamento freelance"
+            ? reasontype + `: ${shopInfo.observation}`
+            : reasontype,
+        amount: +shopOrder?.total || value,
       },
       shopOrder,
       sendToShop,
@@ -171,20 +177,25 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
     setLoading(true);
 
-    const { has_internal_error: errorOnCreateHandler, response: handler, error_message } =
-      await window.Main.handler.create({
-        cashHandler: payload.handler,
-        sendToShop: payload.sendToShop,
-        shopOrder: payload.shopOrder,
-      });
+    const {
+      has_internal_error: errorOnCreateHandler,
+      response: handler,
+      error_message,
+    } = await window.Main.handler.create({
+      cashHandler: payload.handler,
+      sendToShop: payload.sendToShop,
+      shopOrder: payload.shopOrder,
+    });
     if (errorOnCreateHandler) {
-      error_message ? notification.warning({
-        message: error_message,
-        duration: 5,
-      }) : notification.error({
-        message: "Erro ao criar movimentação",
-        duration: 5,
-      });
+      error_message
+        ? notification.warning({
+            message: error_message,
+            duration: 5,
+          })
+        : notification.error({
+            message: "Erro ao criar movimentação",
+            duration: 5,
+          });
     }
 
     setValue(null);
@@ -295,11 +306,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 <Select onChange={handleSelect} placeholder="Escolha a opção">
                   {type === "entrada"
                     ? inValue.map((item) => (
-                      <Option key={item.id}>{item.value}</Option>
-                    ))
+                        <Option key={item.id}>{item.value}</Option>
+                      ))
                     : outValue.map((item) => (
-                      <Option key={item.id}>{item.value}</Option>
-                    ))}
+                        <Option key={item.id}>{item.value}</Option>
+                      ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -316,17 +327,21 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 ]}
               >
                 {type !== "entrada" &&
-                  hasInternet &&
-                  (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
-                    reasontype === ReasonOutValue.PAG_FREELA) ? (
+                hasInternet &&
+                (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
+                  reasontype === ReasonOutValue.PAG_FREELA) ? (
                   <Input
                     placeholder={currencyFormater(
-                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) +
-                      (+shopInfo?.additional_value || 0) - (+shopInfo?.discount_value || 0)
+                      (+shopInfo?.unitary_value || 0) *
+                        (+shopInfo?.quantity || 0) +
+                        (+shopInfo?.additional_value || 0) -
+                        (+shopInfo?.discount_value || 0)
                     )}
                     value={currencyFormater(
-                      (+shopInfo?.unitary_value || 0) * (+shopInfo?.quantity || 0) +
-                      (+shopInfo?.additional_value || 0) - (+shopInfo?.discount_value || 0)
+                      (+shopInfo?.unitary_value || 0) *
+                        (+shopInfo?.quantity || 0) +
+                        (+shopInfo?.additional_value || 0) -
+                        (+shopInfo?.discount_value || 0)
                     )}
                     disabled
                   />
@@ -362,70 +377,71 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
             {type !== "entrada" && (
               <>
-                {reasontype === ReasonOutValue.PAG_FORNECEDOR && hasInternet && (
-                  <>
-                    <Col sm={24}>
-                      <Form.Item
-                        label="Categoria"
-                        name="category_id"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Categoria é obrigatório",
-                          },
-                        ]}
-                      >
-                        <Select
-                          placeholder="Escolha a opção"
-                          loading={fetchingProductsCategory}
-                          onChange={(value) =>
-                            handleShopInfo("category_id", +value)
-                          }
+                {reasontype === ReasonOutValue.PAG_FORNECEDOR &&
+                  hasInternet && (
+                    <>
+                      <Col sm={24}>
+                        <Form.Item
+                          label="Categoria"
+                          name="category_id"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Categoria é obrigatório",
+                            },
+                          ]}
                         >
-                          {productsCategory?.map((productCategory) => (
-                            <Option
-                              value={productCategory.id}
-                              key={productCategory.id}
-                            >
-                              {productCategory.name}
-                            </Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
+                          <Select
+                            placeholder="Escolha a opção"
+                            loading={fetchingProductsCategory}
+                            onChange={(value) =>
+                              handleShopInfo("category_id", +value)
+                            }
+                          >
+                            {productsCategory?.map((productCategory) => (
+                              <Option
+                                value={productCategory.id}
+                                key={productCategory.id}
+                              >
+                                {productCategory.name}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
 
-                    <Col sm={24}>
-                      <Form.Item
-                        label="Produto"
-                        name="product_id"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Produto é obrigatório",
-                          },
-                        ]}
-                      >
-                        <Select
-                          placeholder="Escolha a opção"
-                          disabled={!shopInfo?.category_id}
-                          onChange={(value) =>
-                            handleShopInfo("product_id", +value)
-                          }
+                      <Col sm={24}>
+                        <Form.Item
+                          label="Produto"
+                          name="product_id"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Produto é obrigatório",
+                            },
+                          ]}
                         >
-                          {productsCategory?.map(
-                            (productCategory) =>
-                              productCategory.id === shopInfo?.category_id &&
-                              productCategory.products.map((product) => (
-                                <Option value={product.id} key={product.id}>
-                                  {product.name}
-                                </Option>
-                              ))
-                          )}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                  </>
-                )}
+                          <Select
+                            placeholder="Escolha a opção"
+                            disabled={!shopInfo?.category_id}
+                            onChange={(value) =>
+                              handleShopInfo("product_id", +value)
+                            }
+                          >
+                            {productsCategory?.map(
+                              (productCategory) =>
+                                productCategory.id === shopInfo?.category_id &&
+                                productCategory.products.map((product) => (
+                                  <Option value={product.id} key={product.id}>
+                                    {product.name}
+                                  </Option>
+                                ))
+                            )}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </>
+                  )}
 
                 {reasontype === ReasonOutValue.PAG_FREELA && hasInternet && (
                   <Col sm={24}>
@@ -533,8 +549,6 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           />
                         </Form.Item>
                       </Col>
-
-
 
                       <Col sm={24}>
                         <Form.Item

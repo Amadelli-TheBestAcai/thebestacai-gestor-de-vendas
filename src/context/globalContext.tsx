@@ -178,7 +178,7 @@ export function GlobalProvider({ children }) {
         });
       }
 
-      sale.change_amount = sale.total_paid - sale.total_sold;
+      sale.change_amount = sale.total_paid + sale.discount- sale.total_sold;
 
       setSavingSale(true);
 
@@ -319,25 +319,21 @@ export function GlobalProvider({ children }) {
       0
     );
 
-    if (total_paid + (sale.discount || 0) < sale.total_sold) {
+    if(value > sale.total_sold) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
-        description: `O total de pagamentos deve ser maior ou igual ao total vendido para aplicar o desconto.`,
+        description: `Desconto não deve ser maior que o valor total dos produtos.`,
         duration: 5,
       });
     }
 
-    if (value > sale.payments[0].amount) {
+    if(sale.total_sold === total_paid || value > sale.total_sold - total_paid) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
-        description: `O do desconto deve ser meior que o primeiro pagamento [${sale.payments[0].amount
-          .toFixed(2)
-          .replace(".", ",")}].`,
+        description: `Retire todos os pagamentos para adicionar desconto.`,
         duration: 5,
       });
     }
-
-    sale.payments[0].amount -= value - (sale.discount || 0);
 
     const { response: _updatedSale, has_internal_error: errorOnUpdateSale } =
       await window.Main.sale.updateSale(sale.id, {

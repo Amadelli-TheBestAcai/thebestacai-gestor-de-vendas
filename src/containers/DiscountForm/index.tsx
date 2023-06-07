@@ -21,9 +21,6 @@ const DiscountForm: React.FC = () => {
   const [discountType, setDiscountType] = useState(1);
 
   const handleSubmit = () => {
-    if (!sale.payments.length) {
-      return message.warning("A venda não possui nenhum pagamento");
-    }
     if (value < 0 || (discountType === 2 && value > 100)) {
       return message.warning("Informe um valor válido");
     }

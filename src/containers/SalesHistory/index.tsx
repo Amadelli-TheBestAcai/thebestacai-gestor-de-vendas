@@ -72,7 +72,7 @@ const SalesHistory: React.FC<IProps> = ({
                 <Row>
                   <Col sm={24}>
                     Horário:
-                    <span>{moment(sale.created_at).format("HH:mm:ss")}</span>
+                    <span>{moment(sale.created_at).add(3, 'hours').format("HH:mm:ss")}</span>
                   </Col>
                 </Row>
                 <Row>

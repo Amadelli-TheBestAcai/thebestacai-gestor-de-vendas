@@ -23,18 +23,36 @@ type IProps = {
 };
 
 const Item: React.FC<IProps> = ({ item }) => {
-  const { onDecressItem } = useSale();
+  const { onDecressItem, sale } = useSale();
   const [modalState, setModalState] = useState(false);
   const [disabled, setdisabled] = useState(false);
   const [reasson, setReasson] = useState<string>("");
 
   const removeItem = async (): Promise<void> => {
-    setModalState(true);
-    if (reasson.length < 3) {
+    if(sale.discount > 0) {
       notification.warning({
-        message: "Oops! ",
+        message: "Falha ao remover produto",
         description:
-          "Digite um motivo válido para a remoção do item de seu carrinho.",
+          "Para remover um produto é necessário remover o desconto aplicado",
+        duration: 5,
+      });
+      return;
+    }
+    setModalState(true);
+    let errorMessage = '';
+
+    if (reasson.length < 3) {
+      errorMessage = 'Digite um motivo válido para a remoção do item de seu carrinho.';
+    }
+
+    if (reasson.length > 100) {
+      errorMessage = 'O motivo não deve ultrapassar 100 caracteres.';
+    }
+
+    if (errorMessage) {
+      notification.warning({
+        message: 'Oops!',
+        description: errorMessage,
         duration: 5,
       });
       return;

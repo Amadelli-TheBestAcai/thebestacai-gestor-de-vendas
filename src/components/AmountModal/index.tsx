@@ -18,6 +18,7 @@ interface IProp extends RouteComponentProps {
 
 const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   const { storeCash, setStoreCash } = useSale();
+  const [loading, setLoaindg] = useState(true);
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState({
     twoHundred: null,
@@ -35,6 +36,25 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
     oneCents: null,
     fullAmount: null,
   });
+
+  useEffect(() => {
+    setLoaindg(true);
+    async function init() {
+      const hasInternet = await window.Main.hasInternet();
+      if (!hasInternet) {
+        notification.error({
+          message:
+            "Para abertura/fechamento de caixa é necessário estar conectado a internet",
+          duration: 5,
+        });
+        setVisible(false);
+      }
+      setLoaindg(false);
+    }
+    if (visible) {
+      init();
+    }
+  }, [visible]);
 
   useEffect(() => {
     const getNewTotal = (): number => {
@@ -124,57 +144,63 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   };
 
   return (
-    <Container
-      visible={visible}
-      centered
-      width={800}
-      onCancel={() => setVisible(false)}
-      footer={
-        <span>
-          Valor Total de {storeCash?.is_opened ? "Fechamento" : "Abertura"}:{" "}
-          <span className="value">R$ {currencyFormater(total)}</span>
-        </span>
-      }
-    >
-      <Row>
-        {amountCash.map((_amount) => (
-          <Col sm={12} key={_amount.key}>
-            <span>R$ {_amount.label}</span>{" "}
-            <Input
-              type="number"
-              min={0}
-              placeholder={"0"}
-              onChange={({ target: { value } }) =>
-                setAmount((oldValue) => ({
-                  ...oldValue,
-                  [_amount.key]: +value,
-                }))
-              }
-            />
-          </Col>
-        ))}
-      </Row>
-      <Row>
-        <Col sm={12}>
-          <span>Valor Cheio</span>
-          <MonetaryInput
-            autoFocus={true}
-            getValue={(value) =>
-              setAmount((oldValues) => ({
-                ...oldValues,
-                fullAmount: +value,
-              }))
-            }
-          />
-        </Col>
-      </Row>
+    <>
+      {loading ? (
+        <></>
+      ) : (
+        <Container
+          visible={visible}
+          centered
+          width={800}
+          onCancel={() => setVisible(false)}
+          footer={
+            <span>
+              Valor Total de {storeCash?.is_opened ? "Fechamento" : "Abertura"}:{" "}
+              <span className="value">R$ {currencyFormater(total)}</span>
+            </span>
+          }
+        >
+          <Row>
+            {amountCash.map((_amount) => (
+              <Col sm={12} key={_amount.key}>
+                <span>R$ {_amount.label}</span>{" "}
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder={"0"}
+                  onChange={({ target: { value } }) =>
+                    setAmount((oldValue) => ({
+                      ...oldValue,
+                      [_amount.key]: +value,
+                    }))
+                  }
+                />
+              </Col>
+            ))}
+          </Row>
+          <Row>
+            <Col sm={12}>
+              <span>Valor Cheio</span>
+              <MonetaryInput
+                autoFocus={true}
+                getValue={(value) =>
+                  setAmount((oldValues) => ({
+                    ...oldValues,
+                    fullAmount: +value,
+                  }))
+                }
+              />
+            </Col>
+          </Row>
 
-      <Row>
-        <ButtonRegister onClick={onFinish} isOpened={storeCash?.is_opened}>
-          {storeCash?.is_opened ? "REGISTRAR" : "ABRIR CAIXA"}
-        </ButtonRegister>
-      </Row>
-    </Container>
+          <Row>
+            <ButtonRegister onClick={onFinish} isOpened={storeCash?.is_opened}>
+              {storeCash?.is_opened ? "REGISTRAR" : "ABRIR CAIXA"}
+            </ButtonRegister>
+          </Row>
+        </Container>
+      )}
+    </>
   );
 };
 
