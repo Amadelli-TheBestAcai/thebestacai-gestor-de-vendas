@@ -4,6 +4,7 @@ import { StorageNames } from "../../repository/storageNames";
 import { StoreDto, SettingsDto } from "../../models/gestor";
 import { SaleFromApiDTO } from "../../models/dtos/salesFromApi";
 import { replaceSpecialChars } from '../../helpers/replaceSpecialChars'
+import env from '../../providers/env.json'
 import {
   printer as ThermalPrinter,
   types as TermalTypes,
@@ -115,14 +116,26 @@ class PrintSale implements IUseCaseFactory {
       { text: "Valor Total dos Produtos", align: 'LEFT', cols: 40 },
       { text: totalItems, align: 'CENTER', cols: 10 },
     ])
+    this.printerFormater.drawLine()
 
     if (sale.nfce_url) {
-      this.printerFormater.drawLine()
       this.printerFormater.table(['QRCode NOTA FISCAL'])
       this.printerFormater.alignCenter()
       this.printerFormater.printQR(sale.nfce_url, { correction: 'M', cellSize: 7 })
+      this.printerFormater.newLine()
     }
-    this.printerFormater.cut()
+    
+    this.printerFormater.setTextQuadArea()
+    this.printerFormater.alignCenter()
+    this.printerFormater.println(`CODIGO: ${sale.sales_campaign_hash}\n`);
+    this.printerFormater.setTextNormal();
+    
+    this.printerFormater.println(`Utilize este código em 24h no nosso site:`);
+    this.printerFormater.bold(true)
+    this.printerFormater.println(env.DASH_THOR)
+    this.printerFormater.bold(false)
+    this.printerFormater.println(`e conquiste prêmios da campanha!`)
+   this.printerFormater.cut()
 
     Printer.printDirect({
       data: this.printerFormater.getBuffer(),
