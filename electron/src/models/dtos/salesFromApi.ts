@@ -82,6 +82,7 @@ export interface SaleFromApiDTO {
   nfce_id?: number;
   nfce_focus_id?: number;
   nfce_url?: string;
+  sales_campaign_hash: string
   created_at: string;
   deleted_at?: string;
 }
