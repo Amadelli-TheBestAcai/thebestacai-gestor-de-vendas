@@ -70,7 +70,7 @@ O conteúdo do arquivo **env.json** deverá conster as sequintes informações:
   "CHAT_DASH": "${CHAT_DASH}",
   "API_SALES_HANDLER": "${API_SALES_HANDLER}",
   "API_MERCURY": "${API_MERCURY}",
-  "DASH_THOR": "${DASH_THOR}"
+  "NPS_URL": "${NPS_URL}"
 }
 ```
 
