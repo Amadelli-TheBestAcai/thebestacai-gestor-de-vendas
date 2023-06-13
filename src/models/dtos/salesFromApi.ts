@@ -107,6 +107,7 @@ export interface SaleFromApi {
     updated_at?: Date;
   };
   ref?: string;
+  sales_campaign_hash: string;
   created_at: string;
   deleted_at?: string;
 }

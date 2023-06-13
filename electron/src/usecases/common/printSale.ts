@@ -132,7 +132,7 @@ class PrintSale implements IUseCaseFactory {
     
     this.printerFormater.println(`Utilize este código em 24h no nosso site:`);
     this.printerFormater.bold(true)
-    this.printerFormater.println(env.DASH_THOR)
+    this.printerFormater.println(env.NPS_URL)
     this.printerFormater.bold(false)
     this.printerFormater.println(`e conquiste prêmios da campanha!`)
    this.printerFormater.cut()
