@@ -50,6 +50,7 @@ export interface ProductDto {
   bc_icms_st?: string;
   redution_icms?: string;
   aliquot_final_consumer?: string;
+  cest?: string;
   quantity?: number;
   created_at: string;
   deleted_at?: string;

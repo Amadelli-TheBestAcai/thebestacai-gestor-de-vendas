@@ -67,6 +67,7 @@ export const salesFormaterToIntegrate = (
           redution_icms: _item.storeProduct.redution_icms,
           aliquot_final_consumer: _item.storeProduct.aliquot_final_consumer,
           quantity: _item.storeProduct.quantity,
+          cest: _item.storeProduct.cest,
           created_at: _item.storeProduct.created_at,
           deleted_at: _item.storeProduct.deleted_at,
         },
