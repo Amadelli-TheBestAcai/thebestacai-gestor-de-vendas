@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSale } from "../../hooks/useSale";
 
-import { message } from "antd";
+import { message, notification } from "antd";
 
 import {
   Container,
@@ -12,13 +12,37 @@ import {
   Select,
   Option,
   Input,
+  InputSearchReward,
+  RewardSearch,
+  IconContainer,
+  SearchIcon,
+  Spin,
+  RewardList,
+  RewardRow,
 } from "./styles";
 
 const DiscountForm: React.FC = () => {
-  const { discountModalState, onAddDiscount, discountModalHandler, sale } =
-    useSale();
+  const {
+    discountModalState,
+    onAddDiscount,
+    discountModalHandler,
+    sale,
+    setSale,
+  } = useSale();
+  const [userCpf, setUserCpf] = useState("");
+  const [rewards, setRewards] = useState<
+    { id: number; description: string; value: number; is_taked: boolean }[]
+  >([]);
+  const [searchingReward, setSearchingReward] = useState(false);
   const [value, setValue] = useState<number>();
   const [discountType, setDiscountType] = useState(1);
+
+  useEffect(() => {
+    if (!sale.customer_nps_reward_id) {
+      setUserCpf("");
+      setRewards([]);
+    }
+  }, [sale]);
 
   const handleSubmit = () => {
     if (value < 0 || (discountType === 2 && value > 100)) {
@@ -55,6 +79,93 @@ const DiscountForm: React.FC = () => {
     },
   ];
 
+  const getCampaignReward = async () => {
+    if (userCpf.length != 11) {
+      return notification.error({
+        message: "O CPF do usuário deve conter 11 digitos",
+        duration: 5,
+      });
+    }
+    setSearchingReward(true);
+    const { has_internal_error, error_message, response } =
+      await window.Main.sale.getCampaignReward(userCpf);
+
+    if (has_internal_error) {
+      notification.error({
+        message: error_message || "Erro ao finalizar venda",
+        duration: 5,
+      });
+    }
+    console.log({ response });
+    setRewards(response);
+    setSearchingReward(false);
+  };
+
+  const useReward = async (reward: {
+    id: number;
+    description: string;
+    value: number;
+    is_taked: boolean;
+  }) => {
+    const total_paid = sale.payments.reduce(
+      (total, payment) => total + payment.amount,
+      0
+    );
+
+    if (!sale.items.length) {
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `Adicione produtos para aplicar desconto`,
+        duration: 5,
+      });
+    }
+
+    if (value > sale.total_sold) {
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `Desconto não deve ser maior que o valor total dos produtos.`,
+        duration: 5,
+      });
+    }
+
+    if (
+      sale.total_sold === total_paid ||
+      value > sale.total_sold - total_paid
+    ) {
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `Retire todos os pagamentos para adicionar desconto.`,
+        duration: 5,
+      });
+    }
+
+    setSale({
+      ...sale,
+      customer_nps_reward_id: reward.id,
+      customer_nps_reward_discount: reward.value,
+    });
+
+    await window.Main.sale.updateSale(sale.id, {
+      ...sale,
+      customer_nps_reward_id: reward.id,
+      customer_nps_reward_discount: reward.value,
+    });
+
+    discountModalHandler.closeDiscoundModal();
+    document.getElementById("mainContainer").focus();
+  };
+
+  const removeReward = async () => {
+    setSale((oldValue) => ({
+      ...oldValue,
+      customer_nps_reward_id: null,
+      customer_nps_reward_discount: null,
+    }));
+
+    discountModalHandler.closeDiscoundModal();
+    document.getElementById("mainContainer").focus();
+  };
+
   return (
     <Container
       title="Desconto"
@@ -81,6 +192,48 @@ const DiscountForm: React.FC = () => {
         </Footer>
       }
     >
+      <>
+        <RewardSearch>
+          <InputSearchReward
+            placeholder="Procurar recompensa por cpf"
+            value={userCpf}
+            onChange={({ target: { value } }) => setUserCpf(value)}
+          />
+          <IconContainer onClick={getCampaignReward}>
+            {searchingReward ? <Spin /> : <SearchIcon />}
+          </IconContainer>
+        </RewardSearch>
+        <RewardList>
+          {rewards.map((reward) => (
+            <RewardRow key={reward.id}>
+              <span>{reward.description}</span>
+              {reward.is_taked ? (
+                <div style={{ cursor: "not-allowed", color: "#0000ff99" }}>
+                  Resgatado
+                </div>
+              ) : (
+                <>
+                  {sale.customer_nps_reward_id === reward.id ? (
+                    <div
+                      style={{ color: "#ff4d4fba" }}
+                      onClick={() => removeReward()}
+                    >
+                      Remover
+                    </div>
+                  ) : (
+                    <div
+                      style={{ color: "#52c41a" }}
+                      onClick={() => useReward(reward)}
+                    >
+                      Resgatar
+                    </div>
+                  )}
+                </>
+              )}
+            </RewardRow>
+          ))}
+        </RewardList>
+      </>
       <>
         <Select
           onChange={(type) => handleSelect(+type)}

@@ -24,6 +24,8 @@ export type SaleDto = {
   to_integrate: boolean;
   total_paid: number;
   total_sold: number;
+  customer_nps_reward_id?: number;
+  customer_nps_reward_discount?: number;
   items: ItemDto[];
   payments: PaymentDto[];
   ref?: string;

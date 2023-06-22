@@ -23,6 +23,8 @@ export interface SaleDto {
   to_integrate: boolean;
   total_paid: number;
   total_sold: number;
+  customer_nps_reward_id?: number;
+  customer_nps_reward_discount?: number;
   items: {
     id: string;
     store_product_id: number;

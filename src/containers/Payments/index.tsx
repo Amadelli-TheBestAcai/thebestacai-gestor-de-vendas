@@ -112,8 +112,11 @@ const PaymentsContainer: React.FC<IProps> = ({
 
   const getChangeAmount = () => {
     if (sale.total_paid + sale.discount > sale.total_sold) {
-      const result = (sale.total_paid - sale.total_sold + sale.discount)
-        .toFixed(2);
+      const result = (
+        sale.total_paid -
+        sale.total_sold +
+        sale.discount
+      ).toFixed(2);
       return result;
     } else {
       return "0";
@@ -155,7 +158,12 @@ const PaymentsContainer: React.FC<IProps> = ({
           <ValueInfo>
             R$ Diferença <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
-              {(((sale?.total_paid + sale?.discount)- sale?.total_sold) - +getChangeAmount())
+              {(
+                sale?.total_paid +
+                (sale?.discount + sale?.customer_nps_reward_discount) -
+                sale?.total_sold -
+                +getChangeAmount()
+              )
                 .toFixed(2)
                 .replace(".", ",")}
             </strong>
@@ -170,7 +178,9 @@ const PaymentsContainer: React.FC<IProps> = ({
             R$ Desconto
             <br />{" "}
             <strong style={{ color: "var(--green-600" }}>
-              {sale?.discount.toFixed(2).replace(".", ",")}
+              {((sale.customer_nps_reward_discount || 0) + sale?.discount)
+                .toFixed(2)
+                .replace(".", ",")}
             </strong>
           </ValueInfo>
           <ValueInfo>
@@ -210,7 +220,10 @@ const PaymentsContainer: React.FC<IProps> = ({
           onEnterPress={addPayment}
           defaultValue={
             modalTitle !== "Dinheiro"
-              ? sale?.total_sold - sale?.total_paid - sale?.discount
+              ? sale?.total_sold -
+                sale?.total_paid -
+                sale?.discount -
+                sale?.customer_nps_reward_discount
               : 0
           }
         />

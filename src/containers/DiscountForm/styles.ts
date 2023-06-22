@@ -1,8 +1,14 @@
 import styled from "styled-components";
+import { Search } from "../../styles/Icons";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import { Modal as ModalAnt, Select as SelectAnt, Input as InputAnt } from "antd";
+import {
+  Modal as ModalAnt,
+  Select as SelectAnt,
+  Input as InputAnt,
+  Spin as SpinAnt,
+} from "antd";
 
 export const Container = styled(ModalAnt)`
   .ant-modal-body {
@@ -87,3 +93,69 @@ export const Select = styled(SelectAnt)`
 export const Option = styled(SelectAnt.Option)``;
 
 export const Input = styled(InputAnt)``;
+
+export const Spin = styled(SpinAnt)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const RewardSearch = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 3.8rem;
+  background: var(--white-80);
+  padding: 2%;
+  margin-bottom: 8px;
+`;
+
+export const InputSearchReward = styled.input`
+  width: 100%;
+`;
+
+export const IconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15%;
+  height: 100%;
+  background: var(--white);
+  border-radius: 7px 0px 0px 7px;
+  padding: 5px;
+  cursor: pointer;
+`;
+
+export const SearchIcon = styled(Search)`
+  width: 1rem;
+  height: 1rem;
+  color: var(--grey-80);
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+`;
+
+export const RewardList = styled.div`
+  font-size: 11px;
+`;
+
+export const RewardRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0 2%;
+  span {
+    width: 60%;
+  }
+  div {
+    display: flex;
+    justify-content: center;
+    width: 40%;
+    cursor: pointer;
+  }
+`;

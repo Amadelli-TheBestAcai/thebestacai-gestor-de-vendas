@@ -169,7 +169,9 @@ export function GlobalProvider({ children }) {
     if (sale.items.length) {
       if (
         +(sale.total_sold.toFixed(2) || 0) >
-        sale.total_paid + (sale.discount || 0) + 0.5
+        sale.total_paid +
+          ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
+          0.5
       ) {
         return notification.warning({
           message: "Pagamento inválido!",
@@ -178,7 +180,7 @@ export function GlobalProvider({ children }) {
         });
       }
 
-      sale.change_amount = sale.total_paid + sale.discount- sale.total_sold;
+      sale.change_amount = sale.total_paid + sale.discount - sale.total_sold;
 
       setSavingSale(true);
 
@@ -314,12 +316,20 @@ export function GlobalProvider({ children }) {
   };
 
   const onAddDiscount = async (value: number): Promise<void> => {
+    if (!sale.items.length) {
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `Adicione produtos para aplicar desconto`,
+        duration: 5,
+      });
+    }
+
     const total_paid = sale.payments.reduce(
       (total, payment) => total + payment.amount,
       0
     );
 
-    if(value > sale.total_sold) {
+    if (value > sale.total_sold) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
         description: `Desconto não deve ser maior que o valor total dos produtos.`,
@@ -327,7 +337,10 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    if(sale.total_sold === total_paid || value > sale.total_sold - total_paid) {
+    if (
+      sale.total_sold === total_paid ||
+      value > sale.total_sold - total_paid
+    ) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
         description: `Retire todos os pagamentos para adicionar desconto.`,
