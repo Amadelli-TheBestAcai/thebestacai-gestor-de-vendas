@@ -91,8 +91,9 @@ const DiscountForm: React.FC = () => {
       await window.Main.sale.getCampaignReward(userCpf);
 
     if (has_internal_error) {
-      notification.error({
-        message: error_message || "Erro ao finalizar venda",
+      setSearchingReward(false);
+      return notification.error({
+        message: error_message || "Erro ao buscar recompensas",
         duration: 5,
       });
     }
