@@ -31,7 +31,13 @@ const DiscountForm: React.FC = () => {
   } = useSale();
   const [userCpf, setUserCpf] = useState("");
   const [rewards, setRewards] = useState<
-    { id: number; description: string; value: number; is_taked: boolean }[]
+    {
+      id: number;
+      description: string;
+      value: number;
+      is_taked: boolean;
+      refused: boolean;
+    }[]
   >([]);
   const [searchingReward, setSearchingReward] = useState(false);
   const [value, setValue] = useState<number>();
@@ -97,7 +103,7 @@ const DiscountForm: React.FC = () => {
         duration: 5,
       });
     }
-    console.log({ response });
+
     setRewards(response);
     setSearchingReward(false);
   };
@@ -214,7 +220,11 @@ const DiscountForm: React.FC = () => {
                 </div>
               ) : (
                 <>
-                  {sale.customer_nps_reward_id === reward.id ? (
+                  {reward.refused ? (
+                    <div style={{ cursor: "not-allowed", color: "#ff4d4fba" }}>
+                      Recusado
+                    </div>
+                  ) : sale.customer_nps_reward_id === reward.id ? (
                     <div
                       style={{ color: "#ff4d4fba" }}
                       onClick={() => removeReward()}

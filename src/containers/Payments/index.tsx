@@ -160,7 +160,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             <strong style={{ color: "var(--red-600" }}>
               {(
                 sale?.total_paid +
-                (sale?.discount + sale?.customer_nps_reward_discount) -
+                (sale?.discount + (sale?.customer_nps_reward_discount || 0)) -
                 sale?.total_sold -
                 +getChangeAmount()
               )
@@ -171,7 +171,7 @@ const PaymentsContainer: React.FC<IProps> = ({
           <ValueInfo>
             R$ Troco <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
-              {getChangeAmount().replace(".", ",")}
+              {(+getChangeAmount()).toFixed(2).replace(".", ",")}
             </strong>
           </ValueInfo>
           <ValueInfo>
@@ -223,7 +223,7 @@ const PaymentsContainer: React.FC<IProps> = ({
               ? sale?.total_sold -
                 sale?.total_paid -
                 sale?.discount -
-                sale?.customer_nps_reward_discount
+                (sale?.customer_nps_reward_discount || 0)
               : 0
           }
         />

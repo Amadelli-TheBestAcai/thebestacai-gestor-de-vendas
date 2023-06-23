@@ -13,6 +13,7 @@ class GetCampaignReward implements IUseCaseFactory {
       description: string;
       value: number;
       is_taked: boolean;
+      refused: boolean;
     }[]
   > {
     const {
@@ -50,6 +51,7 @@ class GetCampaignReward implements IUseCaseFactory {
         description: customerReward.campaignReward.description,
         value: value,
         is_taked: customerReward.is_taked,
+        refused: customerReward.refused,
       };
     });
 

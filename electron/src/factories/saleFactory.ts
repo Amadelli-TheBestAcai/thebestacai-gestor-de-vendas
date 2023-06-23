@@ -104,6 +104,7 @@ export const saleFactory = {
         description: string;
         value: number;
         is_taked: boolean;
+        refused: boolean;
       }[]
     >(getCampaignReward, {
       cpf,
