@@ -12,7 +12,8 @@ import {
 export const Container = styled(ModalAnt)`
   display: flex;
   flex-direction: column;
-
+  overflow: hidden;
+  
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
     @media (max-height: 900px) {
@@ -24,9 +25,6 @@ export const Container = styled(ModalAnt)`
   @media (max-width: 1366px) {
     width: 550px !important;
 
-    .ant-modal-content {
-      height: 350px;
-    }
   }
 `;
 
@@ -113,6 +111,7 @@ export const Content = styled.div`
   flex-direction: column;
   width: 100%;
   height: 87%;
+  overflow: auto;
 `;
 
 export const Card = styled(RowAnt)`
