@@ -346,7 +346,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                     disabled
                   />
                 ) : (
-                  <MonetaryInput autoFocus={false} getValue={getAmount} />
+                  <MonetaryInput
+                    onEnterPress={handleSubmit}
+                    autoFocus={false}
+                    getValue={getAmount}
+                  />
                 )}
               </Form.Item>
             </Col>
