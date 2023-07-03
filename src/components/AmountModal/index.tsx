@@ -97,14 +97,14 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
             });
             return;
           }
-          const { response: _storeCash, has_internal_error: errorOnStoreCash } =
+          const { response: _storeCash, has_internal_error: errorOnStoreCash, error_message: errorMessageCloseStoreCash } =
             await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
           if (errorOnStoreCash) {
             notification.error({
-              message: "Erro ao fechar o caixa",
+              message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
               duration: 5,
-            });
-            return;
+            })
+            return
           }
           setStoreCash(_storeCash);
           notification.success({
