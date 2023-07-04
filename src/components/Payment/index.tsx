@@ -30,7 +30,12 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
           </Column>
           <Column sm={8}>
             <Tooltip title="Remover" placement="bottom">
-              <Button onClick={() => removePayment(payment.id)}>
+              <Button
+                onClick={() => {
+                  removePayment(payment.id),
+                    document.getElementById("balanceInput")?.focus();
+                }}
+              >
                 <DeleteIcon />
               </Button>
             </Tooltip>
