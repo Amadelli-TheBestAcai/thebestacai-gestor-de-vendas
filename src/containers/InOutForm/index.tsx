@@ -276,6 +276,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       destroyOnClose={true}
       closable={false}
       centered
+      onCancel={() => handleClose()}
       footer={
         <Footer>
           <ButtonCancel onClick={() => handleClose()}>Cancelar</ButtonCancel>
@@ -346,7 +347,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                     disabled
                   />
                 ) : (
-                  <MonetaryInput autoFocus={false} getValue={getAmount} />
+                  <MonetaryInput
+                    onEnterPress={handleSubmit}
+                    autoFocus={false}
+                    getValue={getAmount}
+                  />
                 )}
               </Form.Item>
             </Col>
