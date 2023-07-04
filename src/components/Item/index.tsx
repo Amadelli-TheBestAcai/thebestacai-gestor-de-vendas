@@ -29,7 +29,7 @@ const Item: React.FC<IProps> = ({ item }) => {
   const [reasson, setReasson] = useState<string>("");
 
   const removeItem = async (): Promise<void> => {
-    if(sale.discount > 0) {
+    if (sale.discount > 0) {
       notification.warning({
         message: "Falha ao remover produto",
         description:
@@ -39,19 +39,20 @@ const Item: React.FC<IProps> = ({ item }) => {
       return;
     }
     setModalState(true);
-    let errorMessage = '';
+    let errorMessage = "";
 
     if (reasson.length < 3) {
-      errorMessage = 'Digite um motivo válido para a remoção do item de seu carrinho.';
+      errorMessage =
+        "Digite um motivo válido para a remoção do item de seu carrinho.";
     }
 
     if (reasson.length > 100) {
-      errorMessage = 'O motivo não deve ultrapassar 100 caracteres.';
+      errorMessage = "O motivo não deve ultrapassar 100 caracteres.";
     }
 
     if (errorMessage) {
       notification.warning({
-        message: 'Oops!',
+        message: "Oops!",
         description: errorMessage,
         duration: 5,
       });
@@ -101,6 +102,7 @@ const Item: React.FC<IProps> = ({ item }) => {
         }
       >
         <Input
+          onPressEnter={removeItem}
           autoFocus={true}
           placeholder="Digite o motivo"
           onChange={({ target: { value } }) => setReasson(value)}

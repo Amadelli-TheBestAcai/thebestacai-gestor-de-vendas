@@ -276,6 +276,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       destroyOnClose={true}
       closable={false}
       centered
+      onCancel={() => handleClose()}
       footer={
         <Footer>
           <ButtonCancel onClick={() => handleClose()}>Cancelar</ButtonCancel>
