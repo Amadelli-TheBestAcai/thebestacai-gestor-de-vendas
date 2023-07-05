@@ -4,6 +4,7 @@ import { PaymentDto } from "./payment";
 export type SaleDto = {
   id: string;
   user_id?: number;
+  sales_campaign_hash: string;
   name?: string;
   quantity: number;
   change_amount: number;

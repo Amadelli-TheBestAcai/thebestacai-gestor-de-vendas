@@ -5,6 +5,7 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getUser } from "../user";
 import { SaleDto, UserDto, StoreCashDto } from "../../models/gestor";
+import { generateUniqueHex } from "../../helpers/generatorUniqueHash";
 
 interface Request {
   withPersistence?: boolean;
@@ -17,7 +18,7 @@ class BuildNewSale implements IUseCaseFactory {
       StorageNames.StoreCash
     ),
     private getUserUseCase = getUser
-  ) { }
+  ) {}
 
   async execute(
     { withPersistence }: Request = { withPersistence: true }
@@ -33,6 +34,7 @@ class BuildNewSale implements IUseCaseFactory {
 
     const newSale: SaleDto = {
       id: v4(),
+      sales_campaign_hash: generateUniqueHex(4),
       user_id: user?.id,
       quantity: 0,
       change_amount: 0,
@@ -49,8 +51,8 @@ class BuildNewSale implements IUseCaseFactory {
     };
 
     if (storeCash?.is_opened && storeCash?.is_online) {
-      newSale.cash_id = storeCash?.cash_id
-      newSale.cash_history_id = storeCash?.history_id
+      newSale.cash_id = storeCash?.cash_id;
+      newSale.cash_history_id = storeCash?.history_id;
     }
 
     if (withPersistence) {
