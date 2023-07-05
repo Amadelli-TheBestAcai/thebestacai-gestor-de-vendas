@@ -10,6 +10,7 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 import { StoreDto } from "../models/dtos/store";
+import { SaleFromApi } from "../models/dtos/salesFromApi";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -290,6 +291,11 @@ export function GlobalProvider({ children }) {
         description: `A venda foi registrada com sucesso.`,
         duration: 3,
       });
+    }
+
+    if (settings.should_print_sale && settings.should_use_printer) {
+      //@ts-expect-error
+      window.Main.common.printSale(sale);
     }
 
     document.getElementById("balanceInput")?.focus();
