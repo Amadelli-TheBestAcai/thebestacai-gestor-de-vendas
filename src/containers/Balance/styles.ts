@@ -88,6 +88,9 @@ export const RightSide = styled.div`
     span {
       font-size: 0.8rem;
     }
+    .spanBalance {
+      font-size: 2rem !important;
+    }
   }
 
   /*Responsive 1366px*/
@@ -98,6 +101,9 @@ export const RightSide = styled.div`
 
     span {
       font-size: 0.7rem;
+    }
+    .spanBalance {
+      font-size: 1.6rem !important;
     }
   }
 `;
