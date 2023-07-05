@@ -153,7 +153,7 @@ const BalanceContainer: React.FC<IProps> = ({
             </span>
             {shouldUseBalance ? (
               <Tooltip
-                title={"Pressione Enter para enviar o valor para pagamento."}
+                title={"Pressione Enter para adicionar ao carrinho"}
                 placement="right"
               >
                 <InputBox>
