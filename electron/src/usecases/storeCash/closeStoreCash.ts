@@ -3,10 +3,10 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreDto, StoreCashDto, OldCashHistoryDto } from "../../models/gestor";
+import { StoreDto, StoreCashDto, OldCashHistoryDto, SaleDto } from "../../models/gestor";
 import { updateBalanceHistory } from './updateBalanceHistory';
 import { useCaseFactory } from "../useCaseFactory";
-import { DeliverySaleDto } from "../../models/gestor/deliverySale";
+
 interface Request {
   code: string;
   amount_on_close: number;
@@ -20,7 +20,7 @@ class CloseStoreCash implements IUseCaseFactory {
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(StorageNames.Old_Cash_History),
     private _updateBalanceHistory = updateBalanceHistory,
-    private deliverySaleRepository = new BaseRepository<DeliverySaleDto>(StorageNames.Delivery_Sale)
+    private deliverySaleRepository = new BaseRepository<SaleDto>(StorageNames.Delivery_Sale)
   ) { }
 
   async execute({
