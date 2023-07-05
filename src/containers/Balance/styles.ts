@@ -27,6 +27,42 @@ const InputCSS = css`
     border: 1px solid var(--grey-70);
   }
 `;
+export const InputBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+
+  background: var(--white-30) !important;
+  border: 1px solid var(--grey-70) !important;
+  box-sizing: border-box;
+  border-radius: 9px;
+  font-size: 2.2rem;
+  padding: 0.8rem;
+
+  :hover,
+  :focus,
+  :active {
+    border: 1px solid var(--grey-70);
+  }
+  .inputBalance {
+    border: none !important;
+    background: none !important;
+
+    width: 100%;
+    :read-only {
+      color: var(--grey-80);
+    }
+  }
+  .spanBalance {
+    font-size: 2.2rem !important;
+    margin-right: 0.5rem;
+    margin-bottom: 0;
+    font-weight: 400;
+    color: var(--grey-80);
+  }
+`;
 
 export const RightSide = styled.div`
   ${BalanceCSS}
