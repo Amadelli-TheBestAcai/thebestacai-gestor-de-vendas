@@ -110,6 +110,10 @@ export const GlobalStyle = createGlobalStyle`
       color: var(--black-opaco);
     }
 
+    .ant-radio-group .ant-radio-group-outline{
+      margin-top: 1rem;
+    }
+
     .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
       @media (max-width: 1366px) {
         font-size: 0.8rem;
@@ -185,6 +189,10 @@ export const GlobalStyle = createGlobalStyle`
         }
 
       }
+    }
+
+    .ant-select-selector{
+      height: 100%;
     }
 
     .ant-input, .ant-input-password,
