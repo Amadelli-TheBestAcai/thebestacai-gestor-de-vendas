@@ -70,11 +70,13 @@ export const SelectSearch = styled(SelectAnt)`
     font-size: 1rem;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .ant-select-arrow {
-    display: none;
+    span {
+      font-size: 0.9rem;
+    }
   }
 `;
 

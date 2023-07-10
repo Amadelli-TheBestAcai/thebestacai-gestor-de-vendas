@@ -60,14 +60,14 @@ const columns: ITableProps[] = [
     data: "10/10/2023",
     id: 2,
     produto: "Uva",
-    quantidade: 5,
-    total: "0.244 kg",
+    quantidade: 1,
+    total: "0.248 kg",
   },
   {
     data: "10/10/2023",
     id: 3,
     produto: "Morango",
-    quantidade: 5,
+    quantidade: 8,
     total: "2 un",
   },
 ];
@@ -96,6 +96,8 @@ const WasteList: React.FC<IProps> = ({
     }
     return true;
   });
+
+  filteredColumns.sort((a, b) => b.quantidade - a.quantidade);
 
   return (
     <Container>
@@ -147,27 +149,25 @@ const WasteList: React.FC<IProps> = ({
               <span>Ranking de desperdício</span>
               <SelectSearch
                 placeholder="Escolha a opção"
-                defaultValue={"Todos"}
+                defaultValue={"Todos os produtos"}
                 onChange={(value: any) => setSelectedOption(value)}
               >
-                <Option value={''}>Todos</Option>
+                <Option value={""}>Todos os produtos</Option>
                 <Option value={Options.Unidade}>Por unidade</Option>
                 <Option value={Options.Quilograma}>Por kg</Option>
               </SelectSearch>
             </ContentWaste>
 
             <Header>
-              <Col sm={6}>Posição</Col>
-              <Col sm={6}>Categoria</Col>
-              <Col sm={6}>Produto</Col>
-              <Col sm={6}>Total</Col>
+              <Col sm={8}>Posição</Col>
+              <Col sm={8}>Produto</Col>
+              <Col sm={8}>Quantidade</Col>
             </Header>
-            {filteredColumns.map((column) => (
+            {filteredColumns.map((column, index) => (
               <Tupla key={column.id}>
-                <Col sm={6}>{`${column.id}º`}</Col>
-                <Col sm={6}>{column.produto}</Col>
-                <Col sm={6}>{column.quantidade}</Col>
-                <Col sm={6}>{column.total}</Col>
+                <Col sm={8}>{`${index + 1}º`}</Col>
+                <Col sm={8}>{column.produto}</Col>
+                <Col sm={8}>{column.total}</Col>
               </Tupla>
             ))}
           </ContentRight>
