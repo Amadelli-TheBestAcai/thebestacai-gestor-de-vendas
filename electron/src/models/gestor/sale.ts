@@ -26,6 +26,9 @@ export interface SaleDto {
   total_sold: number;
   customer_nps_reward_id?: number;
   customer_nps_reward_discount?: number;
+  nfce?: {
+    qrcode_url: string;
+  };
   items: {
     id: string;
     store_product_id: number;

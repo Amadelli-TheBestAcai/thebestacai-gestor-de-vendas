@@ -101,6 +101,7 @@ export interface SaleFromApi {
     numero_final?: string;
     modelo?: string;
     cnpj?: string;
+    qrcode_url: string;
     caminho_xml?: string;
     codigo?: string;
     mensagem?: string;

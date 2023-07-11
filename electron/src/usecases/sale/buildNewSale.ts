@@ -46,6 +46,7 @@ class BuildNewSale implements IUseCaseFactory {
       to_integrate: false,
       total_paid: 0,
       total_sold: 0,
+      ref: v4(),
       items: [],
       payments: [],
     };

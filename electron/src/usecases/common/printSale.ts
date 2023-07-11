@@ -5,12 +5,14 @@ import { StoreDto, SettingsDto } from "../../models/gestor";
 import { SaleFromApiDTO } from "../../models/dtos/salesFromApi";
 import { SaleDto } from "../../models/gestor/sale";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
+import * as jwt from 'jsonwebtoken';
 import env from "../../providers/env.json";
 import {
   printer as ThermalPrinter,
   types as TermalTypes,
 } from "node-thermal-printer";
 import Printer from "printer";
+import { v4 } from "uuid";
 
 interface Request {
   sale: SaleFromApiDTO | SaleDto;
@@ -144,44 +146,45 @@ class PrintSale implements IUseCaseFactory {
       { text: totalItems + "R$", align: "CENTER", cols: 10 },
     ]);
     this.printerFormater.drawLine();
-
-    if (sale.nfce_url) {
+    
+    if (sale.nfce?.qrcode_url) {
       this.printerFormater.table(["QRCode NOTA FISCAL"]);
       this.printerFormater.alignCenter();
-      this.printerFormater.printQR(sale.nfce_url, {
+      
+      this.printerFormater.printQR(sale.nfce.qrcode_url, {
         correction: "M",
         cellSize: 7,
       });
       this.printerFormater.newLine();
     }
 
-    if (sale.sales_campaign_hash) {
+      const access_token = jwt.sign(
+        {
+          ref: sale.ref,
+          cpf: null,
+          total_sold: totalItems
+        },
+        env.ACCESS_TOKEN_SECRET,
+        {
+          expiresIn: '1d',
+        },
+      );
+
+      console.log(access_token)
       this.printerFormater.table(["QRCode Avaliação NPS"]);
       this.printerFormater.println(
         `Utilize este QRCode para ser direcionado para nos avaliar :)`
       );
       this.printerFormater.alignCenter();
       this.printerFormater.printQR(
-        `${env.NPS_URL}/qrcode?hash=${sale.sales_campaign_hash}`,
+        `${env.NPS_URL}/qrcode?hash=${access_token}`,
         {
           correction: "M",
           cellSize: 7,
         }
       );
       this.printerFormater.newLine();
-    }
-
-    this.printerFormater.setTextQuadArea();
-    this.printerFormater.alignCenter();
-    this.printerFormater.println(`CODIGO: ${sale.sales_campaign_hash}\n`);
-    this.printerFormater.setTextNormal();
-
-    this.printerFormater.println(`Utilize este código em 24h no nosso site:`);
-    this.printerFormater.bold(true);
-    this.printerFormater.println(env.NPS_URL);
-    this.printerFormater.bold(false);
-    this.printerFormater.println(`e conquiste prêmios da campanha!`);
-    this.printerFormater.cut();
+      this.printerFormater.cut();
 
     Printer.printDirect({
       data: this.printerFormater.getBuffer(),
