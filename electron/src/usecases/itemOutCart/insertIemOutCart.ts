@@ -10,6 +10,7 @@ import { ItemOutCartDto, StoreCashDto, StoreDto } from "../../models/gestor";
 interface Request {
   reason: string;
   product_id: number;
+  price_sell:number
 }
 
 class InsertItemOutCart implements IUseCaseFactory {
@@ -27,7 +28,7 @@ class InsertItemOutCart implements IUseCaseFactory {
     private integrateItemOutCartUseCase = integrationItemOutCart
   ) {}
 
-  async execute({ product_id, reason }: Request): Promise<ItemOutCartDto> {
+  async execute({ product_id, reason, price_sell }: Request): Promise<ItemOutCartDto> {
     const storeCash = await this.storeCashRepository.getOne();
     const store = await this.storeRepository.getOne();
 
@@ -36,6 +37,7 @@ class InsertItemOutCart implements IUseCaseFactory {
       to_integrate: true,
       cash_code: storeCash?.code,
       store_id: store?.company.id,
+      price_sell,
       reason,
       product_id,
     };

@@ -3,10 +3,10 @@ import { insertItemOutCart, integrationItemOutCart } from "../usecases/itemOutCa
 import { ItemOutCartDto } from "../models/gestor";
 
 export const itemOutCartFactory = {
-  create: async (reason: string, product_id: number) =>
+  create: async (reason: string, product_id: number, price_sell:number) =>
     await useCaseFactory.execute<ItemOutCartDto | undefined>(
       insertItemOutCart,
-      { reason, product_id }
+      { reason, product_id, price_sell }
     ),
   integrationItemOutCart: async () =>
     await useCaseFactory.execute<void>(integrationItemOutCart)
