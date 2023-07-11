@@ -164,13 +164,12 @@ class PrintSale implements IUseCaseFactory {
           cpf: null,
           total_sold: totalItems
         },
-        env.ACCESS_TOKEN_SECRET,
+        env.TOKEN_SECRET_NPS,
         {
           expiresIn: '1d',
         },
       );
 
-      console.log(access_token)
       this.printerFormater.table(["QRCode Avaliação NPS"]);
       this.printerFormater.println(
         `Utilize este QRCode para ser direcionado para nos avaliar :)`
