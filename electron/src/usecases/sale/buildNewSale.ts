@@ -34,7 +34,6 @@ class BuildNewSale implements IUseCaseFactory {
 
     const newSale: SaleDto = {
       id: v4(),
-      sales_campaign_hash: generateUniqueHex(4),
       user_id: user?.id,
       quantity: 0,
       change_amount: 0,
