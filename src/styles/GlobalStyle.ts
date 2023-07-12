@@ -68,7 +68,21 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
- 
+  .ant-radio-inner::after {
+    background-color: var(--orange-250);
+  }
+
+  .ant-radio-checked .ant-radio-inner {
+    border-color: var(--orange-250);
+  }
+
+  .ant-radio-checked {
+    color: var(--orange-250);
+  }
+
+  .ant-radio-inner {
+    border-color: var(--orange-250);
+  }
 
   html, body, #root {
     max-height: 100vh;
