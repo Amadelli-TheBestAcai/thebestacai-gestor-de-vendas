@@ -1,3 +1,5 @@
+import { InputNumberProps } from "antd";
+
 export interface ProductDto {
   id: number;
   product_id?: number;
@@ -50,8 +52,9 @@ export interface ProductDto {
   bc_icms_st?: string;
   redution_icms?: string;
   aliquot_final_consumer?: string;
-  cest?: string;
   quantity?: number;
+  cest?: string;
   created_at: string;
   deleted_at?: string;
 }
+
