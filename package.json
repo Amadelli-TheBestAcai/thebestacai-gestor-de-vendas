@@ -26,6 +26,7 @@
     "printer": "git+https://github.com/tojocky/node-printer.git",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-dropzone": "^14.2.3",
     "react-hotkeys": "^2.0.0",
     "react-input-mask": "^2.0.4",
     "react-intl-currency-input": "^0.2.6",
