@@ -11,96 +11,87 @@ import Spinner from "../../components/Spinner";
 import WasteList from "../../containers/WasteList";
 import moment from "moment";
 import { Modal, notification } from "antd";
-import { wasteDTO } from "../../models/dtos/waste";
-
-export interface ITableProps {
-  data: string;
-  id: number;
-  produto: string;
-  quantidade: number;
-}
-
-const columns: ITableProps[] = [
-  {
-    data: "10/10/2023",
-    id: 1,
-    produto: "Morango",
-    quantidade: 0.526,
-  },
-  {
-    data: "10/10/2023",
-    id: 2,
-    produto: "Uva",
-    quantidade: 1,
-  },
-  {
-    data: "10/10/2023",
-    id: 3,
-    produto: "Morango",
-    quantidade: 2.548,
-  },
-];
+import { ProductDto } from "../../models/dtos/product";
+import { ProductWasteDTO } from "../../models/dtos/productWaste";
 
 const Waste: React.FC = () => {
+  const [products, setProducts] = useState<ProductWasteDTO[]>([]);
+  const [productStoreList, setProductStoreList] = useState<ProductDto[]>([]);
   const [loading, setLoading] = useState(false);
+  const [shouldSearch, setShouldSearch] = useState(false);
   const [selectedDate, setSelectedDate] = useState(moment());
-  const [products, setProducts] = useState<wasteDTO[]>([]);
-  const [isConected, setIsConected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const [filteredProducts, setFilteredProducts] =
-    useState<ITableProps[]>(columns);
+    useState<ProductWasteDTO[]>(products);
+
+  const dataInicial = moment(selectedDate, "DD/MM/YYYY").format("DD/MM/YYYY");
+  const dataFinal = moment(selectedDate, "DD/MM/YYYY")
+    .add(1, "days")
+    .format("DD/MM/YYYY");
 
   useEffect(() => {
     async function init() {
-      const { response: response, has_internal_error: errorOnProducts } =
-        await window.Main.productWaste.getWasteProducts();
+      setLoading(true);
+      const { response: productWaste, has_internal_error: errorOnProducts } =
+        await window.Main.productWaste.getWasteProducts(dataInicial, dataFinal);
+
+      const { response: products } =
+        await window.Main.product.getAllProductStore();
+
       if (errorOnProducts) {
         notification.error({
           message: "Erro ao encontrar os produtos",
           duration: 5,
         });
       }
-      const _isConnected = await window.Main.hasInternet();
 
-      // setProducts(response);
-      console.log(products);
+      const isConnected = await window.Main.hasInternet();
+      setIsConnected(isConnected);
+      setProducts(productWaste);
+      setProductStoreList(products);
       setLoading(false);
-      setIsConected(_isConnected);
     }
+
     init();
-  }, []);
+  }, [dataInicial, dataFinal, shouldSearch]);
 
-  const deleteWaste = async (id: number) => {
-    Modal.confirm({
-      title: "Remover desperdício",
-      content: "Tem certeza que gostaria de remover este desperdício?",
-      okText: "Sim",
-      okType: "danger",
-      cancelText: "Não",
-      async onOk() {
-        try {
-          setLoading(true);
-        //   await api.delete(`product_categories/${id}`);
+  const deleteWaste = async (id: number): Promise<void> => {
+    const confirmDelete = async (): Promise<void> => {
+      setLoading(true);
+      try {
+        const { has_internal_error: error } =
+          await window.Main.productWaste.deleteProductWaste(id);
 
-          notification.success({
-            message: "Desperdício deletado com sucesso",
-            duration: 5,
-          });
-          setLoading(false);
-        } catch (error) {
-          const _message = "Erro ao deletar desperdício";
-
-          //@ts-ignore
-          const _description = error?.response?.data?.error?.message;
-
-          notification.error({
-            message: _message,
-            description: _description,
-            duration: 5,
-          });
-        } finally {
-          setLoading(false);
+        if (error) {
+          throw new Error("Erro ao remover desperdício");
         }
-      },
+
+        notification.success({
+          message: "Desperdício removido com sucesso!",
+          description: "O desperdício selecionado foi removido.",
+          duration: 5,
+        });
+        setShouldSearch(true);
+        setLoading(false);
+      } catch (error) {
+        notification.error({
+          message: "Erro ao remover desperdício",
+          duration: 5,
+        });
+        setLoading(false);
+      } finally {
+        setLoading(false);
+        setShouldSearch(false);
+      }
+    };
+
+    Modal.confirm({
+      content: "Gostaria de prosseguir e remover esse desperdício?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+      onOk: confirmDelete,
     });
   };
 
@@ -108,11 +99,12 @@ const Waste: React.FC = () => {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   };
 
-  const findProduct = ({ target: { value } }) => {
+  const findProduct = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
     const regex = new RegExp(value, "i");
 
-    const filteredProductsItem = columns.filter((product) =>
-      regex.test(removeAccents(product.produto))
+    const filteredProductsItem = products.filter((product) =>
+      regex.test(removeAccents(product.name))
     );
 
     setFilteredProducts(filteredProductsItem);
@@ -121,7 +113,7 @@ const Waste: React.FC = () => {
   return (
     <Container>
       <PageContent>
-        {isConected ? (
+        {isConnected ? (
           <>
             <Header>
               <h2>Desperdício</h2>
@@ -133,26 +125,28 @@ const Waste: React.FC = () => {
                 <SearchContainer>
                   <DatePicker
                     value={selectedDate}
-                    placeholder="DD/MM/AAAA"
+                    allowClear={false}
                     format="DD/MM/YYYY"
                     onChange={(date) => setSelectedDate(date)}
                   />
                 </SearchContainer>
                 <Content>
                   <WasteList
-                    products={[]}
+                    products={products}
+                    productsStore={productStoreList}
                     setLoading={setLoading}
                     loading={false}
                     findProduct={findProduct}
                     filteredProducts={filteredProducts}
                     deleteWaste={deleteWaste}
+                    setShouldSearch={setShouldSearch}
                   />
                 </Content>
               </>
             )}
           </>
         ) : (
-          <p>Conecte-se à internet.</p>
+          <Spinner />
         )}
       </PageContent>
     </Container>
