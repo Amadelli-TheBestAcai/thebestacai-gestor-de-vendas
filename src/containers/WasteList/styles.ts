@@ -1,10 +1,11 @@
 import styled from "styled-components";
+import Upload from "../../components/Upload";
 import {
   Row,
   Col as ColAnt,
   Input as InputAnt,
   Select as SelectAnt,
-  Typography as TypographyAnt,
+  Form as FormAnt,
 } from "antd";
 import { TrashRestoreAlt, Image } from "../../styles/Icons";
 
@@ -14,10 +15,6 @@ export const Container = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-`;
-
-export const Typography = styled(TypographyAnt.Text)`
-  margin: 1rem 0 0;
 `;
 
 export const ContentModal = styled(Container)`
@@ -30,6 +27,7 @@ export const ContentLeft = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 export const ContentRight = styled.div`
   width: 50%;
   display: flex;
@@ -37,28 +35,23 @@ export const ContentRight = styled.div`
   margin-left: 85px;
 `;
 
-export const Footer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
-  width: 100%;
-`;
-
-export const ButtonCancel = styled.button`
-  font-size: 0.9rem;
-  color: var(--orange-250);
-  font-weight: 500;
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    font-size: 0.8rem;
-  }
-`;
-
 export const Input = styled(InputAnt)`
   height: 2.7rem;
-  margin-top: 0.5rem;
+`;
+
+export const ContentGeneral = styled.div`
+  overflow-y: scroll;
+  min-height: 75%;
+`;
+export const ContentGeneralLeft = styled.div`
+  overflow-y: scroll;
+  min-height: 80%;
+`;
+
+export const UploadContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const SelectSearch = styled(SelectAnt)`
@@ -82,35 +75,14 @@ export const SelectSearch = styled(SelectAnt)`
 
 export const Option = styled(SelectAnt.Option)``;
 
-export const ButtonSave = styled.button`
-  padding: 3px 7px;
-  font-weight: 500;
-  border-radius: 1rem;
-  font-size: 0.9rem;
-  background: var(--orange-250);
-  color: white;
-  transition: 0.5s;
-
-  :hover {
-    background: var(--orange-200);
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    font-size: 0.7rem;
-  }
-`;
-
 export const Header = styled.header`
   display: flex;
   width: 100%;
-  height: 5%;
+  height: 8%;
   background: var(--black-opaco);
   color: white;
   border-radius: 3px;
   text-transform: uppercase;
-
-  padding: 1.3rem 0;
 
   /*Responsive 1600*/
   @media (max-width: 1600px) {
@@ -132,10 +104,6 @@ export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-export const ColModal = styled(ColAnt)`
-  display: flex;
-  flex-direction: column;
 `;
 
 export const Content = styled.div`
@@ -171,8 +139,6 @@ export const ImageIcon = styled(Image)`
   margin-right: 0.5rem;
 `;
 
-export const ContentModalBody = styled(Row)``;
-
 export const ButtonWaste = styled.button`
   width: 9rem;
   height: 2.5rem;
@@ -193,7 +159,7 @@ export const Tupla = styled(Row)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 12%;
+  min-height: 12%;
   background: var(--white-30);
   margin-top: 8px;
   border-radius: 3px 3px 0 0;
