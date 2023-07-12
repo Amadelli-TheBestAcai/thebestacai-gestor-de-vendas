@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Col,
   Container,
@@ -6,9 +6,6 @@ import {
   Header,
   TrashIcon,
   ImageIcon,
-  Footer,
-  ButtonCancel,
-  ButtonSave,
   Input,
   ContentLeft,
   ContentRight,
@@ -17,60 +14,32 @@ import {
   ContentWaste,
   SelectSearch,
   Option,
-  ContentModalBody,
-  ColModal,
-  Typography,
+  ContentGeneral,
+  ContentGeneralLeft,
 } from "./styles";
 import { Spinner } from "styled-icons/fa-solid";
-import { Modal, Tooltip, Radio } from "antd";
+import { Tooltip } from "antd";
 import { SearchIcon } from "../../pages/Waste/styles";
 import ModalImageWaste from "../../pages/Waste/ModalImageWaste";
+import ModalAddWaste from "./ModalAddWaste";
+import { ProductDto } from "../../models/dtos/product";
+import { ProductWasteDTO } from "../../models/dtos/productWaste";
 
-interface ITableProps {
-  data: string;
-  id: number;
-  produto: string;
-  quantidade: number;
-  total?: string;
-}
-
-enum Options {
+export enum Options {
   Unidade = 0,
   Quilograma = 1,
 }
 
 interface IProps {
-  products: ITableProps[];
+  products: ProductWasteDTO[];
+  productsStore: ProductDto[];
+  filteredProducts: ProductWasteDTO[];
   setLoading: Dispatch<SetStateAction<boolean>>;
   loading: boolean;
   findProduct: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  filteredProducts: ITableProps[];
   deleteWaste: (id: number) => void;
+  setShouldSearch: any;
 }
-
-const columns: ITableProps[] = [
-  {
-    data: "10/10/2023",
-    id: 1,
-    produto: "Morango",
-    quantidade: 5,
-    total: "0.244 kg",
-  },
-  {
-    data: "10/10/2023",
-    id: 2,
-    produto: "Uva",
-    quantidade: 1,
-    total: "0.248 kg",
-  },
-  {
-    data: "10/10/2023",
-    id: 3,
-    produto: "Morango",
-    quantidade: 8,
-    total: "2 un",
-  },
-];
 
 const WasteList: React.FC<IProps> = ({
   products,
@@ -78,26 +47,31 @@ const WasteList: React.FC<IProps> = ({
   loading,
   findProduct,
   filteredProducts,
+  productsStore,
   deleteWaste,
+  setShouldSearch
 }) => {
   const [modalState, setModalState] = useState(false);
   const [modalImage, setModalImage] = useState(false);
-  const [disabled, setdisabled] = useState(false);
-  const [value, setValue] = useState(Options.Quilograma);
   const [selectedOption, setSelectedOption] = useState<Options | undefined>(
     undefined
   );
 
-  const filteredColumns = columns.filter((column) => {
+  const productsToRender =
+    filteredProducts.length > 0 ? filteredProducts : products;
+
+  const sortedRanking = productsToRender.sort(
+    (a, b) => b.quantity - a.quantity
+  );
+
+  const filteredRanking = sortedRanking.filter((column) => {
     if (selectedOption === Options.Unidade) {
-      return column.total?.includes("un");
+      return column.products_store_waste.some((product) => product.unity === 0);
     } else if (selectedOption === Options.Quilograma) {
-      return column.total?.includes("kg");
+      return column.products_store_waste.some((product) => product.unity === 1);
     }
     return true;
   });
-
-  filteredColumns.sort((a, b) => b.quantidade - a.quantidade);
 
   return (
     <Container>
@@ -113,36 +87,41 @@ const WasteList: React.FC<IProps> = ({
               </ButtonWaste>
             </ContentWaste>
             <Header>
-              <Col sm={4}>Data e hora</Col>
-              <Col sm={5}>Id do produto</Col>
+              <Col sm={6}>Data e hora</Col>
+              <Col sm={4}>Id do produto</Col>
               <Col sm={5}>Produto</Col>
               <Col sm={5}>Quantidade</Col>
-              <Col sm={5}>Ação</Col>
+              <Col sm={4}>Ação</Col>
             </Header>
 
             <Input
               placeholder="Digite o nome do produto"
               prefix={<SearchIcon />}
               onChange={findProduct}
+              style={{ marginTop: "0.5rem" }}
             />
-
-            {(filteredProducts || products)?.map((column) => (
-              <Tupla key={column.id}>
-                <Col sm={4}>{column.data}</Col>
-                <Col sm={5}>{column.id}</Col>
-                <Col sm={5}>{`${column.produto}`}</Col>
-                <Col sm={5}>{`${column.quantidade} KG`}</Col>
-                <Col sm={5}>
-                  <Tooltip title="Imagens">
-                    <ImageIcon onClick={() => setModalImage(true)} />
-                  </Tooltip>
-
-                  <Tooltip title="Deletar desperdício">
-                    <TrashIcon onClick={() => deleteWaste(column.id)} />
-                  </Tooltip>
-                </Col>
-              </Tupla>
-            ))}
+            <ContentGeneral>
+              {productsToRender.map((product) =>
+                product.products_store_waste.map((waste) => {
+                  return (
+                    <Tupla key={waste.id}>
+                      <Col sm={6}>{waste.created_at}</Col>
+                      <Col sm={4}>{product.id}</Col>
+                      <Col sm={5}>{product.name}</Col>
+                      <Col sm={5}>{`${waste.quantity} KG`}</Col>
+                      <Col sm={4}>
+                        <Tooltip title="Imagens">
+                          <ImageIcon onClick={() => setModalImage(true)} />
+                        </Tooltip>
+                        <Tooltip title="Excluir desperdício">
+                          <TrashIcon onClick={() => deleteWaste(waste.id)} />
+                        </Tooltip>
+                      </Col>
+                    </Tupla>
+                  );
+                })
+              )}
+            </ContentGeneral>
           </ContentLeft>
           <ContentRight>
             <ContentWaste>
@@ -163,76 +142,40 @@ const WasteList: React.FC<IProps> = ({
               <Col sm={8}>Produto</Col>
               <Col sm={8}>Quantidade</Col>
             </Header>
-            {filteredColumns.map((column, index) => (
-              <Tupla key={column.id}>
-                <Col sm={8}>{`${index + 1}º`}</Col>
-                <Col sm={8}>{column.produto}</Col>
-                <Col sm={8}>{column.total}</Col>
-              </Tupla>
-            ))}
+            <ContentGeneralLeft>
+              {filteredRanking.map((column, index) => (
+                <Tupla key={column.id}>
+                  <Col sm={8}>{`${index + 1}º`}</Col>
+                  <Col sm={8}>{column.name}</Col>
+                  <Col sm={8}>
+                    {column.products_store_waste.map((item) => (
+                      <span key={item.id}>
+                        {item.quantity} {item.unity === 0 ? "un" : "kg"}
+                      </span>
+                    ))}
+                  </Col>
+                </Tupla>
+              ))}
+            </ContentGeneralLeft>
           </ContentRight>
         </Content>
       )}
 
-      <Modal
-        title="Adicionar desperdício"
+      <ModalAddWaste
+        setVisible={setModalState}
         visible={modalState}
-        onCancel={() => setModalState(false)}
-        destroyOnClose={true}
-        closable={true}
-        centered
-        footer={
-          <Footer>
-            <ButtonCancel onClick={() => setModalState(false)}>
-              Cancelar
-            </ButtonCancel>
-            <ButtonSave onClick={() => {}} disabled={disabled}>
-              Salvar
-            </ButtonSave>
-          </Footer>
-        }
-      >
-        <ContentModalBody gutter={24}>
-          <ColModal sm={12}>
-            <Typography strong>Selecione uma opção:</Typography>
-            <Input
-              autoFocus={true}
-              placeholder="Digite aqui"
-              //   onChange={({ target: { value } }) => setReasson(value)}
-            />
-          </ColModal>
-
-          <ColModal sm={12}>
-            <Typography strong>Selecione uma opção:</Typography>
-
-            <Input autoFocus={true} placeholder="Digite aqui" />
-          </ColModal>
-          <ColModal sm={12}>
-            <Typography strong>Selecione uma opção:</Typography>
-
-            <Input autoFocus={true} placeholder="Digite aqui" />
-          </ColModal>
-
-          <ColModal sm={12}>
-            <Typography strong>Selecione uma opção:</Typography>
-            <Radio.Group
-              onChange={(e) => setValue(e.target.value)}
-              value={value}
-              style={{ alignItems: "center" }}
-            >
-              <Radio value={Options.Quilograma}>Quilograma</Radio>
-              <Radio value={Options.Unidade}>Unidade</Radio>
-            </Radio.Group>
-          </ColModal>
-        </ContentModalBody>
-      </Modal>
-
-      <ModalImageWaste
-        setVisible={setModalImage}
-        visible={modalImage}
-        productsWaste={products}
         setLoading={setLoading}
         loading={loading}
+        productsStore={productsStore}
+        products={products}
+        setShouldSearch={setShouldSearch}
+      />
+      <ModalImageWaste
+      // setVisible={setModalImage}
+      // visible={modalImage}
+      // productsWaste={products}
+      // setLoading={setLoading}
+      // loading={loading}
       />
     </Container>
   );
