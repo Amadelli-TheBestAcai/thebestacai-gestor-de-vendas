@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Col,
   Container,
@@ -20,15 +20,14 @@ import {
 import { Spinner } from "styled-icons/fa-solid";
 import { Tooltip } from "antd";
 import { SearchIcon } from "../../pages/Waste/styles";
-import ModalImageWaste from "../../pages/Waste/ModalImageWaste";
-import ModalAddWaste from "./ModalAddWaste";
 import { ProductDto } from "../../models/dtos/product";
-import { ProductWasteDTO } from "../../models/dtos/productWaste";
-
-export enum Options {
-  Unidade = 0,
-  Quilograma = 1,
-}
+import {
+  ProductStoreWasteDto,
+  ProductWasteDTO,
+} from "../../models/dtos/productWaste";
+import { Options } from "../../models/enums/weightOptions";
+import ModalImageWaste from "../../pages/Waste/ModalImageWaste";
+import ModalAddWaste from "../../pages/Waste/ModalAddWaste";
 
 interface IProps {
   products: ProductWasteDTO[];
@@ -38,7 +37,7 @@ interface IProps {
   loading: boolean;
   findProduct: (event: React.ChangeEvent<HTMLInputElement>) => void;
   deleteWaste: (id: number) => void;
-  setShouldSearch: any;
+  setShouldSearch: Dispatch<SetStateAction<boolean>>;
 }
 
 const WasteList: React.FC<IProps> = ({
@@ -49,10 +48,11 @@ const WasteList: React.FC<IProps> = ({
   filteredProducts,
   productsStore,
   deleteWaste,
-  setShouldSearch
+  setShouldSearch,
 }) => {
   const [modalState, setModalState] = useState(false);
   const [modalImage, setModalImage] = useState(false);
+  const [productSelect, setProductSelect] = useState<ProductStoreWasteDto[]>();
   const [selectedOption, setSelectedOption] = useState<Options | undefined>(
     undefined
   );
@@ -60,18 +60,30 @@ const WasteList: React.FC<IProps> = ({
   const productsToRender =
     filteredProducts.length > 0 ? filteredProducts : products;
 
-  const sortedRanking = productsToRender.sort(
-    (a, b) => b.quantity - a.quantity
-  );
-
-  const filteredRanking = sortedRanking.filter((column) => {
-    if (selectedOption === Options.Unidade) {
-      return column.products_store_waste.some((product) => product.unity === 0);
-    } else if (selectedOption === Options.Quilograma) {
-      return column.products_store_waste.some((product) => product.unity === 1);
-    }
-    return true;
-  });
+  const filteredRanking = products
+    .filter((column) => {
+      if (selectedOption === Options.Unidade) {
+        return column.products_store_waste.some(
+          (product) => product.unity === 0
+        );
+      } else if (selectedOption === Options.Quilograma) {
+        return column.products_store_waste.some(
+          (product) => product.unity === 1
+        );
+      }
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        b.products_store_waste.reduce(
+          (total, item) => total + +item.quantity,
+          0
+        ) -
+        a.products_store_waste.reduce(
+          (total, item) => total + +item.quantity,
+          0
+        )
+    );
 
   return (
     <Container>
@@ -103,15 +115,28 @@ const WasteList: React.FC<IProps> = ({
             <ContentGeneral>
               {productsToRender.map((product) =>
                 product.products_store_waste.map((waste) => {
+                  const unitLabel = waste.unity === 0 ? "un" : "kg";
                   return (
                     <Tupla key={waste.id}>
                       <Col sm={6}>{waste.created_at}</Col>
                       <Col sm={4}>{product.id}</Col>
                       <Col sm={5}>{product.name}</Col>
-                      <Col sm={5}>{`${waste.quantity} KG`}</Col>
+                      <Col sm={5}>
+                        {+waste.unity === 0
+                          ? Math.floor(+waste.quantity)
+                          : +(+waste.quantity).toFixed(2)}{" "}
+                        {unitLabel}
+                      </Col>
                       <Col sm={4}>
                         <Tooltip title="Imagens">
-                          <ImageIcon onClick={() => setModalImage(true)} />
+                          {waste.url_file && (
+                            <ImageIcon
+                              onClick={() => {
+                                setModalImage(true);
+                                setProductSelect([waste]);
+                              }}
+                            />
+                          )}
                         </Tooltip>
                         <Tooltip title="Excluir desperdício">
                           <TrashIcon onClick={() => deleteWaste(waste.id)} />
@@ -148,11 +173,10 @@ const WasteList: React.FC<IProps> = ({
                   <Col sm={8}>{`${index + 1}º`}</Col>
                   <Col sm={8}>{column.name}</Col>
                   <Col sm={8}>
-                    {column.products_store_waste.map((item) => (
-                      <span key={item.id}>
-                        {item.quantity} {item.unity === 0 ? "un" : "kg"}
-                      </span>
-                    ))}
+                    {column.products_store_waste.reduce((total, item) => {
+                      return total + +item.quantity;
+                    }, 0)}
+                    {column.products_store_waste[0].unity === 0 ? "un" : "kg"}
                   </Col>
                 </Tupla>
               ))}
@@ -171,11 +195,11 @@ const WasteList: React.FC<IProps> = ({
         setShouldSearch={setShouldSearch}
       />
       <ModalImageWaste
-      // setVisible={setModalImage}
-      // visible={modalImage}
-      // productsWaste={products}
-      // setLoading={setLoading}
-      // loading={loading}
+        setVisible={setModalImage}
+        visible={modalImage}
+        products={productSelect}
+        setLoading={setLoading}
+        loading={loading}
       />
     </Container>
   );
