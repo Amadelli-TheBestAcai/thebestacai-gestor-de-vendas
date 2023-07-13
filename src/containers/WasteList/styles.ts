@@ -41,7 +41,7 @@ export const Input = styled(InputAnt)`
 
 export const ContentGeneral = styled.div`
   overflow-y: scroll;
-  min-height: 75%;
+  min-height: 70%;
 `;
 export const ContentGeneralLeft = styled.div`
   overflow-y: scroll;
