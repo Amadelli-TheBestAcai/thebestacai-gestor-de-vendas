@@ -12,7 +12,6 @@ import {
   types as TermalTypes,
 } from "node-thermal-printer";
 import Printer from "printer";
-import { v4 } from "uuid";
 
 interface Request {
   sale: SaleFromApiDTO | SaleDto;
@@ -39,7 +38,6 @@ class PrintSale implements IUseCaseFactory {
   }
 
   async execute({ sale }: Request): Promise<void> {
-    console.log({ sale });
     const store = await this.storeRepository.getOne();
     const settings = await this.settingsRepository.getOne();
 
@@ -162,6 +160,9 @@ class PrintSale implements IUseCaseFactory {
         {
           ref: sale.ref,
           cpf: null,
+          cash_history_id: sale.cash_history_id,
+          sale_id: sale.id,
+          store_id: store?.company_id,
           total_sold: totalItems
         },
         env.TOKEN_SECRET_NPS,
