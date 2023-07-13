@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Content,
-  Header,
-  PageContent,
-  SearchContainer,
-  DatePicker,
-} from "./styles";
+import { Container, Content, Header, PageContent, SearchContainer, DatePicker } from "./styles";
 import Spinner from "../../components/Spinner";
 import WasteList from "../../containers/WasteList";
-import moment from "moment";
 import { Modal, notification } from "antd";
+import moment from "moment";
 import { ProductDto } from "../../models/dtos/product";
 import { ProductWasteDTO } from "../../models/dtos/productWaste";
 
