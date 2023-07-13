@@ -1,12 +1,23 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { wasteDTO } from "../../../models/dtos/waste";
-import moment from "moment";
-import { Center, Container, Preview, Table, ViewButton } from "./styles";
-import Spinner from "../../../components/Spinner";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
+import {
+  ProductStoreWasteDto,
+  ProductWasteDTO,
+} from "../../../models/dtos/productWaste";
 import { Tooltip } from "antd";
+import moment from "moment";
+import Spinner from "../../../components/Spinner";
+import {
+  Center,
+  Container,
+  ImageIcon,
+  Preview,
+  Table,
+  TrashIcon,
+  ViewButton,
+} from "./styles";
 
 interface IProps {
-  productsWaste: any | undefined;
+  products: ProductStoreWasteDto[];
   visible: boolean;
   loading: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
@@ -14,10 +25,9 @@ interface IProps {
 }
 
 const ModalImageWaste: React.FC<IProps> = ({
-  productsWaste,
+  products,
   setVisible,
   visible,
-  setLoading,
   loading,
 }) => {
   const columns = [
@@ -25,9 +35,13 @@ const ModalImageWaste: React.FC<IProps> = ({
       title: "Imagem",
       dataIndex: "url_file",
       key: "url_file",
-      render: (text) => (
+      render: (text, record) => (
         <span>
-          <Preview src={text} alt="Image do pedido" />
+          <Preview
+            src={text}
+            alt="Imagem do desperdício"
+            onClick={() => console.log(text)}
+          />
         </span>
       ),
     },
@@ -54,18 +68,16 @@ const ModalImageWaste: React.FC<IProps> = ({
             <>
               <Tooltip title={"Visualizar"}>
                 <ViewButton
-                  href={record.url_file}
+                  href={record}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {/* <ImageIcon /> */}
-                  <p>teste</p>
+                  <ImageIcon />
                 </ViewButton>
               </Tooltip>
 
               <Tooltip title={"Excluir"}>
-                {/* <RemoveButton onClick={() => deleteImage(record)} /> */}
-                remover
+                <TrashIcon onClick={() => console.log(record)} />
               </Tooltip>
             </>
           )}
@@ -73,6 +85,7 @@ const ModalImageWaste: React.FC<IProps> = ({
       ),
     },
   ];
+
   return (
     <Container
       title={`Imagens`}
@@ -83,12 +96,12 @@ const ModalImageWaste: React.FC<IProps> = ({
       footer={null}
     >
       <Table
+        pagination={false}
         columns={columns}
-        dataSource={productsWaste?.map((entity) => ({
+        dataSource={products?.map((entity) => ({
           ...entity,
           key: entity.id,
         }))}
-        scroll={{ y: 400 }}
       />
     </Container>
   );

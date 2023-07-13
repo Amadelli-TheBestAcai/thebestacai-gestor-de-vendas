@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-import { Trash } from "../../../styles/Icons";
+import { Trash, TrashRestoreAlt, Image } from "../../../styles/Icons";
 
 import { Modal as ModalAnt, Table as TableAnt } from "antd";
 
@@ -70,4 +70,18 @@ export const RemoveButton = styled(Trash)`
   ${IconCSS}
   color: var(--maroon);
   margin-left: 5%;
+`;
+
+export const TrashIcon = styled(TrashRestoreAlt)`
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+  color: var(--red-600);
+`;
+export const ImageIcon = styled(Image)`
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+  color: var(--grey-200);
+  margin-right: 0.5rem;
 `;
