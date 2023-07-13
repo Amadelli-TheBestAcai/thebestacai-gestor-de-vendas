@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
 
 import MonetaryInput from "../../components/MonetaryInput";
+import { Trash } from "../../styles/Icons";
 
 import { Modal as ModalAnt, Col, Select as SelectAnt } from "antd";
 
@@ -293,3 +294,16 @@ export const Select = styled(SelectAnt)`
 `;
 
 export const Option = styled(SelectAnt.Option)``;
+
+export const RemoveIcon = styled(Trash)`
+  color: red;
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    width: 1rem;
+    height: 1rem;
+  }
+`;

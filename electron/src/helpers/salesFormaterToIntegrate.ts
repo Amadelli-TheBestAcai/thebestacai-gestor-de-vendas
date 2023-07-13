@@ -8,6 +8,7 @@ export const salesFormaterToIntegrate = (
     return payload.map((_payload) => ({
       quantity: _payload.quantity,
       gv_id: _payload.gv_id,
+      hash_code: _payload.sales_campaign_hash,
       abstract_sale: _payload.abstract_sale,
       change_amount: _payload.change_amount,
       type: _payload.type,
@@ -100,12 +101,13 @@ export const salesFormaterToIntegrate = (
         update_stock: _item.update_stock,
       })),
       ref: _payload.ref,
-      created_at: _payload.created_at
+      created_at: _payload.created_at,
     }));
   } else {
     const response = {
       quantity: payload.quantity,
       gv_id: payload.gv_id,
+      hash_code: payload.sales_campaign_hash,
       cash_id: payload.cash_id || storeCash.cash_id,
       cash_history_id: payload.cash_history_id || storeCash.history_id,
       abstract_sale: payload.abstract_sale,
@@ -197,7 +199,7 @@ export const salesFormaterToIntegrate = (
         update_stock: _item.update_stock,
       })),
       ref: payload.ref,
-      created_at: payload.created_at
+      created_at: payload.created_at,
     };
     return [response];
   }

@@ -29,9 +29,11 @@ import {
   OnlineIcon,
   Select,
   Option,
+  RemoveIcon
 } from "./styles";
 import { FlagCard } from "../../models/enums/flagCard";
 import { Form } from "antd";
+import { useSale } from "../../hooks/useSale";
 
 interface IProps {
   sale: SaleDto;
@@ -64,6 +66,8 @@ const PaymentsContainer: React.FC<IProps> = ({
   setFlagCard,
   flagCard,
 }) => {
+const { setSale } = useSale();
+
   const onModalCancel = (): void => {
     setModalState(false);
     setFlagCard(99);
@@ -169,7 +173,8 @@ const PaymentsContainer: React.FC<IProps> = ({
             </strong>
           </ValueInfo>
           <ValueInfo>
-            R$ Troco <br />{" "}
+            R$ Troco
+            <br />{" "}
             <strong style={{ color: "var(--red-600" }}>
               {(+getChangeAmount()).toFixed(2).replace(".", ",")}
             </strong>
@@ -181,6 +186,7 @@ const PaymentsContainer: React.FC<IProps> = ({
               {((sale.customer_nps_reward_discount || 0) + sale?.discount)
                 .toFixed(2)
                 .replace(".", ",")}
+              {sale?.discount > 0 && <RemoveIcon onClick={() => setSale(oldValues => ({...oldValues, discount: 0}))}/>}
             </strong>
           </ValueInfo>
           <ValueInfo>

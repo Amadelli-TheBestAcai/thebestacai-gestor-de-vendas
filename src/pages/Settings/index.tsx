@@ -150,6 +150,26 @@ const Settings: React.FC = () => {
           </ActionContainer>
         </CardSettings>
 
+        <CardSettings title="Impressão de cupom por venda">
+          <span style={{ padding: "2%" }}>
+            Ao habilitar, a cada venda feita sera feito a impressão do cupom.
+          </span>
+          <ActionContainer>
+            <Switch
+              checked={settings.should_print_sale}
+              onChange={() =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  should_print_sale: !settings.should_print_sale,
+                }))
+              }
+            />
+            <span>
+              {!settings.should_print_sale ? "DESABILITADO" : "HABILITADO"}
+            </span>
+          </ActionContainer>
+        </CardSettings>
+
         <Footer>
           <ButtonSave onClick={handleSave} loading={loading}>
             Salvar
