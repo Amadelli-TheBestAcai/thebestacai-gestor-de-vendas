@@ -1,5 +1,3 @@
-import { InputNumberProps } from "antd";
-
 export interface ProductDto {
   id: number;
   product_id?: number;
