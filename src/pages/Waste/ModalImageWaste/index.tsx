@@ -1,7 +1,6 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {
   ProductStoreWasteDto,
-  ProductWasteDTO,
 } from "../../../models/dtos/productWaste";
 import { Tooltip } from "antd";
 import moment from "moment";
@@ -40,7 +39,6 @@ const ModalImageWaste: React.FC<IProps> = ({
           <Preview
             src={text}
             alt="Imagem do desperdício"
-            onClick={() => console.log(text)}
           />
         </span>
       ),
@@ -68,7 +66,7 @@ const ModalImageWaste: React.FC<IProps> = ({
             <>
               <Tooltip title={"Visualizar"}>
                 <ViewButton
-                  href={record}
+                  href={record.url_file}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -77,7 +75,7 @@ const ModalImageWaste: React.FC<IProps> = ({
               </Tooltip>
 
               <Tooltip title={"Excluir"}>
-                <TrashIcon onClick={() => console.log(record)} />
+                <TrashIcon onClick={() => alert('aiaiauiuiui')} />
               </Tooltip>
             </>
           )}

@@ -4,7 +4,6 @@ import { ProductDto } from "../../../models/dtos/product";
 import { ProductWasteDTO } from "../../../models/dtos/productWaste";
 import { Options } from "../../../models/enums/weightOptions";
 import s3Api from "../../../helpers/s3Api";
-import Upload from "../../../components/Upload";
 import {
   Form,
   ButtonCancel,
@@ -14,9 +13,7 @@ import {
   Footer,
   Input,
   SelectSearch,
-  UploadContainer,
   Option,
-  UploadContent,
 } from "./styles";
 import { useStore } from "../../../hooks/useStore";
 import { useCashHistoryId } from "../../../hooks/useCashHistoryId";
@@ -36,7 +33,6 @@ const ModalAddWaste: React.FC<IProps> = ({
   visible,
   setLoading,
   productsStore,
-  products,
   setShouldSearch,
 }) => {
   const [selectedProduct, setSelectedProduct] = useState<
@@ -51,34 +47,6 @@ const ModalAddWaste: React.FC<IProps> = ({
   const [form] = Form.useForm();
   const { store } = useStore();
   const { cashHistoryId } = useCashHistoryId();
-
-  const handleDeleteUpload = async () => {
-    setLoading(true);
-
-    Modal.confirm({
-      title: "Excluir imagem",
-      content: "Você deseja excluir esta imagem?",
-
-      async onOk() {
-        try {
-          if (uploadedFile?.s3_key) {
-            await s3Api.delete(
-              `/s3-upload/upload/waste-files/${uploadedFile?.s3_key}`
-            );
-          }
-
-          setShouldSearch(true);
-        } catch (error) {
-          notification.error({
-            message: "Erro ao excluir imagem",
-            duration: 5,
-          });
-        }
-      },
-    });
-
-    setLoading(false);
-  };
 
   const handleSave = async () => {
     setLoading(true);
