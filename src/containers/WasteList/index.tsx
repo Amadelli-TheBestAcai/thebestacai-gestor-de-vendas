@@ -18,7 +18,7 @@ import {
   ContentGeneralLeft,
 } from "./styles";
 import { Spinner } from "styled-icons/fa-solid";
-import { Tooltip } from "antd";
+import { Empty, Tooltip } from "antd";
 import { SearchIcon } from "../../pages/Waste/styles";
 import { ProductDto } from "../../models/dtos/product";
 import {
@@ -28,6 +28,7 @@ import {
 import { Options } from "../../models/enums/weightOptions";
 import ModalImageWaste from "../../pages/Waste/ModalImageWaste";
 import ModalAddWaste from "../../pages/Waste/ModalAddWaste";
+import { EmptyContainer } from "../Items/styles";
 
 interface IProps {
   products: ProductWasteDTO[];
@@ -112,41 +113,46 @@ const WasteList: React.FC<IProps> = ({
               onChange={findProduct}
               style={{ marginTop: "0.5rem" }}
             />
-            <ContentGeneral>
-              {productsToRender.map((product) =>
-                product.products_store_waste.map((waste) => {
-                  const unitLabel = waste.unity === 0 ? "un" : "kg";
-                  return (
-                    <Tupla key={waste.id}>
-                      <Col sm={6}>{waste.created_at}</Col>
-                      <Col sm={4}>{product.id}</Col>
-                      <Col sm={5}>{product.name}</Col>
-                      <Col sm={5}>
-                        {+waste.unity === 0
-                          ? Math.floor(+waste.quantity)
-                          : +(+waste.quantity).toFixed(2)}{" "}
-                        {unitLabel}
-                      </Col>
-                      <Col sm={4}>
-                        <Tooltip title="Imagens">
-                          {waste.url_file && (
+
+            {products.length !== 0 ? (
+              <ContentGeneral>
+                {productsToRender.map((product) =>
+                  product.products_store_waste.map((waste) => {
+                    const unitLabel = waste.unity === 0 ? "un" : "kg";
+                    return (
+                      <Tupla key={waste.id}>
+                        <Col sm={6}>{waste.created_at}</Col>
+                        <Col sm={4}>{product.id}</Col>
+                        <Col sm={5}>{product.name}</Col>
+                        <Col sm={5}>
+                          {+waste.unity === 0
+                            ? Math.floor(+waste.quantity)
+                            : +(+waste.quantity).toFixed(2)}{" "}
+                          {unitLabel}
+                        </Col>
+                        <Col sm={4}>
+                          <Tooltip title="Imagens">
                             <ImageIcon
                               onClick={() => {
                                 setModalImage(true);
                                 setProductSelect([waste]);
                               }}
                             />
-                          )}
-                        </Tooltip>
-                        <Tooltip title="Excluir desperdício">
-                          <TrashIcon onClick={() => deleteWaste(waste.id)} />
-                        </Tooltip>
-                      </Col>
-                    </Tupla>
-                  );
-                })
-              )}
-            </ContentGeneral>
+                          </Tooltip>
+                          <Tooltip title="Excluir desperdício">
+                            <TrashIcon onClick={() => deleteWaste(waste.id)} />
+                          </Tooltip>
+                        </Col>
+                      </Tupla>
+                    );
+                  })
+                )}
+              </ContentGeneral>
+            ) : (
+              <EmptyContainer>
+                <Empty description="Não há desperdício cadastrado nesta data" style={{height: '55%'}}/>
+              </EmptyContainer>
+            )}
           </ContentLeft>
           <ContentRight>
             <ContentWaste>
@@ -167,20 +173,26 @@ const WasteList: React.FC<IProps> = ({
               <Col sm={8}>Produto</Col>
               <Col sm={8}>Quantidade</Col>
             </Header>
-            <ContentGeneralLeft>
-              {filteredRanking.map((column, index) => (
-                <Tupla key={column.id}>
-                  <Col sm={8}>{`${index + 1}º`}</Col>
-                  <Col sm={8}>{column.name}</Col>
-                  <Col sm={8}>
-                    {column.products_store_waste.reduce((total, item) => {
-                      return total + +item.quantity;
-                    }, 0)}
-                    {column.products_store_waste[0].unity === 0 ? "un" : "kg"}
-                  </Col>
-                </Tupla>
-              ))}
-            </ContentGeneralLeft>
+            {products.length !== 0 ? (
+              <ContentGeneralLeft>
+                {filteredRanking.map((column, index) => (
+                  <Tupla key={column.id}>
+                    <Col sm={8}>{`${index + 1}º`}</Col>
+                    <Col sm={8}>{column.name}</Col>
+                    <Col sm={8}>
+                      {column.products_store_waste.reduce((total, item) => {
+                        return total + +item.quantity;
+                      }, 0)}
+                      {column.products_store_waste[0].unity === 0 ? "un" : "kg"}
+                    </Col>
+                  </Tupla>
+                ))}
+              </ContentGeneralLeft>
+            ) : (
+              <EmptyContainer>
+                <Empty description="Não há desperdício cadastrado nesta data" />
+              </EmptyContainer>
+            )}
           </ContentRight>
         </Content>
       )}
