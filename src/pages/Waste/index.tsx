@@ -108,33 +108,36 @@ const Waste: React.FC = () => {
       <PageContent>
         {isConnected ? (
           <>
-            <Header>
-              <h2>Desperdício</h2>
-            </Header>
             {loading ? (
               <Spinner />
             ) : (
               <>
-                <SearchContainer>
-                  <DatePicker
-                    value={selectedDate}
-                    allowClear={false}
-                    format="DD/MM/YYYY"
-                    onChange={(date) => setSelectedDate(date)}
-                  />
-                </SearchContainer>
-                <Content>
-                  <WasteList
-                    products={products}
-                    productsStore={productStoreList}
-                    setLoading={setLoading}
-                    loading={false}
-                    findProduct={findProduct}
-                    filteredProducts={filteredProducts}
-                    deleteWaste={deleteWaste}
-                    setShouldSearch={setShouldSearch}
-                  />
-                </Content>
+                <Header>
+                  <h2>Desperdício</h2>
+                </Header>
+                <>
+                  <SearchContainer>
+                    <DatePicker
+                      value={selectedDate}
+                      allowClear={false}
+                      format="DD/MM/YYYY"
+                      onChange={(date) => setSelectedDate(date)}
+                    />
+                  </SearchContainer>
+
+                  <Content>
+                    <WasteList
+                      products={products}
+                      productsStore={productStoreList}
+                      setLoading={setLoading}
+                      loading={false}
+                      findProduct={findProduct}
+                      filteredProducts={filteredProducts}
+                      deleteWaste={deleteWaste}
+                      setShouldSearch={setShouldSearch}
+                    />
+                  </Content>
+                </>
               </>
             )}
           </>

@@ -11,7 +11,6 @@ import {
   ImageIcon,
   Preview,
   Table,
-  TrashIcon,
   ViewButton,
 } from "./styles";
 
@@ -72,10 +71,6 @@ const ModalImageWaste: React.FC<IProps> = ({
                 >
                   <ImageIcon />
                 </ViewButton>
-              </Tooltip>
-
-              <Tooltip title={"Excluir"}>
-                <TrashIcon onClick={() => alert('aiaiauiuiui')} />
               </Tooltip>
             </>
           )}
