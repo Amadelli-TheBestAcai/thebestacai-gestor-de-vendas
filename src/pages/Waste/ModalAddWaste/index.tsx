@@ -38,27 +38,42 @@ const ModalAddWaste: React.FC<IProps> = ({
   const [selectedProduct, setSelectedProduct] = useState<
     ProductDto | undefined
   >(undefined);
+  const [image, setImage] = useState(null);
   const [value, setValue] = useState(Options.Quilograma);
-  const [uploadedFile, setUploadedFile] = useState<{
-    url_file: any;
-    s3_key: any;
-  }>({ url_file: "", s3_key: "" });
+  const [unitSuffix, setUnitSuffix] = useState("kg");
 
   const [form] = Form.useForm();
   const { store } = useStore();
   const { cashHistoryId } = useCashHistoryId();
 
+  useEffect(() => {
+    if (value === Options.Quilograma) {
+      setUnitSuffix("kg");
+    } else if (value === Options.Unidade) {
+      setUnitSuffix("un");
+    }
+  }, [value]);
+
   const handleSave = async () => {
     setLoading(true);
     try {
       const values = form.getFieldsValue();
+      if (!image) {
+        notification.warning({
+          message: "Por favor, faça o upload de uma imagem",
+          duration: 5,
+        });
+        setLoading(false);
+        return;
+      }
 
+      const s3_info = await handleUpload(image);
       const payload = {
         ...values,
         cash_history_id: cashHistoryId.history_id,
         store_id: store.company_id,
-        s3_key: uploadedFile.s3_key,
-        url_file: uploadedFile.url_file,
+        s3_key: s3_info.s3_key,
+        url_file: s3_info.url_file,
       };
 
       const response = await window.Main.productWaste.addWaste(payload);
@@ -79,7 +94,6 @@ const ModalAddWaste: React.FC<IProps> = ({
       }
       setLoading(false);
       setShouldSearch(true);
-
     } catch (error) {
       notification.error({
         message: "Oops, ocorreu um erro!",
@@ -98,7 +112,7 @@ const ModalAddWaste: React.FC<IProps> = ({
     const {
       data: { location, key },
     } = await s3Api.post(`/s3-upload/upload/waste-files`, imageToUpload);
-    setUploadedFile({ url_file: location, s3_key: key });
+    return { url_file: location, s3_key: key };
   };
 
   return (
@@ -127,7 +141,7 @@ const ModalAddWaste: React.FC<IProps> = ({
     >
       <Form layout="vertical" form={form}>
         <ContentModalBody gutter={24}>
-          <ColModal sm={12}>
+          <ColModal sm={24}>
             <Form.Item
               label="Produto"
               name="product_id"
@@ -153,18 +167,7 @@ const ModalAddWaste: React.FC<IProps> = ({
 
           <ColModal sm={12}>
             <Form.Item
-              label="Quantidade"
-              name="quantity"
-              rules={[{ required: true, message: "Digite a quantidade" }]}
-              normalize={(value) => parseFloat(value)}
-            >
-              <Input type="number" placeholder="Digite aqui" />
-            </Form.Item>
-          </ColModal>
-
-          <ColModal sm={12}>
-            <Form.Item
-              label=""
+              label="Unidade de medida"
               name="unity"
               rules={[{ required: true, message: "Selecione uma unidade" }]}
             >
@@ -180,10 +183,34 @@ const ModalAddWaste: React.FC<IProps> = ({
           </ColModal>
 
           <ColModal sm={24}>
-            <Form.Item label="Upload de imagem" name="url_file">
+            <Form.Item
+              label="Quantidade"
+              name="quantity"
+              rules={[{ required: true, message: "Digite a quantidade" }]}
+              normalize={(value) => parseFloat(value)}
+            >
+              <Input
+                type="number"
+                placeholder="Digite aqui"
+                addonAfter={unitSuffix}
+              />
+            </Form.Item>
+          </ColModal>
+
+          <ColModal sm={24}>
+            <Form.Item
+              label="Upload de imagem"
+              name="url_file"
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, faça o upload de uma imagem",
+                },
+              ]}
+            >
               <input
                 type="file"
-                onChange={({ target: { files } }) => handleUpload(files[0])}
+                onChange={({ target: { files } }) => setImage(files[0])}
               />
             </Form.Item>
           </ColModal>
