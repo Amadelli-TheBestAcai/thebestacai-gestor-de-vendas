@@ -29,6 +29,7 @@ import { Options } from "../../models/enums/weightOptions";
 import ModalImageWaste from "../../pages/Waste/ModalImageWaste";
 import ModalAddWaste from "../../pages/Waste/ModalAddWaste";
 import { EmptyContainer } from "../Items/styles";
+import moment from "moment";
 
 interface IProps {
   products: ProductWasteDTO[];
@@ -121,13 +122,17 @@ const WasteList: React.FC<IProps> = ({
                     const unitLabel = waste.unity === 0 ? "un" : "kg";
                     return (
                       <Tupla key={waste.id}>
-                        <Col sm={6}>{waste.created_at}</Col>
+                        <Col sm={6}>
+                          {moment(waste.created_at, "YYYY-MM-DD HH:mm:ss")
+                            .subtract(3, "hours")
+                            .format("DD/MM/YYYY HH:mm:ss")}
+                        </Col>
                         <Col sm={4}>{product.id}</Col>
                         <Col sm={5}>{product.name}</Col>
                         <Col sm={5}>
                           {+waste.unity === 0
                             ? Math.floor(+waste.quantity)
-                            : +(+waste.quantity).toFixed(2)}{" "}
+                            : +(+waste.quantity).toFixed(3)}{" "}
                           {unitLabel}
                         </Col>
                         <Col sm={4}>
@@ -150,7 +155,10 @@ const WasteList: React.FC<IProps> = ({
               </ContentGeneral>
             ) : (
               <EmptyContainer>
-                <Empty description="Não há desperdício cadastrado nesta data" style={{height: '55%'}}/>
+                <Empty
+                  description="Não há desperdício cadastrado nesta data"
+                  style={{ height: "55%" }}
+                />
               </EmptyContainer>
             )}
           </ContentLeft>
@@ -181,9 +189,37 @@ const WasteList: React.FC<IProps> = ({
                     <Col sm={8}>{column.name}</Col>
                     <Col sm={8}>
                       {column.products_store_waste.reduce((total, item) => {
-                        return total + +item.quantity;
-                      }, 0)}
-                      {column.products_store_waste[0].unity === 0 ? "un" : "kg"}
+                        if (item.unity === 0) {
+                          return total + +item.quantity;
+                        }
+                        return total;
+                      }, 0) > 0 && (
+                        <>
+                          {column.products_store_waste.reduce((total, item) => {
+                            if (item.unity === 0) {
+                              return total + +item.quantity;
+                            }
+                            return total;
+                          }, 0)}
+                          {" un "}
+                        </>
+                      )}
+                      {column.products_store_waste.reduce((total, item) => {
+                        if (item.unity === 1) {
+                          return total + +item.quantity;
+                        }
+                        return total;
+                      }, 0) > 0 && (
+                        <>
+                          {column.products_store_waste.reduce((total, item) => {
+                            if (item.unity === 1) {
+                              return total + +item.quantity;
+                            }
+                            return total;
+                          }, 0)}
+                          {" kg"}
+                        </>
+                      )}
                     </Col>
                   </Tupla>
                 ))}
