@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Container, Content, Header, PageContent, SearchContainer, DatePicker } from "./styles";
+import {
+  Container,
+  Content,
+  Header,
+  PageContent,
+  SearchContainer,
+  DatePicker,
+} from "./styles";
 import Spinner from "../../components/Spinner";
 import WasteList from "../../containers/WasteList";
 import { Modal, notification } from "antd";
 import moment from "moment";
 import { ProductDto } from "../../models/dtos/product";
 import { ProductWasteDTO } from "../../models/dtos/productWaste";
+import { useSale } from "../../hooks/useSale";
+import CashNotFound from "../../components/CashNotFound";
 
 const Waste: React.FC = () => {
   const [products, setProducts] = useState<ProductWasteDTO[]>([]);
@@ -17,10 +26,10 @@ const Waste: React.FC = () => {
   const [filteredProducts, setFilteredProducts] =
     useState<ProductWasteDTO[]>(products);
 
+  const { storeCash } = useSale();
+
   const dataInicial = moment(selectedDate, "DD/MM/YYYY").format("DD/MM/YYYY");
-  const dataFinal = moment(selectedDate, "DD/MM/YYYY")
-    .add(1, "days")
-    .format("DD/MM/YYYY");
+  const dataFinal = moment(selectedDate, "DD/MM/YYYY").format("DD/MM/YYYY");
 
   useEffect(() => {
     async function init() {
@@ -108,37 +117,43 @@ const Waste: React.FC = () => {
       <PageContent>
         {isConnected ? (
           <>
-            {loading ? (
-              <Spinner />
-            ) : (
+            {storeCash?.is_opened ? (
               <>
-                <Header>
-                  <h2>Desperdício</h2>
-                </Header>
-                <>
-                  <SearchContainer>
-                    <DatePicker
-                      value={selectedDate}
-                      allowClear={false}
-                      format="DD/MM/YYYY"
-                      onChange={(date) => setSelectedDate(date)}
-                    />
-                  </SearchContainer>
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <>
+                    <Header>
+                      <h2>Desperdício</h2>
+                    </Header>
+                    <>
+                      <SearchContainer>
+                        <DatePicker
+                          value={selectedDate}
+                          allowClear={false}
+                          format="DD/MM/YYYY"
+                          onChange={(date) => setSelectedDate(date)}
+                        />
+                      </SearchContainer>
 
-                  <Content>
-                    <WasteList
-                      products={products}
-                      productsStore={productStoreList}
-                      setLoading={setLoading}
-                      loading={false}
-                      findProduct={findProduct}
-                      filteredProducts={filteredProducts}
-                      deleteWaste={deleteWaste}
-                      setShouldSearch={setShouldSearch}
-                    />
-                  </Content>
-                </>
+                      <Content>
+                        <WasteList
+                          products={products}
+                          productsStore={productStoreList}
+                          setLoading={setLoading}
+                          loading={false}
+                          findProduct={findProduct}
+                          filteredProducts={filteredProducts}
+                          deleteWaste={deleteWaste}
+                          setShouldSearch={setShouldSearch}
+                        />
+                      </Content>
+                    </>
+                  </>
+                )}
               </>
+            ) : (
+              <CashNotFound />
             )}
           </>
         ) : (
