@@ -57,10 +57,11 @@ const ModalAddWaste: React.FC<IProps> = ({
   const handleSave = async () => {
     setLoading(true);
     try {
-      const values = form.getFieldsValue();
+      const values = await form.validateFields();
+
       if (!image) {
         notification.warning({
-          message: "Por favor, faça o upload de uma imagem",
+          message: "Por favor, anexe uma imagem",
           duration: 5,
         });
         setLoading(false);
@@ -88,8 +89,6 @@ const ModalAddWaste: React.FC<IProps> = ({
           message: "Desperdício cadastrado com sucesso",
           duration: 5,
         });
-
-        setVisible(false);
         form.resetFields();
       }
       setLoading(false);
@@ -186,8 +185,17 @@ const ModalAddWaste: React.FC<IProps> = ({
             <Form.Item
               label="Quantidade"
               name="quantity"
-              rules={[{ required: true, message: "Digite a quantidade" }]}
-              normalize={(value) => parseFloat(value)}
+              rules={[
+                { required: true, message: "Digite a quantidade" },
+                {
+                  validator: (_, value) =>
+                    value >= 0
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error("A quantidade não pode ser negativa")
+                        ),
+                },
+              ]}
             >
               <Input
                 type="number"
