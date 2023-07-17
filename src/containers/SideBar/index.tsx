@@ -118,7 +118,7 @@ const SideBar: React.FC<IProps> = ({ history }) => {
 
     if (hasPermission("config.config_access")) {
       response.push({
-        id: 10,
+        id: 11,
         icon: <SettingsIcon />,
         label: "Configuração",
         router: "/settings",
@@ -126,7 +126,7 @@ const SideBar: React.FC<IProps> = ({ history }) => {
     }
 
     response.push({
-      id: 11,
+      id: 10,
       icon: <LogOutIcon />,
       label: "Sair",
     });
