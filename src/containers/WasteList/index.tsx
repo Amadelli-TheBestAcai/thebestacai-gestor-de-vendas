@@ -1,4 +1,17 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
+import moment from "moment";
+import { Empty, Tooltip } from "antd";
+import { SearchIcon } from "../../pages/Waste/styles";
+import { ProductDto } from "../../models/dtos/product";
+import { Options } from "../../models/enums/weightOptions";
+import { EmptyContainer } from "../Items/styles";
+import { Spinner } from "styled-icons/fa-solid";
+import ModalAddWaste from "../../pages/Waste/ModalAddWaste";
+import ModalImageWaste from "../../pages/Waste/ModalImageWaste";
+import {
+  ProductStoreWasteDto,
+  ProductWasteDTO,
+} from "../../models/dtos/productWaste";
 import {
   Col,
   Container,
@@ -17,19 +30,6 @@ import {
   ContentGeneral,
   ContentGeneralLeft,
 } from "./styles";
-import { Spinner } from "styled-icons/fa-solid";
-import { Empty, Tooltip } from "antd";
-import { SearchIcon } from "../../pages/Waste/styles";
-import { ProductDto } from "../../models/dtos/product";
-import {
-  ProductStoreWasteDto,
-  ProductWasteDTO,
-} from "../../models/dtos/productWaste";
-import { Options } from "../../models/enums/weightOptions";
-import ModalImageWaste from "../../pages/Waste/ModalImageWaste";
-import ModalAddWaste from "../../pages/Waste/ModalAddWaste";
-import { EmptyContainer } from "../Items/styles";
-import moment from "moment";
 
 interface IProps {
   products: ProductWasteDTO[];
@@ -63,13 +63,13 @@ const WasteList: React.FC<IProps> = ({
     filteredProducts.length > 0 ? filteredProducts : products;
 
   const filteredRanking = products
-    .filter((column) => {
+    .filter((productStore) => {
       if (selectedOption === Options.Unidade) {
-        return column.products_store_waste.some(
+        return productStore.products_store_waste.some(
           (product) => product.unity === 0
         );
       } else if (selectedOption === Options.Quilograma) {
-        return column.products_store_waste.some(
+        return productStore.products_store_waste.some(
           (product) => product.unity === 1
         );
       }
@@ -86,6 +86,20 @@ const WasteList: React.FC<IProps> = ({
           0
         )
     );
+
+  const getTotalQuantityByUnity = (productStore, unity) => {
+    return productStore.products_store_waste.reduce((total, item) => {
+      if (item.unity === unity) {
+        return total + +item.quantity;
+      }
+      return total;
+    }, 0);
+  };
+
+  const renderQuantity = (productStore, unity, unitLabel) => {
+    const totalQuantity = getTotalQuantityByUnity(productStore, unity);
+    return totalQuantity > 0 ? `${totalQuantity} ${unitLabel} ` : null;
+  };
 
   return (
     <Container>
@@ -181,45 +195,16 @@ const WasteList: React.FC<IProps> = ({
               <Col sm={8}>Produto</Col>
               <Col sm={8}>Quantidade</Col>
             </Header>
+
             {products.length !== 0 ? (
               <ContentGeneralLeft>
-                {filteredRanking.map((column, index) => (
-                  <Tupla key={column.id}>
+                {filteredRanking.map((productStore, index) => (
+                  <Tupla key={productStore.id}>
                     <Col sm={8}>{`${index + 1}º`}</Col>
-                    <Col sm={8}>{column.name}</Col>
+                    <Col sm={8}>{productStore.name}</Col>
                     <Col sm={8}>
-                      {column.products_store_waste.reduce((total, item) => {
-                        if (item.unity === 0) {
-                          return total + +item.quantity;
-                        }
-                        return total;
-                      }, 0) > 0 && (
-                        <>
-                          {column.products_store_waste.reduce((total, item) => {
-                            if (item.unity === 0) {
-                              return total + +item.quantity;
-                            }
-                            return total;
-                          }, 0)}
-                          {" un "}
-                        </>
-                      )}
-                      {column.products_store_waste.reduce((total, item) => {
-                        if (item.unity === 1) {
-                          return total + +item.quantity;
-                        }
-                        return total;
-                      }, 0) > 0 && (
-                        <>
-                          {column.products_store_waste.reduce((total, item) => {
-                            if (item.unity === 1) {
-                              return total + +item.quantity;
-                            }
-                            return total;
-                          }, 0)}
-                          {" kg"}
-                        </>
-                      )}
+                      {renderQuantity(productStore, 0, "un")}
+                      {renderQuantity(productStore, 1, "kg")}
                     </Col>
                   </Tupla>
                 ))}
