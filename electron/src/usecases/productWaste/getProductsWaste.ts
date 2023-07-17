@@ -25,7 +25,6 @@ export class GetWasteProduct implements IUseCaseFactory {
         `/products/waste/${store?.company_id}?dataInicial=${initialDate}&dataFinal=${finalDate}`
       );
       const wasteProducts = data;
-      console.log(wasteProducts);
       return wasteProducts;
     } else {
       return [];
