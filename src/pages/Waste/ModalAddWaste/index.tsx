@@ -3,6 +3,8 @@ import { Modal, Radio, notification } from "antd";
 import { ProductDto } from "../../../models/dtos/product";
 import { ProductWasteDTO } from "../../../models/dtos/productWaste";
 import { Options } from "../../../models/enums/weightOptions";
+import { useStore } from "../../../hooks/useStore";
+import { useCashHistoryId } from "../../../hooks/useCashHistoryId";
 import s3Api from "../../../helpers/s3Api";
 import {
   Form,
@@ -15,8 +17,6 @@ import {
   SelectSearch,
   Option,
 } from "./styles";
-import { useStore } from "../../../hooks/useStore";
-import { useCashHistoryId } from "../../../hooks/useCashHistoryId";
 
 interface IProps {
   visible: boolean;
@@ -41,7 +41,7 @@ const ModalAddWaste: React.FC<IProps> = ({
   const [image, setImage] = useState(null);
   const [value, setValue] = useState(Options.Quilograma);
   const [unitSuffix, setUnitSuffix] = useState("kg");
-
+  const [quantity, setQuantity] = useState<number>(0);
   const [form] = Form.useForm();
   const { store } = useStore();
   const { cashHistoryId } = useCashHistoryId();
@@ -64,7 +64,6 @@ const ModalAddWaste: React.FC<IProps> = ({
           message: "Por favor, anexe uma imagem",
           duration: 5,
         });
-        setLoading(false);
         return;
       }
 
@@ -128,13 +127,15 @@ const ModalAddWaste: React.FC<IProps> = ({
         <Footer>
           <ButtonCancel
             onClick={() => {
-              setVisible(false);
               form.resetFields();
+              setVisible(false);
             }}
           >
             Cancelar
           </ButtonCancel>
-          <ButtonSave onClick={handleSave}>Salvar</ButtonSave>
+          <ButtonSave onClick={handleSave} disabled={quantity <= 0}>
+            Salvar
+          </ButtonSave>
         </Footer>
       }
     >
@@ -189,7 +190,7 @@ const ModalAddWaste: React.FC<IProps> = ({
                 { required: true, message: "Digite a quantidade" },
                 {
                   validator: (_, value) =>
-                    value >= 0
+                    value > 0
                       ? Promise.resolve()
                       : Promise.reject(
                           new Error("A quantidade não pode ser negativa")
@@ -200,11 +201,11 @@ const ModalAddWaste: React.FC<IProps> = ({
               <Input
                 type="number"
                 placeholder="Digite aqui"
+                onChange={(e) => setQuantity(+e.target.value)}
                 addonAfter={unitSuffix}
               />
             </Form.Item>
           </ColModal>
-
           <ColModal sm={24}>
             <Form.Item
               label="Upload de imagem"

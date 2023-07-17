@@ -153,7 +153,7 @@ const Waste: React.FC = () => {
                 )}
               </>
             ) : (
-              <CashNotFound />
+              <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para cadastrar o desperdício." />
             )}
           </>
         ) : (
