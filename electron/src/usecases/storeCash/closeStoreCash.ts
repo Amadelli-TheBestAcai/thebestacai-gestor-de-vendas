@@ -3,9 +3,10 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreDto, StoreCashDto, OldCashHistoryDto } from "../../models/gestor";
+import { StoreDto, StoreCashDto, OldCashHistoryDto, SaleDto } from "../../models/gestor";
 import { updateBalanceHistory } from './updateBalanceHistory';
 import { useCaseFactory } from "../useCaseFactory";
+
 interface Request {
   code: string;
   amount_on_close: number;
@@ -18,7 +19,8 @@ class CloseStoreCash implements IUseCaseFactory {
     ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(StorageNames.Old_Cash_History),
-    private _updateBalanceHistory = updateBalanceHistory
+    private _updateBalanceHistory = updateBalanceHistory,
+    private deliverySaleRepository = new BaseRepository<SaleDto>(StorageNames.Delivery_Sale)
   ) { }
 
   async execute({
@@ -27,6 +29,11 @@ class CloseStoreCash implements IUseCaseFactory {
   }: Request): Promise<StoreCashDto | undefined> {
     const isConnected = await checkInternet();
     if (isConnected) {
+      const deliverySales = await this.deliverySaleRepository.getAll();
+      
+      if (deliverySales.length > 0) {
+        throw new Error("Você ainda possui vendas pendentes no delivery");
+      }
       const { has_internal_error: errorOnUpdateBalanceHistory } =
         await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 
