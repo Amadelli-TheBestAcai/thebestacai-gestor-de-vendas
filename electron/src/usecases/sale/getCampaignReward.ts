@@ -1,61 +1,29 @@
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import thorApi from "../../providers/thorApi";
-import moment from "moment";
 
 interface Request {
   cpf: string;
 }
 
+interface Reward {
+  id: number;
+  description: string;
+  value: number;
+  is_taked: boolean;
+  refused: boolean;
+}
+
 class GetCampaignReward implements IUseCaseFactory {
-  async execute({ cpf }: Request): Promise<
-    {
-      id: number;
-      description: string;
-      value: number;
-      is_taked: boolean;
-      refused: boolean;
-    }[]
-  > {
-    const {
-      data: { content },
-    } = await thorApi.get(`/customer-reward/${cpf}`);
+  async execute({ cpf }: Request): Promise<Reward[]> {
+    try {
+      const {
+        data: { content: rewards },
+      } = await thorApi.get(`/campaign-reward/reward/${cpf}`);
 
-    const campaigns = content.sort((a, b) => b.id - a.id);
-
-    if (!campaigns.length) {
-      throw new Error("Nenhuma campanha encontrada para este usuário");
+      return rewards;
+    } catch (err: any) {
+      throw new Error(err.response.data.message);
     }
-
-    const lastCampaign = campaigns[0];
-
-    if (moment(lastCampaign?.campaign?.expirated_at).isBefore(new Date())) {
-      throw new Error(
-        "A última campanha que o usuário participou já esta expirada"
-      );
-    }
-
-    if (!lastCampaign.customerReward.length) {
-      throw new Error("Nenhuma recompensa encontrada para este usuário");
-    }
-
-    const response = lastCampaign.customerReward.map((customerReward) => {
-      let value = 0;
-      const content =
-        customerReward.campaignReward.description.match(/R\$(\d+(,\d{2})?)/);
-      if (content && content.length && content.length >= 1) {
-        value = +content[1]?.replace(",", ".");
-      }
-
-      return {
-        id: customerReward.id,
-        description: customerReward.campaignReward.description,
-        value: value,
-        is_taked: customerReward.is_taked,
-        refused: customerReward.refused,
-      };
-    });
-
-    return response;
   }
 }
 

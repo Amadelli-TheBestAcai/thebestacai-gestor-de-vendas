@@ -103,6 +103,7 @@ export const saleFactory = {
         id: number;
         description: string;
         value: number;
+        product_id: number;
         is_taked: boolean;
         refused: boolean;
       }[]

@@ -8,6 +8,7 @@ import {
   getProducts,
 } from "../usecases/product";
 import { ProductDto, PurchaseProductDto, AuditDto } from "../models/gestor";
+import { getIdProducts } from "../usecases/product/getIdProducts";
 
 export const productFactory = {
   getProducts: async (local = false) =>
@@ -29,4 +30,8 @@ export const productFactory = {
       id,
       quantity,
     }),
+  getIdProducts: async (id: number) =>
+    await useCaseFactory.execute<ProductDto>(getIdProducts, {
+      id
+    })
 };

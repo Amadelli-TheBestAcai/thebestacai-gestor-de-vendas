@@ -35,6 +35,7 @@ const DiscountForm: React.FC = () => {
       id: number;
       description: string;
       value: number;
+      product_id: number;
       is_taked: boolean;
       refused: boolean;
     }[]
@@ -98,6 +99,9 @@ const DiscountForm: React.FC = () => {
 
     if (has_internal_error) {
       setSearchingReward(false);
+
+      setRewards([]);
+
       return notification.error({
         message: error_message || "Erro ao buscar recompensas",
         duration: 5,
@@ -110,6 +114,7 @@ const DiscountForm: React.FC = () => {
 
   const useReward = async (reward: {
     id: number;
+    product_id: number;
     description: string;
     value: number;
     is_taked: boolean;
@@ -118,6 +123,12 @@ const DiscountForm: React.FC = () => {
       (total, payment) => total + payment.amount,
       0
     );
+
+    const { response: product, has_internal_error: errorOnProduct } =
+      await window.Main.product.getIdProducts(reward.product_id);
+
+    const { response: updatedSale, has_internal_error: errorOnAddItem } =
+      await window.Main.sale.addItem(product, 1, 0);
 
     if (!sale.items.length) {
       return notification.warning({
@@ -162,17 +173,6 @@ const DiscountForm: React.FC = () => {
     document.getElementById("mainContainer").focus();
   };
 
-  const removeReward = async () => {
-    setSale((oldValue) => ({
-      ...oldValue,
-      customer_nps_reward_id: null,
-      customer_nps_reward_discount: null,
-    }));
-
-    discountModalHandler.closeDiscoundModal();
-    document.getElementById("mainContainer").focus();
-  };
-
   return (
     <Container
       title="Desconto"
@@ -194,7 +194,7 @@ const DiscountForm: React.FC = () => {
             Cancelar
           </ButtonCancel>
           <ButtonSave onClick={() => handleSubmit()}>
-            Aplicar desconto
+            {userCpf ? 'Resgatar recompensa' : 'Aplicar desconto'}
           </ButtonSave>
         </Footer>
       }
@@ -214,33 +214,12 @@ const DiscountForm: React.FC = () => {
           {rewards.map((reward) => (
             <RewardRow key={reward.id}>
               <span>{reward.description}</span>
-              {reward.is_taked ? (
-                <div style={{ cursor: "not-allowed", color: "#0000ff99" }}>
-                  Resgatado
-                </div>
-              ) : (
-                <>
-                  {reward.refused ? (
-                    <div style={{ cursor: "not-allowed", color: "#ff4d4fba" }}>
-                      Recusado
-                    </div>
-                  ) : sale.customer_nps_reward_id === reward.id ? (
-                    <div
-                      style={{ color: "#ff4d4fba" }}
-                      onClick={() => removeReward()}
-                    >
-                      Remover
-                    </div>
-                  ) : (
-                    <div
-                      style={{ color: "#52c41a" }}
-                      onClick={() => useReward(reward)}
-                    >
-                      Resgatar
-                    </div>
-                  )}
-                </>
-              )}
+              {<div
+                style={{ color: "#52c41a" }}
+                onClick={() => useReward(reward)}
+              >
+                Resgatar
+              </div>}
             </RewardRow>
           ))}
         </RewardList>

@@ -25,6 +25,8 @@ class AddItem implements IUseCaseFactory {
     if (errorOnGetCurrentSale) {
       throw new Error("Erro ao obter venda atual");
     }
+    console.log(productToAdd)
+    console.log(price)
     if (!sale) {
       throw new Error("Nenhuma venda encontrada");
     }
