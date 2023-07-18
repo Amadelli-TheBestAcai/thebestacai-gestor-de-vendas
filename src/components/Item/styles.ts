@@ -1,6 +1,13 @@
 import styled from "styled-components";
 
-import { Row, Col, Modal as ModalAnt, Input as InputAnt } from "antd";
+import {
+  Row,
+  Col,
+  Modal as ModalAnt,
+  Input as InputAnt,
+  Form as FormAnt,
+  Radio as RadioAnt,
+} from "antd";
 
 import { TrashRestoreAlt } from "../../styles/Icons";
 
@@ -10,6 +17,27 @@ export const Container = styled(Row)`
   height: 100%;
   background: var(--white-40);
   margin-bottom: 8px;
+`;
+
+export const Form = styled(FormAnt)`
+  .ant-form-item-control-input {
+    background-color: white;
+  }
+  .ant-form-label {
+    margin-bottom: 0.5rem;
+  }
+`;
+
+export const Radio = styled(RadioAnt)`
+  display: block;
+  margin-bottom: 0.8rem;
+
+  .ant-radio-checked {
+    color: var(--orange-250);
+  }
+  .ant-radio-checked::after {
+    border: 1px solid var(--orange-250);
+  }
 `;
 
 export const Column = styled(Col)`
