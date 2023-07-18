@@ -11,6 +11,7 @@ import {
   ChartBar,
   Settings,
   LogOut,
+  Trash
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -54,7 +55,7 @@ export const Content = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  height: 85%;
+  height: 100%;
   width: 100%;
 `;
 
@@ -67,7 +68,7 @@ export const CardIcon = styled.button`
   color: var(--orange-250);
   border-radius: 9px;
   transition: 0.3s;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   :hover {
     background: var(--orange-250);
@@ -150,5 +151,8 @@ export const SettingsIcon = styled(Settings)`
 `;
 
 export const LogOutIcon = styled(LogOut)`
+  ${IconCSS}
+`;
+export const TrashIcon = styled(Trash)`
   ${IconCSS}
 `;

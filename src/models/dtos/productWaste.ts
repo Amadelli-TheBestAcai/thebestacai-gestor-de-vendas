@@ -1,33 +1,23 @@
-import { InputNumberProps } from "antd";
-
-export interface ProductDto {
+export interface ProductWasteDTO {
   id: number;
-  product_id?: number;
-  product: {
+  name: string;
+  category_id: number;
+  category: {
     id: number;
     name: string;
-    category_id: number;
-    category: {
-      id: number;
-      name: string;
-      sort?: number;
-      created_at?: string;
-      deleted_at?: string;
-    };
-    price_buy?: string;
-    permission_store?: boolean;
-    permission_order?: boolean;
-    permission_purchase?: boolean;
-    cod_product?: string;
-    cod_ncm?: string;
-    brand?: string;
-    unity?: number;
-    weight?: string;
-    price_sell?: string;
-    description?: string;
+    sort?: number;
     created_at?: string;
     deleted_at?: string;
   };
+  price_buy?: string;
+  permission_store?: boolean;
+  permission_order?: boolean;
+  permission_purchase?: boolean;
+  cod_product?: number;
+  cod_ncm?: string;
+  brand?: string;
+  weight?: string;
+  description?: string;
   store_id?: number;
   price_unit?: string;
   permission: boolean;
@@ -56,5 +46,18 @@ export interface ProductDto {
   cest?: string;
   created_at: string;
   deleted_at?: string;
+  products_store_waste: ProductStoreWasteDto[];
 }
 
+export interface ProductStoreWasteDto {
+  id: number;
+  product_id: number;
+  cash_history_id: number;
+  unity: number;
+  store_id: number;
+  quantity: string;
+  url_file: string;
+  s3_key: string;
+  created_at: string;
+  deleted_at: string;
+}

@@ -6,11 +6,15 @@ import { Empty } from "antd";
 
 import { Container } from "./styles";
 
-const CashNotFound: React.FC = () => {
+interface IProps {
+  description: string;
+}
+
+const CashNotFound: React.FC<IProps> = ({ description }) => {
   return (
     <Container>
       <Empty
-        description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas."
+        description={description}
         image={CashNotImg}
         imageStyle={{
           height: 350,

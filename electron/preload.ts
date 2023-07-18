@@ -10,7 +10,8 @@ import {
   saleFactory,
   settingsFactory,
   storeCashFactory,
-  storeFactory
+  storeFactory,
+  productWasteFactory
 } from "./src/factories";
 
 export const api = {
@@ -34,5 +35,6 @@ export const api = {
   itemOutCart: itemOutCartFactory,
   settings: settingsFactory,
   common: commonFactory,
+  productWaste: productWasteFactory,
 };
 contextBridge.exposeInMainWorld("Main", { ...api });

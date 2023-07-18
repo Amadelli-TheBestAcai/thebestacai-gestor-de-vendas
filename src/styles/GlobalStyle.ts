@@ -68,7 +68,21 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
- 
+  .ant-radio-inner::after {
+    background-color: var(--orange-250);
+  }
+
+  .ant-radio-checked .ant-radio-inner {
+    border-color: var(--orange-250);
+  }
+
+  .ant-radio-checked {
+    color: var(--orange-250);
+  }
+
+  .ant-radio-inner {
+    border-color: var(--orange-250);
+  }
 
   html, body, #root {
     max-height: 100vh;
@@ -108,6 +122,10 @@ export const GlobalStyle = createGlobalStyle`
     .ant-notification-notice-error {
       background: var(--error);
       color: var(--black-opaco);
+    }
+
+    .ant-radio-group .ant-radio-group-outline{
+      margin-top: 1rem;
     }
 
     .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
@@ -185,6 +203,10 @@ export const GlobalStyle = createGlobalStyle`
         }
 
       }
+    }
+
+    .ant-select-selector{
+      height: 100%;
     }
 
     .ant-input, .ant-input-password,
