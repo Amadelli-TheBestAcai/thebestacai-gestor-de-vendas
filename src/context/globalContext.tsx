@@ -10,6 +10,7 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 import { StoreDto } from "../models/dtos/store";
+import { SaleFromApi } from "../models/dtos/salesFromApi";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -204,6 +205,7 @@ export function GlobalProvider({ children }) {
             type: +payment.type,
             flag_card: +payment.flag_card,
           })),
+          ref: sale.ref
         };
 
         const {
@@ -229,7 +231,6 @@ export function GlobalProvider({ children }) {
           await window.Main.sale.getCurrentSale();
         sale.nfce_focus_id = updatedSale.nfce_focus_id;
         sale.nfce_url = updatedSale.nfce_url;
-        sale.ref = updatedSale.ref;
       }
 
       const { has_internal_error: errorOnFinishSAle, error_message } =
@@ -290,6 +291,11 @@ export function GlobalProvider({ children }) {
         description: `A venda foi registrada com sucesso.`,
         duration: 3,
       });
+    }
+
+    if (settings.should_print_sale && settings.should_use_printer) {
+      //@ts-expect-error
+      window.Main.common.printSale(sale);
     }
 
     document.getElementById("balanceInput")?.focus();

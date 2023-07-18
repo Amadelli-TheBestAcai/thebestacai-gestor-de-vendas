@@ -1,4 +1,4 @@
-export type ProductDto = {
+export interface ProductDto {
   id: number;
   product_id?: number;
   product: {
@@ -54,4 +54,5 @@ export type ProductDto = {
   cest?: string;
   created_at: string;
   deleted_at?: string;
-};
+}
+

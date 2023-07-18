@@ -174,6 +174,7 @@ const Sale: React.FC<IProps> = () => {
         flag_card:
           payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
       })),
+      ref: selectedSale.ref
     };
 
     try {

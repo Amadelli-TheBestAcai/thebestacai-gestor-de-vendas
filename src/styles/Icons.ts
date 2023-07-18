@@ -28,7 +28,7 @@ export {
 } from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
-export { CreditCard2BackFill, TelephoneFill } from "@styled-icons/bootstrap";
+export { CreditCard2BackFill, TelephoneFill, Image } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
 export { Grid3x2GapFill, UiChecks, Trash } from "@styled-icons/bootstrap";

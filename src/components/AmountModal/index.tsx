@@ -81,9 +81,8 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   const onFinish = () => {
     Modal.confirm({
       title: `${storeCash?.is_opened ? "Fechamento" : "Abertura"} de caixa`,
-      content: `Tem certeza que gostaria de ${
-        storeCash?.is_opened ? "fechar" : "abrir"
-      } este caixa?`,
+      content: `Tem certeza que gostaria de ${storeCash?.is_opened ? "fechar" : "abrir"
+        } este caixa?`,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
@@ -97,23 +96,76 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
             });
             return;
           }
+
+          const {
+            has_internal_error: internalErrorOnOnlineIntegrate,
+            error_message: errorMessageOnOnlineTntegrate,
+          } = await window.Main.sale.onlineIntegration();
+
+          if (internalErrorOnOnlineIntegrate) {
+            errorMessageOnOnlineTntegrate
+              ? notification.warning({
+                  message: errorMessageOnOnlineTntegrate,
+                  duration: 5,
+                })
+              : notification.error({
+                  message:
+                    errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
+                  duration: 5,
+                });
+          }
+
+          const {
+            has_internal_error: errorOnIntegrateHandler,
+            error_message: errorMessageOnIntegrateHandler,
+          } = await window.Main.handler.integrateHandler();
+
+          if (errorOnIntegrateHandler) {
+            errorMessageOnIntegrateHandler
+              ? notification.warning({
+                  message: errorMessageOnIntegrateHandler,
+                  duration: 5,
+                })
+              : notification.error({
+                  message:
+                    errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
+                  duration: 5,
+                });
+          }
+
+          const {
+            has_internal_error: errorOnIntegrateItemOutCart,
+            error_message: errorMessageOnIntegrateItemOutCart,
+          } = await window.Main.itemOutCart.integrationItemOutCart();
+
+          if (errorOnIntegrateItemOutCart) {
+            errorMessageOnIntegrateItemOutCart
+              ? notification.warning({
+                  message: errorMessageOnIntegrateItemOutCart,
+                  duration: 5,
+                })
+              : notification.error({
+                  message:
+                    errorMessageOnIntegrateItemOutCart ||
+                    "Erro ao integrar itens fora do carrinho",
+                  duration: 5,
+                });
+          }
           const { response: _storeCash, has_internal_error: errorOnStoreCash, error_message: errorMessageCloseStoreCash } =
             await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
           if (errorOnStoreCash) {
             notification.error({
               message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
               duration: 5,
-            })
-            return
+            });
+            return;
           }
           setStoreCash(_storeCash);
           notification.success({
-            message: `Caixa ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso!`,
-            description: `O caixa foi ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso.`,
+            message: `Caixa ${storeCash?.is_opened ? "fechado" : "aberto"
+              } com sucesso!`,
+            description: `O caixa foi ${storeCash?.is_opened ? "fechado" : "aberto"
+              } com sucesso.`,
             duration: 5,
           });
           return history.push("/home");
@@ -129,12 +181,10 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
           }
           setStoreCash(_storeCash);
           notification.success({
-            message: `Caixa ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso!`,
-            description: `O caixa foi ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso.`,
+            message: `Caixa ${storeCash?.is_opened ? "fechado" : "aberto"
+              } com sucesso!`,
+            description: `O caixa foi ${storeCash?.is_opened ? "fechado" : "aberto"
+              } com sucesso.`,
             duration: 5,
           });
           return history.push("/home");

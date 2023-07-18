@@ -21,6 +21,9 @@ export type SaleDto = {
   is_online: boolean;
   is_current: boolean;
   is_integrated: boolean;
+  nfce?: {
+    qrcode_url: string;
+  };
   to_integrate: boolean;
   total_paid: number;
   total_sold: number;
