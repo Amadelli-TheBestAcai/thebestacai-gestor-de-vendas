@@ -118,6 +118,7 @@ const NfeForm: React.FC<IProps> = ({
             ? paymentNfe.flag_card
             : null,
       })),
+      ref: sale.ref
     };
 
     try {

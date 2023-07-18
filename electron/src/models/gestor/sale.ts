@@ -2,7 +2,6 @@ export interface SaleDto {
   id: string;
   gv_id?: number;
   name?: string;
-  sales_campaign_hash: string;
   user_id?: number;
   abstract_sale?: boolean;
   quantity: number;
@@ -26,6 +25,9 @@ export interface SaleDto {
   total_sold: number;
   customer_nps_reward_id?: number;
   customer_nps_reward_discount?: number;
+  nfce?: {
+    qrcode_url: string;
+  };
   items: {
     id: string;
     store_product_id: number;
