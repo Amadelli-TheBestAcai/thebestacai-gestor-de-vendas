@@ -118,7 +118,7 @@ const Login: React.FC<IProps> = ({ history }) => {
         await window.Main.settings.update(settings.id, {
           ...settings,
           rememberd_user: settings.should_remember_user ? user.username : "",
-          should_open_casher: true
+          should_open_casher: true,
         });
       if (errorOnSettings) {
         notification.error({
@@ -378,15 +378,14 @@ const Login: React.FC<IProps> = ({ history }) => {
         }
       >
         <TextModalVersion>
-          Uma nova versão do nosso sistema está disponível. Atualize agora para
-          aproveitar melhorias e recursos aprimorados.
-          <span>Marque a caixa abaixo para confirmar que você leu e entendeu.</span>
+        Seu Gestor de Vendas está <b>desatualizado</b>, o que pode resultar em mau funcionamento e vulnerabilidades de segurança.
+          <span>Entre em contato com o suporte para atualiza-lo.</span>
         </TextModalVersion>
         <Checkbox
           checked={isCheckboxChecked}
           onChange={(e) => setIsCheckboxChecked(e.target.checked)}
         />
-        Li e estou ciente da nova versão
+        Li e estou ciente dos riscos
       </Modal>
     </Container>
   );
