@@ -61,6 +61,40 @@ export const Logo = styled.img`
   }
 `;
 
+export const ButtonSave = styled.button`
+  padding: 3px 7px;
+  font-weight: 500;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  background: var(--orange-250);
+  color: white;
+  transition: 0.5s;
+
+  :hover {
+    background: var(--orange-200);
+  }
+
+  :disabled {
+    opacity: 30%;
+    cursor: not-allowed;
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
+`;
+
+export const TextModalVersion = styled.p`
+  font-size: 1rem;
+  font-weight: 500;
+
+  span{
+    margin-top: .5rem;
+    display: block;
+  }
+`;
+
 export const FormContainer = styled.div`
   display: flex;
   justify-content: center;
