@@ -1,62 +1,33 @@
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import thorApi from "../../providers/thorApi";
-import moment from "moment";
 
 interface Request {
   cpf: string;
 }
 
 class GetCampaignReward implements IUseCaseFactory {
-  async execute({ cpf }: Request): Promise<
-    {
+  async execute({ cpf }: Request): Promise<{
+    points_customer: number;
+    campaignReward: {
       id: number;
+      campaign_id: number;
+      customer_reward_id: number;
       description: string;
-      value: number;
-      is_taked: boolean;
-      refused: boolean;
-    }[]
-  > {
+      url_image: string;
+      s3_key: string;
+      points_reward: number;
+      created_at: string;
+      updated_at: string;
+      deleted_at: string;
+      product_id: number;
+    }[];
+  }> {
     const {
       data: { content },
-    } = await thorApi.get(`/customer-reward/${cpf}`);
+    } = await thorApi.get(`/campaign-reward/reward/${cpf}`);
 
-    const campaigns = content.sort((a, b) => b.id - a.id);
-
-    if (!campaigns.length) {
-      throw new Error("Nenhuma campanha encontrada para este usuário");
-    }
-
-    const lastCampaign = campaigns[0];
-
-    if (moment(lastCampaign?.campaign?.expirated_at).isBefore(new Date())) {
-      throw new Error(
-        "A última campanha que o usuário participou já esta expirada"
-      );
-    }
-
-    if (!lastCampaign.customerReward.length) {
-      throw new Error("Nenhuma recompensa encontrada para este usuário");
-    }
-
-    const response = lastCampaign.customerReward.map((customerReward) => {
-      let value = 0;
-      const content =
-        customerReward.campaignReward.description.match(/R\$(\d+(,\d{2})?)/);
-      if (content && content.length && content.length >= 1) {
-        value = +content[1]?.replace(",", ".");
-      }
-
-      return {
-        id: customerReward.id,
-        description: customerReward.campaignReward.description,
-        value: value,
-        is_taked: customerReward.is_taked,
-        refused: customerReward.refused,
-      };
-    });
-
-    return response;
+    console.log(content);
+    return content;
   }
 }
-
 export const getCampaignReward = new GetCampaignReward();
