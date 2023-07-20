@@ -100,21 +100,6 @@ export const Spin = styled(SpinAnt)`
   justify-content: center;
 `;
 
-export const RewardSearch = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  height: 3.8rem;
-  background: var(--white-80);
-  padding: 2%;
-  margin-bottom: 8px;
-`;
-
-export const InputSearchReward = styled.input`
-  width: 100%;
-`;
-
 export const IconContainer = styled.div`
   display: flex;
   align-items: center;
@@ -139,23 +124,3 @@ export const SearchIcon = styled(Search)`
   }
 `;
 
-export const RewardList = styled.div`
-  font-size: 11px;
-`;
-
-export const RewardRow = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 0 2%;
-  span {
-    width: 60%;
-  }
-  div {
-    display: flex;
-    justify-content: center;
-    width: 40%;
-    cursor: pointer;
-  }
-`;
