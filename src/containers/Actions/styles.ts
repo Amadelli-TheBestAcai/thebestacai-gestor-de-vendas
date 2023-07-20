@@ -5,7 +5,7 @@ import {
   LogInCircle,
   DocumentBulletList,
   LogOutCircle,
-  Chatbubbles,
+  TrophyFill,
 } from "../../styles/Icons";
 
 const BasicCSS = css`
@@ -21,12 +21,12 @@ const ButtonCSS = css`
   justify-content: center;
   width: 11rem;
   height: 4.4rem;
-  border: 1px solid var(--gray-50);
-  box-sizing: border-box;
-  box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
-  border-radius: 1.8rem;
   font-weight: bold;
   transition: 0.5s;
+  border: 1px solid var(--gray-50);
+  box-sizing: border-box;
+  box-shadow: 0px 0px 6px 1px rgb(163 163 163 / 28%);
+  border-radius: 10px;
 
   :hover {
     border: 1px solid var(--orange-250);
@@ -100,20 +100,20 @@ export const Container = styled.div`
 export const ActionButtons = styled.div`
   ${BasicCSS}
   align-items: flex-start;
-  width: 65%;
+  width: 80%;
   justify-content: space-between;
 `;
 
 export const InfosAndChat = styled.div`
   ${BasicCSS}
-  width: 35%;
+  width: 20%;
   align-items: flex-start;
   justify-content: flex-end;
 `;
 
 export const ContentHeaderInfos = styled.div`
   ${BasicCSS}
-  width: 26rem;
+  width: 12rem;
   height: 4.4rem;
   background: var(--white);
   border: 1px solid var(--gray-50);
@@ -122,14 +122,8 @@ export const ContentHeaderInfos = styled.div`
   border-radius: 10px;
   font-size: 1rem;
 
-  /* Responsive 1680 */
-  @media (max-width: 1680px) {
-    width: 23rem;
-  }
-
   /* Responsive 1600 */
   @media (max-width: 1680px) {
-    width: 22rem;
     height: 4rem;
 
     @media (max-height: 900px) {
@@ -140,21 +134,18 @@ export const ContentHeaderInfos = styled.div`
 
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
-    width: 19rem;
     height: 3.6rem;
     font-size: 0.8rem;
   }
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
-    width: 18rem;
     height: 3.2rem;
     font-size: 0.7rem;
   }
 
   /*Responsive 1280px*/
   @media (max-width: 1280px) {
-    width: 16rem;
     height: 3.7rem;
     font-size: 0.7rem;
 
@@ -167,33 +158,9 @@ export const ContentHeaderInfos = styled.div`
 export const InfoStore = styled.div`
   ${BasicCSS}
   flex-direction: column;
-  width: 50%;
+  width: 100%;
   justify-content: center;
   border-right: 1px solid var(--gray-25);
-`;
-
-export const UserPhoto = styled.img`
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50px;
-
-  /*Responsive 1440px*/
-  @media (max-width: 1440px) {
-    width: 2.2rem;
-    height: 2.2rem;
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 2rem;
-    height: 2rem;
-  }
-`;
-
-export const ChatContainer = styled.div`
-  ${BasicCSS}
-  width: 50%;
-  justify-content: space-evenly;
 `;
 
 export const Button = styled.button`
@@ -215,30 +182,6 @@ export const OutputIcon = styled(LogOutCircle)`
 export const ListIcon = styled(DocumentBulletList)`
   ${IconCSS}
 `;
-
-export const ChatIcon = styled(Chatbubbles)`
+export const TrophyIcon = styled(TrophyFill)`
   ${IconCSS}
-  width: 2rem;
-  height: 2rem;
-  cursor: pointer;
-
-  /* Responsive 1600px */
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      width: 1.8rem;
-      height: 1.8rem;
-    }
-  }
-
-  /*Responsive 1440px*/
-  @media (max-width: 1440px) {
-    width: 1.6rem;
-    height: 1.6rem;
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 1.4rem;
-    height: 1.4rem;
-  }
 `;
