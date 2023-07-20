@@ -73,7 +73,13 @@ const Item: React.FC<IProps> = ({ item }) => {
 
     setdisabled(true);
     await onDecressItem(item.id);
-    await window.Main.itemOutCart.create(reasonOption, item.product.id, +item.storeProduct.price_unit);
+
+    let price_sell = +item.storeProduct.price_unit;
+    if (item.product.category.id === 1) {
+      price_sell = +item.total;
+    }
+
+    await window.Main.itemOutCart.create(reasonOption, item.product.id, +price_sell);
     setModalState(false);
     setdisabled(false);
   };
