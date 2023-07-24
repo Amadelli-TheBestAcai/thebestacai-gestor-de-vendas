@@ -9,8 +9,7 @@ import { v4 } from "uuid";
 import { buildNewSale } from "./buildNewSale";
 
 interface Request {
-  sale: SaleDto;
-  products_ids: number[];
+  payload
 }
 
 class IntegrateRewardWithSale implements IUseCaseFactory {
@@ -25,9 +24,9 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
     private buildNewSaleUseCase = buildNewSale
   ) {}
 
-  async execute({ products_ids }: Request): Promise<void> {
+  async execute({ payload }: Request): Promise<void> {
     const { response: newSale, has_internal_error: errorOnBuildNewSale } =
-      await useCaseFactory.execute<SaleDto>(this.buildNewSaleUseCase);
+      await useCaseFactory.execute<SaleDto>(this.buildNewSaleUseCase, {withPersistence: false});
 
     if (errorOnBuildNewSale) {
       throw new Error("Erro ao criar uma nova venda");
@@ -37,23 +36,31 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
     }
     
     await Promise.all(
-      products_ids.map(async (product_id) => {
+      payload.map(async (item) => {
         const product = await this.productRepository.getOne({
-          product_id: product_id,
+          product_id: item.product_id,
         });
         if (!product) {
           throw new Error("Produto não encontrado");
         }
-        newSale?.items.push({
-          created_at: moment(new Date()).format("DD/MM/yyyy HH:mm:ss"),
-          product: product.product,
-          quantity: Number(product?.quantity),
-          storeProduct: product,
-          store_product_id: product.id,
-          total: Number(product.price_sell),
-          update_stock: false,
-          id: v4(),
-        });
+
+        let qtd = Number(product?.quantity)
+
+        do {
+          newSale?.items.push({
+            created_at: moment(new Date()).format("DD/MM/yyyy HH:mm:ss"),
+            product: product.product,
+            quantity: 1,
+            storeProduct: product,
+            store_product_id: product.id,
+            total: Number(product.price_sell),
+            update_stock: false,
+            id: v4(),
+          });
+          qtd -= 1;
+        } while(qtd >= 1)
+
+        
       })
     );
     await this.notIntegratedSaleRepository.create(newSale);
