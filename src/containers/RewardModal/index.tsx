@@ -23,6 +23,7 @@ import {
   Col,
   PlusIconContainer,
   ColReward,
+  ContentItemRow,
 } from "./styles";
 import { useStore } from "../../hooks/useStore";
 import { CustomerReward } from "../../models/dtos/customerReward";
@@ -242,65 +243,71 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                   <Col sm={4}>Custo da recompensa</Col>
                   <Col sm={8}>Itens</Col>
                 </Header>
-                {rewards?.campaignReward.map((item, index) => (
-                  <CardReward key={item.id} invalid={isAnyCardDisabled}>
-                    <React.Fragment key={item.id}>
-                      <ColReward sm={3}>
-                        <ImgContent
-                          src={item.url_image}
-                          alt="imagem da recompensa"
-                        />
-                      </ColReward>
-                      <RewardDescription>
-                        <div className="content">
-                          <ColReward sm={12}>
-                            <div className="contentLeft">
-                              {item.description}
-                            </div>
-                          </ColReward>
-                          <ColReward sm={4}>
-                            <div className="contentLeft">
-                              {item.points_reward}
-                            </div>
-                          </ColReward>
 
-                          <ColReward sm={3}>
-                            <div className="counter">
-                              <DecreaseIcon
-                                onClick={() =>
-                                  rewardCounts[index] > 0 &&
-                                  updateCounter(index, rewardCounts[index] - 1)
-                                }
-                              />
-                              <p>{rewardCounts[index]}</p>
-                              <PlusIconContainer
-                                onClick={() => {
-                                  const newCounts = [...rewardCounts];
-                                  newCounts[index] += 1;
-                                  const totalPointsNeeded =
-                                    rewards?.campaignReward.reduce(
-                                      (acc, reward, idx) =>
-                                        acc +
-                                        reward.points_reward * newCounts[idx],
-                                      0
-                                    );
-                                  if (
-                                    totalPointsNeeded <=
-                                    rewards?.points_customer
-                                  )
-                                    setRewardCounts(newCounts);
-                                }}
-                                disabled={isAnyCardDisabled}
-                              >
-                                <PlusIcon />
-                              </PlusIconContainer>
-                            </div>
-                          </ColReward>
-                        </div>
-                      </RewardDescription>
-                    </React.Fragment>
-                  </CardReward>
-                ))}
+                <ContentItemRow>
+                  {rewards?.campaignReward.map((item, index) => (
+                    <CardReward key={item.id} invalid={isAnyCardDisabled}>
+                      <React.Fragment key={item.id}>
+                        <ColReward sm={3}>
+                          <ImgContent
+                            src={item.url_image}
+                            alt="imagem da recompensa"
+                          />
+                        </ColReward>
+                        <RewardDescription>
+                          <div className="content">
+                            <ColReward sm={12}>
+                              <div className="contentLeft">
+                                {item.description}
+                              </div>
+                            </ColReward>
+                            <ColReward sm={4}>
+                              <div className="contentLeft">
+                                {item.points_reward}
+                              </div>
+                            </ColReward>
+
+                            <ColReward sm={3}>
+                              <div className="counter">
+                                <DecreaseIcon
+                                  onClick={() =>
+                                    rewardCounts[index] > 0 &&
+                                    updateCounter(
+                                      index,
+                                      rewardCounts[index] - 1
+                                    )
+                                  }
+                                />
+                                <p>{rewardCounts[index]}</p>
+                                <PlusIconContainer
+                                  onClick={() => {
+                                    const newCounts = [...rewardCounts];
+                                    newCounts[index] += 1;
+                                    const totalPointsNeeded =
+                                      rewards?.campaignReward.reduce(
+                                        (acc, reward, idx) =>
+                                          acc +
+                                          reward.points_reward * newCounts[idx],
+                                        0
+                                      );
+                                    if (
+                                      totalPointsNeeded <=
+                                      rewards?.points_customer
+                                    )
+                                      setRewardCounts(newCounts);
+                                  }}
+                                  disabled={isAnyCardDisabled}
+                                >
+                                  <PlusIcon />
+                                </PlusIconContainer>
+                              </div>
+                            </ColReward>
+                          </div>
+                        </RewardDescription>
+                      </React.Fragment>
+                    </CardReward>
+                  ))}
+                </ContentItemRow>
               </RewardContent>
             )}
           </Container>

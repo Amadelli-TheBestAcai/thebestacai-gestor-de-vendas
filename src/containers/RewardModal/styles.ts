@@ -5,13 +5,16 @@ import { Search, MinusCircle, PlusCircle2 } from "../../styles/Icons";
 export const GlobalContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 export const Container = styled.div`
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(0.5fr, 1.5fr);
   grid-row-gap: 25px;
+  padding-bottom: 1rem;
 `;
 
 export const Modal = styled(ModalAnt)`
@@ -19,6 +22,9 @@ export const Modal = styled(ModalAnt)`
   .ant-modal-title {
     font-size: 1.3rem;
   }
+
+  max-height: 50rem !important;
+  overflow-y: auto;
 `;
 
 export const FirstContent = styled.div`
@@ -167,6 +173,20 @@ export const RewardContent = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+`;
+
+export const ContentItemRow = styled.div`
+  max-height: 20rem;
+  width: 100%;
+  overflow-y: scroll;
+
+  @media (max-width: 1600px) {
+    max-height: 15rem;
+  }
 `;
 
 export const SearchIcon = styled(Search)`
