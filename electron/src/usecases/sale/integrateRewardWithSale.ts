@@ -6,6 +6,7 @@ import { ProductDto, SaleDto } from "../../models/gestor";
 import { onlineIntegration } from "./onlineIntegration";
 import moment from "moment";
 import { v4 } from "uuid";
+import { buildNewSale } from "./buildNewSale";
 
 interface Request {
   sale: SaleDto;
@@ -20,10 +21,21 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
     private onlineIntegrationUseCase = onlineIntegration,
     private productRepository = new BaseRepository<ProductDto>(
       StorageNames.Product
-    )
+    ),
+    private buildNewSaleUseCase = buildNewSale
   ) {}
 
-  async execute({ sale, products_ids }: Request): Promise<void> {
+  async execute({ products_ids }: Request): Promise<void> {
+    const { response: newSale, has_internal_error: errorOnBuildNewSale } =
+      await useCaseFactory.execute<SaleDto>(this.buildNewSaleUseCase);
+
+    if (errorOnBuildNewSale) {
+      throw new Error("Erro ao criar uma nova venda");
+    }
+    if (!newSale) {
+      throw new Error("Nenhuma venda encontrada");
+    }
+    
     await Promise.all(
       products_ids.map(async (product_id) => {
         const product = await this.productRepository.getOne({
@@ -32,7 +44,7 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
         if (!product) {
           throw new Error("Produto não encontrado");
         }
-        sale?.items.push({
+        newSale?.items.push({
           created_at: moment(new Date()).format("DD/MM/yyyy HH:mm:ss"),
           product: product.product,
           quantity: Number(product?.quantity),
@@ -44,7 +56,7 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
         });
       })
     );
-    await this.notIntegratedSaleRepository.create(sale);
+    await this.notIntegratedSaleRepository.create(newSale);
 
     const {
       has_internal_error: errorOnOnlineTntegrate,

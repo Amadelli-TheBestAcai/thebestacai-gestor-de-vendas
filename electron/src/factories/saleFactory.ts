@@ -130,9 +130,8 @@ export const saleFactory = {
     }),
   onlineIntegration: async () =>
     await useCaseFactory.execute<void>(onlineIntegration),
-  integrateRewardWithSale: async (sale: SaleDto, products_ids: number[]) =>
+  integrateRewardWithSale: async (products_ids: number[]) =>
   await useCaseFactory.execute<void>(integrateRewardWithSale, {
-    sale,
     products_ids
   })
 };
