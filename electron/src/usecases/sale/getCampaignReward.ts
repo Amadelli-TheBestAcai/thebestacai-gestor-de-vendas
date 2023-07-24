@@ -8,6 +8,9 @@ interface Request {
 class GetCampaignReward implements IUseCaseFactory {
   async execute({ cpf }: Request): Promise<{
     points_customer: number;
+    customer_name: string;
+    customer_id: number;
+    customer_campaign_id: number;
     campaignReward: {
       id: number;
       campaign_id: number;
@@ -26,7 +29,6 @@ class GetCampaignReward implements IUseCaseFactory {
       data: { content },
     } = await thorApi.get(`/campaign-reward/reward/${cpf}`);
 
-    console.log(content);
     return content;
   }
 }
