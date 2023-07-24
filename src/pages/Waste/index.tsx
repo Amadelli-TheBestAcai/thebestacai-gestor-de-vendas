@@ -34,28 +34,45 @@ const Waste: React.FC = () => {
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const { response: productWaste, has_internal_error: errorOnProducts } =
-        await window.Main.productWaste.getWasteProducts(dataInicial, dataFinal);
 
-      const { response: products } =
-        await window.Main.product.getAllProductStore();
+      if (storeCash?.is_opened) {
+        const { response: productWaste, has_internal_error: errorOnProducts } =
+          await window.Main.productWaste.getWasteProducts(dataInicial, dataFinal);
 
-      if (errorOnProducts) {
-        notification.error({
-          message: "Erro ao encontrar os produtos",
+        if (errorOnProducts) {
+          notification.error({
+            message: "Erro ao encontrar os produtos",
+            duration: 5,
+          });
+        }
+
+        const isConnected = await window.Main.hasInternet();
+        setIsConnected(isConnected);
+        setProducts(productWaste);
+      } else {
+        setProducts([]);
+        notification.warning({
+          message: "Caixa fechado",
+          description: "O caixa está fechado. Não é possível fazer a requisição de produtos.",
           duration: 5,
         });
       }
 
-      const isConnected = await window.Main.hasInternet();
-      setIsConnected(isConnected);
-      setProducts(productWaste);
-      setProductStoreList(products);
       setLoading(false);
     }
 
     init();
-  }, [dataInicial, dataFinal, shouldSearch]);
+  }, [dataInicial, dataFinal, shouldSearch, storeCash?.is_opened]);
+
+  useEffect(() => {
+    async function fetchProductStoreList() {
+      const { response: products } =
+        await window.Main.product.getAllProductStore();
+      setProductStoreList(products);
+    }
+
+    fetchProductStoreList();
+  }, []);
 
   const deleteWaste = async (id: number): Promise<void> => {
     const confirmDelete = async (): Promise<void> => {
