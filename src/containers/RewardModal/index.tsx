@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { notification } from "antd";
-import { useSale } from "../../hooks/useSale";
 import {
   CardReward,
   Modal,
@@ -26,7 +25,7 @@ import {
   ContentItemRow,
 } from "./styles";
 import { useStore } from "../../hooks/useStore";
-import { CustomerReward } from "../../models/dtos/customerReward";
+import { CustomerReward, Reward } from "../../models/dtos/customerReward";
 import Spinner from "../../components/Spinner";
 
 interface IProps {
@@ -35,13 +34,12 @@ interface IProps {
 }
 
 const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
-  const { sale } = useSale();
   const [loading, setLoading] = useState(false);
   const [shouldSearch, setShouldSearch] = useState(false);
-  const [rewardCounts, setRewardCounts] = useState<number[]>([]);
   const [userCpf, setUserCpf] = useState("");
-  const [searchingReward, setSearchingReward] = useState(false);
-  const [rewards, setRewards] = useState<CustomerReward | undefined>(undefined);
+  const [customerReward, setCustomerReward] = useState<CustomerReward>();
+  const [rewards, setRewards] = useState<Reward[]>([]);
+  const [selectedRewards, setSelectedRewards] = useState<Reward[]>([]);
   const { store } = useStore();
 
   const getCampaignReward = async () => {
@@ -54,27 +52,24 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       }
 
       setLoading(true);
-      setSearchingReward(true);
       const { has_internal_error, error_message, response } =
         await window.Main.sale.getCampaignReward(userCpf);
 
       if (has_internal_error) {
-        setSearchingReward(false);
         setLoading(false);
         return notification.error({
           message: error_message || "Erro ao buscar recompensas",
           duration: 5,
         });
       }
-      const initialCounts = response?.campaignReward.map(() => 0) || [];
 
+      const { campaignReward, ..._customerReward } = response;
+      setCustomerReward(_customerReward);
+      setRewards(campaignReward);
       setUserCpf(userCpf);
-      setRewards(response);
-      setRewardCounts(initialCounts);
-      setSearchingReward(false);
+
       setLoading(false);
     } catch (error) {
-      setSearchingReward(false);
       setLoading(false);
       notification.error({
         message: "Não foi possível listar a recompensa",
@@ -84,58 +79,81 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   };
 
   useEffect(() => {
-    if (userCpf) {
+    if (shouldSearch && userCpf) {
       getCampaignReward();
     }
   }, [shouldSearch]);
 
-  const totalPoints = rewards?.campaignReward.reduce(
-    (acc, item, index) => acc + item.points_reward * rewardCounts[index],
-    0
-  );
+  const resetModalState = () => {
+    setLoading(false);
+    setShouldSearch(false);
+    setUserCpf("");
+    setRewards([]);
+    setIsVisible(false);
+    setCustomerReward(null);
+    setSelectedRewards([]);
+  };
+  
+  const updateUserPoints = (quantity: number) => {
+    setCustomerReward((oldState) => ({
+      ...oldState,
+      quantity: oldState.points_customer + quantity,
+    }));
+  };
 
-  const isAnyCardDisabled = rewardCounts.some(
-    (count, index) =>
-      count * rewards?.campaignReward[index].points_reward >=
-      rewards?.points_customer
-  );
+  const getItemQuantity = (product_id: number) => {
+    return selectedRewards.filter(
+      (selectedReward) => selectedReward.product_id === product_id
+    ).length;
+  };
+
+  const totalPointsUsed = () => {
+    return selectedRewards.reduce(
+      (sum, reward) => sum + +reward.points_reward,
+      0
+    );
+  };
+
+  const handleAddReward = (payload: Reward) => {
+    setSelectedRewards((oldValues) => [...oldValues, payload]);
+    updateUserPoints(payload.points_reward);
+  };
+
+  const handleDecressReward = (payload: Reward) => {
+    const itemIndex = selectedRewards.findIndex(
+      (item) => item.product_id === payload.product_id
+    );
+    setSelectedRewards((oldValues) => [
+      ...oldValues.filter((_, index) => itemIndex !== index),
+    ]);
+    updateUserPoints(payload.points_reward);
+  };
 
   const useReward = async () => {
     setLoading(true);
 
     try {
-      if (!rewardCounts.some((count) => count > 0)) {
+      if (!selectedRewards?.length) {
         return notification.error({
           message: "Selecione um produto para resgatar ou feche o modal",
           duration: 5,
         });
       }
-      const customer_reward = rewardCounts.reduce((result, count, index) => {
-        if (count > 0) {
-          result.push({
-            customer_id: rewards?.customer_id,
-            customer_campaign_id: rewards?.customer_campaign_id,
-            campaign_reward_id: rewards?.campaignReward[index].id,
-          });
-        }
-        return result;
-      }, []);
-
+      const _rewards = selectedRewards?.map((item) => ({
+        ...item,
+        campaign_reward_id: item.id,
+      }));
       const payload = {
-        customer_reward,
+        customer_reward: _rewards,
         store_id: store.company_id,
-        user_name: rewards?.customer_name,
-        user_id: rewards?.customer_id,
+        user_name: customerReward?.customer_name,
+        user_id: customerReward?.customer_id,
         company_name: store.company.company_name,
       };
 
-      const selectedCampaignReward = rewards?.campaignReward.filter(
-        (item, index) => rewardCounts[index] > 0
-      );
+      console.log({ payload });
 
-      const productsIds = selectedCampaignReward.map((item) => item.product_id);
-
-      await window.Main.sale.integrateRewardWithSale(sale, productsIds);
+      await window.Main.sale.integrateRewardWithSale(_rewards);
       await window.Main.sale.createCustomerReward(payload);
       notification.success({
         message: "Recompensa resgatada com sucesso",
@@ -144,6 +162,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       resetModalState();
       setShouldSearch(true);
     } catch (err) {
+      console.log(err);
       notification.error({
         message: "Erro ao resgatar a recompensa",
         duration: 5,
@@ -152,24 +171,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       setShouldSearch(false);
       setLoading(false);
     }
-  };
-
-  const updateCounter = (index, newValue) => {
-    setRewardCounts((prevCounts) => {
-      const newCounts = [...prevCounts];
-      newCounts[index] = newValue;
-      return newCounts;
-    });
-  };
-
-  const resetModalState = () => {
-    setLoading(false);
-    setShouldSearch(false);
-    setRewardCounts([]);
-    setUserCpf("");
-    setSearchingReward(false);
-    setRewards(undefined);
-    setIsVisible(false);
   };
 
   return (
@@ -198,10 +199,11 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
               placeholder="Procurar recompensa por cpf"
               value={userCpf}
               onChange={({ target: { value } }) => setUserCpf(value)}
+              pattern="[0-9]*"
             />
 
             <ButtonSearch onClick={getCampaignReward} disabled={loading}>
-              {searchingReward ? "..." : "buscar"}
+              {loading ? "..." : "buscar"}
             </ButtonSearch>
           </RewardSearch>
           <Container>
@@ -209,31 +211,35 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
               <CustomerInfo>
                 <div className="first-content">
                   <span>Cliente:</span>
-                  <span className="name">{rewards?.customer_name || "-"}</span>
+                  <span className="name">
+                    {customerReward?.customer_name || "-"}
+                  </span>
                 </div>
               </CustomerInfo>
 
               <CustomerInfo>
                 <span>Pontos disponíveis</span>
                 <span className="result-points">
-                  {rewards?.points_customer || "-"}
+                  {customerReward?.points_customer || "-"}
                 </span>
               </CustomerInfo>
 
               <CustomerInfo>
                 <span>Pontos utilizados</span>
-                <span className="result-points">{totalPoints || "-"}</span>
+                <span className="result-points">
+                  {totalPointsUsed() || "-"}
+                </span>
               </CustomerInfo>
 
               <CustomerInfo>
                 <span>Quantidade de itens</span>
                 <span className="result-points">
-                  {rewards?.campaignReward.length || "-"}
+                  {selectedRewards?.length || "-"}
                 </span>
               </CustomerInfo>
             </FirstContent>
 
-            {rewards?.campaignReward && rewards.campaignReward.length !== 0 && (
+            {rewards?.length !== 0 && (
               <RewardContent>
                 <Header>
                   <Col sm={3}>Imagem</Col>
@@ -245,8 +251,13 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                 </Header>
 
                 <ContentItemRow>
-                  {rewards?.campaignReward.map((item, index) => (
-                    <CardReward key={item.id} invalid={isAnyCardDisabled}>
+                  {rewards?.map((item, index) => (
+                    <CardReward
+                      key={item.id}
+                      invalid={
+                        item.points_reward > customerReward.points_customer
+                      }
+                    >
                       <React.Fragment key={item.id}>
                         <ColReward sm={3}>
                           <ImgContent
@@ -270,33 +281,15 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                             <ColReward sm={3}>
                               <div className="counter">
                                 <DecreaseIcon
-                                  onClick={() =>
-                                    rewardCounts[index] > 0 &&
-                                    updateCounter(
-                                      index,
-                                      rewardCounts[index] - 1
-                                    )
-                                  }
+                                  onClick={() => handleDecressReward(item)}
                                 />
-                                <p>{rewardCounts[index]}</p>
+                                <p>{getItemQuantity(item.product_id)}</p>
                                 <PlusIconContainer
-                                  onClick={() => {
-                                    const newCounts = [...rewardCounts];
-                                    newCounts[index] += 1;
-                                    const totalPointsNeeded =
-                                      rewards?.campaignReward.reduce(
-                                        (acc, reward, idx) =>
-                                          acc +
-                                          reward.points_reward * newCounts[idx],
-                                        0
-                                      );
-                                    if (
-                                      totalPointsNeeded <=
-                                      rewards?.points_customer
-                                    )
-                                      setRewardCounts(newCounts);
-                                  }}
-                                  disabled={isAnyCardDisabled}
+                                  onClick={() => handleAddReward(item)}
+                                  disabled={
+                                    item.points_reward >
+                                    customerReward.points_customer
+                                  }
                                 >
                                   <PlusIcon />
                                 </PlusIconContainer>
