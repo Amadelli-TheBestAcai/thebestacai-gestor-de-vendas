@@ -43,32 +43,41 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const { store } = useStore();
 
   const getCampaignReward = async () => {
-    if (userCpf.length !== 11) {
-      return notification.error({
-        message: "O CPF do usuário deve conter 11 dígitos",
-        duration: 5,
-      });
-    }
-    setLoading(true); 
-    setSearchingReward(true);
-    const { has_internal_error, error_message, response } =
-      await window.Main.sale.getCampaignReward(userCpf);
+    try {
+      if (userCpf.length !== 11) {
+        return notification.error({
+          message: "O CPF do usuário deve conter 11 dígitos",
+          duration: 5,
+        });
+      }
+      setLoading(true);
+      setSearchingReward(true);
+      const { has_internal_error, error_message, response } =
+        await window.Main.sale.getCampaignReward(userCpf);
 
-    if (has_internal_error) {
+      if (has_internal_error) {
+        setSearchingReward(false);
+        setLoading(false);
+        return notification.error({
+          message: error_message || "Erro ao buscar recompensas",
+          duration: 5,
+        });
+      }
+      const initialCounts = response?.campaignReward.map(() => 0) || [];
+
+      setUserCpf(userCpf);
+      setRewards(response);
+      setRewardCounts(initialCounts);
       setSearchingReward(false);
-      setLoading(false); 
-      return notification.error({
-        message: error_message || "Erro ao buscar recompensas",
+      setLoading(false);
+    } catch (error) {
+      setSearchingReward(false);
+      setLoading(false);
+      notification.error({
+        message: "Não foi possível listar a recompensa",
         duration: 5,
       });
     }
-    const initialCounts = response?.campaignReward.map(() => 0) || [];
-
-    setUserCpf(userCpf);
-    setRewards(response);
-    setRewardCounts(initialCounts);
-    setSearchingReward(false);
-    setLoading(false); 
   };
 
   useEffect(() => {
@@ -87,16 +96,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       count * rewards?.campaignReward[index].points_reward >=
       rewards?.points_customer
   );
-
-  const resetModalState = () => {
-    setLoading(false);
-    setShouldSearch(false);
-    setRewardCounts([]);
-    setUserCpf("");
-    setSearchingReward(false);
-    setRewards(undefined);
-    setIsVisible(false);
-  };
 
   const useReward = async () => {
     setLoading(true);
@@ -158,6 +157,16 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       newCounts[index] = newValue;
       return newCounts;
     });
+  };
+
+  const resetModalState = () => {
+    setLoading(false);
+    setShouldSearch(false);
+    setRewardCounts([]);
+    setUserCpf("");
+    setSearchingReward(false);
+    setRewards(undefined);
+    setIsVisible(false);
   };
 
   return (
@@ -228,10 +237,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                 <Col sm={8}>Itens</Col>
               </Header>
               {rewards?.campaignReward.map((item, index) => (
-                <CardReward
-                  key={item.id}
-                  invalid={isAnyCardDisabled}
-                >
+                <CardReward key={item.id} invalid={isAnyCardDisabled}>
                   <React.Fragment key={item.id}>
                     <ColReward sm={3}>
                       <ImgContent
@@ -270,7 +276,10 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                                       reward.points_reward * newCounts[idx],
                                     0
                                   );
-                                if (totalPointsNeeded <= rewards?.points_customer) setRewardCounts(newCounts)
+                                if (
+                                  totalPointsNeeded <= rewards?.points_customer
+                                )
+                                  setRewardCounts(newCounts);
                               }}
                               disabled={isAnyCardDisabled}
                             >
