@@ -199,7 +199,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
               placeholder="Procurar recompensa por cpf"
               value={userCpf}
               onChange={({ target: { value } }) => setUserCpf(value)}
-              pattern="[0-9]*"
+              inputMode="numeric"
             />
 
             <ButtonSearch onClick={getCampaignReward} disabled={loading}>
