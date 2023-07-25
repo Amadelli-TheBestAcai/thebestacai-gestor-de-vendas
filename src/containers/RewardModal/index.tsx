@@ -95,7 +95,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     setCustomerReward(null);
     setSelectedRewards([]);
   };
-  
+
   const updateUserPoints = (quantity: number) => {
     setCustomerReward((oldState) => ({
       ...oldState,
@@ -199,6 +199,11 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
               value={userCpf}
               onChange={({ target: { value } }) => setUserCpf(value)}
               inputMode="numeric"
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  getCampaignReward();
+                }
+              }}
             />
 
             <ButtonSearch onClick={getCampaignReward} disabled={loading}>
