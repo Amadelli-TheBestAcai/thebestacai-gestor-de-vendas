@@ -19,13 +19,12 @@ import {
   ListIcon,
   ContentHeaderInfos,
   InfoStore,
-  ChatContainer,
-  ChatIcon,
-  UserPhoto,
+  TrophyIcon,
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
 import { useStore } from "../../hooks/useStore";
+import RewardModal from "../RewardModal";
 
 type ComponentProps = RouteComponentProps;
 
@@ -37,6 +36,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
   const [handlerOutState, setHandlerOutState] = useState(false);
+  const [rewardModal, setRewardModal] = useState(false);
   const [openChat, setOpenChat] = useState(false);
 
   useEffect(() => {
@@ -68,6 +68,11 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
           <ListIcon />
           Comanda
         </Button>
+
+        <Button onClick={() => setRewardModal(true)}>
+          <TrophyIcon />
+          Recompensas
+        </Button>
       </ActionButtons>
 
       <InfosAndChat>
@@ -82,17 +87,6 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               {cash}
             </span>
           </InfoStore>
-
-          <ChatContainer>
-            <ChatIcon onClick={() => setOpenChat(true)} />
-            <UserPhoto
-              src={
-                user?.image
-                  ? user?.image
-                  : "https://www.ecp.org.br/wp-content/uploads/2017/12/default-avatar-1.png"
-              }
-            />
-          </ChatContainer>
         </ContentHeaderInfos>
       </InfosAndChat>
 
@@ -114,6 +108,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         modalState={handlerOutState}
         setModalState={setHandlerOutState}
       />
+
+      <RewardModal isVisible={rewardModal} setIsVisible={setRewardModal}/>
 
       <ChatForm isVisible={openChat} setIsVisible={setOpenChat} />
     </Container>

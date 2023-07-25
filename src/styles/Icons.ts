@@ -28,13 +28,21 @@ export {
 } from "@styled-icons/boxicons-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
-export { CreditCard2BackFill, TelephoneFill, Image } from "@styled-icons/bootstrap";
+export {
+  CreditCard2BackFill,
+  TelephoneFill,
+  Image,
+  TrophyFill,
+  PlusCircle,
+  
+} from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
 export { Grid3x2GapFill, UiChecks, Trash } from "@styled-icons/bootstrap";
 export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
 export { PhoneIphone, MoreHoriz } from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
+export { RemoveCircleOutline as RemoveCircle2 } from "@styled-icons/material-rounded/RemoveCircleOutline";
 export { Attachment } from "@styled-icons/material-sharp/Attachment";
 export {
   CheckboxBlankCircle,
@@ -48,14 +56,14 @@ export {
   AddShoppingCart,
   RemoveShoppingCart,
   Payments,
-  Cancel
+  Cancel,
 } from "@styled-icons/material-outlined";
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export {
   ArrowLeftRight,
   CreditCard2Back,
   CheckCircleFill,
-  FileEarmarkPdf
+  FileEarmarkPdf,
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
@@ -65,6 +73,8 @@ export {
   ArrowFromRight,
   HomeAlt,
   ListOl,
+  MinusCircle,
+  PlusCircle as PlusCircle2
 } from "@styled-icons/boxicons-regular";
 export { CloseOutline, SettingsOutline } from "@styled-icons/evaicons-outline";
 export { Repeat } from "@styled-icons/evaicons-solid/Repeat";
