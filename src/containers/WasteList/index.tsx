@@ -137,7 +137,7 @@ const WasteList: React.FC<IProps> = ({
                     return (
                       <Tupla key={waste.id}>
                         <Col sm={6}>
-                          {moment(waste.created_at, "YYYY-MM-DD HH:mm:ss")
+                          {moment(waste.created_at, "DD-MM-YYYY HH:mm:ss")
                             .subtract(3, "hours")
                             .format("DD/MM/YYYY HH:mm:ss")}
                         </Col>
