@@ -146,7 +146,7 @@ const WasteList: React.FC<IProps> = ({
                         <Col sm={5}>
                           {+waste.unity === 0
                             ? Math.floor(+waste.quantity)
-                            : +(+waste.quantity).toFixed(3)}{" "}
+                            : parseFloat(waste.quantity).toFixed(3)}{" "}
                           {unitLabel}
                         </Col>
                         <Col sm={4}>
