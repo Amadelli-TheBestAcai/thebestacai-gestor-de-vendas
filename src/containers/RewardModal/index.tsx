@@ -27,6 +27,7 @@ import {
 import { useStore } from "../../hooks/useStore";
 import { CustomerReward, Reward } from "../../models/dtos/customerReward";
 import Spinner from "../../components/Spinner";
+import { useUser } from "../../hooks/useUser";
 
 interface IProps {
   isVisible: boolean;
@@ -41,6 +42,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [selectedRewards, setSelectedRewards] = useState<Reward[]>([]);
   const { store } = useStore();
+  const { user } = useUser();
 
   const getCampaignReward = async () => {
     try {
@@ -146,12 +148,10 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       const payload = {
         customer_reward: _rewards,
         store_id: store.company_id,
-        user_name: customerReward?.customer_name,
-        user_id: customerReward?.customer_id,
+        user_name: user.name,
+        user_id: user.id,
         company_name: store.company.company_name,
       };
-
-      console.log({ payload });
 
       await window.Main.sale.integrateRewardWithSale(_rewards);
       await window.Main.sale.createCustomerReward(payload);
@@ -162,7 +162,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       resetModalState();
       setShouldSearch(true);
     } catch (err) {
-      console.log(err);
       notification.error({
         message: "Erro ao resgatar a recompensa",
         duration: 5,
