@@ -42,7 +42,7 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
         });
 
         if (!product) {
-          throw new Error("Produto não encontrado");
+          throw new Error("Essa recompensa não foi cadastrada em sua loja!");
         }
 
         let qtd = Number(product?.quantity)
@@ -63,9 +63,6 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
       })
     );
 
-
-
-    
     await this.notIntegratedSaleRepository.create(newSale);
 
     const {
