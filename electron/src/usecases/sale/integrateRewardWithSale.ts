@@ -40,15 +40,12 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
         const product = await this.productRepository.getOne({
           product_id: item.product_id,
         });
+
         if (!product) {
           throw new Error("Produto não encontrado");
         }
 
-        console.log(product.quantity, 'primeiro console')
-
         let qtd = Number(product?.quantity)
-        console.log(qtd, 'segundo console')
-
         do {
           newSale?.items.push({
             created_at: moment(new Date()).format("DD/MM/yyyy HH:mm:ss"),
@@ -63,7 +60,6 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
           newSale.quantity++
           qtd -= 1;
         } while(qtd >= 1)
-        console.log(qtd, 'terceiro console')
       })
     );
 

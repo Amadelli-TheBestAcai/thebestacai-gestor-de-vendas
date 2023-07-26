@@ -147,8 +147,10 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         });
       }
       const _rewards = selectedRewards?.map((item) => ({
-        ...item,
+        customer_id: customerReward.customer_id,
+        customer_campaign_id: customerReward.customer_campaign_id,
         campaign_reward_id: item.id,
+        product_id: item.product_id,
       }));
       const payload = {
         customer_reward: _rewards,
@@ -157,13 +159,21 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         user_id: user.id,
         company_name: store.company.company_name,
       };
+      const { has_internal_error: error } =
+        await window.Main.sale.createCustomerReward(payload);
 
-      await window.Main.sale.integrateRewardWithSale(_rewards);
-      await window.Main.sale.createCustomerReward(payload);
-      notification.success({
-        message: "Recompensa resgatada com sucesso",
-        duration: 5,
-      });
+      if (error) {
+        notification.error({
+          message: "Houve um erro ao resgatar a recompensa",
+          duration: 5,
+        });
+      } else {
+        await window.Main.sale.integrateRewardWithSale(_rewards);
+        notification.success({
+          message: "Recompensa resgatada com sucesso",
+          duration: 5,
+        });
+      }
       resetModalState();
       setShouldSearch(true);
     } catch (err) {
