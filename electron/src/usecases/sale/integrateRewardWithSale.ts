@@ -44,7 +44,10 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
           throw new Error("Produto não encontrado");
         }
 
+        console.log(product.quantity, 'primeiro console')
+
         let qtd = Number(product?.quantity)
+        console.log(qtd, 'segundo console')
 
         do {
           newSale?.items.push({
@@ -57,12 +60,16 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
             update_stock: false,
             id: v4(),
           });
+          newSale.quantity++
           qtd -= 1;
         } while(qtd >= 1)
-
-        
+        console.log(qtd, 'terceiro console')
       })
     );
+
+
+
+    
     await this.notIntegratedSaleRepository.create(newSale);
 
     const {
