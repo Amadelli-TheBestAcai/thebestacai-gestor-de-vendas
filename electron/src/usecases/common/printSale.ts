@@ -128,9 +128,9 @@ class PrintSale implements IUseCaseFactory {
     this.printerFormater.drawLine();
 
     const totalItems = sale.items
-    .reduce(
-        //@ts-ignore
-        (total, item) => total + +item.storeProduct.price_unit * +item.quantity,
+      //@ts-ignore
+     .reduce(
+        (total, item) => total + Number(item.storeProduct?.price_unit) ?? 0 * +item.quantity,
         0
       )
       .toFixed(2)
