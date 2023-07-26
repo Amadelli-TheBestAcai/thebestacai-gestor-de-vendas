@@ -133,11 +133,16 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
 
   const useReward = async () => {
     setLoading(true);
-
     try {
       if (!selectedRewards?.length) {
         return notification.error({
-          message: "Selecione um produto para resgatar ou feche o modal",
+          message: "Selecione um produto para resgatar",
+          duration: 5,
+        });
+      }
+      if (customerReward.points_customer < totalPointsUsed()) {
+        return notification.error({
+          message: "Saldo insuficiente para resgatar este produto",
           duration: 5,
         });
       }
@@ -195,10 +200,13 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         <GlobalContainer>
           <RewardSearch>
             <InputSearchReward
-              placeholder="Procurar recompensa por cpf"
+              placeholder="Procurar recompensa por CPF"
+              type="text"
               value={userCpf}
-              onChange={({ target: { value } }) => setUserCpf(value)}
-              inputMode="numeric"
+              onChange={({ target: { value } }) => {
+                const numericValue = value.replace(/\D/g, "");
+                setUserCpf(numericValue.slice(0, 11));
+              }}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   getCampaignReward();
@@ -207,7 +215,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
             />
 
             <ButtonSearch onClick={getCampaignReward} disabled={loading}>
-              {loading ? "..." : "buscar"}
+              {loading ? "..." : "Buscar"}
             </ButtonSearch>
           </RewardSearch>
           <Container>
