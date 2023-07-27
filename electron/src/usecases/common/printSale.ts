@@ -170,7 +170,6 @@ class PrintSale implements IUseCaseFactory {
           expiresIn: '1d',
         },
       );
-      console.log(access_token)
 
       this.printerFormater.table(["QRCode Avaliação NPS"]);
       this.printerFormater.println(
