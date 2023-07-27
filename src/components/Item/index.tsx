@@ -28,7 +28,7 @@ const options = [
   "Erro de digitação",
   "Cliente deseja se servir novamente",
   "Forma de pagamento alterada",
-  "Compra anterior não foi finalizada",
+  "Venda anterior não foi finalizada",
   "Outros",
 ];
 

@@ -137,7 +137,7 @@ const WasteList: React.FC<IProps> = ({
                     return (
                       <Tupla key={waste.id}>
                         <Col sm={6}>
-                          {moment(waste.created_at, "YYYY-MM-DD HH:mm:ss")
+                          {moment(waste.created_at, "DD-MM-YYYY HH:mm:ss")
                             .subtract(3, "hours")
                             .format("DD/MM/YYYY HH:mm:ss")}
                         </Col>
@@ -146,7 +146,7 @@ const WasteList: React.FC<IProps> = ({
                         <Col sm={5}>
                           {+waste.unity === 0
                             ? Math.floor(+waste.quantity)
-                            : +(+waste.quantity).toFixed(3)}{" "}
+                            : parseFloat(waste.quantity).toFixed(3)}{" "}
                           {unitLabel}
                         </Col>
                         <Col sm={4}>

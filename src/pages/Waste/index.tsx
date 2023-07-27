@@ -19,27 +19,29 @@ import CashNotFound from "../../components/CashNotFound";
 const Waste: React.FC = () => {
   const [products, setProducts] = useState<ProductWasteDTO[]>([]);
   const [productStoreList, setProductStoreList] = useState<ProductDto[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [shouldSearch, setShouldSearch] = useState(false);
   const [selectedDate, setSelectedDate] = useState(moment());
   const [isConnected, setIsConnected] = useState(false);
-  const [filteredProducts, setFilteredProducts] =
-    useState<ProductWasteDTO[]>(products);
+  const [filteredProducts, setFilteredProducts] = useState<ProductWasteDTO[]>([]);
 
   const { storeCash } = useSale();
 
-  const dataInicial = moment(selectedDate, "DD/MM/YYYY").format("DD/MM/YYYY");
-  const dataFinal = moment(selectedDate, "DD/MM/YYYY").format("DD/MM/YYYY");
-
   useEffect(() => {
-    async function init() {
-      setLoading(true);
-
+    async function fetchData() {
       if (storeCash?.is_opened) {
-        const { response: productWaste, has_internal_error: errorOnProducts } =
-          await window.Main.productWaste.getWasteProducts(dataInicial, dataFinal);
+        setLoading(true);
 
-        if (errorOnProducts) {
+        const dataFormatted = formatDate(selectedDate);
+        const {
+          response: productWaste,
+          has_internal_error: errorOnProductsWaste,
+        } = await window.Main.productWaste.getWasteProducts(
+          dataFormatted,
+          dataFormatted
+        );
+
+        if (errorOnProductsWaste) {
           notification.error({
             message: "Erro ao encontrar os produtos",
             duration: 5,
@@ -49,30 +51,30 @@ const Waste: React.FC = () => {
         const isConnected = await window.Main.hasInternet();
         setIsConnected(isConnected);
         setProducts(productWaste);
+        setLoading(false);
+        setShouldSearch(true); 
       } else {
         setProducts([]);
+        setLoading(false);
+        setShouldSearch(false); 
         notification.warning({
           message: "Caixa fechado",
-          description: "O caixa está fechado. Não é possível fazer a requisição de produtos.",
+          description:
+            "O caixa está fechado. Não é possível fazer a requisição de produtos.",
           duration: 5,
         });
       }
-
-      setLoading(false);
     }
 
-    init();
-  }, [dataInicial, dataFinal, shouldSearch, storeCash?.is_opened]);
-
-  useEffect(() => {
     async function fetchProductStoreList() {
       const { response: products } =
         await window.Main.product.getAllProductStore();
       setProductStoreList(products);
     }
 
+    fetchData();
     fetchProductStoreList();
-  }, []);
+  }, [selectedDate, shouldSearch, storeCash?.is_opened]);
 
   const deleteWaste = async (id: number): Promise<void> => {
     const confirmDelete = async (): Promise<void> => {
@@ -129,50 +131,45 @@ const Waste: React.FC = () => {
     setFilteredProducts(filteredProductsItem);
   };
 
+  const formatDate = (date: moment.Moment) => {
+    return date.format("DD/MM/YYYY");
+  };
+
   return (
     <Container>
       <PageContent>
-        {isConnected ? (
-          <>
-            {storeCash?.is_opened ? (
-              <>
-                {loading ? (
-                  <Spinner />
-                ) : (
-                  <>
-                    <Header>
-                      <h2>Desperdício</h2>
-                    </Header>
-                    <>
-                      <SearchContainer>
-                        <DatePicker
-                          value={selectedDate}
-                          allowClear={false}
-                          format="DD/MM/YYYY"
-                          onChange={(date) => setSelectedDate(date)}
-                        />
-                      </SearchContainer>
-
-                      <Content>
-                        <WasteList
-                          products={products}
-                          productsStore={productStoreList}
-                          setLoading={setLoading}
-                          loading={false}
-                          findProduct={findProduct}
-                          filteredProducts={filteredProducts}
-                          deleteWaste={deleteWaste}
-                          setShouldSearch={setShouldSearch}
-                        />
-                      </Content>
-                    </>
-                  </>
-                )}
-              </>
-            ) : (
-              <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para cadastrar o desperdício." />
-            )}
-          </>
+        {loading ? (
+          <Spinner />
+        ) : isConnected ? (
+          storeCash?.is_opened ? (
+            <>
+              <Header>
+                <h2>Desperdício</h2>
+              </Header>
+              <SearchContainer>
+                <DatePicker
+                  value={selectedDate}
+                  allowClear={false}
+                  format="DD/MM/YYYY"
+                  onChange={(date) => setSelectedDate(date)}
+                />
+              </SearchContainer>
+              <Content>
+                <WasteList
+                  products={products}
+                  productsStore={productStoreList}
+                  setLoading={setLoading}
+                  loading={false}
+                  findProduct={findProduct}
+                  filteredProducts={filteredProducts}
+                  deleteWaste={deleteWaste}
+                  setShouldSearch={setShouldSearch}
+                />
+              </Content>
+            </>
+          ) : (
+            <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para cadastrar o desperdício." />
+          )
         ) : (
           <Spinner />
         )}
