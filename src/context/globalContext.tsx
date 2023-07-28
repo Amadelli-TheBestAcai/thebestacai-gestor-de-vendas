@@ -10,7 +10,7 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { ProductDto } from "../models/dtos/product";
 import { StoreDto } from "../models/dtos/store";
-import { SaleFromApi } from "../models/dtos/salesFromApi";
+import axios from "axios";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -205,7 +205,7 @@ export function GlobalProvider({ children }) {
             type: +payment.type,
             flag_card: +payment.flag_card,
           })),
-          ref: sale.ref
+          ref: sale.ref,
         };
 
         const {
@@ -221,11 +221,15 @@ export function GlobalProvider({ children }) {
           });
         }
 
-        const successOnSefaz = response === "Autorizado o uso da NF-e";
+        const successOnSefaz = response?.status_sefaz === "100";
         notification[successOnSefaz ? "success" : "warning"]({
-          message: response,
+          message: response?.mensagem_sefaz,
           duration: 5,
         });
+        console.log({ successOnSefaz });
+        if (successOnSefaz) {
+          await window.Main.common.printDanfe(response);
+        }
 
         const { response: updatedSale } =
           await window.Main.sale.getCurrentSale();

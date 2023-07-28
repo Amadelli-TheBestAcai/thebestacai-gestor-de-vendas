@@ -96,7 +96,7 @@ export const saleFactory = {
     saleIdToUpdate?: number | string,
     local_update?: boolean
   ) =>
-    await useCaseFactory.execute<string>(emitNfce, {
+    await useCaseFactory.execute<any>(emitNfce, {
       nfe,
       saleIdToUpdate,
       local_update,
@@ -131,7 +131,7 @@ export const saleFactory = {
   onlineIntegration: async () =>
     await useCaseFactory.execute<void>(onlineIntegration),
   integrateRewardWithSale: async (payload) =>
-  await useCaseFactory.execute<void>(integrateRewardWithSale, {
-    payload
-  })
+    await useCaseFactory.execute<void>(integrateRewardWithSale, {
+      payload,
+    }),
 };

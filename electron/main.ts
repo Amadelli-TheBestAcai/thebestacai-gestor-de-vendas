@@ -1,7 +1,8 @@
 import { app, BrowserWindow, screen, ipcMain } from "electron";
-import { autoUpdater } from 'electron-updater';
+import { autoUpdater } from "electron-updater";
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
+import axios from "axios";
 
 let win: Electron.BrowserWindow | null;
 
@@ -20,10 +21,10 @@ function createWindow() {
   });
 
   autoUpdater.setFeedURL({
-    provider: 'github',
-    repo: 'thebestacai-gestor-de-vendas',
-    owner: 'Amadelli-TheBestAcai',
-    releaseType: 'release',
+    provider: "github",
+    repo: "thebestacai-gestor-de-vendas",
+    owner: "Amadelli-TheBestAcai",
+    releaseType: "release",
     private: false,
   });
 
@@ -55,23 +56,28 @@ function createWindow() {
   }
 }
 
-autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = 'Download speed: ' + progressObj.bytesPerSecond;
-  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+autoUpdater.on("download-progress", (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + " - Downloaded " + progressObj.percent + "%";
   log_message =
-    log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
+    log_message +
+    " (" +
+    progressObj.transferred +
+    "/" +
+    progressObj.total +
+    ")";
   console.log(log_message);
   win?.webContents.send(
-    'download-progress',
+    "download-progress",
     progressObj.transferred.toString()
   );
 });
 
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on("update-downloaded", () => {
   autoUpdater.quitAndInstall();
 });
 
-ipcMain.on('check_for_update', function () {
+ipcMain.on("check_for_update", function () {
   autoUpdater.checkForUpdates();
 });
 
@@ -94,4 +100,13 @@ app.whenReady().then(async () => {
 
 ipcMain.on("app_version", (event) => {
   event.sender.send("app_version:response", app.getVersion());
+});
+
+ipcMain.handle("get-danfe", async (event, payload) => {
+  const { data } = await axios({
+    method: "GET",
+    url: `https://api.focusnfe.com.br${payload.caminho_danfe}`,
+  });
+
+  return data;
 });

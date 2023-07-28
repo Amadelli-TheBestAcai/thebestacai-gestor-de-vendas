@@ -9,11 +9,7 @@ import moment from "moment";
 import midasApi from "../../providers/midasApi";
 
 import { buildNewSale, onlineIntegration } from "./index";
-import {
-  SaleDto,
-  StoreCashDto,
-  ProductDto,
-} from "../../models/gestor";
+import { SaleDto, StoreCashDto, ProductDto } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
 
 interface Request {
@@ -30,17 +26,15 @@ class EmitNfce implements IUseCaseFactory {
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Not_Integrated_Sale
     ),
-    private saleRepository = new BaseRepository<SaleDto>(
-      StorageNames.Sale
-    ),
+    private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private productRepository = new BaseRepository<ProductDto>(
       StorageNames.Product
     ),
     private onlineIntegrationUseCase = onlineIntegration,
     private buildNewSaleUseCase = buildNewSale
-  ) { }
+  ) {}
 
-  async execute({ nfe, saleIdToUpdate, local_update }: Request): Promise<string> {
+  async execute({ nfe, saleIdToUpdate, local_update }: Request): Promise<any> {
     const hasInternet = await checkInternet();
     if (!hasInternet) {
       throw new Error("Dispositivo sem conexão");
@@ -65,7 +59,11 @@ class EmitNfce implements IUseCaseFactory {
 
     const {
       data: { nfce: data },
-    } = await midasApi.post("/nfce", { ...nfe, ref: nfe.ref || saleResponse.ref, sale_id: local_update ? null : saleIdToUpdate });
+    } = await midasApi.post("/nfce", {
+      ...nfe,
+      ref: nfe.ref || saleResponse.ref,
+      sale_id: local_update ? null : saleIdToUpdate,
+    });
 
     saleResponse.nfce_focus_id = data.id;
     saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
@@ -76,11 +74,13 @@ class EmitNfce implements IUseCaseFactory {
         nfce_url: `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`,
       });
     } else if (!saleIdToUpdate && !local_update) {
-      nfe.payments.forEach(payment => saleResponse.payments.push({
-        id: v4(),
-        ...payment,
-        created_at: moment(new Date()).toString()
-      }));
+      nfe.payments.forEach((payment) =>
+        saleResponse.payments.push({
+          id: v4(),
+          ...payment,
+          created_at: moment(new Date()).toString(),
+        })
+      );
       await Promise.all(
         nfe.items.map(async (produto) => {
           const product = await this.productRepository.getOne({
@@ -120,8 +120,7 @@ class EmitNfce implements IUseCaseFactory {
       }
     }
 
-
-    return data.mensagem_sefaz;
+    return data;
   }
 }
 
