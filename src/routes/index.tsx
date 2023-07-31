@@ -12,6 +12,7 @@ import Delivery from "../pages/Delivery";
 import Balance from "../pages/Balance";
 import Nfce from "../pages/Nfce";
 import Settings from "../pages/Settings";
+import Waste from "../pages/Waste";
 
 import { useConfigs } from "../hooks/useConfigs";
 import Spinner from "../components/Spinner";
@@ -50,6 +51,7 @@ const Routes = () => {
           <RouteWithLayout exact path="/delivery" component={Delivery} />
           <RouteWithLayout exact path="/balance" component={Balance} />
           <RouteWithLayout exact path="/nfce" component={Nfce} />
+          <RouteWithLayout exact path="/waste" component={Waste} />
           <RouteWithLayout exact path="/settings" component={Settings} />
           <Route path="*" component={Login} />
         </Switch>

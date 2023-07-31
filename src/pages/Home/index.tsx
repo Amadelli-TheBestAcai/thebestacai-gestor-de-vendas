@@ -247,7 +247,7 @@ const Home: React.FC = () => {
                 </RightSide>
               </>
             ) : (
-              <CashNotFound />
+              <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas."/>
             )}
           </>
         )}

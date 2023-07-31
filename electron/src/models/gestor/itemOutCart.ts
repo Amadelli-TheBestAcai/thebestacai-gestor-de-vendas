@@ -7,4 +7,5 @@ export interface ItemOutCartDto {
   to_integrate: boolean;
   created_at?: Date;
   deleted_at?: Date;
+  price_sell?:number;
 }

@@ -15,8 +15,12 @@ import {
 } from "./styles";
 
 const DiscountForm: React.FC = () => {
-  const { discountModalState, onAddDiscount, discountModalHandler, sale } =
-    useSale();
+  const {
+    discountModalState,
+    onAddDiscount,
+    discountModalHandler,
+    sale,
+  } = useSale();
   const [value, setValue] = useState<number>();
   const [discountType, setDiscountType] = useState(1);
 

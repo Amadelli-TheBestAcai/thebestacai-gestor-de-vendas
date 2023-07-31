@@ -5,6 +5,7 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getUser } from "../user";
 import { SaleDto, UserDto, StoreCashDto } from "../../models/gestor";
+import { generateUniqueHex } from "../../helpers/generatorUniqueHash";
 
 interface Request {
   withPersistence?: boolean;
@@ -17,7 +18,7 @@ class BuildNewSale implements IUseCaseFactory {
       StorageNames.StoreCash
     ),
     private getUserUseCase = getUser
-  ) { }
+  ) {}
 
   async execute(
     { withPersistence }: Request = { withPersistence: true }
@@ -44,13 +45,14 @@ class BuildNewSale implements IUseCaseFactory {
       to_integrate: false,
       total_paid: 0,
       total_sold: 0,
+      ref: v4(),
       items: [],
       payments: [],
     };
 
     if (storeCash?.is_opened && storeCash?.is_online) {
-      newSale.cash_id = storeCash?.cash_id
-      newSale.cash_history_id = storeCash?.history_id
+      newSale.cash_id = storeCash?.cash_id;
+      newSale.cash_history_id = storeCash?.history_id;
     }
 
     if (withPersistence) {

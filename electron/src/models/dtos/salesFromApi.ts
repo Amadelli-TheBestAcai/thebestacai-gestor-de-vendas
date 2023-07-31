@@ -3,6 +3,9 @@ export interface SaleFromApiDTO {
   client_id?: number;
   abstract_sale: boolean
   quantity: number;
+  nfce?: {
+    qrcode_url: string;
+  };
   items: {
     name: string;
     product_id: number;
@@ -42,6 +45,7 @@ export interface SaleFromApiDTO {
       redution_icms?: string;
       aliquot_final_consumer?: string;
       quantity: number;
+      cest?: string;
       created_at: string;
       deleted_at?: string;
     };
@@ -82,6 +86,7 @@ export interface SaleFromApiDTO {
   nfce_id?: number;
   nfce_focus_id?: number;
   nfce_url?: string;
+  ref?: string;
   created_at: string;
   deleted_at?: string;
 }

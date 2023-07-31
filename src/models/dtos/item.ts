@@ -58,6 +58,7 @@ export type ItemDto = {
     redution_icms?: string;
     aliquot_final_consumer?: string;
     quantity?: number;
+    cest?: string;
     created_at: string;
     deleted_at?: string;
   };

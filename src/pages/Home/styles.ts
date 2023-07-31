@@ -53,13 +53,13 @@ export const RightSide = styled.div`
 
 export const TopActions = styled.div`
   width: 100%;
-  height: 8%;
+  height: 9%;
 `;
 
 export const Content = styled.div`
   flex-direction: column;
   width: 100%;
-  height: 92%;
+  height: 91%;
   ${ContentCSS}
 `;
 

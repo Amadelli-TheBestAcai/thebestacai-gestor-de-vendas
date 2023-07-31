@@ -1,4 +1,4 @@
-export type ProductDto = {
+export interface ProductDto {
   id: number;
   product_id?: number;
   product: {
@@ -51,6 +51,8 @@ export type ProductDto = {
   redution_icms?: string;
   aliquot_final_consumer?: string;
   quantity?: number;
+  cest?: string;
   created_at: string;
   deleted_at?: string;
-};
+}
+

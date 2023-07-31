@@ -4,7 +4,7 @@ import { ItemDto } from "../../models/dtos/item";
 
 import { useSale } from "../../hooks/useSale";
 
-import { Tooltip, notification } from "antd";
+import { Col, Row, Tooltip, notification } from "antd";
 
 import {
   Container,
@@ -16,20 +16,32 @@ import {
   Footer,
   ButtonSave,
   ButtonCancel,
+  Radio,
+  Form,
 } from "./styles";
 
 type IProps = {
   item: ItemDto;
 };
 
+const options = [
+  "Erro de digitação",
+  "Cliente deseja se servir novamente",
+  "Forma de pagamento alterada",
+  "Venda anterior não foi finalizada",
+  "Outros",
+];
+
 const Item: React.FC<IProps> = ({ item }) => {
   const { onDecressItem, sale } = useSale();
   const [modalState, setModalState] = useState(false);
   const [disabled, setdisabled] = useState(false);
-  const [reasson, setReasson] = useState<string>("");
+  const [reasonOption, setReasonOption] = useState("");
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const [form] = Form.useForm();
 
   const removeItem = async (): Promise<void> => {
-    if(sale.discount > 0) {
+    if (sale.discount > 0) {
       notification.warning({
         message: "Falha ao remover produto",
         description:
@@ -39,19 +51,20 @@ const Item: React.FC<IProps> = ({ item }) => {
       return;
     }
     setModalState(true);
-    let errorMessage = '';
+    let errorMessage = "";
 
-    if (reasson.length < 3) {
-      errorMessage = 'Digite um motivo válido para a remoção do item de seu carrinho.';
+    if (reasonOption.length < 3) {
+      errorMessage =
+        "Digite um motivo válido para a remoção do item de seu carrinho.";
     }
 
-    if (reasson.length > 100) {
-      errorMessage = 'O motivo não deve ultrapassar 100 caracteres.';
+    if (reasonOption.length > 100) {
+      errorMessage = "O motivo não deve ultrapassar 100 caracteres.";
     }
 
     if (errorMessage) {
       notification.warning({
-        message: 'Oops!',
+        message: "Oops!",
         description: errorMessage,
         duration: 5,
       });
@@ -60,7 +73,13 @@ const Item: React.FC<IProps> = ({ item }) => {
 
     setdisabled(true);
     await onDecressItem(item.id);
-    await window.Main.itemOutCart.create(reasson, item.product.id);
+
+    let price_sell = +item.storeProduct.price_unit;
+    if (item.product.category.id === 1) {
+      price_sell = +item.total;
+    }
+
+    await window.Main.itemOutCart.create(reasonOption, item.product.id, +price_sell);
     setModalState(false);
     setdisabled(false);
   };
@@ -100,11 +119,43 @@ const Item: React.FC<IProps> = ({ item }) => {
           </Footer>
         }
       >
-        <Input
-          autoFocus={true}
-          placeholder="Digite o motivo"
-          onChange={({ target: { value } }) => setReasson(value)}
-        />
+        <Form layout="vertical" form={form}>
+          <Row gutter={24}>
+            <Col sm={24}>
+              <Form.Item
+                label="Selecione um motivo"
+                name="unity"
+                rules={[{ required: true, message: "Selecione um motivo" }]}
+              >
+                <Radio.Group
+                  onChange={(e) => {
+                    setReasonOption(e.target.value);
+                    setShowOtherInput(e.target.value === "Outros");
+                  }}
+                  value={reasonOption}
+                >
+                  {options.map((option, index) => (
+                    <Radio key={index} value={option}>
+                      {option}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+
+            {showOtherInput && (
+              <Col sm={24}>
+                <Form.Item label="Digite o motivo" name="motivo">
+                  <Input
+                    autoFocus={true}
+                    value={reasonOption}
+                    onChange={({ target: { value } }) => setReasonOption(value)}
+                  />
+                </Form.Item>
+              </Col>
+            )}
+          </Row>
+        </Form>
       </Modal>
     </Container>
   );

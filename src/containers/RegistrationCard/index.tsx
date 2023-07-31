@@ -39,7 +39,16 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
           duration: 5,
         });
       }
-      setStepSales(_stepSales);
+      const stepSalesOrdened = _stepSales.sort((a, b) => {
+        if (a.created_at > b.created_at) {
+          return 1;
+        }
+        if (a.created_at < b.created_at) {
+          return -1;
+        }
+        return 0;
+      });
+      setStepSales(stepSalesOrdened);
       setName("");
       setLoading(false);
     }
@@ -134,7 +143,7 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
                     <Col sm={5}>{_stepSale.name}</Col>
                     <Col sm={6}>
                       {moment(_stepSale.created_at).format(
-                        "DD/MM/YYYY HH:mm:SS"
+                        "DD/MM/YYYY HH:mm:ss"
                       )}
                     </Col>
                     <Col sm={5}>{index + 1}</Col>

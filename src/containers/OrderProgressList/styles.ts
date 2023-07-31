@@ -137,6 +137,7 @@ export const Checkbox = styled(CheckboxAnt)`
 
 export const CancelIcon = styled(CloseOutline)`
   width: 70%;
+  min-width: 1rem;
   height: 70%;
   color: red;
   cursor: pointer;

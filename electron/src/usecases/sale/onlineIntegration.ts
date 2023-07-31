@@ -34,13 +34,19 @@ class OnlineIntegration implements IUseCaseFactory {
       throw new Error("O sistema está offline");
     }
 
-    let storeCash = await this.storeCashRepository.getOne() as StoreCashDto;
+    let storeCash = (await this.storeCashRepository.getOne()) as StoreCashDto;
 
-    const isOpeningOfflineStoreCash = storeCash?.is_opened && !storeCash?.is_online;
+    const isOpeningOfflineStoreCash =
+      storeCash?.is_opened && !storeCash?.is_online;
 
     if (isOpeningOfflineStoreCash) {
-      const { response: openedOnlineStoreCash, has_internal_error: errorOnOpenOnlineStoreCash, error_message } =
-        await useCaseFactory.execute<StoreCashDto>(this.openOnlineStoreCashUseCase);
+      const {
+        response: openedOnlineStoreCash,
+        has_internal_error: errorOnOpenOnlineStoreCash,
+        error_message,
+      } = await useCaseFactory.execute<StoreCashDto>(
+        this.openOnlineStoreCashUseCase
+      );
 
       if (errorOnOpenOnlineStoreCash) {
         throw new Error(error_message || "Falha ao abrir caixa online");
@@ -52,15 +58,20 @@ class OnlineIntegration implements IUseCaseFactory {
       const sales: SaleDto[] = await this.notIntegratedSaleRepository.getAll();
       if (sales.length) {
         await Promise.all(
-          sales.map(async salePayload => {
+          sales.map(async (salePayload) => {
             try {
-              const payload = salesFormaterToIntegrate(salePayload, storeCash);
+              let payload = salesFormaterToIntegrate(salePayload, storeCash);
+              payload = payload.map((sale) => ({
+                ...sale,
+                store_id: storeCash.store_id,
+              }));
               await midasApi.post("/sales", payload);
               await this.notIntegratedSaleRepository.deleteById(salePayload.id);
               await this.integrateSaleRepository.create({
                 ...salePayload,
-                cash_history_id: salePayload.cash_history_id || storeCash.history_id,
-                cash_id: salePayload.cash_id || storeCash.cash_id
+                cash_history_id:
+                  salePayload.cash_history_id || storeCash.history_id,
+                cash_id: salePayload.cash_id || storeCash.cash_id,
               });
             } catch (error) {
               console.log(error);
