@@ -96,12 +96,12 @@ class PrintSale implements IUseCaseFactory {
           { text: item.product.name, align: "LEFT", cols: 20 },
           { text: item.quantity.toFixed(3), align: "CENTER", cols: 10 },
           {
-            text: item.storeProduct.price_unit + "R$",
+            text: "R$" + item.storeProduct.price_unit,
             align: "CENTER",
             cols: 10,
           },
           {
-            text: item.total.toFixed(2) + "R$",
+            text: "R$" + item.total.toFixed(2),
             align: "CENTER",
             cols: 10,
           },
@@ -141,7 +141,7 @@ class PrintSale implements IUseCaseFactory {
     ]);
     this.printerFormater.tableCustom([
       { text: "Valor Total dos Produtos", align: "LEFT", cols: 40 },
-      { text: totalItems + "R$", align: "CENTER", cols: 10 },
+      { text: "R$" + totalItems, align: "CENTER", cols: 10 },
     ]);
     this.printerFormater.drawLine();
 

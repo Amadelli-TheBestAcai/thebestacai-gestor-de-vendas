@@ -213,10 +213,6 @@ class PrintDanfe implements IUseCaseFactory {
 
     this.printerFormater.drawLine();
 
-    this.printerFormater.println(content.tributacao[0]);
-
-    this.printerFormater.drawLine();
-
     this.printerFormater.alignCenter();
     content.homologacao.forEach((info) => this.printerFormater.println(info));
 
