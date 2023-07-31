@@ -1,3 +1,4 @@
+import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { BaseRepository } from "../../repository/baseRepository";
 import { StorageNames } from "../../repository/storageNames";
@@ -31,7 +32,7 @@ class AddProductWaste implements IUseCaseFactory {
       ...payload,
     });
 
-    await this.integrateProductWasteUseCase.execute();
+    await useCaseFactory.execute<void>(this.integrateProductWasteUseCase);
   }
 }
 
