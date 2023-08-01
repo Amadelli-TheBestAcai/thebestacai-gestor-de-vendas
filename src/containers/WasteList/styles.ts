@@ -75,33 +75,6 @@ export const Content = styled.div`
   height: 95%;
 `;
 
-export const ContentWaste = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-
-  span {
-    font-size: 2rem;
-  }
-`;
-
-export const ButtonWaste = styled.button`
-  width: 9rem;
-  height: 2.5rem;
-  border: 0;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  background: var(--orange-250);
-  color: white;
-  transition: 0.5s;
-
-  :hover {
-    background: var(--orange-200);
-  }
-`;
-
 export const Tupla = styled(Row)`
   display: flex;
   align-items: center;

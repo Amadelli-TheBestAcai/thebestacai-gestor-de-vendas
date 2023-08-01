@@ -8,9 +8,8 @@ import { SalesTypes } from "../models/enums/salesTypes";
 import { SettingsDto } from "../models/dtos/settings";
 import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
-import { ProductDto } from "../models/dtos/product";
+import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
-import axios from "axios";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -23,7 +22,7 @@ type GlobalContextType = {
   savingSale: boolean;
   discountModalState: boolean;
   onAddItem: (
-    product: ProductDto,
+    product: StoreProductDto,
     quantity: number,
     price?: number
   ) => Promise<void>;
@@ -116,7 +115,7 @@ export function GlobalProvider({ children }) {
   };
 
   const onAddItem = async (
-    product: ProductDto,
+    product: StoreProductDto,
     quantity: number,
     price?: number
   ): Promise<void> => {

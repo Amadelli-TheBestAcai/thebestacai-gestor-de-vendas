@@ -26,7 +26,7 @@ const handleUpload = async (url: string) => {
 class IntegrateProductWaste implements IUseCaseFactory {
   constructor(
     private productWasteRepository = new BaseRepository<ProductWasteDTO>(
-      StorageNames.PRODUCT_WAST
+      StorageNames.Product_Wast
     )
   ) {}
 

@@ -9,7 +9,7 @@ import Spinner from "../../components/Spinner";
 import DisconectedForm from "../../containers/DisconectedForm";
 
 import { ProductNfe } from "../../models/dtos/productNfe";
-import { ProductDto } from "../../models/dtos/product";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
 import { Nfe } from "../../models/dtos/nfe";
 
 import {
@@ -72,7 +72,7 @@ const Nfce: React.FC = () => {
     useState<boolean>(false);
   const [nfe, setNfe] = useState<Nfe | null>(null);
   const [productsNfe, setProductsNfe] = useState<ProductNfe[]>([]);
-  const [products, setProducts] = useState<ProductDto[]>([]);
+  const [products, setProducts] = useState<StoreProductDto[]>([]);
   const [isConected, setIsConected] = useState(false);
   const [modalState, setModalState] = useState(false);
   const [shouldSearch, setShouldSearch] = useState(true);
@@ -111,7 +111,7 @@ const Nfce: React.FC = () => {
     }
   }, [shouldSearch]);
 
-  const findSelfService = (products: ProductDto[]): ProductDto => {
+  const findSelfService = (products: StoreProductDto[]): StoreProductDto => {
     return products?.find((product) => product.product.category_id === 1);
   };
 
@@ -140,7 +140,7 @@ const Nfce: React.FC = () => {
     return total.toFixed(2).replace(".", ",");
   };
 
-  const handleSelectProduct = (product: ProductDto, quantity?: number) => {
+  const handleSelectProduct = (product: StoreProductDto, quantity?: number) => {
     let _productsNfe = productsNfe;
 
     const registredProductNfe = productsNfe.find(
@@ -462,7 +462,11 @@ const Nfce: React.FC = () => {
                           </ProductListContainer>
 
                           <FormContainer>
-                            <Form layout="vertical" form={form} preserve={false}>
+                            <Form
+                              layout="vertical"
+                              form={form}
+                              preserve={false}
+                            >
                               <Row>
                                 <Col span={24}>
                                   <FormItem name="totalProdutos">
@@ -570,7 +574,7 @@ const Nfce: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas."/>
+                      <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas." />
                     </>
                   )}
                 </>

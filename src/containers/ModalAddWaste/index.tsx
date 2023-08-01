@@ -71,7 +71,7 @@ const ModalAddWaste: React.FC<IProps> = ({
         quantity: +values.quantity,
         store_id: store.company_id,
         unity: values.unity,
-        product_id: selectedProduct.product_id,
+        product_id: selectedProduct.id,
       };
 
       await window.Main.productWaste.addWaste(payload);

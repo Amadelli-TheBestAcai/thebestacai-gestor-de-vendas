@@ -14,8 +14,6 @@ import {
   Input,
   ContentLeft,
   Tupla,
-  ButtonWaste,
-  ContentWaste,
   ContentGeneral,
   AddIcon,
 } from "./styles";
@@ -35,7 +33,7 @@ const WasteList: React.FC<IProps> = ({ products, setLoading, loading }) => {
 
   const findProduct = (value: string) => {
     return value?.length
-      ? products.filter((product) => product.product.name.includes(value))
+      ? products.filter((product) => product.name.includes(value))
       : products;
   };
 
@@ -46,12 +44,6 @@ const WasteList: React.FC<IProps> = ({ products, setLoading, loading }) => {
       ) : (
         <Content>
           <ContentLeft>
-            <ContentWaste>
-              <span>Lista de desperdício</span>
-              <ButtonWaste onClick={() => setModalState(true)}>
-                Novo desperdício
-              </ButtonWaste>
-            </ContentWaste>
             <Header>
               <Col sm={4}>Id do produto</Col>
               <Col sm={6}>Categoria</Col>
@@ -72,11 +64,11 @@ const WasteList: React.FC<IProps> = ({ products, setLoading, loading }) => {
                   return (
                     <Tupla key={product.id}>
                       <Col sm={4}>{product.id}</Col>
-                      <Col sm={6}>{product.product.category.name}</Col>
-                      <Col sm={10}>{product.product.name}</Col>
+                      <Col sm={6}>{product.category.name}</Col>
+                      <Col sm={10}>{product.name}</Col>
                       <Col sm={4}>
                         <Tooltip
-                          title={`Adicionar desperdicio de ${product.product.name}`}
+                          title={`Adicionar desperdicio de ${product.name}`}
                         >
                           <AddIcon
                             onClick={() => {
