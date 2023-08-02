@@ -174,6 +174,7 @@ const Sale: React.FC<IProps> = () => {
         flag_card:
           payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
       })),
+      ref: selectedSale.ref,
     };
 
     try {
@@ -186,6 +187,13 @@ const Sale: React.FC<IProps> = () => {
         error_message,
       } = await window.Main.sale.emitNfce(nfcePayload, selectedSale.id);
       if (errorOnEmitNfce) {
+        if (error_message === "Store token not found.") {
+          notification.error({
+            message: "O token da nota fiscal não está cadastrado na loja.",
+            duration: 5,
+          });
+          return;
+        }
         return notification.error({
           message: error_message || "Erro ao emitir NFCe",
           duration: 5,
@@ -258,7 +266,7 @@ const Sale: React.FC<IProps> = () => {
       },
     });
 
-    const html = Buffer.from(data.content, 'base64').toString('utf-8');
+    const html = Buffer.from(data.content, "base64").toString("utf-8");
 
     const reaplaceQrcode = async (_html) => {
       const [beforeQrcodeDiv, afterQrcodeDiv] = _html.split(
@@ -315,7 +323,7 @@ const Sale: React.FC<IProps> = () => {
   const getNfceDanfe = async (sale: SaleFromApi) => {
     const { data } = await axios({
       method: "GET",
-      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.id}/danfe`,
+      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.ref}/danfe`,
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
@@ -429,9 +437,9 @@ const Sale: React.FC<IProps> = () => {
                             </Col>
                             <Col sm={2}>{selectedSale.quantity}</Col>
                             <Col sm={4}>
-                              {moment(selectedSale.created_at).add(3, 'hours').format(
-                                "HH:mm:ss"
-                              )}
+                              {moment(selectedSale.created_at)
+                                .add(3, "hours")
+                                .format("HH:mm:ss")}
                             </Col>
                             <Col sm={3}>{SalesTypes[selectedSale.type]}</Col>
                             {selectedSale.nfce ? (
@@ -480,10 +488,12 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-                              <Tooltip title="Imprimir Cupom fiscal" placement="bottom">
+                              <Tooltip
+                                title="Imprimir Cupom fiscal"
+                                placement="bottom"
+                              >
                                 <PrinterIcon
-                                  onClick={() => printReceipt(selectedSale)
-                                  }
+                                  onClick={() => printReceipt(selectedSale)}
                                 />
                               </Tooltip>
                             </Col>

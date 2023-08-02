@@ -5,7 +5,7 @@ import Spinner from "../../components/Spinner";
 import notImage from "../../assets/svg/notImage.svg";
 
 import { Page } from "../../models/dtos/page";
-import { ProductDto } from "../../models/dtos/product";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
 
 import { notification, Dropdown, Menu } from "antd";
 
@@ -31,10 +31,10 @@ import {
 const { confirm } = Modal;
 
 interface IProps {
-  products: ProductDto[];
-  filteredProducts: ProductDto[];
+  products: StoreProductDto[];
+  filteredProducts: StoreProductDto[];
   setLoading: Dispatch<SetStateAction<boolean>>;
-  setProductsStock: Dispatch<SetStateAction<ProductDto[]>>;
+  setProductsStock: Dispatch<SetStateAction<StoreProductDto[]>>;
   loading: boolean;
 }
 
@@ -47,9 +47,8 @@ const StockList: React.FC<IProps> = ({
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(
-    null
-  );
+  const [selectedProduct, setSelectedProduct] =
+    useState<StoreProductDto | null>(null);
   const [newQuantity, setNewQuantity] = useState<number | undefined>(undefined);
   const [paginate, setPaginate] = useState<Page>({
     page: 1,

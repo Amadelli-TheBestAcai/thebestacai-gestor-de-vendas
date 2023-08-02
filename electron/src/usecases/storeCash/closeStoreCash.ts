@@ -1,11 +1,18 @@
 import { BaseRepository } from "../../repository/baseRepository";
+import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
-import { StoreDto, StoreCashDto, OldCashHistoryDto } from "../../models/gestor";
-import { updateBalanceHistory } from './updateBalanceHistory';
-import { useCaseFactory } from "../useCaseFactory";
+import {
+  StoreDto,
+  StoreCashDto,
+  OldCashHistoryDto,
+  SaleDto,
+} from "../../models/gestor";
+import { updateBalanceHistory } from "./updateBalanceHistory";
+import { integrateProductWaste } from "../productWaste/integrateProductWaste";
+
 interface Request {
   code: string;
   amount_on_close: number;
@@ -17,9 +24,15 @@ class CloseStoreCash implements IUseCaseFactory {
       StorageNames.StoreCash
     ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
-    private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(StorageNames.Old_Cash_History),
-    private _updateBalanceHistory = updateBalanceHistory
-  ) { }
+    private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(
+      StorageNames.Old_Cash_History
+    ),
+    private _updateBalanceHistory = updateBalanceHistory,
+    private deliverySaleRepository = new BaseRepository<SaleDto>(
+      StorageNames.Delivery_Sale
+    ),
+    private integrateProductWasteUseCase = integrateProductWaste
+  ) {}
 
   async execute({
     amount_on_close,
@@ -27,6 +40,11 @@ class CloseStoreCash implements IUseCaseFactory {
   }: Request): Promise<StoreCashDto | undefined> {
     const isConnected = await checkInternet();
     if (isConnected) {
+      const deliverySales = await this.deliverySaleRepository.getAll();
+
+      if (deliverySales.length > 0) {
+        throw new Error("Você ainda possui vendas pendentes no delivery");
+      }
       const { has_internal_error: errorOnUpdateBalanceHistory } =
         await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 
@@ -49,15 +67,21 @@ class CloseStoreCash implements IUseCaseFactory {
       }
     );
 
-    const { data: { history } } = await odinApi.get(
+    const {
+      data: { history },
+    } = await odinApi.get(
       `/current_cash_history/${storeCash?.store_id}-${storeCash?.code}`
     );
     const oldCashHistory = await this.oldCashHistoryRepository.getOne();
     if (oldCashHistory) {
-      await this.oldCashHistoryRepository.update(oldCashHistory.id, { ...history });
+      await this.oldCashHistoryRepository.update(oldCashHistory.id, {
+        ...history,
+      });
     } else {
       await this.oldCashHistoryRepository.create({ ...history });
     }
+
+    await useCaseFactory.execute<void>(this.integrateProductWasteUseCase);
 
     return updatedStoreCash;
   }

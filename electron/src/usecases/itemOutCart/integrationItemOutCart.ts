@@ -18,12 +18,15 @@ class IntegrationItemOutCart implements IUseCaseFactory {
     private notIntegratedItemOutCartRepository = new BaseRepository<ItemOutCartDto>(
       StorageNames.Not_Integrated_ItemOutCart
     ),
+    private storeRepository = new BaseRepository<StoreDto>(
+      StorageNames.Store
+    ),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
-    private hasRegistrationUseCase = hasRegistration
   ) { }
 
   async execute(): Promise<void> {
     const hasInternet = await checkInternet();
+    const store = await this.storeRepository.getOne();
 
     const { response: storeCash, has_internal_error: errorOnStoreCash } =
       await useCaseFactory.execute<StoreCashDto | undefined>(
@@ -32,15 +35,6 @@ class IntegrationItemOutCart implements IUseCaseFactory {
 
     if (errorOnStoreCash) {
       throw new Error("Falha ao obter caixa atual");
-    }
-
-    const { response: store, has_internal_error: errorOnStore } =
-      await useCaseFactory.execute<StoreDto | undefined>(
-        this.hasRegistrationUseCase
-      );
-
-    if (errorOnStore) {
-      throw new Error("Falha ao obter loja registrada");
     }
 
     if (!hasInternet || !storeCash || !store || !storeCash.is_online) {

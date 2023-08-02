@@ -1,6 +1,11 @@
 import { useCaseFactory } from "../usecases/useCaseFactory";
 import { SaleFromApiDTO, HandlerApiDto } from "../models/dtos";
-import { checkUpdates, printSale, printHandler } from "../usecases/common";
+import {
+  checkUpdates,
+  printSale,
+  printHandler,
+  printDanfe,
+} from "../usecases/common";
 
 export const commonFactory = {
   checkForUpdates: async (pkg_version: string) =>
@@ -12,4 +17,6 @@ export const commonFactory = {
     await useCaseFactory.execute<void>(printSale, { sale }),
   printHandler: async (handler: HandlerApiDto) =>
     await useCaseFactory.execute<void>(printHandler, { handler }),
+  printDanfe: async (payload) =>
+    await useCaseFactory.execute<void>(printDanfe, { payload }),
 };

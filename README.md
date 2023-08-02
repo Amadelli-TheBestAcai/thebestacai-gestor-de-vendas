@@ -66,13 +66,11 @@ O conteúdo do arquivo **env.json** deverá conster as sequintes informações:
 ```bash
 {
   "API_DASH": "${API_DASH}",
-  "NFCe_Token": "${NFCe_Token}",
-  "NFCe_AMBIENTE": ${NFCe_AMBIENTE},
-  "API_LOG": "${API_LOG}",
   "API_AUTH": "${API_AUTH}",
   "CHAT_DASH": "${CHAT_DASH}",
   "API_SALES_HANDLER": "${API_SALES_HANDLER}",
-  "API_MERCURY": "${API_MERCURY}"
+  "API_MERCURY": "${API_MERCURY}",
+  "NPS_URL": "${NPS_URL}"
 }
 ```
 

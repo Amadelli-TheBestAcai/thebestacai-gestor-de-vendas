@@ -1,14 +1,14 @@
 import React from "react";
 import { useSale } from "../../hooks/useSale";
 
-import { ProductDto } from "../../models/dtos/product";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
 
 import { Tooltip } from "antd";
 
 import { Container, Column, AddIcon } from "./styles";
 
 interface IProps {
-  product: ProductDto;
+  product: StoreProductDto;
 }
 const Product: React.FC<IProps> = ({ product }) => {
   const { onAddItem } = useSale();

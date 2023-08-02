@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 import Spinner from "../../components/Spinner";
-import { Modal, notification, Spin } from "antd";
-import { ProductDto } from "../../models/dtos/product";
+import { Modal, notification, Spin, Tooltip } from "antd";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
 
 import {
   Container,
@@ -10,6 +10,7 @@ import {
   LefttSide,
   InputPrice,
   InfoWeight,
+  InputBox,
 } from "./styles";
 import { PaymentType } from "../../models/enums/paymentType";
 
@@ -24,7 +25,7 @@ const BalanceContainer: React.FC<IProps> = ({
   openDiscoundModal,
 }) => {
   const { onAddItem, onRegisterSale } = useSale();
-  const [selfService, setselfService] = useState<ProductDto | undefined>(
+  const [selfService, setselfService] = useState<StoreProductDto | undefined>(
     undefined
   );
   const [shouldUseBalance, setShouldUseBalance] = useState(true);
@@ -151,13 +152,26 @@ const BalanceContainer: React.FC<IProps> = ({
               {fetchingBalanceWeight && <Spin size="small" />}
             </span>
             {shouldUseBalance ? (
-              <input
-                id="balanceInput"
-                value={balanceAmount?.toFixed(2).replace(".", ",") || "0,00"}
-                autoFocus={true}
-                onKeyPress={async (event) => await handlerEventKey(event.key)}
-                readOnly
-              />
+              <Tooltip
+                title={"Pressione Enter para adicionar ao carrinho"}
+                placement="right"
+              >
+                <InputBox>
+                  <span className="spanBalance">R$</span>
+                  <input
+                    className="inputBalance"
+                    id="balanceInput"
+                    value={
+                      balanceAmount?.toFixed(2).replace(".", ",") || "0,00"
+                    }
+                    autoFocus={true}
+                    onKeyPress={async (event) =>
+                      await handlerEventKey(event.key)
+                    }
+                    readOnly
+                  />
+                </InputBox>
+              </Tooltip>
             ) : (
               <InputPrice
                 autoFocus={true}

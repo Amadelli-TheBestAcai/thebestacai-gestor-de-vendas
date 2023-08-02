@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ProductDto } from "../../models/dtos/product";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
 
 import Spinner from "../../components/Spinner";
 import Product from "../../components/Product";
@@ -24,7 +24,7 @@ import {
 
 type ProductByCategory = {
   category: string;
-  products: ProductDto[];
+  products: StoreProductDto[];
 };
 
 const ProductsContainer: React.FC = () => {

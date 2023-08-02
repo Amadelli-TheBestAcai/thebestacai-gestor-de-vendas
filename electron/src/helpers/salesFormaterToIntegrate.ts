@@ -67,6 +67,7 @@ export const salesFormaterToIntegrate = (
           redution_icms: _item.storeProduct.redution_icms,
           aliquot_final_consumer: _item.storeProduct.aliquot_final_consumer,
           quantity: _item.storeProduct.quantity,
+          cest: _item.storeProduct.cest,
           created_at: _item.storeProduct.created_at,
           deleted_at: _item.storeProduct.deleted_at,
         },
@@ -99,7 +100,7 @@ export const salesFormaterToIntegrate = (
         update_stock: _item.update_stock,
       })),
       ref: _payload.ref,
-      created_at: _payload.created_at
+      created_at: _payload.created_at,
     }));
   } else {
     const response = {
@@ -196,7 +197,7 @@ export const salesFormaterToIntegrate = (
         update_stock: _item.update_stock,
       })),
       ref: payload.ref,
-      created_at: payload.created_at
+      created_at: payload.created_at,
     };
     return [response];
   }

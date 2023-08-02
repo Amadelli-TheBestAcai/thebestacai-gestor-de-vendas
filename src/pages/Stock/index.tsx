@@ -5,7 +5,7 @@ import StockList from "../../containers/StockList";
 import DisconectedForm from "../../containers/DisconectedForm";
 import Spinner from "../../components/Spinner";
 
-import { ProductDto } from "../../models/dtos/product";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
 import { RestrictedProducts } from "../../models/enums/restrictedProducts";
 
 import {
@@ -19,9 +19,9 @@ import {
 } from "./styles";
 
 const Stock: React.FC = () => {
-  const [productsStock, setProductsStock] = useState<ProductDto[]>([]);
+  const [productsStock, setProductsStock] = useState<StoreProductDto[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<
-    ProductDto[] | undefined
+    StoreProductDto[] | undefined
   >(undefined);
   const [loading, setLoading] = useState(true);
   const [isConected, setIsConected] = useState(false);

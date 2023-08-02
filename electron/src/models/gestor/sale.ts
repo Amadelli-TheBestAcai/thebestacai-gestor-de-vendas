@@ -23,6 +23,11 @@ export interface SaleDto {
   to_integrate: boolean;
   total_paid: number;
   total_sold: number;
+  customer_nps_reward_id?: number;
+  customer_nps_reward_discount?: number;
+  nfce?: {
+    qrcode_url: string;
+  };
   items: {
     id: string;
     store_product_id: number;
@@ -83,6 +88,7 @@ export interface SaleDto {
       redution_icms?: string;
       aliquot_final_consumer?: string;
       quantity?: number;
+      cest?: string;
       created_at: string;
       deleted_at?: string;
     };

@@ -21,11 +21,14 @@ import {
   emitNfce,
   deleteSaleDelivery,
   cancelNfce,
-  onlineIntegration
+  onlineIntegration,
+  getCampaignReward,
+  integrateRewardWithSale,
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto } from "../models/gestor";
 import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
+import { createCustomerReward } from "../usecases/sale/addCustomerReward";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -58,6 +61,8 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
   createDelivery: async (payload: any) =>
     await useCaseFactory.execute<void>(createDelivery, { payload }),
+  createCustomerReward: async (payload: any) =>
+    await useCaseFactory.execute<void>(createCustomerReward, { payload }),
   deleteSaleDelivery: async (id: string) =>
     await useCaseFactory.execute<void>(deleteSaleDelivery, { id }),
   getAllDelivery: async () =>
@@ -74,7 +79,11 @@ export const saleFactory = {
     }),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
-  deleteSaleFromApi: async (params: { id: number, cash_history: number, gv_id: number; }) => {
+  deleteSaleFromApi: async (params: {
+    id: number;
+    cash_history: number;
+    gv_id: number;
+  }) => {
     try {
       await useCaseFactory.execute<void>(deleteSaleFromApi, params);
       return true;
@@ -82,24 +91,47 @@ export const saleFactory = {
       return false;
     }
   },
-  emitNfce: async (nfe: NfeDTO, saleIdToUpdate?: number | string, local_update?: boolean) =>
-    await useCaseFactory.execute<string>(
-      emitNfce,
-      {
-        nfe,
-        saleIdToUpdate,
-        local_update
-      }
-    ),
-  cancelNfce: async (sale_id: number,
-    justify: string) =>
-    await useCaseFactory.execute(
-      cancelNfce,
-      {
-        sale_id,
-        justify,
-      }
-    ),
+  emitNfce: async (
+    nfe: NfeDTO,
+    saleIdToUpdate?: number | string,
+    local_update?: boolean
+  ) =>
+    await useCaseFactory.execute<any>(emitNfce, {
+      nfe,
+      saleIdToUpdate,
+      local_update,
+    }),
+  getCampaignReward: async (cpf: string) =>
+    await useCaseFactory.execute<{
+      points_customer: number;
+      customer_name: string;
+      customer_id: number;
+      customer_campaign_id: number;
+      campaignReward: {
+        id: number;
+        campaign_id: number;
+        customer_reward_id: number;
+        description: string;
+        url_image: string;
+        s3_key: string;
+        points_reward: number;
+        created_at: string;
+        updated_at: string;
+        deleted_at: string;
+        product_id: number;
+      }[];
+    }>(getCampaignReward, {
+      cpf,
+    }),
+  cancelNfce: async (sale_id: number, justify: string) =>
+    await useCaseFactory.execute(cancelNfce, {
+      sale_id,
+      justify,
+    }),
   onlineIntegration: async () =>
-    await useCaseFactory.execute<void>(onlineIntegration)
+    await useCaseFactory.execute<void>(onlineIntegration),
+  integrateRewardWithSale: async (payload) =>
+    await useCaseFactory.execute<void>(integrateRewardWithSale, {
+      payload,
+    }),
 };

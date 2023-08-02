@@ -21,6 +21,7 @@ import {
   ChartIcon,
   SettingsIcon,
   LogOutIcon,
+  TrashIcon,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
 
@@ -106,12 +107,18 @@ const SideBar: React.FC<IProps> = ({ history }) => {
         icon: <ScrollIcon />,
         label: "NFC-e",
         router: "/nfce",
+      },
+      {
+        id: 9,
+        icon: <TrashIcon />,
+        label: "Desperdícios",
+        router: "/waste",
       }
     );
 
     if (hasPermission("config.config_access")) {
       response.push({
-        id: 9,
+        id: 11,
         icon: <SettingsIcon />,
         label: "Configuração",
         router: "/settings",

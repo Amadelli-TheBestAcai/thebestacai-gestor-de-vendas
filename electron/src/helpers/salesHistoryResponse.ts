@@ -81,6 +81,7 @@ export interface ItemResponse {
     bc_icms_st?: number;
     redution_icms?: number;
     aliquot_final_consumer?: number;
+    cest?: string;
     quantity: number;
     created_at: string;
     deleted_at?: null;
@@ -123,6 +124,7 @@ export interface StoreProductResponse {
   redution_icms?: string;
   aliquot_final_consumer?: string;
   quantity: number;
+  cest?: string;
   created_at: string;
   deleted_at?: string;
   product: Product;
