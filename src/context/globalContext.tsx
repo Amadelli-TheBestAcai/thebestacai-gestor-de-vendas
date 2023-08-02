@@ -295,7 +295,7 @@ export function GlobalProvider({ children }) {
         duration: 3,
       });
     }
-
+    
     if (settings.should_print_sale && settings.should_use_printer) {
       //@ts-expect-error
       window.Main.common.printSale(sale);

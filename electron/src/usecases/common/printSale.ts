@@ -7,6 +7,7 @@ import { SaleDto } from "../../models/gestor/sale";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
 import * as jwt from "jsonwebtoken";
 import env from "../../providers/env.json";
+import moment from 'moment';
 import {
   printer as ThermalPrinter,
   types as TermalTypes,
@@ -161,15 +162,31 @@ class PrintSale implements IUseCaseFactory {
         ref: sale.ref,
         cpf: null,
         cash_history_id: sale.cash_history_id,
-        sale_id: sale.id,
         store_id: store?.company_id,
         total_sold: totalItems,
+        created_at: sale.created_at
       },
       env.TOKEN_SECRET_NPS,
       {
         expiresIn: "1d",
       }
     );
+
+    console.log(access_token)
+    this.printerFormater.table(["QRCode Avaliação NPS"]);
+    this.printerFormater.println(
+      `Utilize este QRCode para ser direcionado para nos avaliar :)`
+    );
+    this.printerFormater.alignCenter();
+    this.printerFormater.printQR(`${env.NPS_URL}/${access_token}`, {
+      correction: "M",
+      cellSize: 6,
+    });
+    this.printerFormater.newLine();
+    this.printerFormater.print(
+      `Data de expiração do QRCode: ${moment(sale.created_at).add(1, "day").add(3, 'hours').format("DD/MM/YYYY HH:mm:ss")}`
+    );
+    this.printerFormater.newLine();
 
     this.printerFormater.table(["QRCode Avaliação NPS"]);
     this.printerFormater.println(
@@ -178,13 +195,31 @@ class PrintSale implements IUseCaseFactory {
     this.printerFormater.alignCenter();
     this.printerFormater.printQR(`${env.NPS_URL}/${access_token}`, {
       correction: "M",
-      cellSize: 7,
+      cellSize: 5,
     });
+    this.printerFormater.newLine();
+    this.printerFormater.print(
+      `Data de expiração do QRCode: ${moment(sale.created_at).add(1, "day").add(3, 'hours').format("DD/MM/YYYY HH:mm:ss")}`
+    );
     this.printerFormater.newLine();
     this.printerFormater.cut();
 
+    const originalBuffer = this.printerFormater.getBuffer();
+
+    // Convertendo para Base64
+    const base64String = originalBuffer.toString('base64');
+
+    // Convertendo de volta para buffer a partir do Base64
+    const convertedBuffer = Buffer.from(base64String, 'base64');
+
+    // Convertendo o buffer para texto
+    const convertedText = convertedBuffer.toString('utf-8');
+
+    // Imprimir o texto convertido
+    console.log(convertedText);
+
     Printer.printDirect({
-      data: this.printerFormater.getBuffer(),
+      data: originalBuffer,
       options: termalPrinter.options,
       printer,
       type: "RAW",
