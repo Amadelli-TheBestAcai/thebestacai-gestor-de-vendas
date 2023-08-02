@@ -69,10 +69,10 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
           Comanda
         </Button>
 
-        {/* <Button onClick={() => setRewardModal(true)}>
+        <Button onClick={() => setRewardModal(true)}>
           <TrophyIcon />
           Recompensas
-        </Button> */}
+        </Button>
       </ActionButtons>
 
       <InfosAndChat>
