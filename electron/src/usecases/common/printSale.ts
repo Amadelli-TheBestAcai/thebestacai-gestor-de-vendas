@@ -156,31 +156,31 @@ class PrintSale implements IUseCaseFactory {
       this.printerFormater.newLine();
     }
 
-    const access_token = jwt.sign(
-      {
-        ref: sale.ref,
-        cpf: null,
-        cash_history_id: sale.cash_history_id,
-        sale_id: sale.id,
-        store_id: store?.company_id,
-        total_sold: totalItems,
-      },
-      env.TOKEN_SECRET_NPS,
-      {
-        expiresIn: "1d",
-      }
-    );
+    // const access_token = jwt.sign(
+    //   {
+    //     ref: sale.ref,
+    //     cpf: null,
+    //     cash_history_id: sale.cash_history_id,
+    //     sale_id: sale.id,
+    //     store_id: store?.company_id,
+    //     total_sold: totalItems,
+    //   },
+    //   env.TOKEN_SECRET_NPS,
+    //   {
+    //     expiresIn: "1d",
+    //   }
+    // );
 
-    this.printerFormater.table(["QRCode Avaliação NPS"]);
-    this.printerFormater.println(
-      `Utilize este QRCode para ser direcionado para nos avaliar :)`
-    );
-    this.printerFormater.alignCenter();
-    this.printerFormater.printQR(`${env.NPS_URL}/${access_token}`, {
-      correction: "M",
-      cellSize: 7,
-    });
-    this.printerFormater.newLine();
+    // this.printerFormater.table(["QRCode Avaliação NPS"]);
+    // this.printerFormater.println(
+    //   `Utilize este QRCode para ser direcionado para nos avaliar :)`
+    // );
+    // this.printerFormater.alignCenter();
+    // this.printerFormater.printQR(`${env.NPS_URL}/${access_token}`, {
+    //   correction: "M",
+    //   cellSize: 7,
+    // });
+    // this.printerFormater.newLine();
     this.printerFormater.cut();
 
     Printer.printDirect({
