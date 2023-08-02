@@ -172,22 +172,6 @@ class PrintSale implements IUseCaseFactory {
       }
     );
 
-    console.log(access_token)
-    this.printerFormater.table(["QRCode Avaliação NPS"]);
-    this.printerFormater.println(
-      `Utilize este QRCode para ser direcionado para nos avaliar :)`
-    );
-    this.printerFormater.alignCenter();
-    this.printerFormater.printQR(`${env.NPS_URL}/${access_token}`, {
-      correction: "M",
-      cellSize: 6,
-    });
-    this.printerFormater.newLine();
-    this.printerFormater.print(
-      `Data de expiração do QRCode: ${moment(sale.created_at).add(1, "day").add(3, 'hours').format("DD/MM/YYYY HH:mm:ss")}`
-    );
-    this.printerFormater.newLine();
-
     this.printerFormater.table(["QRCode Avaliação NPS"]);
     this.printerFormater.println(
       `Utilize este QRCode para ser direcionado para nos avaliar :)`
@@ -204,22 +188,8 @@ class PrintSale implements IUseCaseFactory {
     this.printerFormater.newLine();
     this.printerFormater.cut();
 
-    const originalBuffer = this.printerFormater.getBuffer();
-
-    // Convertendo para Base64
-    const base64String = originalBuffer.toString('base64');
-
-    // Convertendo de volta para buffer a partir do Base64
-    const convertedBuffer = Buffer.from(base64String, 'base64');
-
-    // Convertendo o buffer para texto
-    const convertedText = convertedBuffer.toString('utf-8');
-
-    // Imprimir o texto convertido
-    console.log(convertedText);
-
     Printer.printDirect({
-      data: originalBuffer,
+      data: this.printerFormater.getBuffer(),
       options: termalPrinter.options,
       printer,
       type: "RAW",
