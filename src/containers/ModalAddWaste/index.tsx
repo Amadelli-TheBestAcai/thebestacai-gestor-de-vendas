@@ -1,11 +1,8 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modal, Radio, notification } from "antd";
-import { ProductDto } from "../../../models/dtos/product";
-import { ProductWasteDTO } from "../../../models/dtos/productWaste";
-import { Options } from "../../../models/enums/weightOptions";
-import { useStore } from "../../../hooks/useStore";
-import { useCashHistoryId } from "../../../hooks/useCashHistoryId";
-import s3Api from "../../../helpers/s3Api";
+import { useCashHistoryId } from "../../hooks/useCashHistoryId";
+import { Options } from "../../models/enums/weightOptions";
+
 import {
   Form,
   ButtonCancel,
@@ -14,30 +11,26 @@ import {
   ContentModalBody,
   Footer,
   Input,
-  SelectSearch,
-  Option,
 } from "./styles";
+import { ProductDto } from "../../models/dtos/product";
+import { useStore } from "../../hooks/useStore";
 
 interface IProps {
   visible: boolean;
   loading: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  productsStore: ProductDto[];
-  products: ProductWasteDTO[];
-  setShouldSearch: Dispatch<SetStateAction<boolean>>;
+  selectedProduct: ProductDto | null;
+  setSelectedProduct: Dispatch<SetStateAction<ProductDto | null>>;
 }
 
 const ModalAddWaste: React.FC<IProps> = ({
   setVisible,
   visible,
   setLoading,
-  productsStore,
-  setShouldSearch,
+  selectedProduct,
+  setSelectedProduct,
 }) => {
-  const [selectedProduct, setSelectedProduct] = useState<
-    ProductDto | undefined
-  >(undefined);
   const [image, setImage] = useState(null);
   const [value, setValue] = useState(Options.Quilograma);
   const [unitSuffix, setUnitSuffix] = useState("kg");
@@ -45,6 +38,10 @@ const ModalAddWaste: React.FC<IProps> = ({
   const [form] = Form.useForm();
   const { store } = useStore();
   const { cashHistoryId } = useCashHistoryId();
+
+  useEffect(() => {
+    if (!visible) setSelectedProduct(null);
+  }, [visible]);
 
   useEffect(() => {
     if (value === Options.Quilograma) {
@@ -67,31 +64,24 @@ const ModalAddWaste: React.FC<IProps> = ({
         return;
       }
 
-      const s3_info = await handleUpload(image);
+      const file = await getBase64(image);
       const payload = {
-        ...values,
         cash_history_id: cashHistoryId.history_id,
+        file,
+        quantity: +values.quantity,
         store_id: store.company_id,
-        s3_key: s3_info.s3_key,
-        url_file: s3_info.url_file,
+        unity: values.unity,
+        product_id: selectedProduct.id,
       };
 
-      const response = await window.Main.productWaste.addWaste(payload);
+      await window.Main.productWaste.addWaste(payload);
 
-      if (response.has_internal_error) {
-        notification.error({
-          message: "Erro ao cadastrar desperdício",
-          duration: 5,
-        });
-      } else {
-        notification.success({
-          message: "Desperdício cadastrado com sucesso",
-          duration: 5,
-        });
-        form.resetFields();
-      }
+      notification.success({
+        message: "Desperdício cadastrado com sucesso",
+        duration: 5,
+      });
+      form.resetFields();
       setLoading(false);
-      setShouldSearch(true);
     } catch (error) {
       notification.error({
         message: "Oops, ocorreu um erro!",
@@ -99,19 +89,21 @@ const ModalAddWaste: React.FC<IProps> = ({
       });
     } finally {
       setLoading(false);
-      setShouldSearch(false);
     }
   };
 
-  const handleUpload = async (file: File) => {
-    const imageToUpload = new FormData();
-    imageToUpload.append("file", file);
-
-    const {
-      data: { location, key },
-    } = await s3Api.post(`/s3-upload/upload/waste-files`, imageToUpload);
-    return { url_file: location, s3_key: key };
-  };
+  function getBase64(file): Promise<any> {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        resolve(reader.result);
+      };
+      reader.onerror = function (error) {
+        reject(error);
+      };
+    });
+  }
 
   return (
     <Modal
@@ -141,30 +133,6 @@ const ModalAddWaste: React.FC<IProps> = ({
     >
       <Form layout="vertical" form={form}>
         <ContentModalBody gutter={24}>
-          <ColModal sm={24}>
-            <Form.Item
-              label="Produto"
-              name="product_id"
-              rules={[{ required: true, message: "Selecione um produto" }]}
-            >
-              <SelectSearch
-                showSearch
-                placeholder={`Escolha a opção` || selectedProduct}
-                onChange={(value: any) => setSelectedProduct(value)}
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-              >
-                {productsStore.map((item) => (
-                  <Option value={item.product_id} key={item.product_id}>
-                    {item.product.name}
-                  </Option>
-                ))}
-              </SelectSearch>
-            </Form.Item>
-          </ColModal>
-
           <ColModal sm={12}>
             <Form.Item
               label="Unidade de medida"

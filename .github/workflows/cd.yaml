@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: create env-config
         run: |
-          echo '{"API_DASH":"${{ secrets.API_DASH }}","API_TOKEN":"${{ secrets.API_TOKEN }}","NFCe_Token":"${{ secrets.NFCE_Token }}","NFCe_AMBIENTE":"${{ secrets.NFCE_AMBIENTE }}","API_LOG":"${{ secrets.API_LOG }}","API_AUTH":"${{ secrets.API_AUTH }}","CHAT_DASH":"${{ secrets.CHAT_DASH }}","API_SALES_HANDLER":"${{ secrets.API_SALES_HANDLER }}","ELASTIC_SHOULD_LOG":"${{ secrets.ELASTIC_SHOULD_LOG }}","ELASTIC_ID":"${{ secrets.ELASTIC_ID }}","ELASTIC_USER":"${{ secrets.ELASTIC_USER }}","API_MERCURY":"${{ secrets.API_MERCURY }}", "NPS_URL":"${{ secrets.NPS_URL }}", "API_THOR":"${{ secrets.API_THOR }}", "API_S3":"${{ secrets.API_S3 }}","ELASTIC_PASS":"${{ secrets.ELASTIC_PASS }}"}' > electron/src/providers/env.json
+          echo '{"API_DASH":"${{ secrets.API_DASH }}","API_TOKEN":"${{ secrets.API_TOKEN }}","NFCe_Token":"${{ secrets.NFCE_Token }}","NFCe_AMBIENTE":"${{ secrets.NFCE_AMBIENTE }}","API_LOG":"${{ secrets.API_LOG }}","API_AUTH":"${{ secrets.API_AUTH }}","CHAT_DASH":"${{ secrets.CHAT_DASH }}","API_SALES_HANDLER":"${{ secrets.API_SALES_HANDLER }}","ELASTIC_SHOULD_LOG":"${{ secrets.ELASTIC_SHOULD_LOG }}","ELASTIC_ID":"${{ secrets.ELASTIC_ID }}","ELASTIC_USER":"${{ secrets.ELASTIC_USER }}","API_MERCURY":"${{ secrets.API_MERCURY }}", "NPS_URL":"${{ secrets.NPS_URL }}", "API_THOR":"${{ secrets.API_THOR }}", "API_S3":"${{ secrets.API_S3 }}", "TOKEN_SECRET_NPS":"${{ secrets.TOKEN_SECRET_NPS }}","ELASTIC_PASS":"${{ secrets.ELASTIC_PASS }}"}' > electron/src/providers/env.json
           echo SKIP_PREFLIGHT_CHECK=true > .env
       - uses: actions/setup-node@master
         with:

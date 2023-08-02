@@ -1,17 +1,38 @@
+import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
-import { checkInternet } from "../../providers/internetConnection";
-import odinApi from "../../providers/odinApi";
+import { BaseRepository } from "../../repository/baseRepository";
+import { StorageNames } from "../../repository/storageNames";
+import { ProductWasteDTO } from "../../models/gestor/productWaste";
+import { v4 } from "uuid";
+
+import { integrateProductWaste } from "./integrateProductWaste";
 
 interface Request {
-  payload: any;
+  payload: {
+    cash_history_id: number;
+    file: string;
+    quantity: number;
+    store_id: number;
+    unity: number;
+    product_id: number;
+  };
 }
 
 class AddProductWaste implements IUseCaseFactory {
+  constructor(
+    private productWasteRepository = new BaseRepository<ProductWasteDTO>(
+      StorageNames.Product_Wast
+    ),
+    private integrateProductWasteUseCase = integrateProductWaste
+  ) {}
+
   async execute({ payload }: Request): Promise<void> {
-    const hasInternet = await checkInternet();
-    if (hasInternet) {
-      await odinApi.post(`/product_store_waste`, payload);
-    }
+    await this.productWasteRepository.create({
+      id: v4(),
+      ...payload,
+    });
+
+    await useCaseFactory.execute<void>(this.integrateProductWasteUseCase);
   }
 }
 

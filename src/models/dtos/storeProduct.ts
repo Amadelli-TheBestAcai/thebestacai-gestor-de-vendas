@@ -1,23 +1,9 @@
-export interface ProductWasteDTO {
+import { ProductDto } from "./product";
+
+export interface StoreProductDto {
   id: number;
-  name: string;
-  category_id: number;
-  category: {
-    id: number;
-    name: string;
-    sort?: number;
-    created_at?: string;
-    deleted_at?: string;
-  };
-  price_buy?: string;
-  permission_store?: boolean;
-  permission_order?: boolean;
-  permission_purchase?: boolean;
-  cod_product?: number;
-  cod_ncm?: string;
-  brand?: string;
-  weight?: string;
-  description?: string;
+  product_id?: number;
+  product: ProductDto;
   store_id?: number;
   price_unit?: string;
   permission: boolean;
@@ -46,18 +32,4 @@ export interface ProductWasteDTO {
   cest?: string;
   created_at: string;
   deleted_at?: string;
-  products_store_waste: ProductStoreWasteDto[];
-}
-
-export interface ProductStoreWasteDto {
-  id: number;
-  product_id: number;
-  cash_history_id: number;
-  unity: number;
-  store_id: number;
-  quantity: string;
-  url_file: string;
-  s3_key: string;
-  created_at: string;
-  deleted_at: string;
 }

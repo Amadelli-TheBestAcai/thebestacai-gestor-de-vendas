@@ -1,11 +1,5 @@
 import styled from "styled-components";
-import {
-  Row,
-  Col as ColAnt,
-  Input as InputAnt,
-  Select as SelectAnt,
-  Form as FormAnt,
-} from "antd";
+import { Row, Col as ColAnt, Input as InputAnt, Form as FormAnt } from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -75,37 +69,6 @@ export const UploadContent = styled.div`
     color: var(--orange-250);
   }
 `;
-
-export const SelectSearch = styled(SelectAnt)`
-  width: 13rem;
-  height: 2.5rem;
-  font-weight: normal;
-
-  .ant-select-selector {
-    display: flex;
-    align-items: center;
-  }
-
-  .ant-select-selection-search {
-    display: flex;
-    align-items: center;
-  }
-
-  .ant-select-selection-item {
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  .ant-select-arrow {
-    span {
-      font-size: 0.9rem;
-    }
-  }
-`;
-
-export const Option = styled(SelectAnt.Option)``;
 
 export const ButtonSave = styled.button`
   padding: 3px 7px;

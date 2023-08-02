@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import Spinner from "../../components/Spinner";
 import { Modal, notification, Spin, Tooltip } from "antd";
-import { ProductDto } from "../../models/dtos/product";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
 
 import {
   Container,
@@ -25,7 +25,7 @@ const BalanceContainer: React.FC<IProps> = ({
   openDiscoundModal,
 }) => {
   const { onAddItem, onRegisterSale } = useSale();
-  const [selfService, setselfService] = useState<ProductDto | undefined>(
+  const [selfService, setselfService] = useState<StoreProductDto | undefined>(
     undefined
   );
   const [shouldUseBalance, setShouldUseBalance] = useState(true);
