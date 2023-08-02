@@ -83,9 +83,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-              (total, _payment) => total + _payment.amount,
-              0
-            ),
+            (total, _payment) => total + _payment.amount,
+            0
+          ),
       }));
 
       if (_sales.length) {
@@ -360,6 +360,7 @@ const Sale: React.FC<IProps> = () => {
         duration: 5,
       });
     }
+    sale.created_at = moment(sale.created_at).add(3, "hour").format("DD/MM/YYYY HH:mm:ss");
     window.Main.common.printSale(sale);
   };
 
@@ -531,7 +532,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                        +_item.storeProduct.price_unit
+                                      +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>
