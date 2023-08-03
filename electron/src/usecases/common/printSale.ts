@@ -43,7 +43,10 @@ class PrintSale implements IUseCaseFactory {
     const settings = await this.settingsRepository.getOne();
 
     const printer = settings?.printer;
-
+    
+    const created_at = moment(sale.created_at).parseZone().format('YYYY-MM-DDTHH:mm:ss');
+    const expirationDate = moment(created_at).add(1, "day").format("DD/MM/YYYY HH:mm:ss");
+   
     if (!settings?.should_use_printer) {
       return;
     }
@@ -164,7 +167,7 @@ class PrintSale implements IUseCaseFactory {
         cash_history_id: sale.cash_history_id,
         store_id: store?.company_id,
         total_sold: totalItems,
-        created_at: sale.created_at
+        created_at: created_at
       },
       env.TOKEN_SECRET_NPS,
       {
@@ -183,7 +186,7 @@ class PrintSale implements IUseCaseFactory {
     });
     this.printerFormater.newLine();
     this.printerFormater.print(
-      `Data de expiração do QRCode: ${moment(sale.created_at).add(1, "day").add(3, "h").format("DD/MM/YYYY HH:mm:ss")}`
+      `Data de expiração do QRCode: ${expirationDate}`
     );
     this.printerFormater.newLine();
     this.printerFormater.cut();
