@@ -298,7 +298,7 @@ export function GlobalProvider({ children }) {
     }
 
     if (settings.should_print_sale && settings.should_use_printer) {
-      sale.created_at = sale.created_at = moment(sale.created_at).subtract(3, "hour").toString();
+      sale.created_at = moment(sale.created_at).subtract(3, "hour").toString();
       //@ts-expect-error
       window.Main.common.printSale(sale);
     }
