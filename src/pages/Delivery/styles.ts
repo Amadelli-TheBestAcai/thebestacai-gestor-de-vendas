@@ -39,7 +39,7 @@ export const Header = styled.header`
   height: 5%;
 
   h2 {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   /*Responsive 1600px*/
@@ -59,7 +59,6 @@ export const Header = styled.header`
 
 export const Tabs = styled(TabsAnt)`
   width: 100%;
-  margin-top: 1rem;
   .ant-tabs-tab.ant-tabs-tab-active,
   .ant-tabs-tab-btn {
     color: black !important;
@@ -91,6 +90,7 @@ export const Tabs = styled(TabsAnt)`
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     width: 100%;
+    justify-content: end;
   }
 
   .ant-tabs-nav {
@@ -108,13 +108,15 @@ export const TabPaneContainer = styled.div<ITabPaneContainer>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 344px;
-  height: 113px;
-  padding: 2rem;
-  background: var(--white-30);
+  width: 10rem;
+  height: 3.7rem;
+  padding: .5rem;
+  background: transparent;
   border: 1px solid var(--grey-60);
   color: var(--grey-90);
   transition: 0.2s;
+  border-radius: 1.2rem;
+  margin-left: 1rem;
 
   label {
     position: absolute;
@@ -130,7 +132,6 @@ export const TabPaneContainer = styled.div<ITabPaneContainer>`
     css`
       color: var(--orange-250);
       border: 1px solid var(--orange-250);
-      border-top: 5px solid var(--orange-250);
 
       svg {
         color: var(--orange-250);
@@ -139,39 +140,18 @@ export const TabPaneContainer = styled.div<ITabPaneContainer>`
 
   /*Responsive 1680px*/
   @media (max-width: 1680px) {
-    width: 300px;
-    height: 113px;
-  }
-
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    width: 284px;
-    height: 100px;
+    width: 8rem;
+    font-size: 0.7rem;
   }
 
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
-    width: 250px;
-    height: 90px;
+    width: 7rem;
+    height: 3rem;
 
     label {
       font-size: 0.7rem;
     }
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 241px;
-    height: 80px;
-
-    label {
-      font-size: 0.6rem;
-    }
-  }
-
-  /*Responsive 1280px*/
-  @media (max-width: 1280px) {
-    width: 220px;
   }
 `;
 
@@ -191,13 +171,6 @@ export const LabelCardTab = styled.div`
 
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
-    span {
-      font-size: 1.2rem;
-    }
-  }
-
-  /*Responsive 1440px*/
-  @media (max-width: 1440px) {
     span {
       font-size: 1rem;
     }
@@ -296,11 +269,10 @@ export const InputValue = styled.div`
   user-select: none;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   padding: 3%;
   width: 100%;
   height: 15%;
-  //border: 1px solid var(--grey-70) !important;
+  justify-content: space-between;
   background: white !important;
   font-size: 2.5rem;
   text-align: end;
@@ -461,4 +433,8 @@ export const CheckAll = styled(UiChecks)`
   ${IconCSS}
   cursor: pointer;
   color: var(--green-400);
+`;
+
+export const Title = styled.h1`
+  margin: 0
 `;
