@@ -360,7 +360,7 @@ const Sale: React.FC<IProps> = () => {
         duration: 5,
       });
     }
-    sale.created_at = moment(sale.created_at).add(3, "hour").format("DD/MM/YYYY HH:mm:ss");
+
     window.Main.common.printSale(sale);
   };
 

@@ -183,7 +183,7 @@ class PrintSale implements IUseCaseFactory {
     });
     this.printerFormater.newLine();
     this.printerFormater.print(
-      `Data de expiração do QRCode: ${moment(sale.created_at).add(1, "day").format("DD/MM/YYYY HH:mm:ss")}`
+      `Data de expiração do QRCode: ${moment(sale.created_at).add(1, "day").add(3, "h").format("DD/MM/YYYY HH:mm:ss")}`
     );
     this.printerFormater.newLine();
     this.printerFormater.cut();
