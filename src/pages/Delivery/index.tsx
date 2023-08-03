@@ -10,6 +10,7 @@ import OrderProgressList from "../../containers/OrderProgressList";
 import { useSale } from "../../hooks/useSale";
 import Spinner from "../../components/Spinner";
 import CashNotFound from "../../components/CashNotFound";
+import IFoodScreen from '../../containers/IFoodScreen'
 
 import { SaleDto } from "../../models/dtos/sale";
 import { SalesTypes } from "../../models/enums/salesTypes";
@@ -45,6 +46,7 @@ import {
   ButtonCancel,
   OrdersListContainer,
   HeaderRight,
+  Title,
 } from "./styles";
 
 type ComponentProps = RouteComponentProps;
@@ -426,26 +428,6 @@ const Delivery: React.FC<ComponentProps> = () => {
     });
   };
 
-  const keyMap = {
-    money: "a",
-    MONEY: "A",
-    c_credit: "s",
-    C_CREDIT: "S",
-    c_debit: "d",
-    C_DEBIT: "D",
-    online: "o",
-    ONLINE: "O",
-    pix: "p",
-    PIX: "P",
-    adicionar: "f",
-    ADICIONAR: "F",
-    aplicativo: "f2",
-    ifood: "f3",
-    outros: "f4",
-    whatsapp: "f5",
-    telefone: "f6",
-  };
-
   const handlers = {
     money: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
     MONEY: () => handleOpenPayment(PaymentType.DINHEIRO, "Dinheiro"),
@@ -473,7 +455,6 @@ const Delivery: React.FC<ComponentProps> = () => {
       id: 5,
       label: (
         <TabPaneContainer isSelected={deliveryType === 5}>
-          <label>[F2]</label>
           <LabelCardTab>
             <AppIcon />
             <span>Aplicativo</span>
@@ -485,7 +466,6 @@ const Delivery: React.FC<ComponentProps> = () => {
       id: 1,
       label: (
         <TabPaneContainer isSelected={deliveryType === 1}>
-          <label>[F3]</label>
           <LabelCardTab>
             <IfoodIcon />
             <span>Ifood</span>
@@ -497,7 +477,6 @@ const Delivery: React.FC<ComponentProps> = () => {
       id: 6,
       label: (
         <TabPaneContainer isSelected={deliveryType === 6}>
-          <label>[F4]</label>
           <LabelCardTab>
             <AiqfomeIcon />
             <span>Outros</span>
@@ -509,7 +488,6 @@ const Delivery: React.FC<ComponentProps> = () => {
       id: 3,
       label: (
         <TabPaneContainer isSelected={deliveryType === 3}>
-          <label>[F5]</label>
           <LabelCardTab>
             <WhatsappIcon />
             <span>Whatsapp</span>
@@ -521,7 +499,6 @@ const Delivery: React.FC<ComponentProps> = () => {
       id: 4,
       label: (
         <TabPaneContainer isSelected={deliveryType === 4}>
-          <label>[F6]</label>
           <LabelCardTab>
             <TelephoneIcon />
             <span>Telefone</span>
@@ -532,8 +509,9 @@ const Delivery: React.FC<ComponentProps> = () => {
   ];
 
   return (
-    <Container id="mainContainer" handlers={handlers} keyMap={keyMap}>
+    <Container id="mainContainer" handlers={handlers}>
       <PageContent>
+        <Title>Delivery</Title>
         {loading ? (
           <>
             <Spinner />
@@ -544,107 +522,108 @@ const Delivery: React.FC<ComponentProps> = () => {
               <>
                 {storeCash?.is_opened ? (
                   <>
-                    <Header>
-                      <h2>Delivery</h2>
-                    </Header>
                     <Tabs
-                      defaultActiveKey="1"
+                      defaultActiveKey={deliveryType.toString()}
                       centered
                       onChange={(type) => setDeliveryType(+type)}
                     >
                       {tabPanes.map((_tab) => (
                         <TabPane key={_tab.id} tab={_tab.label}>
-                          <Content>
-                            <LeftContainer>
-                              <h2>Adicionar Pedidos</h2>
-                              <ActionContent>
-                                <Input
-                                  placeholder="Nome do cliente"
-                                  value={sale?.name}
-                                  onChange={({ target: { value } }) =>
-                                    setSale((oldValues) => ({
-                                      ...oldValues,
-                                      name: value,
-                                    }))
-                                  }
-                                />
-                                <Select placeholder="Escolha a opção">
-                                  <Option>Entrega</Option>
-                                </Select>
-                              </ActionContent>
-                              {sale.payments.length !== 0 && (
-                                <InputValue>
-                                  R${" "}
-                                  {currencyFormater(
-                                    sale?.payments?.reduce(
-                                      (total, _payment) =>
-                                        +_payment.amount + total,
-                                      0
-                                    )
-                                  )}
-                                  <span>Valor do Delivery</span>
-                                </InputValue>
-                              )}
-                              <PaymentsContainer>
-                                <Payments
-                                  sale={sale}
-                                  addPayment={addPayment}
-                                  removePayment={removePayment}
-                                  setCurrentPayment={setAmount}
-                                  modalState={paymentModal}
-                                  modalTitle={paymentModalTitle}
-                                  setModalState={setPaymentModal}
-                                  handleOpenPayment={handleOpenPayment}
-                                  usingDelivery={true}
-                                  flagCard={flagCard}
-                                  setFlagCard={setFlagCard}
-                                />
-                              </PaymentsContainer>
-
-                              <ButtonsContainer>
-                                <ButtonCancel onClick={() => handleCancel()}>
-                                  CANCELAR [C]
-                                </ButtonCancel>
-                                <ButtonConfirm onClick={handleCreateSale}>
-                                  ADICIONAR [F]
-                                </ButtonConfirm>
-                              </ButtonsContainer>
-                            </LeftContainer>
-
-                            <RightContainer>
-                              <HeaderRight>
-                                <h2>Delivery em Andamento</h2>
-
-                                {deliveries.length !== 0 && (
-                                  <a
-                                    onClick={() =>
-                                      integrateAllSalesFromType(deliveryType)
+                          {deliveryType === 1 ? (
+                            <IFoodScreen />
+                          ) : (
+                            <Content>
+                              <LeftContainer>
+                                <h2>Adicionar Pedidos</h2>
+                                <ActionContent>
+                                  <Input
+                                    placeholder="Nome do cliente"
+                                    value={sale?.name}
+                                    onChange={({ target: { value } }) =>
+                                      setSale((oldValues) => ({
+                                        ...oldValues,
+                                        name: value,
+                                      }))
                                     }
-                                  >
-                                    {" "}
-                                    Confirmar todas as vendas
-                                  </a>
+                                  />
+                                  <Select placeholder="Escolha a opção">
+                                    <Option>Entrega</Option>
+                                  </Select>
+                                </ActionContent>
+                                {sale.payments.length !== 0 && (
+                                  <InputValue>
+                                    R${" "}
+                                    {currencyFormater(
+                                      sale?.payments?.reduce(
+                                        (total, _payment) =>
+                                          +_payment.amount + total,
+                                        0
+                                      )
+                                    )}
+                                    <span>Valor do Delivery</span>
+                                  </InputValue>
                                 )}
-                              </HeaderRight>
+                                <PaymentsContainer>
+                                  <Payments
+                                    sale={sale}
+                                    addPayment={addPayment}
+                                    removePayment={removePayment}
+                                    setCurrentPayment={setAmount}
+                                    modalState={paymentModal}
+                                    modalTitle={paymentModalTitle}
+                                    setModalState={setPaymentModal}
+                                    handleOpenPayment={handleOpenPayment}
+                                    usingDelivery={true}
+                                    flagCard={flagCard}
+                                    setFlagCard={setFlagCard}
+                                  />
+                                </PaymentsContainer>
 
-                              <OrdersListContainer>
-                                <OrderProgressList
-                                  finishSale={finishSale}
-                                  removeSale={handleCancelSale}
-                                  deliveries={deliveries?.filter(
-                                    (_delivery) =>
-                                      _delivery.type === deliveryType
+                                <ButtonsContainer>
+                                  <ButtonCancel onClick={() => handleCancel()}>
+                                    CANCELAR [C]
+                                  </ButtonCancel>
+                                  <ButtonConfirm onClick={handleCreateSale}>
+                                    ADICIONAR [F]
+                                  </ButtonConfirm>
+                                </ButtonsContainer>
+                              </LeftContainer>
+
+                              <RightContainer>
+                                <HeaderRight>
+                                  <h2>Delivery em Andamento</h2>
+
+                                  {deliveries.length !== 0 && (
+                                    <a
+                                      onClick={() =>
+                                        integrateAllSalesFromType(deliveryType)
+                                      }
+                                    >
+                                      {" "}
+                                      Confirmar todas as vendas
+                                    </a>
                                   )}
-                                />
-                              </OrdersListContainer>
-                            </RightContainer>
-                          </Content>
+                                </HeaderRight>
+
+                                <OrdersListContainer>
+                                  <OrderProgressList
+                                    finishSale={finishSale}
+                                    removeSale={handleCancelSale}
+                                    deliveries={deliveries?.filter(
+                                      (_delivery) =>
+                                        _delivery.type === deliveryType
+                                    )}
+                                  />
+                                </OrdersListContainer>
+                              </RightContainer>
+                            </Content>
+                          )}
                         </TabPane>
                       ))}
                     </Tabs>
                   </>
                 ) : (
-                  <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas."/>
+                  <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas." />
                 )}
               </>
             ) : (
@@ -657,6 +636,7 @@ const Delivery: React.FC<ComponentProps> = () => {
       </PageContent>
     </Container>
   );
+
 };
 
 export default withRouter(Delivery);
