@@ -20,4 +20,5 @@ export enum StorageNames {
   Old_Cash_History = "Old_Cash_History",
   Product_Wast = "Product_Wast",
   Products_To_Waste = "Products_To_Waste",
+  Ifood = "Ifood",
 }

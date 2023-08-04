@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
+
 import { checkInternet } from "./src/providers/internetConnection";
 import env from "./src/providers/env.json";
 import {
@@ -11,11 +12,13 @@ import {
   settingsFactory,
   storeCashFactory,
   storeFactory,
-  productWasteFactory
+  productWasteFactory,
+  ifoodFactory,
 } from "./src/factories";
 
 export const api = {
-  send: (channel: string, func: Function, data?: any) => {
+  send: (channel: string, data?: any) => ipcRenderer.send(channel, data),
+  send_once: (channel: string, func: Function, data?: any) => {
     ipcRenderer.send(channel, data);
     ipcRenderer.once(`${channel}:response`, (_, ...args) => func(...args));
   },
@@ -36,5 +39,6 @@ export const api = {
   settings: settingsFactory,
   common: commonFactory,
   productWaste: productWasteFactory,
+  ifood: ifoodFactory,
 };
 contextBridge.exposeInMainWorld("Main", { ...api });

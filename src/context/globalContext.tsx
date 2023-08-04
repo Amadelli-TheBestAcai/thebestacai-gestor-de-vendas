@@ -10,7 +10,6 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
-import moment from "moment";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -101,6 +100,7 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
+
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);
@@ -108,6 +108,13 @@ export function GlobalProvider({ children }) {
       setLoading(false);
     }
     init();
+  }, []);
+
+  useEffect(() => {
+    window.Main.send("ifood:pooling");
+    window.Main.on("ifood:pooling:response", (...props) => {
+      console.log({ props });
+    });
   }, []);
 
   const discountModalHandler = {
@@ -171,8 +178,8 @@ export function GlobalProvider({ children }) {
       if (
         +(sale.total_sold.toFixed(2) || 0) >
         sale.total_paid +
-        ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
-        0.5
+          ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
+          0.5
       ) {
         return notification.warning({
           message: "Pagamento inválido!",
@@ -247,7 +254,7 @@ export function GlobalProvider({ children }) {
         if (
           settings.should_open_casher === true &&
           error_message ===
-          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+            "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
         ) {
           const {
             response: _newSettings,
@@ -270,13 +277,13 @@ export function GlobalProvider({ children }) {
 
         error_message
           ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
+              message: error_message,
+              duration: 5,
+            })
           : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+              message: "Erro ao finalizar venda",
+              duration: 5,
+            });
       }
 
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =

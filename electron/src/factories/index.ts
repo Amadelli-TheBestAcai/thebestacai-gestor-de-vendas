@@ -8,3 +8,4 @@ export * from "./storeCashFactory";
 export * from "./storeFactory";
 export * from "./commonFactory";
 export * from "./productWasteFactory";
+export * from "./ifoodFactory";

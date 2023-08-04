@@ -57,7 +57,7 @@ const Login: React.FC<IProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      window.Main.send("app_version", async (pkg_version) => {
+      window.Main.send_once("app_version", async (pkg_version) => {
         setVersion(pkg_version);
         const { response, has_internal_error: errorOnGetVersion } =
           await window.Main.common.checkForUpdates(pkg_version);
@@ -378,7 +378,8 @@ const Login: React.FC<IProps> = ({ history }) => {
         }
       >
         <TextModalVersion>
-        Seu Gestor de Vendas está <b>desatualizado</b>, o que pode resultar em mau funcionamento e vulnerabilidades de segurança.
+          Seu Gestor de Vendas está <b>desatualizado</b>, o que pode resultar em
+          mau funcionamento e vulnerabilidades de segurança.
           <span>Entre em contato com o suporte para atualiza-lo.</span>
         </TextModalVersion>
         <Checkbox

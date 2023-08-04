@@ -2,7 +2,9 @@ import { app, BrowserWindow, screen, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
+import { ifoodFactory } from "./src/factories/ifoodFactory";
 import axios from "axios";
+import * as nodeCron from "node-cron";
 
 let win: Electron.BrowserWindow | null;
 
@@ -100,6 +102,13 @@ app.whenReady().then(async () => {
 
 ipcMain.on("app_version", (event) => {
   event.sender.send("app_version:response", app.getVersion());
+});
+
+ipcMain.on("ifood:pooling", (event) => {
+  nodeCron.schedule("*/20 * * * * *", async () => {
+    const response = await ifoodFactory.pooling();
+    event.reply("ifood:pooling:response", response);
+  });
 });
 
 ipcMain.handle("get-danfe", async (event, payload) => {
