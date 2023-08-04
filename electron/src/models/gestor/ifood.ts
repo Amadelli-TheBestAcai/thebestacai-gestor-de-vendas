@@ -1,5 +1,7 @@
 export interface IfoodDto {
   id: string;
+  merchant_id?: string;
+  merchant?: any;
   status?: string;
   token?: string;
   token_expired_at?: Date;
