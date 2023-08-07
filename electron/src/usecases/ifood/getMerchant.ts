@@ -13,8 +13,8 @@ class GetMerchant implements IUseCaseFactory {
 
   async execute(): Promise<void> {
     const hasInternet = await checkInternet();
-    if (hasInternet) {
-      const ifood = await findOrCreate.execute();
+    const ifood = await findOrCreate.execute();
+    if (hasInternet && ifood.merchant_id) {
       let { data: merchant } = await ifoodApi.get(
         `/merchant/v1.0/merchants/${ifood.merchant_id}`
       );
