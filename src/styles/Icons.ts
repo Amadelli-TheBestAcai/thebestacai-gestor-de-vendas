@@ -26,6 +26,7 @@ export {
   LogOutCircle,
   LogOut,
 } from "@styled-icons/boxicons-regular";
+export { Money } from "@styled-icons/fluentui-system-regular"
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
 export {
@@ -34,12 +35,15 @@ export {
   Image,
   TrophyFill,
   PlusCircle,
-  
+  PlayCircle,
+  PauseCircle,
+  PinMap,
+  Check2Circle
 } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
 export { Grid3x2GapFill, UiChecks, Trash } from "@styled-icons/bootstrap";
-export { ViewList } from "@styled-icons/heroicons-outline/ViewList";
+export { ViewList, Sparkles } from "@styled-icons/heroicons-outline";
 export { PhoneIphone, MoreHoriz } from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
 export { RemoveCircleOutline as RemoveCircle2 } from "@styled-icons/material-rounded/RemoveCircleOutline";
@@ -50,13 +54,12 @@ export {
   SendPlane,
 } from "@styled-icons/remix-fill";
 
-//---------------------------------------------------///
-
 export {
   AddShoppingCart,
   RemoveShoppingCart,
   Payments,
   Cancel,
+  DeliveryDining
 } from "@styled-icons/material-outlined";
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export {
@@ -64,6 +67,8 @@ export {
   CreditCard2Back,
   CheckCircleFill,
   FileEarmarkPdf,
+  Clock,
+
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
