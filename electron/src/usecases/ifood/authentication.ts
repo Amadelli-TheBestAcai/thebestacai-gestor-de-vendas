@@ -5,38 +5,39 @@ import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import ifoodApi from "../../providers/ifoodApi";
 import jwt_decode from "jwt-decode";
+import env from "../../providers/env.json";
+import { IfoodDto } from "../../models/gestor";
 
 import { formUrlEncoded } from "../../helpers/formUrlEncoded";
 
-import { IfoodDto } from "../../models/gestor/ifood";
+import { findOrCreate } from "./findOrCreate";
 
 class Authentication implements IUseCaseFactory {
   constructor(
-    private storeRepository = new BaseRepository<any>(StorageNames.Store)
+    private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood)
   ) {}
 
-  async execute(ifood: IfoodDto): Promise<IfoodDto> {
+  async execute(): Promise<IfoodDto> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
-      if (ifood.token && moment(new Date()).isAfter(ifood.token_expired_at)) {
+      let ifood = await findOrCreate.execute();
+      if (ifood.token && moment(new Date()).isBefore(ifood.token_expired_at)) {
         return ifood;
       } else {
         const { data } = await ifoodApi.post(
           "/authentication/v1.0/oauth/token",
           formUrlEncoded({
-            clientId: `c29bd29d-9c18-497f-9994-2d271ea69af8`,
-            clientSecret: `gl8eo8rhy6y613133uvllrfynll5i9mt51fasdzfj3sxxvt3jz7oumtf1xetj052dn1o5lop8412r88stucnwoc2yzkyvhlx7tz`,
+            clientId: env.IFOOD_CLIENT_ID,
+            clientSecret: env.IFOOD_CLIENT_SECRET,
             grantType: ifood.refresh_token
               ? "refresh_token"
               : "authorization_code",
-            authorizationCode: "CBRM-PPGQ",
-            authorizationCodeVerifier:
-              "im36zr6dabnd7i169pqjg0w89wavvt85dpd0lfko2pz255xpbtfnpz6odgfssnluz2pzary79s7lrpxizwp3gxr4ffxlrggb093",
+            authorizationCode: ifood.authorizationCode,
+            authorizationCodeVerifier: ifood.authorizationCodeVerifier,
             refreshToken: ifood.refresh_token,
           }),
           { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
         );
-
         ifood.token = data.accessToken;
         ifood.merchant_id = jwt_decode<{ merchant_scope }>(
           data.accessToken
@@ -46,6 +47,8 @@ class Authentication implements IUseCaseFactory {
           .add(5, "hours")
           .add(45, "minutes")
           .toDate();
+
+        await this.ifoodRepository.update(ifood.id, ifood);
 
         return ifood;
       }

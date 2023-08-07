@@ -12,3 +12,4 @@ export * from "./emitNfce";
 export * from "./handler";
 export * from "./itemOutCart";
 export * from "./oldCashHistory";
+export * from "./ifood";

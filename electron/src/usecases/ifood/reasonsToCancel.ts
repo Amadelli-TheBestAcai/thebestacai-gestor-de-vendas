@@ -3,15 +3,24 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 
-class ReasonsToCancel implements IUseCaseFactory {
-  constructor(
-    private ifoodRepository = new BaseRepository<any>(StorageNames.Ifood)
-  ) {}
+import ifoodApi from "../../providers/ifoodApi";
 
-  async execute(): Promise<void> {
+interface Request {
+  orderId: string;
+}
+
+class ReasonsToCancel implements IUseCaseFactory {
+  async execute({
+    orderId,
+  }: Request): Promise<{ cancelCodeId: string; description: string }[]> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
+      const { data } = await ifoodApi.get(
+        `/order/v1.0/orders/${orderId}/cancellationReasons`
+      );
+      return data;
     }
+    throw new Error("Falha ao estabelecer conexão com internet");
   }
 }
 

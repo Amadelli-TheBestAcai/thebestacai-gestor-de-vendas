@@ -106,12 +106,20 @@ ipcMain.on("app_version", (event) => {
 
 ipcMain.on("ifood:pooling", (event) => {
   nodeCron.schedule("*/20 * * * * *", async () => {
-    const response = await ifoodFactory.pooling();
-    event.reply("ifood:pooling:response", response);
+    try {
+      const response = await ifoodFactory.pooling();
+      event.reply("ifood:pooling:response", response);
+    } catch (err: any) {
+      return {
+        response: null,
+        has_internal_error: true,
+        error_message: err?.response?.data || err.message || err,
+      };
+    }
   });
 });
 
-ipcMain.handle("get-danfe", async (event, payload) => {
+ipcMain.handle("get-danfe", async (_, payload) => {
   const { data } = await axios({
     method: "GET",
     url: `https://api.focusnfe.com.br${payload.caminho_danfe}`,

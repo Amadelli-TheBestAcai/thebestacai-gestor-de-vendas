@@ -10,6 +10,7 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
+import { IfoodDto } from "../models/dtos/ifood";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -52,6 +53,7 @@ export function GlobalProvider({ children }) {
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
+  const [ifood, setIfood] = useState<IfoodDto | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -112,8 +114,17 @@ export function GlobalProvider({ children }) {
 
   useEffect(() => {
     window.Main.send("ifood:pooling");
-    window.Main.on("ifood:pooling:response", (...props) => {
-      console.log({ props });
+    window.Main.on("ifood:pooling:response", (event) => {
+      const { response, has_internal_error, error_message } = event;
+      if (!has_internal_error) {
+        console.log(response);
+        setIfood(response);
+      } else {
+        console.log({
+          message: "Error in ifood routine",
+          error: error_message,
+        });
+      }
     });
   }, []);
 
