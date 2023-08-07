@@ -6,15 +6,16 @@ import WasteList from "../../containers/WasteList";
 import { ProductDto } from "../../models/dtos/product";
 
 const Waste: React.FC = () => {
-  const [productStoreList, setProductStoreList] = useState<ProductDto[]>([]);
+  const [productList, setProductList] = useState<ProductDto[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProductStoreList() {
       setLoading(true);
       const { response: products } =
-        await window.Main.product.getAllProductStore();
-      setProductStoreList(products);
+        await window.Main.productWaste.getAllProductsToWaste();
+      console.log(products);
+      setProductList(products);
       setLoading(false);
     }
 
@@ -33,7 +34,7 @@ const Waste: React.FC = () => {
             </Header>
             <Content>
               <WasteList
-                products={productStoreList}
+                products={productList}
                 setLoading={setLoading}
                 loading={false}
               />

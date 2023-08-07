@@ -8,9 +8,9 @@ import { SalesTypes } from "../models/enums/salesTypes";
 import { SettingsDto } from "../models/dtos/settings";
 import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
-import { ProductDto } from "../models/dtos/product";
+import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
-import axios from "axios";
+import { IfoodDto } from "../models/dtos/ifood";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -23,7 +23,7 @@ type GlobalContextType = {
   savingSale: boolean;
   discountModalState: boolean;
   onAddItem: (
-    product: ProductDto,
+    product: StoreProductDto,
     quantity: number,
     price?: number
   ) => Promise<void>;
@@ -53,6 +53,7 @@ export function GlobalProvider({ children }) {
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
+  const [ifood, setIfood] = useState<IfoodDto | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -101,6 +102,7 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
+
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);
@@ -110,13 +112,29 @@ export function GlobalProvider({ children }) {
     init();
   }, []);
 
+  useEffect(() => {
+    window.Main.send("ifood:pooling");
+    window.Main.on("ifood:pooling:response", (event) => {
+      const { response, has_internal_error, error_message } = event;
+      if (!has_internal_error) {
+        console.log(response);
+        setIfood(response);
+      } else {
+        console.log({
+          message: "Error in ifood routine",
+          error: error_message,
+        });
+      }
+    });
+  }, []);
+
   const discountModalHandler = {
     openDiscoundModal: () => setDiscountModalState(true),
     closeDiscoundModal: () => setDiscountModalState(false),
   };
 
   const onAddItem = async (
-    product: ProductDto,
+    product: StoreProductDto,
     quantity: number,
     price?: number
   ): Promise<void> => {

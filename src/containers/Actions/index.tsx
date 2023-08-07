@@ -109,7 +109,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         setModalState={setHandlerOutState}
       />
 
-      <RewardModal isVisible={rewardModal} setIsVisible={setRewardModal}/>
+      <RewardModal isVisible={rewardModal} setIsVisible={setRewardModal} />
 
       <ChatForm isVisible={openChat} setIsVisible={setOpenChat} />
     </Container>

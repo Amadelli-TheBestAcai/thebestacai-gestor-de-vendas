@@ -18,5 +18,7 @@ export enum StorageNames {
   Errors = "Errors",
   Apm_Temp = "Apm_Temp",
   Old_Cash_History = "Old_Cash_History",
-  PRODUCT_WAST = "PRODUCT_WAST",
+  Product_Wast = "Product_Wast",
+  Products_To_Waste = "Products_To_Waste",
+  Ifood = "Ifood",
 }

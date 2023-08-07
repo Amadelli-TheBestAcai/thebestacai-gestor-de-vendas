@@ -70,6 +70,8 @@ O conteúdo do arquivo **env.json** deverá conster as sequintes informações:
   "CHAT_DASH": "${CHAT_DASH}",
   "API_SALES_HANDLER": "${API_SALES_HANDLER}",
   "API_MERCURY": "${API_MERCURY}",
+  "IFOOD_CLIENT_ID": "${IFOOD_CLIENT_ID}",
+  "IFOOD_CLIENT_SECRET": "${IFOOD_CLIENT_SECRET}",
   "NPS_URL": "${NPS_URL}"
 }
 ```
