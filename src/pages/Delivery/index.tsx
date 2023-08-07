@@ -511,7 +511,6 @@ const Delivery: React.FC<ComponentProps> = () => {
   return (
     <Container id="mainContainer" handlers={handlers}>
       <PageContent>
-        <Title>Delivery</Title>
         {loading ? (
           <>
             <Spinner />

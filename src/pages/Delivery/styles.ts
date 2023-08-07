@@ -29,7 +29,6 @@ export const PageContent = styled.div`
   background: var(--white);
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
-  padding: 1rem;
 `;
 
 export const Header = styled.header`
@@ -58,7 +57,8 @@ export const Header = styled.header`
 `;
 
 export const Tabs = styled(TabsAnt)`
-  width: 100%;
+  width: 99%;
+  
   .ant-tabs-tab.ant-tabs-tab-active,
   .ant-tabs-tab-btn {
     color: black !important;
@@ -189,6 +189,7 @@ export const Content = styled.div`
   width: 100%;
   height: 100%;
   margin-top: 1rem;
+  padding: 1rem;
 `;
 
 const ContentCSS = css`
@@ -255,11 +256,11 @@ export const ActionContent = styled.div`
 `;
 
 export const Input = styled(InputAnt)`
-  width: 40%;
+  width: 60%;
 `;
 
 export const Select = styled(SelectAnt)`
-  width: 25%;
+  width: 38%;
 `;
 
 export const Option = styled(SelectAnt.Option)``;
