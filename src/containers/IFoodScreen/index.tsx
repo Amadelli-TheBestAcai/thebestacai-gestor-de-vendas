@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CardComponent from '../../components/OrderCardComponent';
 import OrderPageIfood from '../../containers/OrderPageIfood';
@@ -41,6 +41,7 @@ import {
   ContentSelect,
   ContentMenuItems
 } from './styles';
+import { notification } from 'antd';
 const TesteModule = [
   {
     id: 1,
@@ -66,6 +67,8 @@ const TesteModule = [
 ]
 
 const IFoodScreen: React.FC = () => {
+  const [loading, setLoading] = useState(false)
+  const [codeVerifier, setCodeVerifier] = useState<any>()
   const [activeTab, setActiveTab] = useState('pedidos');
   const [selectedOption, setSelectedOption] = useState<string>('agora');
   const [totalChecked, setTotalChecked] = useState(0);
@@ -78,6 +81,29 @@ const IFoodScreen: React.FC = () => {
     othersChecked: false,
   });
   const { user } = useUser();
+
+
+
+  useEffect(() => {
+    const handleGetCodeVerifier = async () => {
+      setLoading(true);
+      try {
+        const response = await window.Main.ifood.getCodeVerifier();
+        setCodeVerifier(response)
+        console.log(response)
+        setLoading(false);
+      } catch (error) {
+        notification.error({
+          message: "Oops, ocorreu um erro!",
+          duration: 5,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleGetCodeVerifier()
+  }, [])
 
   const handleCheckboxChange = (checkboxName, isChecked) => {
     setFilters({ ...filters, [checkboxName]: isChecked });
@@ -175,9 +201,9 @@ const IFoodScreen: React.FC = () => {
                         delivery='teste'
                         order='333'
                         status='teste'
-                        onClick={() => {}}
+                        onClick={() => { }}
                       />
- 
+
                       <Footer>
                         <div className="content-footer">
                           <div className="items">
