@@ -42,6 +42,7 @@ export const ifoodFactory = {
       catalog_id,
     }),
   updateOrderStatus: async (
+    id: string,
     status:
       | "confirm"
       | "startPreparation"
@@ -56,6 +57,7 @@ export const ifoodFactory = {
     }
   ) =>
     await useCaseFactory.execute<IfoodDto>(updateOrderStatus, {
+      id,
       status,
       reasson,
     }),

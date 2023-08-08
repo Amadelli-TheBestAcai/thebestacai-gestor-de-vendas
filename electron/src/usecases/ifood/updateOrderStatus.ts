@@ -8,10 +8,10 @@ import { formUrlEncoded } from "../../helpers/formUrlEncoded";
 import { CatalogDto } from "./dtos";
 
 interface Request {
+  id: string;
   status:
     | "confirm"
     | "startPreparation"
-    | "confirm"
     | "readyToPickup"
     | "acceptCancellation"
     | "denyCancellation"
@@ -23,10 +23,10 @@ interface Request {
 }
 
 class UpdateOrderStatus implements IUseCaseFactory {
-  async execute({ status, reasson }: Request): Promise<CatalogDto[]> {
+  async execute({ id, status, reasson }: Request): Promise<CatalogDto[]> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
-      await ifoodApi.post(`/orders/{id}/${status}`, formUrlEncoded(reasson));
+      await ifoodApi.post(`/orders/${id}/${status}`, formUrlEncoded(reasson));
 
       return await getCatalogs.execute();
     }
