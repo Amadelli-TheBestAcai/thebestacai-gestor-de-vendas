@@ -6,10 +6,10 @@ import ifoodApi from "../../providers/ifoodApi";
 
 class OpenExternalLink implements IUseCaseFactory {
 
-    async execute(): Promise<void> {
+    async execute(link: string): Promise<void> {
         const hasInternet = await checkInternet();
         if (hasInternet) {
-            shell.openExternal('https://www.google.com.br');
+            shell.openExternal(link);
         }
     }
 }

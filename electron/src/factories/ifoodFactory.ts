@@ -59,5 +59,5 @@ export const ifoodFactory = {
       status,
       reasson,
     }),
-  openExternalLink: async () => await useCaseFactory.execute<any>(openExternalLink),
+  openExternalLink: async (url: string) => await useCaseFactory.execute<any>(openExternalLink, url),
 };
