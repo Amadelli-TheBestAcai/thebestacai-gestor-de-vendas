@@ -55,6 +55,23 @@ export const Footer = styled.footer`
   right: 0;
 `;
 
+export const Button = styled(ButtonAnt)`
+  width: 110px;
+  height: 50px;
+  background: transparent;
+  color: var(--orange-250);
+  border: 1px solid var(--orange-250);
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+`;
+
+export const ContentButton = styled.div`
+  display: flex;
+  width: 15%;
+`;
+
 export const ButtonSave = styled(ButtonAnt)`
   width: 113px;
   height: 50px;
@@ -111,9 +128,10 @@ export const ActionContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
   width: 10%;
   height: 100%;
+  flex-direction: column;
+  margin-left: 50px;
 
   span {
     color: #949494;

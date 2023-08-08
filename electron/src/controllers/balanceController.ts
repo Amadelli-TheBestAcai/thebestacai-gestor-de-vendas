@@ -1,7 +1,7 @@
 import SerialPort from "serialport";
 import { ipcMain } from "electron";
 import { sleep } from "../helpers/sleep";
-import { settingsFactory } from '../factories/settingsFactory'
+import { settingsFactory } from '../factories/settingsFactory';
 
 let port: SerialPort | null = null;
 
@@ -62,4 +62,60 @@ ipcMain.on("balance:get", async (event) => {
   });
   await sleep(2000);
   return event.reply("balance:get:response", { weight: 0 });
+});
+
+ipcMain.on("balance:testConnection", async (event, portCOM) => {
+  console.log(portCOM, 'PortCOM');
+  if (port && port.isOpen) {
+    port?.close(function (err) {
+      if (err) {
+        return console.log('Error closing port: ', err.message);
+      }
+      console.log('Porta Fechou');
+    });
+  }
+
+  const serialPorts = await SerialPort.list();
+
+  let portCOMAutomatic;
+  let portCOMInput;
+
+  serialPorts.forEach(port => {
+    if (port.manufacturer === "wch.cn") {
+      portCOMAutomatic = port.path;
+    } else {
+      portCOMInput = portCOM;
+    }
+  });
+
+  const detectedOrInsertPortCom = portCOMAutomatic ? portCOMAutomatic : portCOMInput;
+
+  port = new SerialPort(
+    detectedOrInsertPortCom,
+    {
+      baudRate: 9600,
+      dataBits: 7,
+      stopBits: 1,
+      parity: "none",
+      autoOpen: true,
+    },
+    (err) => {
+      if (err) {
+        const errorFileNotFound = err?.message.toLowerCase().includes("File not found");
+        const errorAccessDenied = err?.message.toLocaleLowerCase().includes('Access denied');
+
+        if (errorFileNotFound) {
+          throw new Error("Essa porta COM não foi encontrada");
+        }
+        if (errorAccessDenied) {
+          throw new Error("Essa porta COM já está sendo utilizada por outro dispositivo");
+        }
+
+        return console.log('Error: ', err.message);
+      }
+      port?.on("error", function (err: any) {
+        event.reply("balance:get:response", { error: true });
+      });
+    }
+  );
 });
