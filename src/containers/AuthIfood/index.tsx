@@ -3,6 +3,7 @@ import Code from '../../assets/svg/code.svg';
 import { Container, InfoContent, Title, ButtonLink, ContentButtons, Input, Image, Instruction, ImageSize, SubtitleAuth } from './styles';
 
 const AuthIfood = () => {
+  
   return (
     <Container>
       <Title>Autorize o iFood no gestor</Title>
@@ -16,7 +17,7 @@ const AuthIfood = () => {
               Copie o código de autorização e cole no passo 2. Faça o login, se necessário.
             </SubtitleAuth>
           </Instruction>
-          <ButtonLink onClick={() => window.Main.ifood.openExternalLink()}>
+          <ButtonLink onClick={() => window.Main.ifood.openExternalLink('https://www.google.com.br')}>
             Ver código no site
           </ButtonLink>
           <Image src={ImageCode} />
