@@ -1,7 +1,6 @@
-import React from 'react'
-import ImageCode from '../../assets/svg/codeCopy.svg'
-import Code from '../../assets/svg/code.svg'
-import { Container, InfoContent, Title, ButtonLink, ContentButtons, Input, Image, Instruction, ImageSize, SubtitleAuth } from './styles'
+import ImageCode from '../../assets/svg/codeCopy.svg';
+import Code from '../../assets/svg/code.svg';
+import { Container, InfoContent, Title, ButtonLink, ContentButtons, Input, Image, Instruction, ImageSize, SubtitleAuth } from './styles';
 
 const AuthIfood = () => {
   return (
@@ -17,7 +16,9 @@ const AuthIfood = () => {
               Copie o código de autorização e cole no passo 2. Faça o login, se necessário.
             </SubtitleAuth>
           </Instruction>
-          <ButtonLink>Ver código no site</ButtonLink>
+          <ButtonLink onClick={() => window.Main.ifood.openExternalLink()}>
+            Ver código no site
+          </ButtonLink>
           <Image src={ImageCode} />
         </ContentButtons>
         <ContentButtons>

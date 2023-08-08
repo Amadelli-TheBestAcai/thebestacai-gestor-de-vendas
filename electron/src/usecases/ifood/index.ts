@@ -7,3 +7,4 @@ export * from "./update";
 export * from "./updateProductStatus";
 export * from "./findOrCreate";
 export * from "./updateOrderStatus";
+export * from "./openExternalLink";

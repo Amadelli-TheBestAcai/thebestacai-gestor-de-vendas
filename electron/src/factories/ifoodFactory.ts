@@ -9,6 +9,7 @@ import {
   update,
   updateOrderStatus,
   reasonsToCancel,
+  openExternalLink,
 } from "../usecases/ifood";
 
 import { IfoodDto } from "../models/gestor";
@@ -26,7 +27,7 @@ export const ifoodFactory = {
   pooling: async () => await useCaseFactory.execute<IfoodDto>(pooling),
   reasonsToCancel: async () =>
     await useCaseFactory.execute<
-      { cancelCodeId: string; description: string }[]
+      { cancelCodeId: string; description: string; }[]
     >(reasonsToCancel),
   updateProductStatus: async (
     status: "AVAILABLE" | "UNAVAILABLE",
@@ -58,4 +59,5 @@ export const ifoodFactory = {
       status,
       reasson,
     }),
+  openExternalLink: async () => await useCaseFactory.execute<any>(openExternalLink),
 };
