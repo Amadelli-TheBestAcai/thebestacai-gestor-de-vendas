@@ -1,10 +1,10 @@
 import { app, BrowserWindow, screen, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import * as path from "path";
+
+import axios, { AxiosRequestConfig } from "axios";
+
 import { inicializeControllers } from "./src/controllers";
-import { ifoodFactory } from "./src/factories/ifoodFactory";
-import axios from "axios";
-import * as nodeCron from "node-cron";
 
 let win: Electron.BrowserWindow | null;
 
@@ -104,21 +104,6 @@ ipcMain.on("app_version", (event) => {
   event.sender.send("app_version:response", app.getVersion());
 });
 
-ipcMain.on("ifood:pooling", (event) => {
-  nodeCron.schedule("*/20 * * * * *", async () => {
-    try {
-      const response = await ifoodFactory.pooling();
-      event.reply("ifood:pooling:response", response);
-    } catch (err: any) {
-      return {
-        response: null,
-        has_internal_error: true,
-        error_message: err?.response?.data || err.message || err,
-      };
-    }
-  });
-});
-
 ipcMain.handle("get-danfe", async (_, payload) => {
   const { data } = await axios({
     method: "GET",
@@ -127,3 +112,11 @@ ipcMain.handle("get-danfe", async (_, payload) => {
 
   return data;
 });
+
+ipcMain.handle(
+  "request-handler",
+  async (_, config: AxiosRequestConfig<any>) => {
+    const response = await axios(config);
+    return JSON.stringify(response.data);
+  }
+);

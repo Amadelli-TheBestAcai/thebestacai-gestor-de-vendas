@@ -10,6 +10,7 @@ import {
   updateOrderStatus,
   reasonsToCancel,
   openExternalLink,
+  findOrCreate,
 } from "../usecases/ifood";
 
 import { IfoodDto } from "../models/gestor";
@@ -17,17 +18,20 @@ import { IfoodDto } from "../models/gestor";
 import { CatalogDto, CodeVerifierDto } from "../usecases/ifood/dtos";
 
 export const ifoodFactory = {
+  findOrCreate: async () =>
+    await useCaseFactory.execute<IfoodDto>(findOrCreate),
   authentication: async () =>
     await useCaseFactory.execute<IfoodDto>(authentication),
   getCatalogs: async () =>
     await useCaseFactory.execute<CatalogDto>(getCatalogs),
   getCodeVerifier: async () =>
     await useCaseFactory.execute<CodeVerifierDto>(getCodeVerifier),
-  update: async () => await useCaseFactory.execute<IfoodDto>(update),
+  update: async (payload: Partial<IfoodDto>) =>
+    await useCaseFactory.execute<IfoodDto>(update, { payload }),
   pooling: async () => await useCaseFactory.execute<IfoodDto>(pooling),
   reasonsToCancel: async () =>
     await useCaseFactory.execute<
-      { cancelCodeId: string; description: string; }[]
+      { cancelCodeId: string; description: string }[]
     >(reasonsToCancel),
   updateProductStatus: async (
     status: "AVAILABLE" | "UNAVAILABLE",
@@ -61,5 +65,6 @@ export const ifoodFactory = {
       status,
       reasson,
     }),
-  openExternalLink: async (url: string) => await useCaseFactory.execute<any>(openExternalLink, url),
+  openExternalLink: async (url: string) =>
+    await useCaseFactory.execute<any>(openExternalLink, url),
 };

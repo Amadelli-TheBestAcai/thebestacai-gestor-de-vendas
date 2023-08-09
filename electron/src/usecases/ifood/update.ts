@@ -10,7 +10,11 @@ class Update implements IUseCaseFactory {
     private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood)
   ) {}
 
-  async execute(payload: Partial<IfoodDto>): Promise<IfoodDto> {
+  async execute({
+    payload,
+  }: {
+    payload: Partial<IfoodDto>;
+  }): Promise<IfoodDto> {
     let ifood = await findOrCreate.execute();
 
     ifood = (await this.ifoodRepository.update(ifood.id, payload)) as IfoodDto;

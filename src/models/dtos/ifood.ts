@@ -1,5 +1,6 @@
 export interface IfoodDto {
   id: string;
+  is_opened?: boolean;
   merchant_id?: string;
   authorizationCode?: string;
   authorizationCodeVerifier?: string;

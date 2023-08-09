@@ -1,6 +1,8 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createContext } from "use-context-selector";
 
+import { IfoodScheduler } from "../helpers/ifoodScheduler";
+
 import { notification } from "antd";
 
 import { SaleDto } from "../models/dtos/sale";
@@ -40,6 +42,8 @@ type GlobalContextType = {
   store: StoreDto | null;
   setStore: Dispatch<SetStateAction<StoreDto | null>>;
   hasPermission: (_permission: string) => boolean;
+  ifood: IfoodDto | null;
+  setIfood: Dispatch<SetStateAction<IfoodDto>>;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(null);
@@ -54,6 +58,19 @@ export function GlobalProvider({ children }) {
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
   const [ifood, setIfood] = useState<IfoodDto | null>(null);
+
+  const ifoodSchedule = IfoodScheduler.getInstance(20, async () => {
+    const { response, has_internal_error, error_message } =
+      await window.Main.ifood.pooling();
+    if (has_internal_error) {
+      notification.error({
+        message: `[IFOOD ERROR]: ${error_message}`,
+        duration: 5,
+      });
+    } else {
+      setIfood(response);
+    }
+  });
 
   useEffect(() => {
     async function init() {
@@ -103,6 +120,9 @@ export function GlobalProvider({ children }) {
         return;
       }
 
+      const { response: _ifood } = await window.Main.ifood.findOrCreate();
+
+      setIfood(_ifood);
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);
@@ -113,20 +133,14 @@ export function GlobalProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    window.Main.send("ifood:pooling");
-    window.Main.on("ifood:pooling:response", (event) => {
-      const { response, has_internal_error, error_message } = event;
-      if (!has_internal_error) {
-        console.log(response);
-        setIfood(response);
-      } else {
-        console.log({
-          message: "Error in ifood routine",
-          error: error_message,
-        });
-      }
-    });
-  }, []);
+    if (ifood?.is_opened) {
+      console.log("starting ifood pooling");
+      ifoodSchedule.start();
+    } else {
+      console.log("stoping ifood pooling");
+      ifoodSchedule.stop();
+    }
+  }, [ifoodSchedule, ifood]);
 
   const discountModalHandler = {
     openDiscoundModal: () => setDiscountModalState(true),
@@ -420,6 +434,8 @@ export function GlobalProvider({ children }) {
         hasPermission,
         store,
         setStore,
+        ifood,
+        setIfood,
       }}
     >
       {children}

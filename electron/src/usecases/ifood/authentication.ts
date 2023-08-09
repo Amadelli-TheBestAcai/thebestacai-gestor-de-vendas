@@ -1,16 +1,20 @@
+import { ipcRenderer } from "electron";
+import jwt_decode from "jwt-decode";
 import moment from "moment";
+
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
-import ifoodApi from "../../providers/ifoodApi";
-import jwt_decode from "jwt-decode";
+
 import env from "../../providers/env.json";
+
 import { IfoodDto } from "../../models/gestor";
 
 import { formUrlEncoded } from "../../helpers/formUrlEncoded";
 
 import { findOrCreate } from "./findOrCreate";
+import { AxiosRequestConfig } from "axios";
 
 class Authentication implements IUseCaseFactory {
   constructor(
@@ -24,9 +28,10 @@ class Authentication implements IUseCaseFactory {
       if (ifood.token && moment(new Date()).isBefore(ifood.token_expired_at)) {
         return ifood;
       } else {
-        const { data } = await ifoodApi.post(
-          "/authentication/v1.0/oauth/token",
-          formUrlEncoded({
+        let data = await ipcRenderer.invoke("request-handler", {
+          method: "POST",
+          url: "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token",
+          data: formUrlEncoded({
             clientId: env.IFOOD_CLIENT_ID,
             clientSecret: env.IFOOD_CLIENT_SECRET,
             grantType: ifood.refresh_token
@@ -36,8 +41,10 @@ class Authentication implements IUseCaseFactory {
             authorizationCodeVerifier: ifood.authorizationCodeVerifier,
             refreshToken: ifood.refresh_token,
           }),
-          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-        );
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        } as AxiosRequestConfig);
+        data = JSON.parse(data);
+
         ifood.token = data.accessToken;
         ifood.merchant_id = jwt_decode<{ merchant_scope }>(
           data.accessToken
