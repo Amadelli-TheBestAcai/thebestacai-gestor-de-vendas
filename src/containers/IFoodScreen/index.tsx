@@ -141,6 +141,14 @@ const IFoodScreen: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    async function getCatalog() {
+      const response = await window.Main.ifood.getCatalogs();
+      console.log(response);
+    }
+    getCatalog();
+  }, [activeTab]);
+
   return (
     <>
       {!ifood?.token || !ifood?.refresh_token ? (

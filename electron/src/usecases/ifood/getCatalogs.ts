@@ -1,3 +1,6 @@
+import { ipcRenderer } from "electron";
+import { AxiosRequestConfig } from "axios";
+
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { checkInternet } from "../../providers/internetConnection";
 
@@ -13,15 +16,22 @@ class GetCatalogs implements IUseCaseFactory {
     if (hasInternet) {
       let ifood = await findOrCreate.execute();
       ifood = await authentication.execute();
-      let { data: catalogs } = await ifoodApi.get<CatalogDto[]>(
-        `/catalog/v2.0/merchants/${ifood.merchant_id}`
-      );
+
+      let catalogs = await ipcRenderer.invoke("request-handler", {
+        method: "GET",
+        url: `https://merchant-api.ifood.com.br/catalog/v2.0/merchants/${ifood.merchant_id}/catalogs`,
+        headers: { Authorization: `Bearer ${ifood.token}` },
+      } as AxiosRequestConfig);
+      catalogs = JSON.parse(catalogs);
 
       await Promise.all(
         catalogs.map(async (catalog) => {
-          const { data: categories } = await ifoodApi.get<CategoryDto[]>(
-            `/catalog/v2.0/merchants/${ifood.merchant}/catalogs/${catalog.groupId}/categories?includeItems=true`
-          );
+          let categories = await ipcRenderer.invoke("request-handler", {
+            method: "GET",
+            url: `https://merchant-api.ifood.com.br/catalog/v2.0/merchants/${ifood.merchant_id}/catalogs/${catalog.catalogId}/categories?includeItems=true`,
+            headers: { Authorization: `Bearer ${ifood.token}` },
+          } as AxiosRequestConfig);
+          categories = JSON.parse(categories);
 
           catalog.categories = categories;
         })
