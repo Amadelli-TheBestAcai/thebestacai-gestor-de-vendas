@@ -7,8 +7,6 @@ import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import { findOrCreate } from "./findOrCreate";
 
-import ifoodApi from "../../providers/ifoodApi";
-
 class GetMerchant implements IUseCaseFactory {
   constructor(
     private ifoodRepository = new BaseRepository<any>(StorageNames.Ifood)
