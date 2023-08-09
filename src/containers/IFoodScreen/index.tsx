@@ -146,7 +146,9 @@ const IFoodScreen: React.FC = () => {
       const response = await window.Main.ifood.getCatalogs();
       console.log(response);
     }
-    getCatalog();
+    if (activeTab === "cardapio") {
+      getCatalog();
+    }
   }, [activeTab]);
 
   return (
@@ -234,7 +236,7 @@ const IFoodScreen: React.FC = () => {
                           <div className="items">
                             <span className="order-name">Online (0): </span>
                             {/* <span>R$ 0,00</span> */}
-                            <span>{ifood?.updated_at.toISOString()}</span>
+                            <span>{ifood?.updated_at?.toISOString()}</span>
                           </div>
                         </div>
                       </Footer>
