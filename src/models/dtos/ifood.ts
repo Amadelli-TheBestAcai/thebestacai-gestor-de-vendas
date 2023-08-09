@@ -1,6 +1,7 @@
 export interface IfoodDto {
   id: string;
   is_opened?: boolean;
+  new_orders: number;
   merchant_id?: string;
   authorizationCode?: string;
   authorizationCodeVerifier?: string;
@@ -10,6 +11,7 @@ export interface IfoodDto {
   token_expired_at?: Date;
   refresh_token?: string;
   orders: OrderDto[];
+  updated_at?: Date;
 }
 
 export interface DeliveryAddressDto {

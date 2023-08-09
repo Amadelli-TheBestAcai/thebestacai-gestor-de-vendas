@@ -1,11 +1,10 @@
 export class IfoodScheduler {
   static instance: IfoodScheduler | null = null;
-
   timeInSeconds: number;
-  taskFunction: () => Promise<void>;
-  timerId: any | null = null;
+  taskFunction: () => Promise<any>;
+  timerId: NodeJS.Timeout | null = null;
 
-  constructor(timeInSeconds: number, taskFunction: () => Promise<void>) {
+  constructor(timeInSeconds: number, taskFunction: () => Promise<any>) {
     this.timeInSeconds = timeInSeconds;
     this.taskFunction = taskFunction;
   }
@@ -20,7 +19,7 @@ export class IfoodScheduler {
     return IfoodScheduler.instance;
   }
 
-  async executeTask(): Promise<any> {
+  async executeTask(): Promise<void> {
     try {
       await this.taskFunction();
     } catch (error) {

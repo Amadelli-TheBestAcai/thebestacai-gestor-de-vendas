@@ -11,5 +11,10 @@ export function useIfood() {
     (globalContext) => globalContext.setIfood
   );
 
-  return { ifood, setIfood };
+  const togleIfoodPooling = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.togleIfoodPooling
+  );
+
+  return { ifood, setIfood, togleIfoodPooling };
 }

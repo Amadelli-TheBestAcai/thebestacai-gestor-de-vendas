@@ -14,6 +14,7 @@ class FindOrCreate implements IUseCaseFactory {
     if (!ifood) {
       ifood = await this.ifoodRepository.create({
         id: v4(),
+        new_orders: 0,
         orders: [],
       });
     }

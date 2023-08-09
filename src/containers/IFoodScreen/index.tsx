@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import CardComponent from "../../components/OrderCardComponent";
 import OrderPageIfood from "../../containers/OrderPageIfood";
 import AuthIfood from "../AuthIfood";
 import { useUser } from "../../hooks/useUser";
 const { Option } = Select;
+
 import {
   Container,
   Select,
@@ -82,7 +83,7 @@ const IFoodScreen: React.FC = () => {
     othersChecked: false,
   });
   const { user } = useUser();
-  const { ifood } = useIfood();
+  const { ifood, setIfood } = useIfood();
 
   const handleCheckboxChange = (checkboxName, isChecked) => {
     setFilters({ ...filters, [checkboxName]: isChecked });
@@ -159,6 +160,7 @@ const IFoodScreen: React.FC = () => {
               <SideMenu>
                 <>
                   <ContentSelect>
+                    #
                     <Select
                       value={selectedOption}
                       onChange={(value) => setSelectedOption(String(value))}
@@ -194,22 +196,37 @@ const IFoodScreen: React.FC = () => {
                         </Dropdown>
                       </ContentButton>
 
-                      <CardComponent
-                        delivery="teste"
-                        order="333"
-                        status="teste"
-                        onClick={() => {}}
-                      />
+                      {ifood.orders.map((order) => (
+                        <CardComponent
+                          key={order.id}
+                          delivery="teste2"
+                          order="333"
+                          status="teste"
+                          onClick={() => {}}
+                        />
+                      ))}
 
                       <Footer>
                         <div className="content-footer">
                           <div className="items">
-                            <span className="order-name">Pedidos (0): </span>
+                            <span
+                              className="order-name"
+                              onClick={async () => {
+                                const { response } =
+                                  await window.Main.ifood.update({
+                                    is_opened: !ifood.is_opened,
+                                  });
+                                setIfood(response);
+                              }}
+                            >
+                              Pedidos (0):{" "}
+                            </span>
                             <span>R$ 0,00</span>
                           </div>
                           <div className="items">
                             <span className="order-name">Online (0): </span>
-                            <span>R$ 0,00</span>
+                            {/* <span>R$ 0,00</span> */}
+                            <span>{ifood?.updated_at.toISOString()}</span>
                           </div>
                         </div>
                       </Footer>

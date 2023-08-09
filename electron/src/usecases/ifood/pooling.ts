@@ -61,6 +61,8 @@ class Pooling implements IUseCaseFactory {
                     code: newOrder.code,
                     createdAt: newOrder.createdAt,
                   });
+
+                  ifood.new_orders += 1;
                 }
               })
             );
@@ -72,6 +74,8 @@ class Pooling implements IUseCaseFactory {
               headers: { Authorization: `Bearer ${ifood.token}` },
             } as AxiosRequestConfig);
           }
+
+          ifood.updated_at = new Date();
 
           await this.ifoodRepository.update(ifood.id, ifood);
           return ifood;

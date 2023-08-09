@@ -44,6 +44,7 @@ type GlobalContextType = {
   hasPermission: (_permission: string) => boolean;
   ifood: IfoodDto | null;
   setIfood: Dispatch<SetStateAction<IfoodDto>>;
+  togleIfoodPooling: () => void;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(null);
@@ -58,19 +59,7 @@ export function GlobalProvider({ children }) {
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
   const [ifood, setIfood] = useState<IfoodDto | null>(null);
-
-  const ifoodSchedule = IfoodScheduler.getInstance(20, async () => {
-    const { response, has_internal_error, error_message } =
-      await window.Main.ifood.pooling();
-    if (has_internal_error) {
-      notification.error({
-        message: `[IFOOD ERROR]: ${error_message}`,
-        duration: 5,
-      });
-    } else {
-      setIfood(response);
-    }
-  });
+  const [togleIfood, setTogleIfoodfood] = useState(true);
 
   useEffect(() => {
     async function init() {
@@ -133,14 +122,32 @@ export function GlobalProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (ifood?.is_opened) {
+    async function ifoodScheduler() {
+      console.log(new Date());
+      const { response, has_internal_error, error_message } =
+        await window.Main.ifood.pooling();
+      if (has_internal_error) {
+        notification.error({
+          message: `[IFOOD ERROR]: ${error_message}`,
+          duration: 5,
+        });
+      } else {
+        console.log(response);
+        const updatedIfood = response;
+        setIfood(updatedIfood);
+      }
+    }
+    const taskScheduler = IfoodScheduler.getInstance(20, ifoodScheduler);
+    if (togleIfood) {
       console.log("starting ifood pooling");
-      ifoodSchedule.start();
+      taskScheduler.start();
     } else {
       console.log("stoping ifood pooling");
-      ifoodSchedule.stop();
+      taskScheduler.stop();
     }
-  }, [ifoodSchedule, ifood]);
+  }, [togleIfood]);
+
+  const togleIfoodPooling = () => setTogleIfoodfood((oldValue) => !oldValue);
 
   const discountModalHandler = {
     openDiscoundModal: () => setDiscountModalState(true),
@@ -436,6 +443,7 @@ export function GlobalProvider({ children }) {
         setStore,
         ifood,
         setIfood,
+        togleIfoodPooling,
       }}
     >
       {children}
