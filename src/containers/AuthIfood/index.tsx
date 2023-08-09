@@ -13,7 +13,7 @@ import {
   ImageSize,
   SubtitleAuth,
 } from "./styles";
-import { message } from "antd";
+import { notification } from "antd";
 
 import { useIfood } from "../../hooks/useIfood";
 
@@ -31,7 +31,7 @@ const AuthIfood = () => {
         error_message: error_message_on_auth,
       } = await window.Main.ifood.authentication();
       if (has_internal_error_on_auth) {
-        message.error(error_message_on_auth);
+        notification.error({ message: error_message_on_auth });
         return;
       }
 
@@ -40,9 +40,8 @@ const AuthIfood = () => {
       });
       setIfood(response);
 
-      console.log({
-        message: "Success on login",
-        response,
+      notification.success({
+        message: "Usuário autenticado com sucesso!"
       });
     }
   };
@@ -75,6 +74,7 @@ const AuthIfood = () => {
           <Input
             placeholder="Cole o código de autorização"
             onChange={({ target: { value } }) => setCode(value)}
+            onKeyPress={(e) => e.key === "Enter" && onLogin()}
           />
           <ButtonLink onClick={onLogin}>Enviar</ButtonLink>
           <ImageSize src={Code} />
