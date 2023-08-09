@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Select, Empty } from "antd";
+import { Empty } from "antd";
 import CardComponent from "../../components/OrderCardComponent";
 import OrderPageIfood from "../../containers/OrderPageIfood";
 import AuthIfood from "../AuthIfood";
@@ -43,9 +43,9 @@ import {
   Dropdown,
   ContentSelect,
   ContentMenuItems,
-  Option
+  Option,
+  Select
 } from "./styles";
-
 
 const TesteModule = [
   {
@@ -73,7 +73,7 @@ const TesteModule = [
 
 const IFoodScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [catalogItems, setCatalogItems] = useState<any>();
+  const [catalogItems, setCatalogItems] = useState<CatalogDto>();
   const [activeTab, setActiveTab] = useState("pedidos");
   const [selectedOption, setSelectedOption] = useState<string>("agora");
   const [totalChecked, setTotalChecked] = useState(0);
@@ -147,7 +147,7 @@ const IFoodScreen: React.FC = () => {
   useEffect(() => {
     async function getCatalog() {
       const { response } = await window.Main.ifood.getCatalogs();
-      console.log(response);
+      console.log(response, 'ana teste');
       setCatalogItems(response)
     }
     if (activeTab === "cardapio") {
@@ -176,7 +176,6 @@ const IFoodScreen: React.FC = () => {
                   <SideMenu>
                     <>
                       <ContentSelect>
-                        #
                         <Select
                           value={selectedOption}
                           onChange={(value) => setSelectedOption(String(value))}
