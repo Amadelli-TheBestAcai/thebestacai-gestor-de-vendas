@@ -1,30 +1,32 @@
 import React from 'react'
-import { Container, DeliveryBox, Header, Order, StatusMessage, CardGeneral } from './styles'
+import { Container, DeliveryBox, Order, StatusMessage, CardGeneral, Button } from './styles'
 
 interface IOrderCardProps {
     order: string;
-    status: string;
     delivery: string;
     onClick: () => void;
+    message?: string;
 }
 
 const OrderCard: React.FC<IOrderCardProps> = ({
     order,
-    status,
     delivery,
-    onClick
+    onClick,
+    message
 }) => {
+
     return (
         <CardGeneral onClick={onClick}>
-            <Header status={status}>Em andamento <span>1 pedido</span></Header>
             <Container>
                 <Order>#{order}</Order>
+                
                 <StatusMessage>
-                    {status}
+                    {message}
                 </StatusMessage>
                 <DeliveryBox>
                     {delivery}
                 </DeliveryBox>
+                <Button>Despachar pedido</Button>
             </Container>
         </CardGeneral>
     )
