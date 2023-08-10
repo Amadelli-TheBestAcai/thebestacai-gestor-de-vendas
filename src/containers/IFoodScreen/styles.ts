@@ -31,6 +31,14 @@ export const Container = styled.div`
   }
 `;
 
+export const ContentScroll = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 75vh;
+`;
+
 export const TabPaneElement = styled(TabsAnt.TabPane)`
   font-size: 2rem;
 `;
@@ -43,6 +51,40 @@ export const SideMenu = styled.div`
   min-width: 23rem;
   height: 79vh;
   box-shadow: 4px 0px 4px 0px rgba(0, 0, 0, 0.25);
+`;
+
+export const ContentCards = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 24.8rem;
+  overflow: scroll;
+  overflow-x: hidden;
+`;
+
+interface IStatusProps {
+  status?: string;
+}
+
+export const HeaderCard = styled.header<IStatusProps>`
+  display: flex;
+  width: 100%;
+  padding: .2rem 1rem;
+  justify-content: space-between;
+  background-color: var(--orange-250);
+  font-size: .9rem;
+  color: var(--white);
+
+  :first-child{
+    margin-top: .5rem;
+  }
+`;
+
+export const ContentCollapse = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  
 `;
 
 export const MenuContainer = styled.div`
@@ -290,7 +332,7 @@ export const Footer = styled.footer`
     .content-footer{
       display:flex;
       justify-content: space-between;
-      width: 80%;
+      width: 90%;
     }
 
     .order-name{
@@ -354,7 +396,7 @@ export const CardHome = styled.div`
 
   .content{
     display: flex;
-    align-items: center;
+    align-items: start;
     flex-direction: column;
   }
 
@@ -471,6 +513,7 @@ export const ItemTitle = styled.span`
 export const ItemDescription = styled.span`
   font-size: 0.9rem;
   color: var(--grey-60);
+  margin-left: 1rem;
 `;
 
 export const ItemPrice = styled.span`
