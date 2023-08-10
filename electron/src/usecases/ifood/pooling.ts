@@ -16,15 +16,29 @@ class Pooling implements IUseCaseFactory {
     private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood)
   ) {}
 
-  async execute(): Promise<IfoodDto | null> {
+  async execute(): Promise<{
+    response: IfoodDto;
+    has_error: boolean;
+    error_message?: string;
+  }> {
     let ifood = await findOrCreate.execute();
 
     if (ifood.is_opened) {
       const hasInternet = await checkInternet();
       if (hasInternet) {
         if (ifood.authorizationCode && ifood.authorizationCodeVerifier) {
-          await getMerchant.execute();
-          ifood = await authentication.execute();
+          const { response, status } = await authentication.execute();
+
+          if (!status) {
+            return {
+              response: response,
+              has_error: true,
+              error_message:
+                "Erro ao realizar autenticação no ifood. Refaça o login na tela de delivery",
+            };
+          } else {
+            ifood = response;
+          }
 
           let newOrders = await ipcRenderer.invoke("request-handler", {
             method: "GET",
@@ -75,17 +89,32 @@ class Pooling implements IUseCaseFactory {
             } as AxiosRequestConfig);
           }
 
+          await getMerchant.execute();
+
           ifood.updated_at = new Date();
 
           await this.ifoodRepository.update(ifood.id, ifood);
-          return ifood;
+          return {
+            response: ifood,
+            has_error: false,
+          };
         }
-        return ifood;
+        return {
+          response: ifood,
+          has_error: false,
+        };
       } else {
-        throw new Error("Aplicação sem conexão com internet");
+        return {
+          response: ifood,
+          has_error: true,
+          error_message: "Aplicação sem conexão com internet",
+        };
       }
     } else {
-      return null;
+      return {
+        response: ifood,
+        has_error: false,
+      };
     }
   }
 }

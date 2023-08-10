@@ -28,7 +28,12 @@ export const ifoodFactory = {
     await useCaseFactory.execute<CodeVerifierDto>(getCodeVerifier),
   update: async (payload: Partial<IfoodDto>) =>
     await useCaseFactory.execute<IfoodDto>(update, { payload }),
-  pooling: async () => await useCaseFactory.execute<IfoodDto>(pooling),
+  pooling: async () =>
+    await useCaseFactory.execute<{
+      response: IfoodDto;
+      has_error: boolean;
+      error_message?: string;
+    }>(pooling),
   reasonsToCancel: async () =>
     await useCaseFactory.execute<
       { cancelCodeId: string; description: string }[]

@@ -132,8 +132,18 @@ export function GlobalProvider({ children }) {
           duration: 5,
         });
       } else {
-        console.log(response);
-        const updatedIfood = response;
+        console.log(response.response);
+        const {
+          response: updatedIfood,
+          has_error,
+          error_message: _error_message,
+        } = response;
+        if (has_error) {
+          notification.error({
+            message: `[IFOOD ERROR]: ${_error_message}`,
+            duration: 5,
+          });
+        }
         setIfood(updatedIfood);
       }
     }

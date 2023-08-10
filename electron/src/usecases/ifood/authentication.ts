@@ -21,43 +21,58 @@ class Authentication implements IUseCaseFactory {
     private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood)
   ) {}
 
-  async execute(): Promise<IfoodDto> {
+  async execute(): Promise<{ response: IfoodDto; status: boolean }> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       let ifood = await findOrCreate.execute();
       if (ifood.token && moment(new Date()).isBefore(ifood.token_expired_at)) {
-        return ifood;
+        return { response: ifood, status: true };
       } else {
-        let data = await ipcRenderer.invoke("request-handler", {
-          method: "POST",
-          url: "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token",
-          data: formUrlEncoded({
-            clientId: env.IFOOD_CLIENT_ID,
-            clientSecret: env.IFOOD_CLIENT_SECRET,
-            grantType: ifood.refresh_token
-              ? "refresh_token"
-              : "authorization_code",
-            authorizationCode: ifood.authorizationCode,
-            authorizationCodeVerifier: ifood.authorizationCodeVerifier,
-            refreshToken: ifood.refresh_token,
-          }),
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        } as AxiosRequestConfig);
-        data = JSON.parse(data);
+        try {
+          let data = await ipcRenderer.invoke("request-handler", {
+            method: "POST",
+            url: "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token",
+            data: formUrlEncoded({
+              clientId: env.IFOOD_CLIENT_ID,
+              clientSecret: env.IFOOD_CLIENT_SECRET,
+              grantType: ifood.refresh_token
+                ? "refresh_token"
+                : "authorization_code",
+              authorizationCode: ifood.authorizationCode,
+              authorizationCodeVerifier: ifood.authorizationCodeVerifier,
+              refreshToken: ifood.refresh_token,
+            }),
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          } as AxiosRequestConfig);
+          data = JSON.parse(data);
 
-        ifood.token = data.accessToken;
-        ifood.merchant_id = jwt_decode<{ merchant_scope }>(
-          data.accessToken
-        ).merchant_scope[0].split(":")[0];
-        ifood.refresh_token = data.refreshToken;
-        ifood.token_expired_at = moment(new Date())
-          .add(5, "hours")
-          .add(45, "minutes")
-          .toDate();
+          ifood.token = data.accessToken;
+          ifood.merchant_id = jwt_decode<{ merchant_scope }>(
+            data.accessToken
+          ).merchant_scope[0].split(":")[0];
+          ifood.refresh_token = data.refreshToken;
+          ifood.token_expired_at = moment(new Date())
+            .add(5, "hours")
+            .add(45, "minutes")
+            .toDate();
 
-        await this.ifoodRepository.update(ifood.id, ifood);
+          await this.ifoodRepository.update(ifood.id, ifood);
 
-        return ifood;
+          return { response: ifood, status: true };
+        } catch (error: any) {
+          if (error?.message?.includes("401")) {
+            const updatedIfood = (await this.ifoodRepository.update(ifood.id, {
+              token: undefined,
+              token_expired_at: undefined,
+              refresh_token: undefined,
+              authorizationCode: undefined,
+              authorizationCodeVerifier: undefined,
+            })) as IfoodDto;
+
+            return { response: updatedIfood, status: false };
+          }
+          throw new Error(error);
+        }
       }
     } else {
       throw new Error("Aplicação sem conexão com internet");

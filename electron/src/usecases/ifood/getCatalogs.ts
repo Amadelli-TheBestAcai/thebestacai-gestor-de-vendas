@@ -15,7 +15,15 @@ class GetCatalogs implements IUseCaseFactory {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       let ifood = await findOrCreate.execute();
-      ifood = await authentication.execute();
+
+      const { response, status } = await authentication.execute();
+      if (!status) {
+        throw new Error(
+          "Erro ao realizar autenticação no ifood. Refaça o login na tela de delivery"
+        );
+      } else {
+        ifood = response;
+      }
 
       let catalogs = await ipcRenderer.invoke("request-handler", {
         method: "GET",
