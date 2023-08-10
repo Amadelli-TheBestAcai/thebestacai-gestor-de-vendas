@@ -43,6 +43,14 @@ export const TabPaneElement = styled(TabsAnt.TabPane)`
   font-size: 2rem;
 `;
 
+export const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  margin-top: 10rem;
+`;
+
 export const SideMenu = styled.div`
   display: flex;
   position: relative;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Empty } from "antd";
+import { Empty, notification } from "antd";
 import CardComponent from "../../components/OrderCardComponent";
 import OrderPageIfood from "../../containers/OrderPageIfood";
 import AuthIfood from "../AuthIfood";
@@ -48,9 +48,11 @@ import {
   ContentCards,
   HeaderCard,
   ContentCollapse,
-  ContentScroll
+  ContentScroll,
+  LoadingContainer
 } from "./styles";
 import moment from "moment";
+import Spinner from "../../components/Spinner";
 
 const screenTypes = [
   {
@@ -88,9 +90,17 @@ const IFoodScreen: React.FC = () => {
 
   useEffect(() => {
     async function getCatalog() {
-      const { response } = await window.Main.ifood.getCatalogs();
-      console.log(response);
-      setCatalogItems(response[0])
+      try {
+        setLoading(true)
+        const { response } = await window.Main.ifood.getCatalogs();
+        setCatalogItems(response[0])
+      } catch (error) {
+        notification.error({
+          message: "Oops, ocorreu um erro!"
+        })
+      } finally {
+        setLoading(false)
+      }
     }
     if (activeTab === "cardapio") {
       getCatalog();
@@ -290,55 +300,59 @@ const IFoodScreen: React.FC = () => {
                         placeholder="Buscar item do cardápio"
                       />
 
-                      <ContentCollapse>
-                        {catalogItems?.categories?.map((category) => (
-                          <Collapse expandIconPosition="right" key={category.id}>
-                            <CollapseHeader>
-                              <span>{category.name}</span>
-                              <button onClick={() => setIsPlaying((prevState) => !prevState)}>
-                                {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                              </button>
-                            </CollapseHeader>
+                      {loading ? (
+                        <LoadingContainer>
+                          <Spinner />
+                        </LoadingContainer>
+                      ) : (
+                        <ContentCollapse>
+                          {catalogItems?.categories?.map((category) => (
+                            <Collapse expandIconPosition="right" key={category.id}>
+                              <CollapseHeader>
+                                <span>{category.name}</span>
+                                <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                  {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                                </button>
+                              </CollapseHeader>
 
-                            {category.items?.map((item) => (
-                              <PanelAnt header={<div>{item.name}</div>} key={item.id}>
-                                <PanelContent>
-                                  <ItemInfo>
-                                    <ItemTitle>{item.name}</ItemTitle>
+                              {category.items?.map((item) => (
+                                <PanelAnt header={<div>{item.name}</div>} key={item.id}>
+                                  <PanelContent>
+                                    <ItemInfo>
+                                      <ItemTitle>{item.name}</ItemTitle>
 
-                                    <ContentPrice>
-                                      <ItemDescription>
-                                        {item.description}
-                                      </ItemDescription>
+                                      <ContentPrice>
+                                        <ItemDescription>
+                                          {item.description}
+                                        </ItemDescription>
 
-                                      <ItemPrice>{item.price.value}</ItemPrice>
-                                      <button onClick={() => setIsPlaying((prevState) => !prevState)}>
-                                        {isPlaying ? (
-                                          <PauseIcon size={5} />
-                                        ) : (
-                                          <PlayIcon size={5} />
-                                        )}
-                                      </button>
-                                    </ContentPrice>
+                                        <ItemPrice>{item.price.value}</ItemPrice>
+                                        <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                          {isPlaying ? (
+                                            <PauseIcon size={5} />
+                                          ) : (
+                                            <PlayIcon size={5} />
+                                          )}
+                                        </button>
+                                      </ContentPrice>
 
-                                    {item.optionGroups?.map((optionGroup) => (
-                                      <div key={optionGroup.id}>
-                                        <div>{optionGroup.name}</div>
+                                      {item.optionGroups?.map((optionGroup) => (
+                                        <div key={optionGroup.id}>
+                                          <div>{optionGroup.name}</div>
 
-                                        {optionGroup.options.map((option) => (
-                                          <div key={option.id}>{option.name}</div>
-                                        ))}
-                                      </div>
-                                    ))}
-                                  </ItemInfo>
-                                </PanelContent>
-                              </PanelAnt>
-                            ))}
-                          </Collapse>
-                        ))}
-                      </ContentCollapse>
-
-
+                                          {optionGroup.options.map((option) => (
+                                            <div key={option.id}>{option.name}</div>
+                                          ))}
+                                        </div>
+                                      ))}
+                                    </ItemInfo>
+                                  </PanelContent>
+                                </PanelAnt>
+                              ))}
+                            </Collapse>
+                          ))}
+                        </ContentCollapse>
+                      )}
                     </ContentMenuItems>
                   </ContentScroll>
                 </Container>
