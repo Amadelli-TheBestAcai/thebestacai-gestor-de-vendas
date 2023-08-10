@@ -55,21 +55,25 @@ const Settings: React.FC = () => {
   };
 
   const testConnectionBalance = async (portCOM: string) => {
-    try {
-      window.Main.message("balance:testConnection", portCOM);
-      notification.success({
-        message: "Sucesso: conexão estabelecida com a balança!",
-        duration: 5,
-      });
-    } catch (error) {
-      console.log(error, "errorrrr");
-      notification.warning({
-        message: "Oops, algo deu errado",
-        duration: 5,
-      });
-    }
+    window.Main.send(
+      "balance:testConnection",
+      (response) => {
+        console.log(response);
+        if (response.success) {
+          notification.success({
+            message: "Sucesso: conexão estabelecida com a balança!",
+            duration: 5,
+          });
+        } else {
+          notification.warning({
+            message: response.message,
+            duration: 5,
+          });
+        }
+      },
+      portCOM
+    );
   };
-
 
   return (
     <Container>
@@ -102,7 +106,9 @@ const Settings: React.FC = () => {
             <Button
               hidden={!settings.should_use_balance}
               onClick={() => {
-                let portCOM = inputPortCOM ? inputPortCOM : "COM" + settings.balance_port?.replace(/\D/g, "");
+                let portCOM = inputPortCOM
+                  ? inputPortCOM
+                  : "COM" + settings.balance_port?.replace(/\D/g, "");
                 testConnectionBalance(portCOM);
               }}
             >
