@@ -1,27 +1,30 @@
-import styled, { css } from 'styled-components';
-
-interface Status {
-    status: string;
-}
+import styled from 'styled-components';
+import { Button as ButtonAnt } from 'antd'
 
 export const CardGeneral = styled.div`
     width: 100%;
     border-bottom: 1px solid var(--grey-60);
-    margin-top: 1rem;
 `;
 
-export const Header = styled.header<Status>`
-    display: flex;
-    background-color: var(--orange-250);
+export const Button = styled(ButtonAnt)`
     width: 100%;
-    padding: .2rem 1rem;
-    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--green-400);
+    color: var(--white);
+    border:none;
+    border-radius: 5px;
+    margin-top: .7rem;
 
-    ${({ status }) =>
-        (status === 'preparo' || status === 'pendente' || status === 'cancelado') &&
-        css`
-            color: var(--orange-250);
-        `}
+    :hover{
+     opacity: 50%;
+    }
+
+    :focus, :hover, :active {
+     background-color: var(--green-400);
+     color: var(--white);
+    }
 `;
 
 export const Container = styled.div`
@@ -36,7 +39,7 @@ export const Container = styled.div`
 `;
 
 export const StatusMessage = styled.span`
-    font-size: 1.1rem;
+    font-size: .8rem;
     font-weight: 600;
     margin-bottom: .5rem;
 `;
@@ -58,5 +61,6 @@ export const DeliveryBox = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: .7rem;
 `;
 
