@@ -61,7 +61,7 @@ export const ButtonLink = styled(ButtonAnt)`
     border-radius: 10px;
     margin: 2.5rem 0;
 
-    :hover {
+    :hover, :active, :focus {
         background-color: var(--orange-250);
         border: none;
         opacity: 70%;
@@ -75,6 +75,7 @@ export const Input = styled(InputAnt)`
     background-color: #F7F7F7;
     border: 1px solid #BEBEBEBE;
     margin: .8rem 0;
+    text-transform: uppercase;
 
     ::placeholder{
         color: #BEBEBEBE;
