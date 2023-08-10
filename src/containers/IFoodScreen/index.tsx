@@ -44,30 +44,26 @@ import {
   ContentSelect,
   ContentMenuItems,
   Option,
-  Select
+  Select,
+  ContentCards,
+  HeaderCard,
+  ContentCollapse,
+  ContentScroll
 } from "./styles";
+import moment from "moment";
 
-const TesteModule = [
+const screenTypes = [
   {
     id: 1,
-    title: ["Categoria item normal"],
-    item: "Sanduíche",
-    description: "lorem ipsum",
-    price: "R$10,00",
+    value: "agora",
   },
   {
     id: 2,
-    title: "Categoria 2",
-    item: "Açaí",
-    description: "hasiuhcfiah",
-    price: "R$10,00",
+    value: "agendado",
   },
   {
     id: 3,
-    title: "Categoria 333",
-    item: "Pão com mandioca",
-    description: "lorem ipsum",
-    price: "R$10,00",
+    value: "card",
   },
 ];
 
@@ -79,76 +75,22 @@ const IFoodScreen: React.FC = () => {
   const [totalChecked, setTotalChecked] = useState(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [filters, setFilters] = useState({
-    statusChecked: false,
-    channelChecked: false,
-    othersChecked: false,
-  });
+
   const { user } = useUser();
   const { ifood, setIfood } = useIfood();
   const { storeCash } = useSale();
+  const currentDate = moment();
+  const nextDate = moment().add(1, 'day');
 
-  const handleCheckboxChange = (checkboxName, isChecked) => {
-    setFilters({ ...filters, [checkboxName]: isChecked });
-
-    const checkedCount = Object.values({
-      ...filters,
-      [checkboxName]: isChecked,
-    }).filter(Boolean).length;
-    setTotalChecked(checkedCount);
-  };
-
-  const menuCheckbox = (
-    <div>
-      <FilterCheckbox
-        checked={filters.statusChecked}
-        onChange={(e) =>
-          handleCheckboxChange("statusChecked", e.target.checked)
-        }
-      >
-        Teste
-      </FilterCheckbox>
-
-      <FilterCheckbox
-        checked={filters.channelChecked}
-        onChange={(e) =>
-          handleCheckboxChange("channelChecked", e.target.checked)
-        }
-      >
-        Teste2
-      </FilterCheckbox>
-
-      <FilterCheckbox
-        checked={filters.othersChecked}
-        onChange={(e) =>
-          handleCheckboxChange("othersChecked", e.target.checked)
-        }
-      >
-        Teste3
-      </FilterCheckbox>
-    </div>
-  );
-
-  const screenTypes = [
-    {
-      id: 1,
-      value: "agora",
-    },
-    {
-      id: 2,
-      value: "agendado",
-    },
-    {
-      id: 3,
-      value: "card",
-    },
-  ];
+  useEffect(() => {
+    console.log(catalogItems, 'TESTE')
+  }, [])
 
   useEffect(() => {
     async function getCatalog() {
       const { response } = await window.Main.ifood.getCatalogs();
-      console.log(response, 'ana teste');
-      setCatalogItems(response)
+      console.log(response);
+      setCatalogItems(response[0])
     }
     if (activeTab === "cardapio") {
       getCatalog();
@@ -196,7 +138,7 @@ const IFoodScreen: React.FC = () => {
                               prefix={<SearchIcon />}
                             />
                             <Dropdown
-                              overlay={menuCheckbox}
+                              overlay={<p>teste</p>}
                               placement="bottomRight"
                               trigger={["click"]}
                               visible={dropdownVisible}
@@ -210,17 +152,24 @@ const IFoodScreen: React.FC = () => {
                               </Button>
                             </Dropdown>
                           </ContentButton>
-
-                          {ifood.orders.map((order) => (
-                            <CardComponent
-                              key={order.id}
-                              delivery="teste2"
-                              order="333"
-                              status="teste"
-                              onClick={() => { }}
-                            />
-                          ))}
-
+                          <ContentCards>
+                            {ifood.orders.map((order) => {
+                              return (
+                                <>
+                                  <HeaderCard>
+                                    {order.fullCode} <span>{ifood.orders.length}</span>
+                                  </HeaderCard>
+                                  <CardComponent
+                                    key={order.id}
+                                    order={order.displayId}
+                                    delivery={order.orderType}
+                                    message={order.delivery.observations}
+                                    onClick={() => { }}
+                                  />
+                                </>
+                              )
+                            })}
+                          </ContentCards>
                           <Footer>
                             <div className="content-footer">
                               <div className="items">
@@ -234,14 +183,21 @@ const IFoodScreen: React.FC = () => {
                                     setIfood(response);
                                   }}
                                 >
-                                  Pedidos (0):{" "}
+                                  Pedidos ({ifood?.orders.length}):
                                 </span>
-                                <span>R$ 0,00</span>
+                                <span>
+                                  R$ {ifood.orders.reduce((acc, order) => {
+                                    const orderTotal = order.items.reduce((orderAcc, item) => {
+                                      return orderAcc + item.price;
+                                    }, 0);
+                                    return acc + orderTotal;
+                                  }, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </span>
                               </div>
                               <div className="items">
-                                <span className="order-name">Online (0): </span>
+                                <span className="order-name">Online ({ifood?.orders.length}): </span>
                                 {/* <span>R$ 0,00</span> */}
-                                <span>{ifood?.updated_at?.toISOString()}</span>
+                                <span>Operando online</span>
                               </div>
                             </div>
                           </Footer>
@@ -264,11 +220,11 @@ const IFoodScreen: React.FC = () => {
 
                             <div className="container-card">
                               <div className="content">
-                                <span>Hoje, 02/08</span>
+                                <span>Hoje, {currentDate.format('DD/MM')} </span>
                                 <span className="hourTime">00:00 - 23:59</span>
                               </div>
                               <div className="content">
-                                <span>Hoje, 02/08</span>
+                                <span>Amanhã, {nextDate.format('DD/MM')}</span>
                                 <span className="hourTime">00:00 - 23:59</span>
                               </div>
                             </div>
@@ -307,84 +263,84 @@ const IFoodScreen: React.FC = () => {
                 </ContentGeneral>
               ) : (
                 <Container>
-                  <ContentMenuItems>
-                    <h1>Cardápio</h1>
+                  <ContentScroll>
+                    <ContentMenuItems>
+                      <h1>Cardápio</h1>
 
-                    <p>
-                      <b>Pause</b> ou <b>ative rapidamente os itens</b> do cardápio
-                      da sua loja por aqui. Para fazer edições como incluir, excluir
-                      itens ou fotos, <br />
-                      acesse o{" "}
-                      <a
-                        href="https://portal.ifood.com.br/menu"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Portal do Parceiro.
-                      </a>
-                    </p>
-                    <p>
-                      As alterações dos cardápios podem demorar até 5 minutos para
-                      aparecerem aos clientes
-                    </p>
-
-                    <Input
-                      prefix={<SearchIcon />}
-                      placeholder="Buscar item do cardápio"
-                    />
-
-                    <Collapse expandIconPosition="right">
-                      <CollapseHeader>
-                        <span>Categoria item</span>
-                        <button
-                          onClick={() => setIsPlaying((prevState) => !prevState)}
+                      <p>
+                        <b>Pause</b> ou <b>ative rapidamente os itens</b> do cardápio
+                        da sua loja por aqui. Para fazer edições como incluir, excluir
+                        itens ou fotos, <br />
+                        acesse o{" "}
+                        <a
+                          href="https://portal.ifood.com.br/menu"
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
-                          {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                        </button>
-                      </CollapseHeader>
+                          Portal do Parceiro.
+                        </a>
+                      </p>
+                      <p>
+                        As alterações dos cardápios podem demorar até 5 minutos para
+                        aparecerem aos clientes
+                      </p>
 
-                      {TesteModule.map((_module) => (
-                        <PanelAnt
-                          header={
-                            <div>
-                              {_module.item}
-                              <ItemDescription style={{ marginLeft: "1rem" }}>
-                                {_module.description}
-                              </ItemDescription>
-                            </div>
-                          }
-                          key={_module.id}
-                        >
-                          <PanelContent>
-                            <ItemInfo>
-                              <ItemTitle>{_module.title}</ItemTitle>
+                      <Input
+                        prefix={<SearchIcon />}
+                        placeholder="Buscar item do cardápio"
+                      />
 
-                              <ContentPrice>
-                                <ItemDescription>
-                                  {_module.description}
-                                </ItemDescription>
+                      <ContentCollapse>
+                        {catalogItems?.categories?.map((category) => (
+                          <Collapse expandIconPosition="right" key={category.id}>
+                            <CollapseHeader>
+                              <span>{category.name}</span>
+                              <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                              </button>
+                            </CollapseHeader>
 
-                                <div>
-                                  <ItemPrice>{_module.price}</ItemPrice>
-                                  <button
-                                    onClick={() =>
-                                      setIsPlaying((prevState) => !prevState)
-                                    }
-                                  >
-                                    {isPlaying ? (
-                                      <PauseIcon size={5} />
-                                    ) : (
-                                      <PlayIcon size={5} />
-                                    )}
-                                  </button>
-                                </div>
-                              </ContentPrice>
-                            </ItemInfo>
-                          </PanelContent>
-                        </PanelAnt>
-                      ))}
-                    </Collapse>
-                  </ContentMenuItems>
+                            {category.items?.map((item) => (
+                              <PanelAnt header={<div>{item.name}</div>} key={item.id}>
+                                <PanelContent>
+                                  <ItemInfo>
+                                    <ItemTitle>{item.name}</ItemTitle>
+
+                                    <ContentPrice>
+                                      <ItemDescription>
+                                        {item.description}
+                                      </ItemDescription>
+
+                                      <ItemPrice>{item.price.value}</ItemPrice>
+                                      <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                        {isPlaying ? (
+                                          <PauseIcon size={5} />
+                                        ) : (
+                                          <PlayIcon size={5} />
+                                        )}
+                                      </button>
+                                    </ContentPrice>
+
+                                    {item.optionGroups?.map((optionGroup) => (
+                                      <div key={optionGroup.id}>
+                                        <div>{optionGroup.name}</div>
+
+                                        {optionGroup.options.map((option) => (
+                                          <div key={option.id}>{option.name}</div>
+                                        ))}
+                                      </div>
+                                    ))}
+                                  </ItemInfo>
+                                </PanelContent>
+                              </PanelAnt>
+                            ))}
+                          </Collapse>
+                        ))}
+                      </ContentCollapse>
+
+
+                    </ContentMenuItems>
+                  </ContentScroll>
                 </Container>
               )}
             </Container>
