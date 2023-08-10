@@ -25,7 +25,7 @@ class Authentication implements IUseCaseFactory {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       let ifood = await findOrCreate.execute();
-      if (ifood.token && moment(new Date()).isBefore(ifood.token_expired_at)) {
+      if (ifood.token && moment(new Date()).isAfter(ifood.token_expired_at)) {
         return { response: ifood, status: true };
       } else {
         try {
