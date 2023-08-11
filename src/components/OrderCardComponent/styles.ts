@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Trash } from '../../styles/Icons'
 import { Button as ButtonAnt } from 'antd'
 
 export const CardGeneral = styled.div`
@@ -25,6 +26,13 @@ export const Button = styled(ButtonAnt)`
      background-color: var(--green-400);
      color: var(--white);
     }
+`;
+
+export const ContentTopInfo = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
 `;
 
 export const Container = styled.div`
@@ -54,13 +62,28 @@ export const DeliveryBox = styled.div`
     border: 1px solid var(--orange-250);
     background-color: var(--warning);
     color: var(--gray-100);
-    height: 1.2rem;
+    height: 2rem;
     padding: 2px;
-    width: 5rem;
+    width: 10rem;
     border-radius: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: .7rem;
+
+    :first-child{
+        margin-bottom: .5rem;
+    }
+`;
+
+export const ContentDeliveryBox = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+export const TrashIcon = styled(Trash)`
+    color: red;
+    width: 1.2rem;
+    height: 1.2rem;
 `;
 

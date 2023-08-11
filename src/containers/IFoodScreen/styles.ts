@@ -274,7 +274,7 @@ export const ContentMenuItems = styled.div`
 export const PageContent = styled.div`
   width: 100%;
   height: 100%;
-  padding: 1rem 2rem;
+  padding: 1rem 4rem;
   overflow: hidden;
 `;
 
