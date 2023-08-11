@@ -25,10 +25,17 @@ class Authentication implements IUseCaseFactory {
     const hasInternet = await checkInternet();
     if (hasInternet) {
       let ifood = await findOrCreate.execute();
-      if (ifood.token && moment(new Date()).isAfter(ifood.token_expired_at)) {
+      console.log({
+        isValid: moment(new Date()).isBefore(ifood.token_expired_at),
+        data: moment(ifood.token_expired_at).format("DD/MM/YYYY HH:mm:ss")
+      })
+      if (ifood.token && moment(new Date()).isBefore(ifood.token_expired_at)) {
         return { response: ifood, status: true };
       } else {
         try {
+          console.log(ifood.refresh_token
+            ? "refresh_token"
+            : "authorization_code")
           let data = await ipcRenderer.invoke("request-handler", {
             method: "POST",
             url: "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token",
@@ -52,7 +59,7 @@ class Authentication implements IUseCaseFactory {
           ).merchant_scope[0].split(":")[0];
           ifood.refresh_token = data.refreshToken;
           ifood.token_expired_at = moment(new Date())
-            .add(5, "hours")
+            .add(2, "hours")
             .add(45, "minutes")
             .toDate();
 
