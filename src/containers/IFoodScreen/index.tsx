@@ -37,7 +37,6 @@ import {
   ItemTitle,
   ItemDescription,
   ItemPrice,
-  ContentPrice,
   PlayIcon,
   PauseIcon,
   Dropdown,
@@ -49,7 +48,12 @@ import {
   HeaderCard,
   ContentCollapse,
   ContentScroll,
-  LoadingContainer
+  LoadingContainer,
+  ContentTitleCollapse,
+  TitleDisposition,
+  ComplementalGroupName,
+  DisplayLine,
+  TitleDispositionBottom
 } from "./styles";
 import moment from "moment";
 import Spinner from "../../components/Spinner";
@@ -73,7 +77,7 @@ const IFoodScreen: React.FC = () => {
   const [totalChecked, setTotalChecked] = useState(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<any>();
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const { user } = useUser();
   const { ifood, setIfood } = useIfood();
@@ -173,8 +177,9 @@ const IFoodScreen: React.FC = () => {
                                   order={order.displayId}
                                   delivery={order.orderType}
                                   message={order.delivery.observations}
-                                  onClick={() => setSelectedOrder(true)}
+                                  fullCode={order.fullCode}
                                   orderOn={order.salesChannel}
+                                  onClick={() => setSelectedOrder(order)}
                                   onDeleteCard={() => handleDeleteOrder(order.id)}
                                 />
                               </>
@@ -221,7 +226,7 @@ const IFoodScreen: React.FC = () => {
                     </>
                   </SideMenu>
                   <PageContent>
-                    {selectedOrder ? (
+                    {selectedOrder !== null ? (
                       ifood?.orders.map((orderItem) => (
                         <OrderPageIfood
                           key={orderItem.id}
@@ -236,7 +241,6 @@ const IFoodScreen: React.FC = () => {
                           closePage={() => setSelectedOrder(null)}
                         />
                       ))
-
                     ) : (
                       <>
                         {selectedOption === "agora" ? (
@@ -297,14 +301,7 @@ const IFoodScreen: React.FC = () => {
                         <b>Pause</b> ou <b>ative rapidamente os itens</b> do cardápio
                         da sua loja por aqui. Para fazer edições como incluir, excluir
                         itens ou fotos, <br />
-                        acesse o{" "}
-                        <a
-                          href="https://portal.ifood.com.br/menu"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Portal do Parceiro.
-                        </a>
+                        acesse o Portal do Parceiro.
                       </p>
                       <p>
                         As alterações dos cardápios podem demorar até 5 minutos para
@@ -332,32 +329,43 @@ const IFoodScreen: React.FC = () => {
                               </CollapseHeader>
 
                               {category.items?.map((item) => (
-                                <PanelAnt header={<div>{item.name}</div>} key={item.id}>
+                                <PanelAnt header={
+                                  <ContentTitleCollapse>
+                                    <TitleDisposition>
+                                      {item.name}
+                                      <ItemDescription>
+                                        {item.description}
+                                      </ItemDescription>
+                                    </TitleDisposition>
+
+                                    <ItemPrice>R$ {item.price.value.toFixed(2)}</ItemPrice>
+                                    <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                      {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                                    </button>
+                                  </ContentTitleCollapse>
+                                } key={item.id}>
                                   <PanelContent>
                                     <ItemInfo>
-                                      <ItemTitle>{item.name}</ItemTitle>
 
-                                      <ContentPrice>
-                                        <ItemDescription>
-                                          {item.description}
-                                        </ItemDescription>
-
-                                        <ItemPrice>{item.price.value}</ItemPrice>
-                                        <button onClick={() => setIsPlaying((prevState) => !prevState)}>
-                                          {isPlaying ? (
-                                            <PauseIcon size={5} />
-                                          ) : (
-                                            <PlayIcon size={5} />
-                                          )}
-                                        </button>
-                                      </ContentPrice>
 
                                       {item.optionGroups?.map((optionGroup) => (
                                         <div key={optionGroup.id}>
-                                          <div>{optionGroup.name}</div>
+                                          <ComplementalGroupName>{optionGroup.name}</ComplementalGroupName>
 
                                           {optionGroup.options.map((option) => (
-                                            <div key={option.id}>{option.name}</div>
+                                            <TitleDisposition>
+
+                                              <DisplayLine key={option.id}>
+                                                <span>{option.name}</span>
+
+                                                <TitleDispositionBottom>
+                                                  <span>R$ {option.price.value}</span>
+                                                  <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                                    {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                                                  </button>
+                                                </TitleDispositionBottom>
+                                              </DisplayLine>
+                                            </TitleDisposition>
                                           ))}
                                         </div>
                                       ))}
@@ -373,7 +381,7 @@ const IFoodScreen: React.FC = () => {
                   </ContentScroll>
                 </Container>
               )}
-            </Container>
+            </Container >
           )}
         </>) : (
         <EmptyContainer>

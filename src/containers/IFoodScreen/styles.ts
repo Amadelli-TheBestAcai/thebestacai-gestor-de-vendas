@@ -15,7 +15,7 @@ export const Option = styled(SelectAnt.Option)``;
 
 export const Dropdown = styled(DropdownAnt)`
   .ant-dropdown::before{
-    background: var(--gray-10);
+    background: var(--grey-60);
     padding:.8rem;
   } 
 `;
@@ -29,6 +29,12 @@ export const Container = styled.div`
   p{
     color: var(--grey-100);
   }
+`;
+
+export const DisplayLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 export const ContentScroll = styled.div`
@@ -239,6 +245,29 @@ export const FilterButton = styled.div`
   position: relative;
 `;
 
+export const ContentTitleCollapse = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+`;
+
+export const TitleDisposition = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;
+
+export const TitleDispositionBottom = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: .5rem;
+`;
+
+export const ComplementalGroupName = styled.span`
+  font-size: 1.2rem;
+`;
+
 export const FilterDropdown = styled.div`
   position: absolute;
   top: 100%;
@@ -445,6 +474,7 @@ export const Collapse = styled(CollapseAnt)`
     font-weight: 400;
     border-left: 1px solid var(--grey-60);
     border-right: 1px solid var(--grey-60);
+    padding: 0 1rem 1rem;
   }
 
   .ant-collapse-content {
@@ -513,7 +543,7 @@ export const ItemInfo = styled.div`
 `;
 
 export const ItemTitle = styled.span`
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 500;
   color: var(--grey-100);
 `;
@@ -525,20 +555,10 @@ export const ItemDescription = styled.span`
 `;
 
 export const ItemPrice = styled.span`
-  font-size: 1rem;
+  font-size: .9rem;
   font-weight: 500;
   color: var(--grey-100);
-`;
-
-export const ContentPrice = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-
-  div{
-    display: flex;
-    align-items: center;
-  }
+  width: 5%;
 `;
 
 export const PlayIcon = styled(PlayCircle)`
