@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Clock, DeliveryDining, Sparkles, Check2Circle, PinMap } from '../../styles/Icons'
+import { Clock, DeliveryDining, Sparkles, Check2Circle, PinMap, CheckCircleFill, Money } from '../../styles/Icons'
 
 const OrderBoxMixin = css`
   display: flex;
@@ -25,6 +25,27 @@ export const Container = styled.div`
   grid-template-columns: 1fr;
   grid-row-gap: 1rem;
 `;
+
+export const ContainerTypeOfPayment = styled.div`
+  ${OrderBoxMixin}
+  ${Font}
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ContainerGeneral = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  width: 100%;
+  height: 70vh;
+  
+  &::-webkit-scrollbar {
+    width: 0; 
+    display: none; 
+  }
+`;
+
 
 export const ContentOrderHeader = styled.div`
     display: flex;
@@ -53,6 +74,13 @@ export const OrderBoxItems = styled.div`
   span {
     font-size: 0.7rem;
   }
+`;
+
+export const ContentGoBack = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-bottom: .5rem;
 `;
 
 export const OrderDetailsBox = styled.div`
@@ -123,6 +151,14 @@ export const Check2CircleIcon = styled(Check2Circle)`
     ${Icon}
 `;
 export const PinMapIcon = styled(PinMap)`
+    ${Icon}
+`;
+export const Checked = styled(CheckCircleFill)`
+    ${Icon}
+`;
+export const MoneyIcon = styled(Money)`
+    width: 1.2rem;
+    height: 1.2rem;
     ${Icon}
 `;
 
