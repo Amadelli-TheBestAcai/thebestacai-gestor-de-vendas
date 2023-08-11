@@ -9,6 +9,7 @@ interface IOrderCardProps {
     onDeleteCard?: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
     message?: string;
     orderOn: string;
+    fullCode?: string;
 }
 
 const OrderCard: React.FC<IOrderCardProps> = ({
@@ -17,7 +18,8 @@ const OrderCard: React.FC<IOrderCardProps> = ({
     onClick,
     message,
     onDeleteCard,
-    orderOn
+    orderOn,
+    fullCode
 }) => {
 
     return (
@@ -41,7 +43,8 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                         {orderOn}
                     </DeliveryBox>
                 </ContentDeliveryBox>
-                <Button>Despachar pedido</Button>
+                {fullCode === 'confirmed' && <Button>Despachar pedido</Button>}
+                
             </Container>
         </CardGeneral>
     )
