@@ -1,12 +1,13 @@
-import React from 'react'
+import React from 'react';
 import { CustomerDto, OrderItemDto, OrderPaymentMethodDto, TotalOrderDto } from '../../models/dtos/ifood/order';
 import moment from 'moment';
-import { calculateTimeAgo } from '../../helpers/orderTime'
+import { calculateTimeAgo } from '../../helpers/orderTime';
 import {
     Container,
     ClockIcon,
     ContentOrderHeader,
-    Title, SubTitle,
+    Title,
+    SubTitle,
     OrderBoxInfo,
     OrderBoxItems,
     OrderDetailsBox,
@@ -16,7 +17,8 @@ import {
     ContainerGeneral,
     Checked,
     MoneyIcon
-} from './styles'
+} from './styles';
+
 interface IPageIfoodProps {
     name: string;
     displayId: string;
@@ -51,8 +53,8 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 <ContainerGeneral>
                     <Title>{name}</Title>
                     <SubTitle>
-                        Pedido {displayId} ● Feito {" "}
-                        {moment(deliveryDateTime).format("HH:mm")}
+                        Pedido {displayId} ● Feito{" "}
+                        {moment(deliveryDateTime).format('HH:mm')}
                     </SubTitle>
                     <OrderBoxInfo>
                         <ClockIcon /> Entrega prevista: 10:14
@@ -64,38 +66,52 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                     </OrderBoxItems>
                     <OrderDetailsBox>
                         <h3>Itens no pedido</h3>
-
-                        {items && items.map((item) => (
+                        {items.map((item) => (
                             <ContentInsideOrderDetailsBox key={item.id}>
-                                <span>{item.quantity}x {" "} {item.name}</span>
+                                <span>
+                                    {item.quantity}x {item.name}
+                                </span>
                                 <span className="price">
                                     R$ {item.totalPrice.toFixed(2)}
                                 </span>
                             </ContentInsideOrderDetailsBox>
                         ))}
-
                         <hr />
                         <ContentInsideOrderDetailsBox>
                             <span className="tax">Taxa de entrega</span>
-                            <span className="price">R$ {total.deliveryFee.toFixed(2)}</span>
+                            <span className="price">
+                                R$ {total.deliveryFee.toFixed(2)}
+                            </span>
                         </ContentInsideOrderDetailsBox>
                         <hr />
                         <ContentInsideOrderDetailsBox>
                             <span className="tax">Subtotal</span>
-                            <span className="price">R$ {total.orderAmount.toFixed(2)}</span>
+                            <span className="price">
+                                R$ {total.orderAmount.toFixed(2)}
+                            </span>
                         </ContentInsideOrderDetailsBox>
                     </OrderDetailsBox>
-
                     <PaymentOrderBox>
                         {methods.map((method, index) => (
                             <div key={index}>
-                                {method.prepaid ?
+                                {method.prepaid ? (
                                     <ContentOrderHeader>
-                                        <span> <Checked /> Pago via iFood, não precisa cobrar na entrega</span>
-                                        <span> <MoneyIcon />Dados do pagamento - {method.card.brand} - {method.type}</span>
+                                        <span>
+                                            <Checked /> Pago via iFood, não precisa cobrar na entrega
+                                        </span>
+                                        <span>
+                                            <MoneyIcon />
+                                            Dados do pagamento - {method.card.brand} - {method.type}
+                                        </span>
                                     </ContentOrderHeader>
-                                    : <span>Cobrar pedido na entrega</span>}
-                                {customer.documentNumber ? <span>Incluir CPF na nota fiscal</span> : <span>Usuário sem CPF vinculado</span>}
+                                ) : (
+                                    <span>Cobrar pedido na entrega</span>
+                                )}
+                                {customer.documentNumber ? (
+                                    <span>Incluir CPF na nota fiscal</span>
+                                ) : (
+                                    <span>Usuário sem CPF vinculado</span>
+                                )}
                             </div>
                         ))}
                     </PaymentOrderBox>
@@ -105,4 +121,4 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
     );
 };
 
-export default OrderPageIfood
+export default OrderPageIfood;
