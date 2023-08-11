@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Empty, notification } from "antd";
+import { Empty, Modal, notification } from "antd";
 import CardComponent from "../../components/OrderCardComponent";
 import OrderPageIfood from "../../containers/OrderPageIfood";
 import AuthIfood from "../AuthIfood";
@@ -63,10 +63,6 @@ const screenTypes = [
     id: 2,
     value: "agendado",
   },
-  {
-    id: 3,
-    value: "card",
-  },
 ];
 
 const IFoodScreen: React.FC = () => {
@@ -77,6 +73,7 @@ const IFoodScreen: React.FC = () => {
   const [totalChecked, setTotalChecked] = useState(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>();
 
   const { user } = useUser();
   const { ifood, setIfood } = useIfood();
@@ -84,9 +81,12 @@ const IFoodScreen: React.FC = () => {
   const currentDate = moment();
   const nextDate = moment().add(1, 'day');
 
-  useEffect(() => {
-    console.log(catalogItems, 'TESTE')
-  }, [])
+  const handleDeleteOrder = (orderId: string) => {
+    setIfood(prevIfood => ({
+      ...prevIfood,
+      orders: prevIfood.orders.filter(order => order.id !== orderId)
+    }));
+  };
 
   useEffect(() => {
     async function getCatalog() {
@@ -163,22 +163,23 @@ const IFoodScreen: React.FC = () => {
                             </Dropdown>
                           </ContentButton>
                           <ContentCards>
-                            {ifood.orders.map((order) => {
-                              return (
-                                <>
-                                  <HeaderCard>
-                                    {order.fullCode} <span>{ifood.orders.length}</span>
-                                  </HeaderCard>
-                                  <CardComponent
-                                    key={order.id}
-                                    order={order.displayId}
-                                    delivery={order.orderType}
-                                    message={order.delivery.observations}
-                                    onClick={() => { }}
-                                  />
-                                </>
-                              )
-                            })}
+                            {ifood.orders.map((order) => (
+                              <>
+                                <HeaderCard>
+                                  {order.fullCode} <span>{ifood.orders.length}</span>
+                                </HeaderCard>
+                                <CardComponent
+                                  key={order.id}
+                                  order={order.displayId}
+                                  delivery={order.orderType}
+                                  message={order.delivery.observations}
+                                  onClick={() => setSelectedOrder(true)}
+                                  orderOn={order.salesChannel}
+                                  onDeleteCard={() => handleDeleteOrder(order.id)}
+                                />
+                              </>
+                            )
+                            )}
                           </ContentCards>
                           <Footer>
                             <div className="content-footer">
@@ -206,7 +207,6 @@ const IFoodScreen: React.FC = () => {
                               </div>
                               <div className="items">
                                 <span className="order-name">Online ({ifood?.orders.length}): </span>
-                                {/* <span>R$ 0,00</span> */}
                                 <span>Operando online</span>
                               </div>
                             </div>
@@ -221,53 +221,69 @@ const IFoodScreen: React.FC = () => {
                     </>
                   </SideMenu>
                   <PageContent>
-                    {selectedOption === "agora" ? (
-                      <Container>
-                        <h1>👋 Olá, {user.name}</h1>
-                        <ContentHome>
-                          <CardHome>
-                            <h3>Horário de funcionamento:</h3>
+                    {selectedOrder ? (
+                      ifood?.orders.map((orderItem) => (
+                        <OrderPageIfood
+                          key={orderItem.id}
+                          name={orderItem.customer.name}
+                          displayId={orderItem.displayId}
+                          deliveryDateTime={orderItem.delivery.deliveryDateTime}
+                          fullcode={orderItem.fullCode}
+                          items={orderItem.items}
+                          total={orderItem.total}
+                          customer={orderItem.customer}
+                          methods={orderItem.payments.methods}
+                          closePage={() => setSelectedOrder(null)}
+                        />
+                      ))
 
-                            <div className="container-card">
-                              <div className="content">
-                                <span>Hoje, {currentDate.format('DD/MM')} </span>
-                                <span className="hourTime">00:00 - 23:59</span>
-                              </div>
-                              <div className="content">
-                                <span>Amanhã, {nextDate.format('DD/MM')}</span>
-                                <span className="hourTime">00:00 - 23:59</span>
-                              </div>
-                            </div>
-                          </CardHome>
-                          <CardHome>
-                            <h3>Itens pausados no cardápio:</h3>
-                            <p>0</p>
-                          </CardHome>
-                        </ContentHome>
-                      </Container>
-                    ) : selectedOption === "agendado" ? (
-                      <ContentGeneral>
-                        <CardScheduled>
-                          <h2>Pedidos agendados</h2>
-
-                          <p>
-                            Aqui você encontra os <b>pedidos agendados</b> feitos na
-                            sua loja
-                          </p>
-                          <p>
-                            O agendamento ajuda a prever a demanda que virá para a
-                            sua cozinha e seus entregadores
-                          </p>
-                          <p>
-                            Os pedidos agendados irão para a aba <b>"Agora"</b>{" "}
-                            quando estiver faltando o tempo de entrega configurado
-                            no seu restaurante. Você poderá confirmar ou cancelar o
-                            pedido clicando em "Rejeitar pedido".
-                          </p>
-                        </CardScheduled>
-                      </ContentGeneral>
                     ) : (
-                      selectedOption === "card" && <OrderPageIfood />
+                      <>
+                        {selectedOption === "agora" ? (
+                          <Container>
+                            <h1>👋 Olá, {user.name}</h1>
+                            <ContentHome>
+                              <CardHome>
+                                <h3>Horário de funcionamento:</h3>
+                                <div className="container-card">
+                                  <div className="content">
+                                    <span>Hoje, {currentDate.format('DD/MM')} </span>
+                                    <span className="hourTime">00:00 - 23:59</span>
+                                  </div>
+                                  <div className="content">
+                                    <span>Amanhã, {nextDate.format('DD/MM')}</span>
+                                    <span className="hourTime">00:00 - 23:59</span>
+                                  </div>
+                                </div>
+                              </CardHome>
+                              <CardHome>
+                                <h3>Itens pausados no cardápio:</h3>
+                                <p>0</p>
+                              </CardHome>
+                            </ContentHome>
+                          </Container>
+                        ) : (
+                          <ContentGeneral>
+                            <CardScheduled>
+                              <h2>Pedidos agendados</h2>
+                              <p>
+                                Aqui você encontra os <b>pedidos agendados</b> feitos na
+                                sua loja
+                              </p>
+                              <p>
+                                O agendamento ajuda a prever a demanda que virá para a
+                                sua cozinha e seus entregadores
+                              </p>
+                              <p>
+                                Os pedidos agendados irão para a aba <b>"Agora"</b>{" "}
+                                quando estiver faltando o tempo de entrega configurado
+                                no seu restaurante. Você poderá confirmar ou cancelar o
+                                pedido clicando em "Rejeitar pedido".
+                              </p>
+                            </CardScheduled>
+                          </ContentGeneral>
+                        )}
+                      </>
                     )}
                   </PageContent>
                 </ContentGeneral>
