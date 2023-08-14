@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Empty, Modal, notification } from "antd";
+import { Checkbox, Empty, Dropdown, notification } from "antd";
 import CardComponent from "../../components/OrderCardComponent";
 import OrderPageIfood from "../../containers/OrderPageIfood";
 import AuthIfood from "../AuthIfood";
@@ -39,7 +39,6 @@ import {
   ItemPrice,
   PlayIcon,
   PauseIcon,
-  Dropdown,
   ContentSelect,
   ContentMenuItems,
   Option,
@@ -57,6 +56,7 @@ import {
 } from "./styles";
 import moment from "moment";
 import Spinner from "../../components/Spinner";
+import { orderStatus } from "../../models/dtos/ifood/orderStatus";
 
 const screenTypes = [
   {
@@ -70,13 +70,13 @@ const screenTypes = [
 ];
 
 const IFoodScreen: React.FC = () => {
-  const [totalChecked, setTotalChecked] = useState(0);
   const [loading, setLoading] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [catalogItems, setCatalogItems] = useState<CatalogDto>();
   const [activeTab, setActiveTab] = useState("pedidos");
   const [selectedOption, setSelectedOption] = useState<string>("agora");
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
 
   const { user } = useUser();
   const { ifood, setIfood } = useIfood();
@@ -143,6 +143,10 @@ const IFoodScreen: React.FC = () => {
     setSelectedOrder(newSelectedOrder[0])
   }, [ifood])
 
+  const handleStatusChange = (checkedValues) => {
+    setSelectedStatuses(checkedValues);
+  };
+
   return (
     <>
       {storeCash?.is_opened && storeCash?.is_online ? (
@@ -179,44 +183,50 @@ const IFoodScreen: React.FC = () => {
                       {selectedOption === "agora" ? (
                         <ContentSideMenu>
                           <ContentButton>
-                            <InputWithSearchIcon
-                              placeholder="Buscar pedido"
-                              prefix={<SearchIcon />}
-                            />
                             <Dropdown
-                              overlay={<p>teste</p>}
+                              overlay={
+                                <div>
+                                  <Checkbox.Group onChange={handleStatusChange} value={selectedStatuses}>
+                                    <p>Status do Pedido</p>
+                                    {Object.keys(orderStatus).map((status) => (
+                                      <div key={status}>
+                                        <Checkbox value={status}>{orderStatus[status]}</Checkbox>
+                                      </div>
+                                    ))}
+                                  </Checkbox.Group>
+                                </div>
+                              }
                               placement="bottomRight"
                               trigger={["click"]}
                               visible={dropdownVisible}
-                              onVisibleChange={(visible) =>
-                                setDropdownVisible(visible)
-                              }
+                              onVisibleChange={(visible) => setDropdownVisible(visible)}
                             >
                               <Button icon={<SearchIcon />}>
-                                {totalChecked > 0 && `${totalChecked}`} Aplicar
-                                filtro
+                                Aplicar filtro
                               </Button>
                             </Dropdown>
                           </ContentButton>
                           <ContentCards>
-                            {ifood.orders.map((order) => (
-                              <>
-                                <HeaderCard>
-                                  {order.fullCode} <span>{ifood.orders.length}</span>
-                                </HeaderCard>
-                                <CardComponent
-                                  key={order.id}
-                                  order={order.displayId}
-                                  delivery={order.orderType}
-                                  message={order.delivery.observations}
-                                  fullCode={order.fullCode}
-                                  orderOn={order.salesChannel}
-                                  onClick={() => setSelectedOrder(order)}
-                                  onDeleteCard={() => handleDeleteOrder(order.id)}
-                                />
-                              </>
-                            )
-                            )}
+                            {ifood.orders
+                              .filter((order) => selectedStatuses.length === 0 || selectedStatuses.includes(order.fullCode.toLowerCase()))
+                              .map((order) => (
+                                <>
+                                  <HeaderCard>
+                                    {orderStatus[order.fullCode.toLowerCase()]} <span>{ifood.orders.length}</span>
+                                  </HeaderCard>
+                                  <CardComponent
+                                    key={order.id}
+                                    order={order.displayId}
+                                    delivery={order.orderType}
+                                    message={order.delivery.observations}
+                                    fullCode={order.fullCode}
+                                    orderOn={order.salesChannel}
+                                    onClick={() => setSelectedOrder(order)}
+                                    onDeleteCard={() => handleDeleteOrder(order.id)}
+                                  />
+                                </>
+                              )
+                              )}
                           </ContentCards>
                           <Footer>
                             <div className="content-footer">
