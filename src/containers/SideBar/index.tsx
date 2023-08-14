@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import LogoImg from "../../assets/img/logo-login.png";
@@ -24,12 +24,27 @@ import {
   TrashIcon,
 } from "./styles";
 import { useUser } from "../../hooks/useUser";
+import { useIfood } from "../../hooks/useIfood";
 
 type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history }) => {
   const [visible, setVisible] = useState(false);
+  const [newOrderCount, setNewOrderCount] = useState(0);
+  const [showNotification, setShowNotification] = useState(false);
+  const { ifood } = useIfood();
+
   const { hasPermission } = useUser();
+
+  useEffect(() => {
+    if (ifood?.new_orders !== undefined) {
+      setNewOrderCount(ifood.new_orders);
+      setShowNotification(ifood.new_orders > 0);
+    } else {
+      setNewOrderCount(0);
+      setShowNotification(false);
+    }
+  }, [ifood]);
 
   const handleClick = (id: number, route: string): void => {
     history.push(route);
@@ -68,7 +83,14 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       },
       {
         id: 3,
-        icon: <DeliveryIcon />,
+        icon: (
+          <div style={{ position: "relative" }}>
+            <DeliveryIcon />
+            {newOrderCount > 0 && (
+              <div className="notification-badge">{newOrderCount}</div>
+            )}
+          </div>
+        ),
         label: "Delivery",
         router: "/delivery",
       },
@@ -130,6 +152,17 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       icon: <LogOutIcon />,
       label: "Sair",
     });
+
+    const deliveryMenu = response.find((menu) => menu.id === 3);
+
+    if (deliveryMenu && showNotification) {
+      deliveryMenu.icon = (
+        <div style={{ position: "relative" }}>
+          <DeliveryIcon />
+          <div className="notification-badge">{ifood?.new_orders}</div>
+        </div>
+      );
+    }
 
     return response;
   };
