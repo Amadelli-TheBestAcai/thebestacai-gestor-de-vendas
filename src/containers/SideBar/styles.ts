@@ -21,6 +21,17 @@ export const Container = styled.div`
   height: 100%;
   width: 100%;
   background: var(--black-opaco);
+
+  .notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 6px;
+  font-size: 12px;
+}
 `;
 
 export const LogoContainer = styled.div`
