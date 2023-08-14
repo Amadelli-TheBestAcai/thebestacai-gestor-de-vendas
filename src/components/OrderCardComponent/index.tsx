@@ -5,11 +5,11 @@ import { Tooltip } from 'antd';
 interface IOrderCardProps {
     order: string;
     delivery: string;
-    onClick: () => void;
-    onDeleteCard?: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
-    message?: string;
+    message: string;
     orderOn: string;
-    fullCode?: string;
+    fullCode: string;
+    onClick: () => void;
+    onDeleteCard: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
 }
 
 const OrderCard: React.FC<IOrderCardProps> = ({
@@ -44,7 +44,6 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                     </DeliveryBox>
                 </ContentDeliveryBox>
                 {fullCode === 'confirmed' && <Button>Despachar pedido</Button>}
-                
             </Container>
         </CardGeneral>
     )
