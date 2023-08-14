@@ -24,9 +24,12 @@ import {
     Form,
     Row,
     RadioGroup,
-    CancelButton
+    CancelButton,
+    SparklesIcon,
+    ContentBoxes
 } from './styles';
 import { Col, Modal } from 'antd';
+import { orderStatus } from '../../models/dtos/ifood/orderStatus';
 
 const optionsCancel = [
     "Problemas de sistema na loja",
@@ -47,6 +50,7 @@ interface IPageIfoodProps {
     | "PLACED"
     | "CONFIRMED";
     id: string;
+    ordersCountOnMerchant: number;
     name: string;
     displayId: string;
     deliveryDateTime: string;
@@ -67,7 +71,8 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
     items,
     total,
     customer,
-    methods
+    methods,
+    ordersCountOnMerchant
 }) => {
     const timeAgo = calculateTimeAgo(deliveryDateTime);
     const [modalState, setModalState] = useState(false);
@@ -92,10 +97,10 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 reason: reasonOption,
                 cancellationCode: "",
             });
-            setModalState(false); 
+            setModalState(false);
         }
     }
-    
+
 
     return (
         <Container>
@@ -106,15 +111,22 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 <ContainerGeneral>
                     <Title>{name}</Title>
                     <SubTitle>
-                        Pedido {displayId} ● Feito{" "}
-                        {moment(deliveryDateTime).format('HH:mm')}
+                        Pedido nº {displayId}
                     </SubTitle>
-                    <OrderBoxInfo>
-                        <ClockIcon /> Entrega prevista: 10:14
-                    </OrderBoxInfo>
+
+                    <ContentBoxes>
+                        <OrderBoxInfo>
+                            <ClockIcon /> Entrega prevista: {moment(deliveryDateTime).format('HH:mm')}
+                        </OrderBoxInfo>
+
+                        {ordersCountOnMerchant === 0 && (<OrderBoxInfo>
+                            <SparklesIcon /> Primeiro pedido na loja!
+                        </OrderBoxInfo>)}
+                    </ContentBoxes>
+
                     <OrderBoxItems>
                         <span>Status do pedido</span>
-                        <p>{fullcode}</p>
+                        <p>{orderStatus[fullcode.toLowerCase()]}</p>
                         <span>{timeAgo}</span>
                     </OrderBoxItems>
                     <OrderDetailsBox>
