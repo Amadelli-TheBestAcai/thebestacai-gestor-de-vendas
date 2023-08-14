@@ -24,8 +24,8 @@ export const Container = styled.div`
 
   .notification-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: 10px;
+  right: 10px;
   background-color: red;
   color: white;
   border-radius: 50%;
