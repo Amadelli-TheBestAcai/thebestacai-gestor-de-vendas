@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Trash } from '../../styles/Icons'
+import styled, { css } from 'styled-components';
+import { Trash, DeliveryDining, Check2Circle } from '../../styles/Icons'
 import { Button as ButtonAnt } from 'antd'
 
 export const CardGeneral = styled.div`
@@ -81,9 +81,31 @@ export const ContentDeliveryBox = styled.div`
     flex-direction: column;
 `;
 
+export const ContentIcons = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const Icon = css `
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--grey-60);
+`;
+
 export const TrashIcon = styled(Trash)`
+    ${Icon}
     color: red;
     width: 1.2rem;
     height: 1.2rem;
+`;
+
+export const CheckCircleFillIcon = styled(Check2Circle)`
+    ${Icon}
+    margin-right: .5rem;
+`;
+
+export const DeliveryDiningIcon = styled(DeliveryDining)`
+    ${Icon}
+    margin-right: .5rem;
 `;
 

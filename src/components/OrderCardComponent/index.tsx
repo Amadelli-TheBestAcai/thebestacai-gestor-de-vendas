@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, DeliveryBox, Order, StatusMessage, CardGeneral, Button, ContentTopInfo, TrashIcon, ContentDeliveryBox } from './styles'
+import { Container, DeliveryBox, Order, StatusMessage, CardGeneral, Button, ContentTopInfo, TrashIcon, ContentDeliveryBox, ContentIcons, DeliveryDiningIcon, CheckCircleFillIcon } from './styles'
 import { Tooltip } from 'antd';
 
 interface IOrderCardProps {
@@ -27,9 +27,18 @@ const OrderCard: React.FC<IOrderCardProps> = ({
             <Container>
                 <ContentTopInfo>
                     <Order>#{order}</Order>
-                    <Tooltip title="Deletar pedido">
-                        <TrashIcon onClick={(id) => onDeleteCard(id)}>excluir</TrashIcon>
-                    </Tooltip>
+
+                    <ContentIcons>
+                        <Tooltip title="Pedido à caminho">
+                            {fullCode === 'DISPATCHED' && <DeliveryDiningIcon />}
+                        </Tooltip>
+                        <Tooltip title="Pedido entregue">
+                            {fullCode === 'CONCLUDED' && <CheckCircleFillIcon />}
+                        </Tooltip>
+                        <Tooltip title="Deletar pedido">
+                            <TrashIcon onClick={(id) => onDeleteCard(id)}>excluir</TrashIcon>
+                        </Tooltip>
+                    </ContentIcons>
                 </ContentTopInfo>
                 <StatusMessage>
                     {message}
