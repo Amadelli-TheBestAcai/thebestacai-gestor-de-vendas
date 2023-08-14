@@ -18,9 +18,9 @@ interface Request {
 class UpdateProductStatus implements IUseCaseFactory {
   async execute({
     status,
-    catalog_id,
     category_id,
     product_id,
+    catalog_id,
   }: Request): Promise<CatalogDto[]> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
