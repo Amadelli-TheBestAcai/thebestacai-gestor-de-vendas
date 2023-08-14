@@ -55,11 +55,11 @@ export const ifoodFactory = {
     status:
       | "confirm"
       | "startPreparation"
-      | "confirm"
       | "readyToPickup"
       | "acceptCancellation"
       | "denyCancellation"
-      | "requestCancellation",
+      | "requestCancellation"
+      | "dispatch",
     reasson?: {
       reason: string;
       cancellationCode: string;
