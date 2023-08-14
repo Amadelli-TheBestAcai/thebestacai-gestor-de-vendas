@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Checkbox, Empty, Dropdown, notification } from "antd";
-import CardComponent from "../../components/OrderCardComponent";
-import OrderPageIfood from "../../containers/OrderPageIfood";
-import AuthIfood from "../AuthIfood";
+
 import { useUser } from "../../hooks/useUser";
 import { useIfood } from "../../hooks/useIfood";
 import { useSale } from "../../hooks/useSale";
-import { CatalogDto } from "../../models/dtos/ifood/catalog";
+
+import moment from "moment";
+import { Checkbox, Empty, Dropdown, notification } from "antd";
+
 import { EmptyContainer } from "../Items/styles";
+import CardComponent from "../../components/OrderCardComponent";
+import OrderPageIfood from "../../containers/OrderPageIfood";
+import { CatalogDto } from "../../models/dtos/ifood/catalog";
+import Spinner from "../../components/Spinner";
+import { orderStatus } from "../../models/dtos/ifood/orderStatus";
+import AuthIfood from "../AuthIfood";
 
 import {
   Container,
@@ -18,8 +24,6 @@ import {
   Button,
   ContentButton,
   Tabs,
-  InputWithSearchIcon,
-  FilterCheckbox,
   PageContent,
   Input,
   CardScheduled,
@@ -34,7 +38,6 @@ import {
   PanelAnt,
   PanelContent,
   ItemInfo,
-  ItemTitle,
   ItemDescription,
   ItemPrice,
   PlayIcon,
@@ -54,9 +57,7 @@ import {
   DisplayLine,
   TitleDispositionBottom
 } from "./styles";
-import moment from "moment";
-import Spinner from "../../components/Spinner";
-import { orderStatus } from "../../models/dtos/ifood/orderStatus";
+
 
 const screenTypes = [
   {
@@ -209,13 +210,13 @@ const IFoodScreen: React.FC = () => {
                           <ContentCards>
                             {ifood.orders
                               .filter((order) => selectedStatuses.length === 0 || selectedStatuses.includes(order.fullCode.toLowerCase()))
+                              .sort((a, b) => b.createdAt.localeCompare(a.createdAt)) 
                               .map((order) => (
-                                <>
+                                <React.Fragment key={order.id}>
                                   <HeaderCard>
                                     {orderStatus[order.fullCode.toLowerCase()]} <span>{ifood.orders.length}</span>
                                   </HeaderCard>
                                   <CardComponent
-                                    key={order.id}
                                     order={order.displayId}
                                     delivery={order.orderType}
                                     message={order.delivery.observations}
@@ -224,32 +225,35 @@ const IFoodScreen: React.FC = () => {
                                     onClick={() => setSelectedOrder(order)}
                                     onDeleteCard={() => handleDeleteOrder(order.id)}
                                   />
-                                </>
-                              )
-                              )}
+                                </React.Fragment>
+                              ))}
                           </ContentCards>
+
                           <Footer>
                             <div className="content-footer">
                               <div className="items">
                                 <span
                                   className="order-name"
                                   onClick={async () => {
-                                    const { response } =
-                                      await window.Main.ifood.update({
-                                        is_opened: !ifood.is_opened,
-                                      });
+                                    const { response } = await window.Main.ifood.update({
+                                      is_opened: !ifood.is_opened,
+                                    });
                                     setIfood(response);
                                   }}
                                 >
                                   Pedidos ({ifood?.orders.length}):
                                 </span>
                                 <span>
-                                  R$ {ifood.orders.reduce((acc, order) => {
+                                  R${' '}
+                                  {ifood.orders.reduce((acc, order) => {
                                     const orderTotal = order.items.reduce((orderAcc, item) => {
                                       return orderAcc + item.price;
                                     }, 0);
-                                    return acc + orderTotal;
-                                  }, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    return acc + orderTotal + order.total.deliveryFee;
+                                  }, 0).toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}
                                 </span>
                               </div>
                               <div className="items">
@@ -258,6 +262,7 @@ const IFoodScreen: React.FC = () => {
                               </div>
                             </div>
                           </Footer>
+
                         </ContentSideMenu>
                       ) : (
                         <ContentInsideMenu>
@@ -280,6 +285,7 @@ const IFoodScreen: React.FC = () => {
                         total={selectedOrder.total}
                         customer={selectedOrder.customer}
                         methods={selectedOrder.payments.methods}
+                        ordersCountOnMerchant={selectedOrder.customer.ordersCountOnMerchant}
                         closePage={() => setSelectedOrder(null)}
                       />
                     ) : (
