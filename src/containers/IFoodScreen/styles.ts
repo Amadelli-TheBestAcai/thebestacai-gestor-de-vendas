@@ -151,40 +151,6 @@ export const Button = styled(ButtonAnt)`
   }
 `;
 
-export const InputWithSearchIcon = styled(InputAnt)`
-  display: flex;
-  height: 50px;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 20px !important;
-  border: 1px solid var(--grey-60) !important;
-  border-radius: 4px !important;
-  width: 180px;
-  background: transparent !important;
-  margin-right: 10px;
-
-  .ant-input {
-    background: transparent !important;
-    padding: 0 !important;
-    ::placeholder {
-      color: var(--grey-60);
-    }
-  }
-
-  && {
-    .ant-input-prefix {
-      display: flex;
-      align-items: center;
-      color: var(--grey-60);
-    }
-
-    .ant-input-affix-wrapper {
-      ${Button}
-      background: transparent !important;
-    }
-  }
-`;
-
 export const ContentButton = styled.div`
   display: flex;
   margin-top: 18px;
@@ -263,11 +229,6 @@ export const ComplementalGroupName = styled.span`
 
 export const FilterButtonContent = styled(Button)`
   ${Button}
-`;
-
-export const FilterCheckbox = styled(CheckboxAnt)`
-  display: block;
-  margin-bottom: 8px;
 `;
 
 export const ContentGeneral = styled.div`
@@ -522,12 +483,6 @@ export const ItemInfo = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-`;
-
-export const ItemTitle = styled.span`
-  font-size: 1.4rem;
-  font-weight: 500;
-  color: var(--grey-100);
 `;
 
 export const ItemDescription = styled.span`

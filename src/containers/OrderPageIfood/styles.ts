@@ -92,12 +92,14 @@ export const Title = styled.h1`
 export const SubTitle = styled.div`
     ${Font}
     font-size: 1rem;
+    margin-bottom: .5rem;
 `;
 
 export const OrderBoxInfo = styled.div`
   ${OrderBoxMixin}
   align-items: center;
-  width: 100%;
+  margin-right: 1rem;
+  width: 15rem;
 `;
 
 export const OrderBoxItems = styled.div`
@@ -193,6 +195,11 @@ export const MoneyIcon = styled(Money)`
     width: 1.2rem;
     height: 1.2rem;
     ${Icon}
+`;
+
+export const ContentBoxes = styled.div`
+  display: flex;
+  width: 100%;
 `;
 
 export const ContentAcceptORDeniedOrder = styled.div`
