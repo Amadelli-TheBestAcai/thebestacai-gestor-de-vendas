@@ -15,7 +15,6 @@ export const Option = styled(SelectAnt.Option)``;
 
 export const Dropdown = styled(DropdownAnt)`
   .ant-dropdown::before{
-    background: var(--grey-60);
     padding:.8rem;
   } 
 `;

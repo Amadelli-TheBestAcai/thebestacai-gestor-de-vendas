@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { Button as ButtonAnt, Row as RowAnt, Radio as RadioAnt, Form as FormAnt } from 'antd'
 import { Clock, DeliveryDining, Sparkles, Check2Circle, PinMap, CheckCircleFill, Money } from '../../styles/Icons'
 
 const OrderBoxMixin = css`
@@ -24,6 +25,38 @@ export const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-row-gap: 1rem;
+
+  position: relative;
+`;
+
+export const Radio = styled(RadioAnt)`
+`;
+
+export const RadioGroup = styled(RadioAnt.Group)`
+  font-size: 1.1rem;
+  .ant-radio-wrapper {
+    margin: 0 .8rem .8rem;
+  }
+`;
+
+export const Row = styled(RowAnt)`
+   p {
+    font-size: 1.1rem;
+   }
+  .attention {
+    color: red;
+  }
+`;
+
+export const Form = styled(FormAnt)`
+
+  .ant-form-item-control-input{
+    padding: 0;
+  }
+
+  .ant-form label {
+      font-size: 1.1rem;
+  }
 `;
 
 export const ContainerTypeOfPayment = styled.div`
@@ -162,5 +195,65 @@ export const MoneyIcon = styled(Money)`
     ${Icon}
 `;
 
+export const ContentAcceptORDeniedOrder = styled.div`
+    width: 100%;
+    justify-content: space-between;
+    padding: 1rem;
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    background-color: var(--white);
+    border-top: 1px solid var(--grey-60);
+    align-items: center;
 
+    .btn-content {
+      justify-content: end;
+      display: flex;
+    }
+`;
 
+export const Footer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  height: 100%;
+  width: 100%;
+`;
+
+export const Button = styled(ButtonAnt)`
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 4px;
+  width: 150px;
+  transition: 0.3s ease-in-out;
+  background-color: var(--orange-250);
+  color: var(--white);
+  :hover, :focus, :active {
+    border: 2px solid var(--grey-60);
+    opacity: 70%;
+  }
+
+  :first-child{
+    margin-right: 20px;
+  }
+
+  .cancel-btn {
+    background-color: transparent;
+    border: none;
+  }
+`;
+
+export const CancelButton = styled(Button)`
+  background-color: transparent;
+  border: 1px solid red;
+  color: red;
+
+  :hover{
+    background-color: transparent;
+    border: 1px solid red;
+    color: red;
+  }
+`;
