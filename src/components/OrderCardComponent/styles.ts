@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Trash, DeliveryDining, Check2Circle } from '../../styles/Icons'
+import { Trash, DeliveryDining, Check2Circle, Cancel } from '../../styles/Icons'
 import { Button as ButtonAnt } from 'antd'
 
 interface ICardProp {
@@ -119,6 +119,10 @@ export const CheckCircleFillIcon = styled(Check2Circle)`
 `;
 
 export const DeliveryDiningIcon = styled(DeliveryDining)`
+    ${Icon}
+    margin-right: .5rem;
+`;
+export const CancelIcon = styled(Cancel)`
     ${Icon}
     margin-right: .5rem;
 `;
