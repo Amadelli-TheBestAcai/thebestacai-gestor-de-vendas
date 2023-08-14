@@ -6,16 +6,16 @@ import { StoreDto } from "../../models/gestor";
 import midasApi from "../../providers/midasApi";
 
 interface Request {
-  sale_id: number,
-  justify?: string
+  sale_id: number;
+  justify?: string;
 }
 
 class CancelNfce implements IUseCaseFactory {
   constructor(
     private storeCashRepository = new BaseRepository<StoreDto>(
       StorageNames.Store
-    ),
-  ) { }
+    )
+  ) {}
 
   async execute({ sale_id, justify }: Request): Promise<void> {
     const store = await this.storeCashRepository.getOne();
@@ -23,14 +23,10 @@ class CancelNfce implements IUseCaseFactory {
     const payload = {
       sale_id,
       justify,
-      store_id: store?.company.id
-    }
+      store_id: store?.company.id,
+    };
 
-    const {
-      data
-    } = await midasApi.post("/nfce/cancel", payload);
-
-    console.log(data)
+    const { data } = await midasApi.post("/nfce/cancel", payload);
   }
 }
 

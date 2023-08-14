@@ -275,7 +275,7 @@ export function GlobalProvider({ children }) {
           message: response?.mensagem_sefaz,
           duration: 5,
         });
-        console.log({ successOnSefaz });
+
         if (successOnSefaz) {
           await window.Main.common.printDanfe(response);
         }

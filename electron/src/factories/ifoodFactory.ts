@@ -34,10 +34,10 @@ export const ifoodFactory = {
       has_error: boolean;
       error_message?: string;
     }>(pooling),
-  reasonsToCancel: async () =>
+  reasonsToCancel: async (orderId: string) =>
     await useCaseFactory.execute<
       { cancelCodeId: string; description: string }[]
-    >(reasonsToCancel),
+    >(reasonsToCancel, { orderId }),
   updateProductStatus: async (
     status: "AVAILABLE" | "UNAVAILABLE",
     category_id: string,
