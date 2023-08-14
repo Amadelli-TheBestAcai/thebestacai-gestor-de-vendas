@@ -26,7 +26,7 @@ class UpdateOrderStatus implements IUseCaseFactory {
   async execute({ id, status, reasson }: Request): Promise<CatalogDto[]> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
-      await ifoodApi.post(`/orders/${id}/${status}`, formUrlEncoded(reasson));
+      await ifoodApi.post(`/order/v1.0/orders/${id}/${status}`, formUrlEncoded(reasson));
 
       return await getCatalogs.execute();
     }
