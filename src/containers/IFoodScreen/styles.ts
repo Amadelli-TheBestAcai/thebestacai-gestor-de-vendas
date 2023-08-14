@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Search, PlayCircle, PauseCircle } from "../../styles/Icons";
 import {
   Select as SelectAnt,
@@ -40,6 +40,8 @@ export const ContentScroll = styled.div`
 
 export const TabPaneElement = styled(TabsAnt.TabPane)`
   font-size: 2rem;
+
+
 `;
 
 export const LoadingContainer = styled.div`
@@ -170,12 +172,18 @@ export const Tabs = styled(TabsAnt)`
   display: flex;
   justify-content: start !important;
   padding: 0 1rem;
+
   .ant-tabs-tab {
     display: flex;
     font-size: 1.2rem;
     color: black !important;
     justify-content: start !important;
     margin-right: 2rem !important;
+  }
+
+  .ant-tabs-nav-list {
+    display: flex;
+    justify-content: start !important;
   }
 
   .ant-tabs-tab-btn:hover{

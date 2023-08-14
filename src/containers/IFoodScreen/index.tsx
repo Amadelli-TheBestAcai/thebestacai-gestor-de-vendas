@@ -157,8 +157,8 @@ const IFoodScreen: React.FC = () => {
                 defaultActiveKey="pedidos"
                 onChange={(key) => setActiveTab(key)}
               >
-                <TabPaneElement tab="Pedidos" key="pedidos" />
-                <TabPaneElement tab="Cardápio" key="cardapio" />
+                <TabPaneElement active={activeTab === 'pedidos'} tab="Pedidos" key="pedidos" />
+                <TabPaneElement active={activeTab === 'cardapio'}tab="Cardápio" key="cardapio" />
               </Tabs>
               {activeTab === "pedidos" ? (
                 <ContentGeneral>
