@@ -70,13 +70,12 @@ const screenTypes = [
 ];
 
 const IFoodScreen: React.FC = () => {
+  const [totalChecked, setTotalChecked] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [catalogItems, setCatalogItems] = useState<CatalogDto>();
   const [activeTab, setActiveTab] = useState("pedidos");
   const [selectedOption, setSelectedOption] = useState<string>("agora");
-  const [totalChecked, setTotalChecked] = useState(0);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const { user } = useUser();
@@ -85,12 +84,38 @@ const IFoodScreen: React.FC = () => {
   const currentDate = moment();
   const nextDate = moment().add(1, 'day');
 
-  const handleDeleteOrder = (orderId: string) => {
-    setIfood(prevIfood => ({
-      ...prevIfood,
-      orders: prevIfood.orders.filter(order => order.id !== orderId)
-    }));
+  const handleDeleteOrder = async (orderId: string) => {
+    const updatedIfood = {
+      ...ifood,
+      orders: ifood.orders.filter(order => order.id !== orderId)
+    }
+    setIfood(updatedIfood);
+    await window.Main.ifood.update(updatedIfood)
   };
+
+  const changeProductStatus = async (
+    status: "AVAILABLE" | "UNAVAILABLE",
+    category_id: string,
+    catalog_id: string,
+    product_id: string
+  ) => {
+    try {
+      setLoading(true)
+      await window.Main.ifood.updateProductStatus(
+        status,
+        catalog_id,
+        category_id,
+        product_id
+      );
+    } catch (error) {
+      notification.error({
+        message: "Oops, ocorreu um erro!",
+        duration: 5
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     async function getCatalog() {
@@ -98,6 +123,7 @@ const IFoodScreen: React.FC = () => {
         setLoading(true)
         const { response } = await window.Main.ifood.getCatalogs();
         setCatalogItems(response[0])
+        console.log(response[0])
       } catch (error) {
         notification.error({
           message: "Oops, ocorreu um erro!"
@@ -110,6 +136,12 @@ const IFoodScreen: React.FC = () => {
       getCatalog();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    if (!ifood || !selectedOrder) return
+    const newSelectedOrder = ifood.orders.filter((item) => item.id === selectedOrder.id)
+    setSelectedOrder(newSelectedOrder[0])
+  }, [ifood])
 
   return (
     <>
@@ -226,21 +258,20 @@ const IFoodScreen: React.FC = () => {
                     </>
                   </SideMenu>
                   <PageContent>
-                    {selectedOrder !== null ? (
-                      ifood?.orders.map((orderItem) => (
-                        <OrderPageIfood
-                          key={orderItem.id}
-                          name={orderItem.customer.name}
-                          displayId={orderItem.displayId}
-                          deliveryDateTime={orderItem.delivery.deliveryDateTime}
-                          fullcode={orderItem.fullCode}
-                          items={orderItem.items}
-                          total={orderItem.total}
-                          customer={orderItem.customer}
-                          methods={orderItem.payments.methods}
-                          closePage={() => setSelectedOrder(null)}
-                        />
-                      ))
+                    {selectedOrder ? (
+                      <OrderPageIfood
+                        id={selectedOrder.id}
+                        key={selectedOrder.id}
+                        name={selectedOrder.customer.name}
+                        displayId={selectedOrder.displayId}
+                        deliveryDateTime={selectedOrder.delivery.deliveryDateTime}
+                        fullcode={selectedOrder.fullCode}
+                        items={selectedOrder.items}
+                        total={selectedOrder.total}
+                        customer={selectedOrder.customer}
+                        methods={selectedOrder.payments.methods}
+                        closePage={() => setSelectedOrder(null)}
+                      />
                     ) : (
                       <>
                         {selectedOption === "agora" ? (
@@ -320,11 +351,18 @@ const IFoodScreen: React.FC = () => {
                       ) : (
                         <ContentCollapse>
                           {catalogItems?.categories?.map((category) => (
-                            <Collapse expandIconPosition="right" key={category.id}>
+                            <Collapse expandIconPosition="right" key={category.id} >
                               <CollapseHeader>
-                                <span>{category.name}</span>
-                                <button onClick={() => setIsPlaying((prevState) => !prevState)}>
-                                  {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                                <span>
+                                  {category.name}
+                                </span>
+                                <button onClick={() => changeProductStatus(
+                                  category.status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE",
+                                  category.id,
+                                  catalogItems.catalogId,
+                                  ""
+                                )}>
+                                  {category.status === "AVAILABLE" ? <PauseIcon /> : <PlayIcon />}
                                 </button>
                               </CollapseHeader>
 
@@ -339,9 +377,9 @@ const IFoodScreen: React.FC = () => {
                                     </TitleDisposition>
 
                                     <ItemPrice>R$ {item.price.value.toFixed(2)}</ItemPrice>
-                                    <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                    {/* <button onClick={() => setIsPlaying((prevState) => !prevState)}>
                                       {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                                    </button>
+                                    </button> */}
                                   </ContentTitleCollapse>
                                 } key={item.id}>
                                   <PanelContent>
@@ -360,9 +398,9 @@ const IFoodScreen: React.FC = () => {
 
                                                 <TitleDispositionBottom>
                                                   <span>R$ {option.price.value}</span>
-                                                  <button onClick={() => setIsPlaying((prevState) => !prevState)}>
+                                                  {/* <button onClick={() => setIsPlaying((prevState) => !prevState)}>
                                                     {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                                                  </button>
+                                                  </button> */}
                                                 </TitleDispositionBottom>
                                               </DisplayLine>
                                             </TitleDisposition>
