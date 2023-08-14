@@ -99,6 +99,16 @@ export const GlobalStyle = createGlobalStyle`
       background-color: var(--orange-250);
     }
 
+    .ant-dropdown {
+      background: white;
+      padding: .2rem .5rem;
+      max-width: 100%;
+    }
+
+    .ant-checkbox-wrapper {
+      margin-bottom: 0.5rem;
+    }
+
     .ant-tabs-tab.ant-tabs-tab-active,
     .ant-tabs-tab-btn {
       color: white;

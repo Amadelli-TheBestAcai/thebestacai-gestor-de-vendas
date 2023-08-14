@@ -7,17 +7,11 @@ import {
   Input as InputAnt,
   Checkbox as CheckboxAnt,
   Collapse as CollapseAnt,
-  Dropdown as DropdownAnt,
+
 } from "antd";
 const { Panel } = CollapseAnt;
 
 export const Option = styled(SelectAnt.Option)``;
-
-export const Dropdown = styled(DropdownAnt)`
-  .ant-dropdown::before{
-    padding:.8rem;
-  } 
-`;
 
 export const Container = styled.div`
   width: 100%;
@@ -147,7 +141,7 @@ export const Button = styled(ButtonAnt)`
   padding: 10px;
   border: 1px solid var(--grey-60);
   border-radius: 4px;
-  width: 180px;
+  width: 100%;
   transition: 0.3s ease-in-out;
   color: var(--grey-60);
 
@@ -265,17 +259,6 @@ export const TitleDispositionBottom = styled.div`
 
 export const ComplementalGroupName = styled.span`
   font-size: 1.2rem;
-`;
-
-export const FilterDropdown = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  border: 1px solid #d9d9d9;
-  padding: 8px;
-  z-index: 999;
-  min-width: 180px;
 `;
 
 export const FilterButtonContent = styled(Button)`
