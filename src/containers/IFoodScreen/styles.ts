@@ -1,11 +1,10 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { Search, PlayCircle, PauseCircle } from "../../styles/Icons";
 import {
   Select as SelectAnt,
   Button as ButtonAnt,
   Tabs as TabsAnt,
   Input as InputAnt,
-  Checkbox as CheckboxAnt,
   Collapse as CollapseAnt,
 
 } from "antd";
@@ -40,8 +39,6 @@ export const ContentScroll = styled.div`
 
 export const TabPaneElement = styled(TabsAnt.TabPane)`
   font-size: 2rem;
-
-
 `;
 
 export const LoadingContainer = styled.div`
