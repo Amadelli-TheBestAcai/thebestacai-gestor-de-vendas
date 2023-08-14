@@ -67,35 +67,26 @@ ipcMain.on("balance:get", async (event) => {
 
 ipcMain.on("balance:testConnection", async (event, portCOM) => {
   try {
-    console.log(portCOM, "PortCOM");
+
     if (port && port.isOpen) {
       port?.close(function (err) {
         if (err) {
-          return console.log("Error closing port: ", err.message);
+          console.log("Error closing port: ", err.message);
+          return event.reply("balance:testConnection:response", {
+            success: false,
+            message: `Erro ao tentar desconectar a porta ${port?.path}`,
+          });
         }
-        console.log("Porta Fechou");
+
+      });
+      return event.reply("balance:testConnection:response", {
+        success: false,
+        message: `A porta ${port?.path} foi desconectada`,
       });
     }
 
-    const serialPorts = await SerialPort.list();
-
-    let portCOMAutomatic;
-    let portCOMInput;
-
-    serialPorts.forEach((port) => {
-      if (port.manufacturer === "wch.cn") {
-        portCOMAutomatic = port.path;
-      } else {
-        portCOMInput = portCOM;
-      }
-    });
-
-    const detectedOrInsertPortCom = portCOMAutomatic
-      ? portCOMAutomatic
-      : portCOMInput;
-
     port = new SerialPort(
-      detectedOrInsertPortCom,
+      portCOM,
       {
         baudRate: 9600,
         dataBits: 7,
@@ -105,24 +96,19 @@ ipcMain.on("balance:testConnection", async (event, portCOM) => {
       },
       (err) => {
         if (err) {
-          const errorFileNotFound = err?.message
-            .toLowerCase()
-            .includes("File not found");
-          const errorAccessDenied = err?.message
-            .toLocaleLowerCase()
-            .includes("Access denied");
-
+          const errorFileNotFound = err?.message.toLowerCase().includes("file not found");
+          const errorAccessDenied = err?.message.toLowerCase().includes("access denied");
           if (errorFileNotFound) {
             return event.reply("balance:testConnection:response", {
               success: false,
-              message: "Essa porta COM não foi encontrada",
+              message: `A porta ${port?.path} não foi encontrada`,
             });
           }
           if (errorAccessDenied) {
             return event.reply("balance:testConnection:response", {
               success: false,
               message:
-                "Essa porta COM já está sendo utilizada por outro dispositivo",
+                `A porta ${port?.path} já está sendo utilizada por outro dispositivo`,
             });
           }
           console.log(err);
