@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Trash, DeliveryDining, Check2Circle, Cancel } from '../../styles/Icons'
+import { Trash, DeliveryDining, Check2Circle, Cancel, NotificationsCircle } from '../../styles/Icons'
 import { Button as ButtonAnt } from 'antd'
 
 interface ICardProp {
@@ -61,7 +61,7 @@ export const Container = styled.div`
 `;
 
 export const StatusMessage = styled.span`
-    font-size: .8rem;
+    font-size: .9rem;
     font-weight: 600;
     margin-bottom: .5rem;
 `;
@@ -84,6 +84,10 @@ export const DeliveryBox = styled.div`
     align-items: center;
     justify-content: center;
     font-size: .7rem;
+
+    .delivery-box {
+        color: var(--orange-250);
+    }
 
     :first-child{
         margin-bottom: .5rem;
@@ -126,4 +130,7 @@ export const CancelIcon = styled(Cancel)`
     ${Icon}
     margin-right: .5rem;
 `;
-
+export const NotificationsCircleIcon = styled(NotificationsCircle)`
+    ${Icon}
+    margin-right: .5rem;
+`;

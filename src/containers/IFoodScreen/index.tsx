@@ -124,7 +124,6 @@ const IFoodScreen: React.FC = () => {
         setLoading(true)
         const { response } = await window.Main.ifood.getCatalogs();
         setCatalogItems(response[0])
-        console.log(response[0])
       } catch (error) {
         notification.error({
           message: "Oops, ocorreu um erro!"
@@ -218,7 +217,6 @@ const IFoodScreen: React.FC = () => {
                                   <CardComponent
                                     order={order.displayId}
                                     delivery={order.orderType}
-                                    message={order.delivery.observations}
                                     fullCode={order.fullCode}
                                     orderOn={order.salesChannel}
                                     onClick={() => setSelectedOrder(order)}

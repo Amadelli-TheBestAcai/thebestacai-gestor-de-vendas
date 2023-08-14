@@ -1,11 +1,26 @@
 import React, { useState } from 'react'
-import { Container, DeliveryBox, Order, StatusMessage, CardGeneral, Button, ContentTopInfo, TrashIcon, ContentDeliveryBox, ContentIcons, DeliveryDiningIcon, CheckCircleFillIcon, InsideCard, CancelIcon } from './styles'
+import {
+    Container,
+    DeliveryBox,
+    Order,
+    StatusMessage,
+    CardGeneral,
+    Button,
+    ContentTopInfo,
+    TrashIcon,
+    ContentDeliveryBox,
+    ContentIcons,
+    DeliveryDiningIcon,
+    CheckCircleFillIcon,
+    InsideCard,
+    CancelIcon,
+    NotificationsCircleIcon
+} from './styles'
 import { Tooltip } from 'antd';
 
 interface IOrderCardProps {
     order: string;
     delivery: string;
-    message: string;
     orderOn: string;
     fullCode: string;
     onClick: () => void;
@@ -16,16 +31,16 @@ const OrderCard: React.FC<IOrderCardProps> = ({
     order,
     delivery,
     onClick,
-    message,
     onDeleteCard,
     orderOn,
-    fullCode
+    fullCode,
 }) => {
     const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
 
     const handleCardClick = () => {
         setSelectedOrder(selectedOrder === order ? null : order);
     };
+
 
     return (
         <CardGeneral onClick={onClick}>
@@ -38,6 +53,15 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                         <Order>#{order}</Order>
 
                         <ContentIcons>
+                            <Tooltip title="Novo pedido">
+                                {fullCode === 'PLACED' && (
+                                    <div>
+                                        <NotificationsCircleIcon />
+                                        <StatusMessage>Novo pedido!</StatusMessage>
+                                    </div>
+                                )}
+                            </Tooltip>
+
                             <Tooltip title="Pedido à caminho">
                                 {fullCode === 'DISPATCHED' && <DeliveryDiningIcon />}
                             </Tooltip>
@@ -47,24 +71,28 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                             <Tooltip title="Pedido cancelado">
                                 {fullCode === 'CANCELLED' && <CancelIcon />}
                             </Tooltip>
-                            <Tooltip title="Deletar pedido">
-                                <TrashIcon onClick={(id) => onDeleteCard(id)}>excluir</TrashIcon>
-                            </Tooltip>
+
+                            {fullCode !== 'PLACED' && (
+                                <Tooltip title="Deletar pedido">
+                                    <TrashIcon onClick={(id) => onDeleteCard(id)}>excluir</TrashIcon>
+                                </Tooltip>
+                            )}
                         </ContentIcons>
                     </ContentTopInfo>
                     <StatusMessage>
-                        {message}
+                        {fullCode === 'CONCLUDED' && 'Concluído'}
+                        {fullCode === 'CANCELLED' && 'Cancelado'}
+                        {fullCode === 'DISPATCHED' && 'Despachado'}
                     </StatusMessage>
 
                     <ContentDeliveryBox>
                         <DeliveryBox>
-                            {delivery}
+                            <DeliveryDiningIcon className='delivery-box' /> {delivery}
                         </DeliveryBox>
                         <DeliveryBox>
                             {orderOn}
                         </DeliveryBox>
                     </ContentDeliveryBox>
-                    {fullCode === 'CONFIRMED' && <Button>Despachar pedido</Button>}
                 </Container>
             </InsideCard>
         </CardGeneral>

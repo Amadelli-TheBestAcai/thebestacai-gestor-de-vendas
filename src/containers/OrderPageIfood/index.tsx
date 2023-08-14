@@ -233,7 +233,6 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                                 <RadioGroup
                                     onChange={({ target }) => {
                                         setReasonOption(target.value);
-                                        console.log(target.value)
                                     }}
                                     value={reasonOption}
                                 >

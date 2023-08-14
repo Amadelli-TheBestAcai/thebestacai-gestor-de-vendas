@@ -44,7 +44,7 @@ export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
 export { Grid3x2GapFill, UiChecks, Trash } from "@styled-icons/bootstrap";
 export { ViewList, Sparkles } from "@styled-icons/heroicons-outline";
-export { PhoneIphone, MoreHoriz } from "@styled-icons/material-outlined";
+export { PhoneIphone, MoreHoriz, SettingsCell } from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
 export { RemoveCircleOutline as RemoveCircle2 } from "@styled-icons/material-rounded/RemoveCircleOutline";
 export { Attachment } from "@styled-icons/material-sharp/Attachment";
@@ -52,6 +52,7 @@ export {
   CheckboxBlankCircle,
   CheckboxCircle,
   SendPlane,
+  Cellphone
 } from "@styled-icons/remix-fill";
 
 export {
@@ -71,6 +72,7 @@ export {
 
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
+export { NotificationsCircle } from '@styled-icons/ionicons-outline';
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
 export { AddToQueue, User } from "@styled-icons/boxicons-solid";
 export {
