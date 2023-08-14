@@ -157,7 +157,7 @@ const IFoodScreen: React.FC = () => {
                 onChange={(key) => setActiveTab(key)}
               >
                 <TabPaneElement active={activeTab === 'pedidos'} tab="Pedidos" key="pedidos" />
-                <TabPaneElement active={activeTab === 'cardapio'}tab="Cardápio" key="cardapio" />
+                <TabPaneElement active={activeTab === 'cardapio'} tab="Cardápio" key="cardapio" />
               </Tabs>
               {activeTab === "pedidos" ? (
                 <ContentGeneral>
@@ -390,9 +390,14 @@ const IFoodScreen: React.FC = () => {
                                     </TitleDisposition>
 
                                     <ItemPrice>R$ {item.price.value.toFixed(2)}</ItemPrice>
-                                    {/* <button onClick={() => setIsPlaying((prevState) => !prevState)}>
-                                      {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                                    </button> */}
+                                    <button onClick={() => changeProductStatus(
+                                      category.status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE",
+                                      category.id,
+                                      catalogItems.catalogId,
+                                      ""
+                                    )}>
+                                      {category.status === "AVAILABLE" ? <PauseIcon /> : <PlayIcon />}
+                                    </button>
                                   </ContentTitleCollapse>
                                 } key={item.id}>
                                   <PanelContent>
@@ -411,9 +416,14 @@ const IFoodScreen: React.FC = () => {
 
                                                 <TitleDispositionBottom>
                                                   <span>R$ {option.price.value}</span>
-                                                  {/* <button onClick={() => setIsPlaying((prevState) => !prevState)}>
-                                                    {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                                                  </button> */}
+                                                  <button onClick={() => changeProductStatus(
+                                                    category.status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE",
+                                                    category.id,
+                                                    catalogItems.catalogId,
+                                                    ""
+                                                  )}>
+                                                    {category.status === "AVAILABLE" ? <PauseIcon /> : <PlayIcon />}
+                                                  </button>
                                                 </TitleDispositionBottom>
                                               </DisplayLine>
                                             </TitleDisposition>
