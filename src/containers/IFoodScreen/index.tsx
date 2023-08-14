@@ -144,10 +144,6 @@ const IFoodScreen: React.FC = () => {
     setSelectedOrder(newSelectedOrder[0])
   }, [ifood])
 
-  const handleStatusChange = (checkedValues) => {
-    setSelectedStatuses(checkedValues);
-  };
-
   return (
     <>
       {storeCash?.is_opened && storeCash?.is_online ? (
@@ -187,7 +183,8 @@ const IFoodScreen: React.FC = () => {
                             <Dropdown
                               overlay={
                                 <div>
-                                  <Checkbox.Group onChange={handleStatusChange} value={selectedStatuses}>
+                                  <Checkbox.Group onChange={(checkedValues) => setSelectedStatuses(checkedValues)}
+                                    value={selectedStatuses}>
                                     <p>Status do Pedido</p>
                                     {Object.keys(orderStatus).map((status) => (
                                       <div key={status}>
@@ -203,14 +200,16 @@ const IFoodScreen: React.FC = () => {
                               onVisibleChange={(visible) => setDropdownVisible(visible)}
                             >
                               <Button icon={<SearchIcon />}>
-                                Aplicar filtro
+                                {selectedStatuses.length > 0
+                                  ? `${selectedStatuses.length} filtros aplicados`
+                                  : "Aplicar filtro"}
                               </Button>
                             </Dropdown>
                           </ContentButton>
                           <ContentCards>
                             {ifood.orders
                               .filter((order) => selectedStatuses.length === 0 || selectedStatuses.includes(order.fullCode.toLowerCase()))
-                              .sort((a, b) => b.createdAt.localeCompare(a.createdAt)) 
+                              .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
                               .map((order) => (
                                 <React.Fragment key={order.id}>
                                   <HeaderCard>
