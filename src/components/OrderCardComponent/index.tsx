@@ -1,5 +1,5 @@
-import React from 'react'
-import { Container, DeliveryBox, Order, StatusMessage, CardGeneral, Button, ContentTopInfo, TrashIcon, ContentDeliveryBox, ContentIcons, DeliveryDiningIcon, CheckCircleFillIcon } from './styles'
+import React, { useState } from 'react'
+import { Container, DeliveryBox, Order, StatusMessage, CardGeneral, Button, ContentTopInfo, TrashIcon, ContentDeliveryBox, ContentIcons, DeliveryDiningIcon, CheckCircleFillIcon, InsideCard } from './styles'
 import { Tooltip } from 'antd';
 
 interface IOrderCardProps {
@@ -21,39 +21,49 @@ const OrderCard: React.FC<IOrderCardProps> = ({
     orderOn,
     fullCode
 }) => {
+    const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+
+    const handleCardClick = () => {
+        setSelectedOrder(selectedOrder === order ? null : order);
+    };
 
     return (
         <CardGeneral onClick={onClick}>
-            <Container>
-                <ContentTopInfo>
-                    <Order>#{order}</Order>
+            <InsideCard
+                onClick={handleCardClick}
+                isSelected={selectedOrder === order}
+            >
+                <Container>
+                    <ContentTopInfo>
+                        <Order>#{order}</Order>
 
-                    <ContentIcons>
-                        <Tooltip title="Pedido à caminho">
-                            {fullCode === 'DISPATCHED' && <DeliveryDiningIcon />}
-                        </Tooltip>
-                        <Tooltip title="Pedido entregue">
-                            {fullCode === 'CONCLUDED' && <CheckCircleFillIcon />}
-                        </Tooltip>
-                        <Tooltip title="Deletar pedido">
-                            <TrashIcon onClick={(id) => onDeleteCard(id)}>excluir</TrashIcon>
-                        </Tooltip>
-                    </ContentIcons>
-                </ContentTopInfo>
-                <StatusMessage>
-                    {message}
-                </StatusMessage>
+                        <ContentIcons>
+                            <Tooltip title="Pedido à caminho">
+                                {fullCode === 'DISPATCHED' && <DeliveryDiningIcon />}
+                            </Tooltip>
+                            <Tooltip title="Pedido entregue">
+                                {fullCode === 'CONCLUDED' && <CheckCircleFillIcon />}
+                            </Tooltip>
+                            <Tooltip title="Deletar pedido">
+                                <TrashIcon onClick={(id) => onDeleteCard(id)}>excluir</TrashIcon>
+                            </Tooltip>
+                        </ContentIcons>
+                    </ContentTopInfo>
+                    <StatusMessage>
+                        {message}
+                    </StatusMessage>
 
-                <ContentDeliveryBox>
-                    <DeliveryBox>
-                        {delivery}
-                    </DeliveryBox>
-                    <DeliveryBox>
-                        {orderOn}
-                    </DeliveryBox>
-                </ContentDeliveryBox>
-                {fullCode === 'confirmed' && <Button>Despachar pedido</Button>}
-            </Container>
+                    <ContentDeliveryBox>
+                        <DeliveryBox>
+                            {delivery}
+                        </DeliveryBox>
+                        <DeliveryBox>
+                            {orderOn}
+                        </DeliveryBox>
+                    </ContentDeliveryBox>
+                    {fullCode === 'CONFIRMED' && <Button>Despachar pedido</Button>}
+                </Container>
+            </InsideCard>
         </CardGeneral>
     )
 }

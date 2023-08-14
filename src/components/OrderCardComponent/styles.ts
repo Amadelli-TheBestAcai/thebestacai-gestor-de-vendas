@@ -2,9 +2,23 @@ import styled, { css } from 'styled-components';
 import { Trash, DeliveryDining, Check2Circle } from '../../styles/Icons'
 import { Button as ButtonAnt } from 'antd'
 
+interface ICardProp {
+    isSelected: boolean;
+}
+
 export const CardGeneral = styled.div`
     width: 100%;
     border-bottom: 1px solid var(--grey-60);
+`;
+
+export const InsideCard = styled.div<ICardProp>`
+    width: 100%;
+    border-left: 5px solid var(--gray-10);
+    ${({ isSelected }) =>
+        isSelected &&
+        css`
+            border-left-color: var(--orange-200);
+        `}
 `;
 
 export const Button = styled(ButtonAnt)`
@@ -86,7 +100,7 @@ export const ContentIcons = styled.div`
     align-items: center;
 `;
 
-const Icon = css `
+const Icon = css`
     width: 1.4rem;
     height: 1.4rem;
     color: var(--grey-60);
