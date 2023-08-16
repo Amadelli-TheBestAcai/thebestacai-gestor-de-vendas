@@ -254,9 +254,9 @@ const IFoodScreen: React.FC = () => {
                                         order?.fullCode?.toLowerCase()
                                       ]
                                     }{" "}
-                                    <span>
+                                    <span onClick={() => console.log(order)}>
                                       {moment(new Date()).diff(
-                                        order.createdAt,
+                                        order.preparationStartDateTime,
                                         "minutes"
                                       )}
                                       min.
