@@ -48,6 +48,8 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
       description: string;
     }[]
   >([]);
+  const [changingStatus, setChangingStatus] = useState(false);
+  const [cancellingStatus, setCancellingStatus] = useState(false);
   const [reasonOption, setReasonOption] = useState("");
   const [form] = Form.useForm();
 
@@ -73,10 +75,12 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
 
   const getAction = {
     placed: "confirm",
-    confirmed: "dispatch",
+    confirmed: "readyToPickup",
+    ready_to_pickup: "dispatch",
   };
 
   const handleChangeOrderStatus = async () => {
+    setChangingStatus(true);
     await window.Main.ifood.updateOrderStatus(
       order.id,
       getAction[order.fullCode.toLowerCase()],
@@ -89,10 +93,12 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
     if (!has_internal_error && !response.has_error) {
       setIfood(response.response);
     }
+    setChangingStatus(false);
   };
 
   const handleCancelOrder = async () => {
     if (reasonOption) {
+      setCancellingStatus(true);
       const reason = reasonsToCancel.find(
         (_r) => _r.cancelCodeId === reasonOption
       );
@@ -104,7 +110,13 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
           cancellationCode: reason.cancelCodeId,
         }
       );
+      const { has_internal_error, response } =
+        await window.Main.ifood.pooling();
+      if (!has_internal_error && !response.has_error) {
+        setIfood(response.response);
+      }
       setModalState(false);
+      setCancellingStatus(false);
     }
   };
 
@@ -185,28 +197,37 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
               </div>
             ))}
           </PaymentOrderBox>
-
-          {order.fullCode !== "CANCELLED" ? (
-            <ContentAcceptORDeniedOrder>
+          <ContentAcceptORDeniedOrder>
+            <>
               <div>
                 <span>Novo pedido</span>
               </div>
 
               <div className="btn-content">
-                <CancelButton onClick={() => setModalState(true)}>
-                  Recusar
-                </CancelButton>
-
-                <Button onClick={handleChangeOrderStatus}>
-                  {order.fullCode === "CONFIRMED"
-                    ? "Despachar pedido"
-                    : "Confirmar"}
-                </Button>
+                {!["cancelled", "concluded"].some(
+                  (status) => status === order.fullCode.toLowerCase()
+                ) && (
+                  <CancelButton onClick={() => setModalState(true)}>
+                    Recusar
+                  </CancelButton>
+                )}
+                {["placed", "confirmed", "ready_to_pickup"].some(
+                  (status) => status === order.fullCode.toLowerCase()
+                ) && (
+                  <Button
+                    onClick={handleChangeOrderStatus}
+                    loading={changingStatus}
+                  >
+                    {order.fullCode === "PLACED"
+                      ? "Confirmar"
+                      : order.fullCode === "READY_TO_PICKUP"
+                      ? "Despachar"
+                      : "Pronto para retirada"}
+                  </Button>
+                )}
               </div>
-            </ContentAcceptORDeniedOrder>
-          ) : (
-            <></>
-          )}
+            </>
+          </ContentAcceptORDeniedOrder>
         </ContainerGeneral>
       </ContentOrderHeader>
 
@@ -222,11 +243,16 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
           <Footer>
             <CancelButton
               className="cancel-btn"
+              disabled={cancellingStatus}
               onClick={() => setModalState(false)}
             >
               Voltar
             </CancelButton>
-            <Button onClick={handleCancelOrder} disabled={!reasonOption}>
+            <Button
+              onClick={handleCancelOrder}
+              disabled={!reasonOption}
+              loading={cancellingStatus}
+            >
               Cancelar pedido
             </Button>
           </Footer>

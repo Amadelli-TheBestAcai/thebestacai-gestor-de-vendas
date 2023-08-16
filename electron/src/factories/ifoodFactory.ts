@@ -41,14 +41,16 @@ export const ifoodFactory = {
   updateProductStatus: async (
     status: "AVAILABLE" | "UNAVAILABLE",
     category_id: string,
-    product_id: string,
-    catalog_id: string
+    product_id?: string,
+    catalog_id?: string,
+    option_id?: string
   ) =>
     await useCaseFactory.execute<IfoodDto>(updateProductStatus, {
       status,
       category_id,
       product_id,
       catalog_id,
+      option_id,
     }),
   updateOrderStatus: async (
     id: string,
