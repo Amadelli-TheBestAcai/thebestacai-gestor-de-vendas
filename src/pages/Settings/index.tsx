@@ -77,10 +77,10 @@ const Settings: React.FC = () => {
 
   return (
     <Container>
+      <Header>
+        <h2>Configurações</h2>
+      </Header>
       <PageContent>
-        <Header>
-          <h2>Configurações</h2>
-        </Header>
         <CardSettings title="Integração de Balança">
           <SelectsContainer>
             <InputPortCOM
@@ -178,6 +178,9 @@ const Settings: React.FC = () => {
                   ...oldValues,
                   should_emit_nfce_per_sale:
                     !settings.should_emit_nfce_per_sale,
+                  should_print_nfce_per_sale: settings.should_emit_nfce_per_sale
+                    ? settings.should_print_nfce_per_sale
+                    : false,
                 }))
               }
             />
@@ -188,6 +191,32 @@ const Settings: React.FC = () => {
             </span>
           </ActionContainer>
         </CardSettings>
+
+        {settings.should_emit_nfce_per_sale && (
+          <CardSettings title="Impressão automática da DANFE">
+            <span style={{ padding: "2%" }}>
+              Ao habilitar, será impresso automaticamente a DANFE a cada nota
+              fiscal emitida com sucesso ao finalizar venda.
+            </span>
+            <ActionContainer>
+              <Switch
+                checked={settings.should_print_nfce_per_sale}
+                onChange={() =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    should_print_nfce_per_sale:
+                      !settings.should_print_nfce_per_sale,
+                  }))
+                }
+              />
+              <span>
+                {!settings.should_emit_nfce_per_sale
+                  ? "DESABILITADO"
+                  : "HABILITADO"}
+              </span>
+            </ActionContainer>
+          </CardSettings>
+        )}
 
         <CardSettings title="Impressão de cupom por venda">
           <span style={{ padding: "2%" }}>
@@ -208,13 +237,13 @@ const Settings: React.FC = () => {
             </span>
           </ActionContainer>
         </CardSettings>
-
-        <Footer>
-          <ButtonSave onClick={handleSave} loading={loading}>
-            Salvar
-          </ButtonSave>
-        </Footer>
       </PageContent>
+
+      <Footer>
+        <ButtonSave onClick={handleSave} loading={loading}>
+          Salvar
+        </ButtonSave>
+      </Footer>
     </Container>
   );
 };

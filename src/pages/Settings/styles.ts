@@ -4,11 +4,12 @@ import {
   Select as SelectAnt,
   Switch as SwitchAnt,
   Button as ButtonAnt,
-  Input as InputAnt
+  Input as InputAnt,
 } from "antd";
 
 export const Container = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -21,11 +22,12 @@ export const PageContent = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: 90%;
   background: var(--white);
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
   padding: 1rem;
+  overflow-y: scroll;
 `;
 
 export const Header = styled.header`
@@ -68,7 +70,7 @@ export const Button = styled(ButtonAnt)`
   background: transparent;
   color: var(--orange-250);
   border: 1px solid var(--orange-250);
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
@@ -78,23 +80,9 @@ export const Button = styled(ButtonAnt)`
   }
 `;
 
-
 export const ContentButton = styled.div`
   display: flex;
-  width: 15%;
   align-items: center;
-
-  @media screen and (max-width: 1500px){
-    width: 18%;
-  }
-
-  @media screen and (max-width: 1400px){
-    width: 20%;
-  }
-
-  @media screen and (max-width: 1200px){
-    width: 21%;
-  }
 `;
 
 export const ButtonSave = styled(ButtonAnt)`
@@ -144,8 +132,7 @@ export const Select = styled(SelectAnt)`
   width: 100%;
 `;
 
-export const InputPortCOM = styled(InputAnt)`
-`;
+export const InputPortCOM = styled(InputAnt)``;
 
 export const Option = styled(SelectAnt.Option)``;
 
