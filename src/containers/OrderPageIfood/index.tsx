@@ -262,12 +262,12 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
           <Row gutter={24}>
             <p>
               Cancelar muitos pedidos pode afetar o desempenho da sua loja no
-              iFood. Assim que possível, ajuste sua operação para não cancelas
-              novos pedidos pelo mesmo motivo
+              iFood. Assim que possível, ajuste sua operação para não cancelar
+              novos pedidos pelo mesmo motivo.
             </p>
             <p className="attention">
-              ATENÇÃO: Muitos cancelamos pela fatla de confirmação podem fechar
-              seu restaurante na plataforma
+              ATENÇÃO: Muitos cancelamos pela falta de confirmação podem fechar
+              seu restaurante na plataforma.
             </p>
             <p>
               Selecione o motivo pelo qual você não pode aceitar esse pedido

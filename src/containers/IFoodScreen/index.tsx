@@ -5,7 +5,7 @@ import { useIfood } from "../../hooks/useIfood";
 import { useSale } from "../../hooks/useSale";
 
 import moment from "moment";
-import { Checkbox, Empty, Dropdown, notification } from "antd";
+import { Checkbox, Empty, Dropdown, notification, Modal } from "antd";
 
 import { EmptyContainer } from "../Items/styles";
 import CardComponent from "../../components/OrderCardComponent";
@@ -85,13 +85,24 @@ const IFoodScreen: React.FC = () => {
   const currentDate = moment();
   const nextDate = moment().add(1, "day");
 
-  const handleDeleteOrder = async (orderId: string) => {
-    const updatedIfood = {
-      ...ifood,
-      orders: ifood.orders.filter((order) => order.id !== orderId),
-    };
-    setIfood(updatedIfood);
-    await window.Main.ifood.update(updatedIfood);
+  const handleDeleteOrder = (orderId: string) => {
+    Modal.confirm({
+      title: `Deseja remover o pedido?`,
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+
+      async onOk() {
+        const updatedIfood = {
+          ...ifood,
+          orders: ifood.orders.filter((order) => order.id !== orderId),
+        };
+        setIfood(updatedIfood);
+        await window.Main.ifood.update(updatedIfood);
+      }
+    })
+
   };
 
   const changeProductStatus = async (
@@ -243,7 +254,7 @@ const IFoodScreen: React.FC = () => {
                                   <HeaderCard>
                                     {
                                       orderStatus[
-                                        order?.fullCode?.toLowerCase()
+                                      order?.fullCode?.toLowerCase()
                                       ]
                                     }{" "}
                                     <span onClick={() => console.log(order)}>
@@ -518,7 +529,7 @@ const IFoodScreen: React.FC = () => {
                                                     }
                                                   >
                                                     {option.status ===
-                                                    "AVAILABLE" ? (
+                                                      "AVAILABLE" ? (
                                                       <PauseIcon />
                                                     ) : (
                                                       <PlayIcon />

@@ -58,7 +58,7 @@ export const Header = styled.header`
 
 export const Tabs = styled(TabsAnt)`
   width: 99%;
-  
+  height: 100%;
   .ant-tabs-tab.ant-tabs-tab-active,
   .ant-tabs-tab-btn {
     color: black !important;

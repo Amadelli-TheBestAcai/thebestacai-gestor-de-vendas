@@ -55,17 +55,25 @@ export const SideMenu = styled.div`
   flex-direction: column;
   align-items: flex-start;
   min-width: 23rem;
-  height: 79vh;
+  height: 84vh;
   box-shadow: 4px 0px 4px 0px rgba(0, 0, 0, 0.25);
+  
+  @media screen and (max-width: 1600px){
+    height: 80vh;
+  }
 `;
 
 export const ContentCards = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-height: 24.8rem;
+  height: 39.2rem;
   overflow: scroll;
   overflow-x: hidden;
+
+  @media screen and (max-width: 1600px){
+    max-height: 25.2rem;
+  }
 `;
 
 interface IStatusProps {
