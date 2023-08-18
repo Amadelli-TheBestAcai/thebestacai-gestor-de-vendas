@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import {
   Select as SelectAnt,
@@ -53,6 +53,48 @@ export const Footer = styled.footer`
   bottom: 0;
   left: 0;
   right: 0;
+`;
+
+export const DisabledButtonStyle = css`
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+  color: transparent;
+`;
+
+export const Button = styled(ButtonAnt)`
+  width: 110px;
+  height: 50px;
+  background: transparent;
+  color: var(--orange-250);
+  border: 1px solid var(--orange-250);
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+
+  &.disabled-button {
+    ${DisabledButtonStyle}
+  }
+`;
+
+
+export const ContentButton = styled.div`
+  display: flex;
+  width: 15%;
+  align-items: center;
+
+  @media screen and (max-width: 1500px){
+    width: 18%;
+  }
+
+  @media screen and (max-width: 1400px){
+    width: 20%;
+  }
+
+  @media screen and (max-width: 1200px){
+    width: 21%;
+  }
 `;
 
 export const ButtonSave = styled(ButtonAnt)`
@@ -111,9 +153,10 @@ export const ActionContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
   width: 10%;
   height: 100%;
+  flex-direction: column;
+  margin-left: 50px;
 
   span {
     color: #949494;
