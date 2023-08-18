@@ -75,8 +75,6 @@ class Pooling implements IUseCaseFactory {
                     code: newOrder.code,
                     createdAt: newOrder.createdAt,
                   });
-
-                  ifood.new_orders += 1;
                 }
               })
             );
@@ -92,6 +90,9 @@ class Pooling implements IUseCaseFactory {
           await getMerchant.execute();
 
           ifood.updated_at = new Date();
+          ifood.new_orders = ifood.orders.filter(
+            (order) => order.fullCode === "PLACED"
+          ).length;
 
           await this.ifoodRepository.update(ifood.id, ifood);
           return {

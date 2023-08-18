@@ -123,7 +123,6 @@ export function GlobalProvider({ children }) {
 
   useEffect(() => {
     async function ifoodScheduler() {
-      console.log(new Date());
       const { response, has_internal_error, error_message } =
         await window.Main.ifood.pooling();
       if (has_internal_error) {
@@ -132,7 +131,6 @@ export function GlobalProvider({ children }) {
           duration: 5,
         });
       } else {
-        console.log(response.response);
         const {
           response: updatedIfood,
           has_error,
@@ -275,7 +273,7 @@ export function GlobalProvider({ children }) {
           message: response?.mensagem_sefaz,
           duration: 5,
         });
-        console.log({ successOnSefaz });
+
         if (successOnSefaz) {
           await window.Main.common.printDanfe(response);
         }

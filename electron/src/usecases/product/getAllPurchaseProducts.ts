@@ -18,9 +18,8 @@ class GetAllPurchaseProducts implements IUseCaseFactory {
 
   async execute({ local }: Request): Promise<PurchaseProductDto[]> {
     const hasInternet = await checkInternet();
-    console.log({local})
-    if(local){
-      return await this.purchaseProductRepository.getAll()
+    if (local) {
+      return await this.purchaseProductRepository.getAll();
     }
 
     if (!hasInternet) {
@@ -29,7 +28,7 @@ class GetAllPurchaseProducts implements IUseCaseFactory {
     const {
       data: { content },
     } = await odinApi.get("/product_categories/products/purchases");
-    await this.purchaseProductRepository.createManyAndReplace(content)
+    await this.purchaseProductRepository.createManyAndReplace(content);
     return content;
   }
 }

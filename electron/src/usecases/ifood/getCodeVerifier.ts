@@ -27,7 +27,6 @@ class GetCodeVerifier implements IUseCaseFactory {
         data: formUrlEncoded({ clientId: env.IFOOD_CLIENT_ID }),
       } as AxiosRequestConfig<CodeVerifierDto>);
       data = JSON.parse(data);
-      console.log({ data });
 
       const ifood = await findOrCreate.execute();
 
