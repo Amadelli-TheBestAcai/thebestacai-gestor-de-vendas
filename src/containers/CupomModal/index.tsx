@@ -24,7 +24,7 @@ const CupomModal: React.FC = () => {
             }
         } else {
             seCupom(["", "", "", ""]);
-            setPhone("");
+            setPhone("")
         }
     }, [cupomModalState, sale]);
 
@@ -157,6 +157,13 @@ const CupomModal: React.FC = () => {
             setLoading(false);
         }
     };
+
+    const handleKeyPress = (event: KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            onFinish()
+        }
+    }
 
     return (
         <Container
