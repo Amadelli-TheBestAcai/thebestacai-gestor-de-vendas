@@ -142,8 +142,8 @@ const CupomModal: React.FC = () => {
                 });
             }
 
-            notification.success({
-                message: "Cupom resgatado com sucesso",
+            notification.info({
+                message: "Você cancelou a utilização do cupom!",
                 duration: 5,
             });
 
@@ -157,13 +157,6 @@ const CupomModal: React.FC = () => {
             setLoading(false);
         }
     };
-
-    const handleKeyPress = (event: KeyboardEvent) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            onFinish()
-        }
-    }
 
     return (
         <Container
