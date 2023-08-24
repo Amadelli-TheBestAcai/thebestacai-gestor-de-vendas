@@ -171,7 +171,7 @@ const CupomModal: React.FC = () => {
             <p>Digite o código do cupom e o telefone do cliente abaixo para que o cupom seja resgatado.</p>
 
             <Row>
-                <Col sm={4} xs={4}>
+                <Col sm={5} xs={5}>
                     <InputCode
                         defaultValue={cupom[0]}
                         maxLength={2}
@@ -183,7 +183,7 @@ const CupomModal: React.FC = () => {
                         tabIndex={1}
                     />
                 </Col>
-                <Col sm={4} xs={4}>
+                <Col sm={5} xs={5}>
                     <InputCode
                         defaultValue={cupom[1]}
                         maxLength={2}
@@ -195,7 +195,7 @@ const CupomModal: React.FC = () => {
                         tabIndex={2}
                     />
                 </Col>
-                <Col sm={4} xs={4}>
+                <Col sm={5} xs={5}>
                     <InputCode
                         defaultValue={cupom[2]}
                         maxLength={2}
@@ -207,7 +207,7 @@ const CupomModal: React.FC = () => {
                         tabIndex={3}
                     />
                 </Col>
-                <Col sm={4} xs={4}>
+                <Col sm={5} xs={5}>
                     <InputCode
                         defaultValue={cupom[3]}
                         maxLength={2}
