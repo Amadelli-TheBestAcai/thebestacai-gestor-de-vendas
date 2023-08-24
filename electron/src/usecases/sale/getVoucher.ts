@@ -9,6 +9,7 @@ import { CustomerVoucherDTO } from "../../models/dtos/customerVoucher";
 
 interface Request {
   hash_code: string;
+  cell_number: string;
 }
 
 class GetVoucher implements IUseCaseFactory {
@@ -21,14 +22,14 @@ class GetVoucher implements IUseCaseFactory {
     )
   ) { }
 
-  async execute({ hash_code }: Request): Promise<CustomerVoucherDTO> {
+  async execute({ hash_code, cell_number }: Request): Promise<CustomerVoucherDTO> {
     const is_online = await checkInternet();
     if (!is_online) {
       throw new Error("Falha ao validar conexão de internet");
     }
 
     const store = await this.storeRepository.getOne()
-    const { data } = await thorApi.get(`/customerVoucher/${store?.company_id}/hash/${hash_code}`);
+    const { data } = await thorApi.get(`/customerVoucher/${store?.company_id}?hash_code=${hash_code}&cell_number=${cell_number}`);
 
     return data.content;
   }

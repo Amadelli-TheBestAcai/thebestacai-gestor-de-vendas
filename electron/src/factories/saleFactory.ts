@@ -80,8 +80,8 @@ export const saleFactory = {
     }),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
-  getVoucher: async (hash_code: string) =>
-    await useCaseFactory.execute<CustomerVoucherDTO>(getVoucher, { hash_code }),
+  getVoucher: async (hash_code: string, cell_number: string) =>
+    await useCaseFactory.execute<CustomerVoucherDTO>(getVoucher, { hash_code, cell_number }),
   deleteSaleFromApi: async (params: {
     id: number;
     cash_history: number;
