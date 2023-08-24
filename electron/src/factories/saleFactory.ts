@@ -130,10 +130,12 @@ export const saleFactory = {
           expirated_at: string;
           observation: string;
         }
-    }>(getCustomerReward, {
-      phone,
-      hash_code
-    }),
+      }
+    }>(getCustomerReward,
+      {
+        phone,
+        hash_code
+      }),
   cancelNfce: async (sale_id: number, justify: string) =>
     await useCaseFactory.execute(cancelNfce, {
       sale_id,
