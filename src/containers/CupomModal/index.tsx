@@ -24,8 +24,10 @@ const CupomModal: React.FC = () => {
             }
         } else {
             seCupom(["", "", "", ""]);
+            setPhone("");
         }
     }, [cupomModalState, sale]);
+
 
     const handleCupomState = (
         position: number,
@@ -35,7 +37,6 @@ const CupomModal: React.FC = () => {
         const updatedValue = cupom;
         updatedValue[position] = value;
         seCupom(updatedValue);
-
         const input = document.getElementsByName(name)[0];
         //@ts-ignore
         if (input.value.toString().length === 2) {
@@ -62,8 +63,9 @@ const CupomModal: React.FC = () => {
     const onFinish = async (): Promise<void> => {
         try {
             setLoading(true);
+            const cleanPhoneNumber = phone.replace(/\D/g, '');
             const { has_internal_error, response, error_message } =
-                await window.Main.sale.getVoucher(cupom.join(""));
+                await window.Main.sale.getVoucher(cupom.join("").toUpperCase(), cleanPhoneNumber);
 
             if (has_internal_error) {
                 return notification.error({
@@ -76,21 +78,21 @@ const CupomModal: React.FC = () => {
                 const cupomItem = response.voucher.products.find(
                     (voucherProduct) => voucherProduct.product_id === item.product.id
                 );
+
                 if (response.voucher.self_service && item.product.id === 1) {
+
                     return response.voucher.self_service_discount_type === 1
-                        ? item.total -
-                        item.total *
-                        (+response.voucher.self_service_discount_amount / 100) +
-                        total
+                        ? item.total - item.total * (+response.voucher.self_service_discount_amount / 100) + total
                         : item.total -
                         +response.voucher.self_service_discount_amount +
                         total;
                 } else if (cupomItem) {
-                    return +cupomItem.price_sell * item.quantity + total;
+                    return item.total - +cupomItem.price_sell
                 } else {
                     return item.total + total;
                 }
             }, 0);
+
             const { error } = await updateSale({
                 customerVoucher: response,
                 total_sold: newTotal,
@@ -249,7 +251,7 @@ const CupomModal: React.FC = () => {
                     type="primary"
                     loading={loading}
                     onClick={onFinish}
-                    disabled={!!sale.payments.length || !phone || !cupom}
+                    disabled={!!sale.payments.length || !phone && !cupom}
                 >
                     <span className="buttonSpan">Resgatar</span>
                 </Button>

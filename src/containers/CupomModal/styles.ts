@@ -82,4 +82,6 @@ export const InputCode = styled(InputAnt)`
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: .5rem;
+
+  text-transform: uppercase;
 `;
