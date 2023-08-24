@@ -113,7 +113,10 @@ const CupomModal: React.FC = () => {
 
             setCupomModalState(false);
         } catch (e) {
-            console.log(e);
+            notification.error({
+                message: "Oops! Ocorreu um erro",
+                duration: 5,
+            });
         } finally {
             setLoading(false);
         }
