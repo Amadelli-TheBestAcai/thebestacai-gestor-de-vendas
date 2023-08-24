@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain } from "electron";
+import { app, BrowserWindow, screen, ipcMain, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import * as path from "path";
 
@@ -56,6 +56,15 @@ function createWindow() {
       hardResetMethod: "exit",
     });
   }
+
+  win.webContents.setWindowOpenHandler((event) => {
+    const newURL = new URL(event.url);
+    if (newURL.origin.endsWith("ifood.com.br")) {
+      shell.openExternal(newURL.href);
+      return { action: "deny" };
+    }
+    return { action: "allow" };
+  });
 }
 
 autoUpdater.on("download-progress", (progressObj) => {

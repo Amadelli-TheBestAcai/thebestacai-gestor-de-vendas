@@ -122,6 +122,18 @@ export function GlobalProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    if (window.iFoodWidget && ifood?.is_opened && ifood?.merchant_id) {
+      window.iFoodWidget?.init({
+        merchantIds: [ifood?.merchant_id],
+        widgetId: "028f8be2-7696-4bc5-938e-831ac309ea5d",
+      });
+      window.iFoodWidget?.show();
+    } else {
+      window.iFoodWidget?.hide();
+    }
+  }, [window.iFoodWidget, ifood?.is_opened]);
+
+  useEffect(() => {
     async function ifoodScheduler() {
       const { response, has_internal_error, error_message } =
         await window.Main.ifood.pooling();

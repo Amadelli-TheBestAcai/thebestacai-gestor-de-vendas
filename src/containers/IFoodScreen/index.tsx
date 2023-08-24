@@ -100,9 +100,8 @@ const IFoodScreen: React.FC = () => {
         };
         setIfood(updatedIfood);
         await window.Main.ifood.update(updatedIfood);
-      }
-    })
-
+      },
+    });
   };
 
   const changeProductStatus = async (
@@ -180,8 +179,16 @@ const IFoodScreen: React.FC = () => {
                 defaultActiveKey="pedidos"
                 onChange={(key) => setActiveTab(key)}
               >
-                <TabPaneElement active={activeTab === 'pedidos'} tab="Pedidos" key="pedidos" />
-                <TabPaneElement active={activeTab === 'cardapio'} tab="Cardápio" key="cardapio" />
+                <TabPaneElement
+                  active={activeTab === "pedidos"}
+                  tab="Pedidos"
+                  key="pedidos"
+                />
+                <TabPaneElement
+                  active={activeTab === "cardapio"}
+                  tab="Cardápio"
+                  key="cardapio"
+                />
               </Tabs>
               {activeTab === "pedidos" ? (
                 <ContentGeneral>
@@ -254,7 +261,7 @@ const IFoodScreen: React.FC = () => {
                                   <HeaderCard>
                                     {
                                       orderStatus[
-                                      order?.fullCode?.toLowerCase()
+                                        order?.fullCode?.toLowerCase()
                                       ]
                                     }{" "}
                                     <span onClick={() => console.log(order)}>
@@ -529,7 +536,7 @@ const IFoodScreen: React.FC = () => {
                                                     }
                                                   >
                                                     {option.status ===
-                                                      "AVAILABLE" ? (
+                                                    "AVAILABLE" ? (
                                                       <PauseIcon />
                                                     ) : (
                                                       <PlayIcon />

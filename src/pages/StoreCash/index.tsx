@@ -33,6 +33,7 @@ import {
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 import { useSettings } from "../../hooks/useSettings";
+import { useIfood } from "../../hooks/useIfood";
 
 interface IProp extends RouteComponentProps {}
 
@@ -55,6 +56,7 @@ moment.updateLocale("pt", {
 });
 
 const StoreCash: React.FC<IProp> = ({ history }) => {
+  const { ifood } = useIfood();
   const { storeCash, setStoreCash } = useSale();
   const [storeCashHistory, setStoreCashHistory] =
     useState<StoreCashHistoryDTO | null>(null);
@@ -67,7 +69,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
   const { settings, setSettings } = useSettings();
-  const [hasOpenedOnlineStoreCash, setHasOpenedOnlineStoreCash] = useState(false);
+  const [hasOpenedOnlineStoreCash, setHasOpenedOnlineStoreCash] =
+    useState(false);
 
   useEffect(() => {
     async function init() {
@@ -331,6 +334,40 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     }
   };
 
+  const changeStoreCashStatus = () => {
+    if (
+      storeCash?.is_opened &&
+      !storeCash?.is_online &&
+      !hasOpenedOnlineStoreCash
+    ) {
+      openOnlineStoreCash(storeCash?.code);
+      setHasOpenedOnlineStoreCash(true);
+    } else {
+      if (
+        ifood.orders.some(
+          (order) =>
+            !["cancelled", "concluded"].some(
+              (order_status) => order.fullCode.toLowerCase() === order_status
+            )
+        )
+      ) {
+        Modal.confirm({
+          title: "Você ainda possui pedidos pendentes no ifood",
+          content: `Tem certeza que gostaria de prosseguir e fechar este caixa?`,
+          okText: "Sim",
+          okType: "default",
+          cancelText: "Não",
+          centered: true,
+          async onOk() {
+            setAmountModal(true);
+          },
+        });
+      } else {
+        setAmountModal(true);
+      }
+    }
+  };
+
   return (
     <Container>
       <PageContent>
@@ -363,11 +400,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   </StatusCash>
                   <CloseCashContatiner>
                     <OpenCloseButton
-                      onClick={() =>
-                        storeCash?.is_opened && !storeCash?.is_online && !hasOpenedOnlineStoreCash
-                          ? (openOnlineStoreCash(storeCash?.code), setHasOpenedOnlineStoreCash(true))
-                          : setAmountModal(true)
-                      }
+                      onClick={changeStoreCashStatus}
                       _type={
                         storeCash?.is_opened && storeCash?.is_online
                           ? "close"

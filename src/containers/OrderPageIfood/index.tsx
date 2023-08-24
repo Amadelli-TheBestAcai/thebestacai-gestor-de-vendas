@@ -65,7 +65,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
           duration: 5,
         });
       } else {
-        setReasonsToCancel(response);
+        setReasonsToCancel(response || []);
       }
     }
     if (order.fullCode !== "CANCELLED") {
@@ -94,6 +94,8 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
       setIfood(response.response);
     }
     setChangingStatus(false);
+
+    document.getElementById("change-order-status-btn")?.blur();
   };
 
   const handleCancelOrder = async () => {
@@ -121,7 +123,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
   };
 
   return (
-    <Container>
+    <Container id="ifood-container">
       <ContentOrderHeader>
         <ContentGoBack>
           <button onClick={closePage}>{"<"} Voltar</button>
@@ -215,6 +217,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
                   (status) => status === order.fullCode.toLowerCase()
                 ) && (
                   <Button
+                    id="change-order-status-btn"
                     onClick={handleChangeOrderStatus}
                     loading={changingStatus}
                   >
@@ -283,7 +286,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
                   }}
                   value={reasonOption}
                 >
-                  {reasonsToCancel.map((option, index) => (
+                  {reasonsToCancel?.map((option, index) => (
                     <Radio key={index} value={option.cancelCodeId}>
                       {option.description}
                     </Radio>
