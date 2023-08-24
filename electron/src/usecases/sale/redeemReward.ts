@@ -19,7 +19,7 @@ class RedeemReward implements IUseCaseFactory {
   async execute({ id, payload }: Request): Promise<void> {
     const hasInternet = await checkInternet();
     if (hasInternet) {
-      await thorApi.post(`/customer-reward/redeem-reward/${id}`, payload);
+      await thorApi.patch(`/customer-reward/redeem-reward/${id}`, payload);
     }
   }
 }
