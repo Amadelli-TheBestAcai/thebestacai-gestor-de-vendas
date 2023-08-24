@@ -58,7 +58,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
 
       setLoading(true);
       const { has_internal_error, error_message, response } =
-        await window.Main.sale.getCampaignReward(userCpf);
+        await window.Main.sale.getCustomerReward(userCpf);
 
       if (has_internal_error) {
         setLoading(false);
@@ -166,7 +166,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       const {
         has_internal_error: createCustomerError,
         error_message: error_message_create_customer_reward,
-      } = await window.Main.sale.createCustomerReward(payload);
+      } = await window.Main.sale.redeemReward(id, payload);
 
       if (createCustomerError) {
         notification.error({
