@@ -262,7 +262,7 @@ const CupomModal: React.FC = () => {
                     type="primary"
                     loading={loading}
                     onClick={onFinish}
-                    disabled={!!sale.payments.length || !phone && !cupom}
+                    disabled={!!sale.payments.length || !phone || cupom.some(value => value === "")}
                 >
                     <span className="buttonSpan">Resgatar</span>
                 </Button>
