@@ -92,10 +92,11 @@ const CupomModal: React.FC = () => {
                     return item.total + total;
                 }
             }, 0);
+            const validatedTotal = Math.max(newTotal, 0);
 
             const { error } = await updateSale({
                 customerVoucher: response,
-                total_sold: newTotal,
+                total_sold: validatedTotal,
             });
 
             if (error) {
