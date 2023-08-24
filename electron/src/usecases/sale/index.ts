@@ -22,3 +22,4 @@ export * from "./deleteSaleDelivery";
 export * from "./cancelNfce";
 export * from "./getCampaignReward";
 export * from "./integrateRewardWithSale";
+export * from "./getVoucher";
