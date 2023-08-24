@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { IMaskInput } from "react-imask";
 
 import {
   Input as InputAnt,
@@ -22,10 +23,13 @@ export const Container = styled(ModalAnt)`
   }
 `;
 
-export const Input = styled(InputAnt)`
+export const Input = styled(IMaskInput)`
   width: 100%;
+  padding: 0 1rem;
   height: 3rem;
   border-radius: 10px;
+  background-color: var(--white-25);
+  margin-bottom: .8rem;
 `;
 
 export const Row = styled(RowAnt)`
@@ -45,7 +49,7 @@ export const Button = styled(ButtonAnt)`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 3.7rem;
+  height: 3rem;
   width: 100%;
   border-radius: 0.7rem;
   background: var(--orange-250);
@@ -57,7 +61,9 @@ export const Button = styled(ButtonAnt)`
     background: var(--orange-250);
   }
   :hover {
-    background: var(--orange-150);
+    background: var(--orange-250);
+    color: var(--white);
+    opacity: 70%;
   }
   @media only screen and (max-width: 1366px) {
     height: 3rem;
@@ -75,4 +81,5 @@ export const InputCode = styled(InputAnt)`
   text-align: center;
   font-size: 1.5rem;
   font-weight: 600;
+  margin-bottom: .5rem;
 `;

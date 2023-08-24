@@ -8,6 +8,7 @@ import { Container, Row, Col, InputCode, Button, Input } from "./styles";
 const CupomModal: React.FC = () => {
     const { sale, updateSale, cupomModalState, setCupomModalState } = useSale();
     const [cupom, seCupom] = useState(["", "", "", ""]);
+    const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -136,13 +137,16 @@ const CupomModal: React.FC = () => {
             }
 
             notification.success({
-                message: "Cupom removido com sucesso",
+                message: "Cupom resgatado com sucesso",
                 duration: 5,
             });
 
             setCupomModalState(false);
         } catch (e) {
-            console.log(e);
+            notification.error({
+                message: "Oops, ocorreu um erro",
+                duration: 5,
+            });
         } finally {
             setLoading(false);
         }
@@ -158,7 +162,7 @@ const CupomModal: React.FC = () => {
             destroyOnClose
         >
             <h2>Resgate de cupom</h2>
-            <p>Digite o código do cupom abaixo para que o cupom seja resgatado.</p>
+            <p>Digite o código do cupom e o telefone do cliente abaixo para que o cupom seja resgatado.</p>
 
             <Row>
                 <Col sm={4} xs={4}>
@@ -211,8 +215,14 @@ const CupomModal: React.FC = () => {
                 </Col>
 
                 <Col sm={24} className="content-tel">
-                    <label htmlFor="tel">Telefone: </label>
-                    <Input id="id" placeholder="Digite aqui..." />
+                    <label htmlFor="phone">Telefone: </label>
+                    <Input
+                        id='phone'
+                        value={phone}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPhone(event.target.value)}
+                        mask="(00) 00000-0000"
+                        placeholder="(00) 00000-0000"
+                    />
                 </Col>
             </Row>
             <span>
@@ -223,8 +233,7 @@ const CupomModal: React.FC = () => {
             <span>
                 <strong>Para recalcular o valor total:</strong>
             </span>
-            <br />
-            <span>Remova os pagamentos</span>
+            <span>{" "}Remova os pagamentos</span>
             {sale.customerVoucher ? (
                 <Button
                     htmlType="submit"
@@ -240,7 +249,7 @@ const CupomModal: React.FC = () => {
                     type="primary"
                     loading={loading}
                     onClick={onFinish}
-                    disabled={!!sale.payments.length}
+                    disabled={!!sale.payments.length || !phone || !cupom}
                 >
                     <span className="buttonSpan">Resgatar</span>
                 </Button>
