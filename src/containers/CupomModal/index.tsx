@@ -11,6 +11,8 @@ const CupomModal: React.FC = () => {
     const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const products = sale.items.map((item) => item.product)
+
     useEffect(() => {
         if (cupomModalState) {
             const saleHashCode = sale?.customerVoucher?.hash_code;
@@ -63,6 +65,14 @@ const CupomModal: React.FC = () => {
     const onFinish = async (): Promise<void> => {
         try {
             setLoading(true);
+
+            if (!products.length) {
+                return notification.warn({
+                    message: "É necessário adicionar um produto para adicionar o cupom!",
+                    duration: 5,
+                });
+            }
+
             const cleanPhoneNumber = phone.replace(/\D/g, '');
             const { has_internal_error, response, error_message } =
                 await window.Main.sale.getVoucher(cupom.join("").toUpperCase(), cleanPhoneNumber);
@@ -144,6 +154,7 @@ const CupomModal: React.FC = () => {
 
             notification.info({
                 message: "Você cancelou a utilização do cupom!",
+                description: "Ele ainda poderá ser utilizado",
                 duration: 5,
             });
 
@@ -240,26 +251,21 @@ const CupomModal: React.FC = () => {
                 <strong>Para recalcular o valor total:</strong>
             </span>
             <span>{" "}Remova os pagamentos</span>
-            {sale.customerVoucher ? (
-                <Button
-                    htmlType="submit"
-                    type="primary"
-                    loading={loading}
-                    onClick={onCancel}
-                >
-                    <span className="buttonSpan">Cancelar</span>
-                </Button>
-            ) : (
-                <Button
-                    htmlType="submit"
-                    type="primary"
-                    loading={loading}
-                    onClick={onFinish}
-                    disabled={!!sale.payments.length || !phone || cupom.some(value => value === "")}
-                >
-                    <span className="buttonSpan">Resgatar</span>
-                </Button>
-            )}
+            <Button
+                htmlType="submit"
+                type="primary"
+                loading={loading}
+                onClick={sale.customerVoucher ? onCancel : onFinish}
+                disabled={
+                    !!sale.payments.length ||
+                    !phone ||
+                    (cupom.some(value => value === "") && !sale.customerVoucher)
+                }
+            >
+                <span className="buttonSpan">
+                    {sale.customerVoucher ? "Cancelar" : "Resgatar"}
+                </span>
+            </Button>
         </Container>
     );
 };
