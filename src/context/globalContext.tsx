@@ -42,9 +42,6 @@ type GlobalContextType = {
   store: StoreDto | null;
   setStore: Dispatch<SetStateAction<StoreDto | null>>;
   hasPermission: (_permission: string) => boolean;
-  updateSale: (
-    payload: Partial<SaleDto>
-  ) => Promise<{ updatedSale: SaleDto | null; error: string }>;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(null);
@@ -385,44 +382,7 @@ export function GlobalProvider({ children }) {
     return user.permissions?.some((permission) => permission === _permission);
   };
 
-  const updateSale = async (
-    payload: Partial<SaleDto>
-  ): Promise<{ updatedSale: SaleDto | null; error: string }> => {
-    if (!sale) {
-      return {
-        updatedSale: null,
-        error: "Venda não encontrada.",
-      };
-    }
-
-    const updatedSale = {
-      ...sale,
-      ...payload,
-    };
-
-    const {
-      response: _updatedSale,
-      has_internal_error: errorOnUpdateSale,
-      error_message,
-    } = await window.Main.sale.updateSale(sale.id, updatedSale);
-
-    if (errorOnUpdateSale) {
-      return {
-        updatedSale: null,
-        error: error_message,
-      };
-    }
-
-    setSale(_updatedSale);
-
-    {
-      return {
-        updatedSale: _updatedSale,
-        error: null,
-      };
-    }
-  };
-
+  
   return (
     <GlobalContext.Provider
       value={{
@@ -448,7 +408,6 @@ export function GlobalProvider({ children }) {
         setStore,
         cupomModalState,
         setCupomModalState,
-        updateSale,
       }}
     >
       {children}

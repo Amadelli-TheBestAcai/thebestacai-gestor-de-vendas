@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 
 import { notification } from "antd";
 import { useSale } from "../../hooks/useSale";
-
 import { Container, Row, Col, InputCode, Button, Input } from "./styles";
 
-const CupomModal: React.FC = () => {
-    const { sale, updateSale, cupomModalState, setCupomModalState } = useSale();
-    const [cupom, seCupom] = useState(["", "", "", ""]);
+interface ICupomProps {
+    cupomModalState: boolean;
+    setCupomModalState: Dispatch<SetStateAction<boolean>>;
+}
+
+const CupomModal: React.FC<ICupomProps> = ({ cupomModalState, setCupomModalState }) => {
+    const { sale, setSale, onAddDiscount } = useSale();
+    const [cupom, setCupom] = useState(["", "", "", ""]);
     const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -17,7 +21,7 @@ const CupomModal: React.FC = () => {
         if (cupomModalState) {
             const saleHashCode = sale?.customerVoucher?.hash_code;
             if (saleHashCode) {
-                seCupom([
+                setCupom([
                     `${saleHashCode[0]}${saleHashCode[1]}`,
                     `${saleHashCode[2]}${saleHashCode[3]}`,
                     `${saleHashCode[4]}${saleHashCode[5]}`,
@@ -25,7 +29,7 @@ const CupomModal: React.FC = () => {
                 ]);
             }
         } else {
-            seCupom(["", "", "", ""]);
+            setCupom(["", "", "", ""]);
             setPhone("")
         }
     }, [cupomModalState, sale]);
@@ -38,7 +42,7 @@ const CupomModal: React.FC = () => {
     ): void => {
         const updatedValue = cupom;
         updatedValue[position] = value;
-        seCupom(updatedValue);
+        setCupom(updatedValue);
         const input = document.getElementsByName(name)[0];
         //@ts-ignore
         if (input.value.toString().length === 2) {
@@ -97,24 +101,38 @@ const CupomModal: React.FC = () => {
                         +response.voucher.self_service_discount_amount +
                         total;
                 } else if (cupomItem) {
-                    return item.total - +cupomItem.price_sell
+                    return (item.total - +cupomItem.price_sell)
                 } else {
                     return item.total + total;
                 }
             }, 0);
+
+            if (newTotal < 0) {
+                return notification.error({
+                    message: "O desconto excede o valor total da compra.",
+                    duration: 10,
+                });
+            }
+
             const validatedTotal = Math.max(newTotal, 0);
 
-            const { error } = await updateSale({
+            const payload = {
+                ...sale,
                 customerVoucher: response,
                 total_sold: validatedTotal,
-            });
+            };
 
-            if (error) {
+            const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
+                await window.Main.sale.updateSale(sale.id, payload);
+
+            if (errorOnUpdateSale) {
                 return notification.error({
-                    message: error,
+                    message: errorOnUpdateSale || "Oops, ocorreu um erro ao efetuar a venda!",
                     duration: 5,
                 });
             }
+
+            setSale(updatedSale)
 
             notification.success({
                 message: "Cupom aplicado com sucesso",
@@ -140,17 +158,23 @@ const CupomModal: React.FC = () => {
                 0
             );
 
-            const { error } = await updateSale({
+            const payload = {
+                ...sale,
                 customerVoucher: null,
                 total_sold: newTotal,
-            });
+            };
 
-            if (error) {
+            const { response: _sale, has_internal_error: errorOnUpdateSale } =
+                await window.Main.sale.updateSale(sale.id, payload);
+
+            if (errorOnUpdateSale) {
                 return notification.error({
-                    message: error,
+                    message: errorOnUpdateSale || "Oops, ocorreu um erro ao resgatar o cupom!",
                     duration: 5,
                 });
             }
+
+            setSale(_sale)
 
             notification.info({
                 message: "Você cancelou a utilização do cupom!",
@@ -166,13 +190,16 @@ const CupomModal: React.FC = () => {
             });
         } finally {
             setLoading(false);
+            setLoading(true);
         }
     };
 
     return (
         <Container
             visible={cupomModalState}
-            onCancel={() => setCupomModalState(false)}
+            onCancel={() => {
+                setCupomModalState(false)
+            }}
             footer={null}
             centered={true}
             width={400}
@@ -257,15 +284,15 @@ const CupomModal: React.FC = () => {
                 loading={loading}
                 onClick={sale.customerVoucher ? onCancel : onFinish}
                 disabled={
-                    !!sale.payments.length ||
                     !phone ||
-                    (cupom.some(value => value === "") && !sale.customerVoucher)
+                    cupom.some(value => value === "")
                 }
             >
                 <span className="buttonSpan">
                     {sale.customerVoucher ? "Cancelar" : "Resgatar"}
                 </span>
             </Button>
+
         </Container>
     );
 };

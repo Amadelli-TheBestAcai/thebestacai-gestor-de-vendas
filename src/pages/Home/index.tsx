@@ -28,6 +28,7 @@ import {
 } from "./styles";
 
 import { PaymentType } from "../../models/enums/paymentType";
+import CupomModal from "../../containers/CupomModal";
 
 const Home: React.FC = () => {
   const {
@@ -35,13 +36,12 @@ const Home: React.FC = () => {
     setSale,
     onRegisterSale,
     discountModalHandler,
-    setCupomModalState,
   } = useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [flagCard, setFlagCard] = useState<number | null>(99);
-
+  const [cupomModalState, setCupomModalState] = useState(false)
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
@@ -192,7 +192,7 @@ const Home: React.FC = () => {
     insert_discount: () => discountModalHandler.openDiscoundModal(),
     INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
     insert_cupom: () => setCupomModalState(true),
-    INSERT_CUPOM: () => setCupomModalState(true), 
+    INSERT_CUPOM: () => setCupomModalState(true),
   };
 
   return (
@@ -248,7 +248,7 @@ const Home: React.FC = () => {
                           setFlagCard={setFlagCard}
                         />
                       </PaymentsContent>
-
+                      <CupomModal cupomModalState={cupomModalState} setCupomModalState={setCupomModalState} />
                       <RegisterContent>
                         <Register />
                       </RegisterContent>
@@ -257,7 +257,7 @@ const Home: React.FC = () => {
                 </RightSide>
               </>
             ) : (
-              <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas."/>
+              <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas." />
             )}
           </>
         )}

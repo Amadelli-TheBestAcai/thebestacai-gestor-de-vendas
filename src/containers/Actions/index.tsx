@@ -31,9 +31,9 @@ import CupomModal from "../CupomModal";
 type ComponentProps = RouteComponentProps;
 
 const Actions: React.FC<ComponentProps> = ({ history }) => {
-  const { discountModalHandler, setCupomModalState } = useSale();
+  const { discountModalHandler } = useSale();
+  const [cupomModalState, setCupomModalState] = useState(false)
   const { store } = useStore();
-  const { user } = useUser();
   const [cash, setCash] = useState<string | undefined>("");
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
@@ -103,7 +103,10 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       </InfosAndChat>
 
       <DiscountForm />
-      <CupomModal />
+      <CupomModal
+        cupomModalState={cupomModalState}
+        setCupomModalState={setCupomModalState}
+      />
       <RegistrationCard
         modalState={commandState}
         setModalState={setCommandState}
