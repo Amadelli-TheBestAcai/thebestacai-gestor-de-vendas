@@ -39,26 +39,28 @@ interface IProps {
 const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [loading, setLoading] = useState(false);
   const [shouldSearch, setShouldSearch] = useState(false);
-  const [userCpf, setUserCpf] = useState("");
+  const [userHash, setUserHash] = useState("");
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [selectedRewards, setSelectedRewards] = useState<Reward[]>([]);
+  const [phone, setPhone] = useState('')
+
   const { store } = useStore();
   const { user } = useUser();
   const { storeCash } = useSale();
 
   const getCampaignReward = async () => {
     try {
-      if (userCpf.length !== 11) {
-        return notification.error({
-          message: "O CPF do usuário deve conter 11 dígitos",
-          duration: 5,
-        });
-      }
+      // if (userHash.length !== 11) {
+      //   return notification.error({
+      //     message: "O CPF do usuário deve conter 11 dígitos",
+      //     duration: 5,
+      //   });
+      // }
 
       setLoading(true);
       const { has_internal_error, error_message, response } =
-        await window.Main.sale.getCustomerReward(userCpf);
+        await window.Main.sale.getCustomerReward(userHash, phone); //phone, hashCode
 
       if (has_internal_error) {
         setLoading(false);
@@ -68,11 +70,13 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         });
       }
 
-      const { campaignReward, ..._customerReward } = response;
+      const { ..._customerReward } = response;
+      // const { campaignReward, ..._customerReward } = response;
 
-      setCustomerReward(_customerReward);
-      setRewards(campaignReward);
-      setUserCpf(userCpf);
+      // setCustomerReward(_customerReward);
+      // setRewards(campaignReward);
+      setUserHash(userHash);
+      setPhone(phone)
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -84,7 +88,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   };
 
   useEffect(() => {
-    if (shouldSearch && userCpf) {
+    if (shouldSearch && userHash) {
       getCampaignReward();
     }
   }, [shouldSearch]);
@@ -92,7 +96,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const resetModalState = () => {
     setLoading(false);
     setShouldSearch(false);
-    setUserCpf("");
+    setUserHash("");
     setRewards([]);
     setIsVisible(false);
     setCustomerReward(null);
@@ -156,7 +160,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         product_id: item.product_id,
       }));
       const payload = {
-        customer_reward: _rewards,
         store_id: store.company_id,
         user_name: user.name,
         user_id: user.id,
@@ -166,7 +169,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       const {
         has_internal_error: createCustomerError,
         error_message: error_message_create_customer_reward,
-      } = await window.Main.sale.redeemReward(id, payload);
+      } = await window.Main.sale.redeemReward(1, payload); //customerreward.id
 
       if (createCustomerError) {
         notification.error({
@@ -234,10 +237,10 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
               <InputSearchReward
                 placeholder="Procurar recompensa por CPF"
                 type="text"
-                value={userCpf}
+                value={userHash}
                 onChange={({ target: { value } }) => {
                   const numericValue = value.replace(/\D/g, "");
-                  setUserCpf(numericValue.slice(0, 11));
+                  setUserHash(numericValue.slice(0, 11));
                 }}
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
