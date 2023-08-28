@@ -39,42 +39,6 @@ export const Col = styled(ColAnt)`
   align-items: center;
   justify-content: center;
 `;
-export const ColReward = styled(ColAnt)`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-`;
-
-export const CustomerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 1rem;
-  border-left: 1px solid var(--gray-50);
-
-  :first-child {
-    border: none;
-    padding: 0;
-  }
-
-  span {
-    text-transform: uppercase;
-    text-align: center;
-  }
-
-  .first-content {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: start;
-    width: 100%;
-  }
-
-  .result-points {
-    font-size: 1.7rem;
-    font-weight: 700;
-  }
-`;
 
 export const InputSearchReward = styled(IMaskInput)`
   height: 2.5rem;
@@ -82,7 +46,6 @@ export const InputSearchReward = styled(IMaskInput)`
   padding: 5px;
   border-radius: 5px;
   width: 100%;
-  text-transform: uppercase;
 `;
 
 export const InputMask = styled(IMaskInput)`
@@ -251,44 +214,6 @@ export const SearchIcon = styled(Search)`
   }
 `;
 
-export const ImgContent = styled.img`
-  width: 9rem;
-  height: 5rem;
-  border-radius: 12px 0 0 12px;
-  border: 1px solid var(--gray-50);
-`;
-
-export const RewardDescription = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  width: 100%;
-
-  span {
-    display: block;
-  }
-
-  .content {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .contentLeft {
-    display: flex;
-    font-size: 1.2rem;
-  }
-
-  .counter {
-    display: flex;
-    align-items: center;
-
-    p {
-      font-size: 1.5rem;
-      margin: 0 10px;
-    }
-  }
-`;
-
 const Icon = css`
   height: 2.1rem;
   width: 2.1rem;
@@ -341,20 +266,4 @@ export const ButtonSave = styled.button`
   @media (max-width: 1366px) {
     font-size: 0.7rem;
   }
-`;
-
-export const PlusIcon = styled(PlusCircle2)`
-  ${Icon}
-  color: green;
-`;
-
-export const PlusIconContainer = styled.div<{ disabled: boolean }>`
-  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  opacity: ${(props) => (props.disabled ? 0.6 : 1)};
-  display: inline-block;
-`;
-
-export const DecreaseIcon = styled(MinusCircle)`
-  ${Icon}
-  color: red;
 `;

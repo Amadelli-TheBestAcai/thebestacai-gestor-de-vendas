@@ -5,19 +5,12 @@ import {
   Container,
   GlobalContainer,
   ButtonSearch,
-  ImgContent,
   InputSearchReward,
-  RewardDescription,
   RewardSearch,
   ButtonCancel,
-  PlusIcon,
-  DecreaseIcon,
   Footer,
   ButtonSave,
-  CustomerInfo,
   Col,
-  PlusIconContainer,
-  ColReward,
   Row,
   InfoClient,
   PointsCustomerContainer,
@@ -50,7 +43,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [userHash, setUserHash] = useState("");
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward>();
-  const [selectedRewards, setSelectedRewards] = useState<Reward>();
   const [phone, setPhone] = useState('')
 
   const { store } = useStore();
@@ -58,18 +50,17 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const { storeCash } = useSale();
 
   const getCampaignReward = async () => {
-    const uppercaseUserHash = userHash;
     try {
       if (userHash.length !== 8) {
         return notification.error({
-          message: `O hashcode deve conter ${userHash.length} dígitos`,
+          message: `O hashcode deve conter 8 dígitos`,
           duration: 5,
         });
       }
 
       setLoading(true);
       const { has_internal_error, error_message, response } =
-        await window.Main.sale.getCustomerReward(phone, userHash);
+        await window.Main.sale.getCustomerReward(phone, userHash.toUpperCase());
 
       if (has_internal_error) {
         setLoading(false);
@@ -109,7 +100,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         hash_code: customer_reward.hash_code,
       };
       setRewards(rewardFromCampaign);
-      setUserHash(uppercaseUserHash);
+      setUserHash(userHash);
       setPhone(phone)
       setLoading(false);
     } catch (error) {
@@ -136,20 +127,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     setRewards(null);
     setIsVisible(false);
     setCustomerReward(null);
-    setSelectedRewards(null);
-  };
-
-
-  const totalPointsUsed = () => {
-    let sum = 0;
-
-    for (const rewardId in rewards) {
-      if (rewards.hasOwnProperty(rewardId)) {
-        sum += +rewards[rewardId].points_reward;
-      }
-    }
-
-    return sum;
   };
 
   const useReward = async () => {
@@ -258,11 +235,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                     placeholder="Digite o hashcode"
                     type="text"
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const formattedValue = event.target.value
-                        .toUpperCase()
-                        .replace(/[^A-Z0-9]/g, ''); 
-
-                      setUserHash(formattedValue);
+                      setUserHash(event.target.value.toUpperCase());
                     }}
                     value={userHash}
                     onKeyPress={(e) => {
@@ -271,7 +244,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                       }
                     }}
                   />
-
                 </Col>
                 <Col md={4}>
                   <ButtonSearch onClick={getCampaignReward} disabled={loading || !phone || !userHash}>
