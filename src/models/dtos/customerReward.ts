@@ -25,10 +25,4 @@ export interface Reward {
   product_id: number;
   expirated_at: string; 
   observation: string | null; 
-  name: string; 
-  points_customer: number; 
-  customer_id: number; 
-  customer_campaign_id: number; 
-  taked_at: string | null; 
-  hash_code: string; 
 }

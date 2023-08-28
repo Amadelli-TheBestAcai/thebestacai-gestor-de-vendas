@@ -43,7 +43,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [userHash, setUserHash] = useState("");
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward>();
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState("")
 
   const { store } = useStore();
   const { user } = useUser();
@@ -54,6 +54,13 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       if (userHash.length !== 8) {
         return notification.error({
           message: `O hashcode deve conter 8 dígitos`,
+          duration: 5,
+        });
+      }
+
+      if (userHash === "" || phone === "") {
+        return notification.info({
+          message: "Preencha todos os campos",
           duration: 5,
         });
       }
@@ -78,28 +85,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         ...customer_reward,
       });
 
-      const rewardFromCampaign = {
-        id: customer_reward.campaignReward.id,
-        campaign_id: customer_reward.campaignReward.campaign_id,
-        customer_reward_id: customer_reward.campaignReward.customer_reward_id,
-        description: customer_reward.campaignReward.description,
-        url_image: customer_reward.campaignReward.url_image,
-        s3_key: customer_reward.campaignReward.s3_key,
-        points_reward: customer_reward.campaignReward.points_reward,
-        created_at: customer_reward.campaignReward.created_at,
-        updated_at: customer_reward.campaignReward.updated_at,
-        deleted_at: customer_reward.campaignReward.deleted_at,
-        product_id: customer_reward.campaignReward.product_id,
-        expirated_at: customer_reward.campaignReward.expirated_at,
-        observation: customer_reward.campaignReward.observation,
-        name: name,
-        points_customer: points_customer,
-        customer_id: customer_reward.customer_id,
-        customer_campaign_id: customer_reward.customer_campaign_id,
-        taked_at: customer_reward.taked_at,
-        hash_code: customer_reward.hash_code,
-      };
-      setRewards(rewardFromCampaign);
+      setRewards(customer_reward.campaignReward);
       setUserHash(userHash);
       setPhone(phone)
       setLoading(false);
@@ -110,6 +96,8 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         message: error.message || "Erro ao buscar recompensas",
         duration: 5,
       });
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -234,9 +222,9 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                   <InputSearchReward
                     placeholder="Digite o hashcode"
                     type="text"
-                    maxLength={8} 
+                    maxLength={8}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const userInput = event.target.value.slice(0, 8).toUpperCase(); 
+                      const userInput = event.target.value.slice(0, 8).toUpperCase();
                       setUserHash(userInput);
                     }}
                     value={userHash}
