@@ -1,10 +1,8 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Empty, notification } from "antd";
 import {
-  CardReward,
   Modal,
   Container,
-  FirstContent,
   GlobalContainer,
   ButtonSearch,
   ImgContent,
@@ -12,17 +10,27 @@ import {
   RewardDescription,
   RewardSearch,
   ButtonCancel,
-  RewardContent,
   PlusIcon,
   DecreaseIcon,
   Footer,
   ButtonSave,
   CustomerInfo,
-  Header,
   Col,
   PlusIconContainer,
   ColReward,
-  ContentItemRow,
+  Row,
+  InfoClient,
+  PointsCustomerContainer,
+  DataClient,
+  CustomerPoints,
+  ContentReward,
+  ProgressBarActived,
+  ProgressBar,
+  ContentGeneral,
+  Value,
+  TitleReward,
+  ImgReward,
+  InputMask
 } from "./styles";
 import { useStore } from "../../hooks/useStore";
 import { CustomerReward, Reward } from "../../models/dtos/customerReward";
@@ -41,8 +49,8 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [shouldSearch, setShouldSearch] = useState(false);
   const [userHash, setUserHash] = useState("");
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
-  const [rewards, setRewards] = useState<Reward[]>([]);
-  const [selectedRewards, setSelectedRewards] = useState<Reward[]>([]);
+  const [rewards, setRewards] = useState<Reward>();
+  const [selectedRewards, setSelectedRewards] = useState<Reward>();
   const [phone, setPhone] = useState('')
 
   const { store } = useStore();
@@ -50,17 +58,18 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const { storeCash } = useSale();
 
   const getCampaignReward = async () => {
+    const uppercaseUserHash = userHash;
     try {
-      // if (userHash.length !== 11) {
-      //   return notification.error({
-      //     message: "O CPF do usuário deve conter 11 dígitos",
-      //     duration: 5,
-      //   });
-      // }
+      if (userHash.length !== 8) {
+        return notification.error({
+          message: `O hashcode deve conter ${userHash.length} dígitos`,
+          duration: 5,
+        });
+      }
 
       setLoading(true);
       const { has_internal_error, error_message, response } =
-        await window.Main.sale.getCustomerReward(userHash, phone); //phone, hashCode
+        await window.Main.sale.getCustomerReward(phone, userHash);
 
       if (has_internal_error) {
         setLoading(false);
@@ -70,25 +79,51 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         });
       }
 
-      const { ..._customerReward } = response;
-      // const { campaignReward, ..._customerReward } = response;
+      const { name, customer_reward, points_customer } = response;
 
-      // setCustomerReward(_customerReward);
-      // setRewards(campaignReward);
-      setUserHash(userHash);
+      setCustomerReward({
+        customer_name: name,
+        points_customer,
+        ...customer_reward,
+      });
+
+      const rewardFromCampaign = {
+        id: customer_reward.campaignReward.id,
+        campaign_id: customer_reward.campaignReward.campaign_id,
+        customer_reward_id: customer_reward.campaignReward.customer_reward_id,
+        description: customer_reward.campaignReward.description,
+        url_image: customer_reward.campaignReward.url_image,
+        s3_key: customer_reward.campaignReward.s3_key,
+        points_reward: customer_reward.campaignReward.points_reward,
+        created_at: customer_reward.campaignReward.created_at,
+        updated_at: customer_reward.campaignReward.updated_at,
+        deleted_at: customer_reward.campaignReward.deleted_at,
+        product_id: customer_reward.campaignReward.product_id,
+        expirated_at: customer_reward.campaignReward.expirated_at,
+        observation: customer_reward.campaignReward.observation,
+        name: name,
+        points_customer: points_customer,
+        customer_id: customer_reward.customer_id,
+        customer_campaign_id: customer_reward.customer_campaign_id,
+        taked_at: customer_reward.taked_at,
+        hash_code: customer_reward.hash_code,
+      };
+      setRewards(rewardFromCampaign);
+      setUserHash(uppercaseUserHash);
       setPhone(phone)
       setLoading(false);
     } catch (error) {
       setLoading(false);
       notification.error({
-        message: "Não foi possível listar a recompensa",
+        //@ts-ignore
+        message: error.message || "Erro ao buscar recompensas",
         duration: 5,
       });
     }
   };
 
   useEffect(() => {
-    if (shouldSearch && userHash) {
+    if (shouldSearch && userHash && phone) {
       getCampaignReward();
     }
   }, [shouldSearch]);
@@ -97,68 +132,35 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     setLoading(false);
     setShouldSearch(false);
     setUserHash("");
-    setRewards([]);
+    setPhone("");
+    setRewards(null);
     setIsVisible(false);
     setCustomerReward(null);
-    setSelectedRewards([]);
+    setSelectedRewards(null);
   };
 
-  const updateUserPoints = (quantity: number) => {
-    setCustomerReward((oldState) => ({
-      ...oldState,
-      quantity: oldState.points_customer + quantity,
-    }));
-  };
-
-  const getItemQuantity = (product_id: number) => {
-    return selectedRewards.filter(
-      (selectedReward) => selectedReward.product_id === product_id
-    ).length;
-  };
 
   const totalPointsUsed = () => {
-    return selectedRewards.reduce(
-      (sum, reward) => sum + +reward.points_reward,
-      0
-    );
-  };
+    let sum = 0;
 
-  const handleAddReward = (payload: Reward) => {
-    setSelectedRewards((oldValues) => [...oldValues, payload]);
-    updateUserPoints(payload.points_reward);
-  };
+    for (const rewardId in rewards) {
+      if (rewards.hasOwnProperty(rewardId)) {
+        sum += +rewards[rewardId].points_reward;
+      }
+    }
 
-  const handleDecressReward = (payload: Reward) => {
-    const itemIndex = selectedRewards.findIndex(
-      (item) => item.product_id === payload.product_id
-    );
-    setSelectedRewards((oldValues) => [
-      ...oldValues.filter((_, index) => itemIndex !== index),
-    ]);
-    updateUserPoints(payload.points_reward);
+    return sum;
   };
 
   const useReward = async () => {
     setLoading(true);
     try {
-      if (!selectedRewards?.length) {
-        return notification.error({
-          message: "Selecione um produto para resgatar",
-          duration: 5,
-        });
-      }
-      if (customerReward.points_customer < totalPointsUsed()) {
-        return notification.error({
-          message: "Saldo insuficiente para resgatar este produto",
-          duration: 5,
-        });
-      }
-      const _rewards = selectedRewards?.map((item) => ({
-        customer_id: customerReward.customer_id,
-        customer_campaign_id: customerReward.customer_campaign_id,
-        campaign_reward_id: item.id,
-        product_id: item.product_id,
-      }));
+      // const _rewards = selectedRewards?.map((item) => ({
+      //   customer_id: customerReward.customer_id,
+      //   customer_campaign_id: customerReward.customer_campaign_id,
+      //   campaign_reward_id: item.id,
+      //   product_id: item.product_id,
+      // }));
       const payload = {
         store_id: store.company_id,
         user_name: user.name,
@@ -169,7 +171,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       const {
         has_internal_error: createCustomerError,
         error_message: error_message_create_customer_reward,
-      } = await window.Main.sale.redeemReward(1, payload); //customerreward.id
+      } = await window.Main.sale.redeemReward(customerReward.id, payload);
 
       if (createCustomerError) {
         notification.error({
@@ -179,15 +181,15 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         return;
       }
 
-      const { has_internal_error: rewardError, error_message } =
-        await window.Main.sale.integrateRewardWithSale(_rewards);
-      if (rewardError) {
-        notification.warning({
-          message: error_message,
-          duration: 5,
-        });
-        return;
-      }
+      // const { has_internal_error: rewardError, error_message } =
+      //   await window.Main.sale.integrateRewardWithSale(_rewards);
+      // if (rewardError) {
+      //   notification.warning({
+      //     message: error_message,
+      //     duration: 5,
+      //   });
+      //   return;
+      // }
 
       notification.success({
         message: "Recompensa resgatada com sucesso",
@@ -213,19 +215,23 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       centered
       visible={isVisible}
       onCancel={resetModalState}
-      width={"75%"}
+      width={"60%"}
       destroyOnClose
       footer={
-        <Footer>
-          {storeCash?.is_opened && storeCash.is_online && (
-            <>
-              <ButtonCancel onClick={resetModalState}>Cancelar</ButtonCancel>
-              <ButtonSave onClick={useReward} disabled={loading}>
-                Resgatar recompensa
-              </ButtonSave>
-            </>
+        <>
+          {customerReward && (
+            <Footer>
+              {storeCash?.is_opened && storeCash.is_online && (
+                <>
+                  <ButtonCancel onClick={resetModalState}>Cancelar</ButtonCancel>
+                  <ButtonSave onClick={useReward} disabled={loading}>
+                    Resgatar recompensa
+                  </ButtonSave>
+                </>
+              )}
+            </Footer>
           )}
-        </Footer>
+        </>
       }
     >
       {storeCash?.is_opened && storeCash.is_online ? (
@@ -234,123 +240,95 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         ) : (
           <GlobalContainer>
             <RewardSearch>
-              <InputSearchReward
-                placeholder="Procurar recompensa por CPF"
-                type="text"
-                value={userHash}
-                onChange={({ target: { value } }) => {
-                  const numericValue = value.replace(/\D/g, "");
-                  setUserHash(numericValue.slice(0, 11));
-                }}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    getCampaignReward();
-                  }
-                }}
-              />
+              <Row gutter={12}>
+                <Col md={10}>
+                  <InputMask
+                    placeholder="Digite o telefone"
+                    mask="(00) 00000-0000"
+                    value={phone}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const inputValue = event.target.value;
+                      const numericValue = inputValue.replace(/\D/g, '');
+                      setPhone(numericValue);
+                    }}
+                  />
+                </Col>
+                <Col md={10}>
+                  <InputSearchReward
+                    placeholder="Digite o hashcode"
+                    type="text"
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const formattedValue = event.target.value
+                        .toUpperCase()
+                        .replace(/[^A-Z0-9]/g, ''); 
 
-              <ButtonSearch onClick={getCampaignReward} disabled={loading}>
-                {loading ? "..." : "Buscar"}
-              </ButtonSearch>
+                      setUserHash(formattedValue);
+                    }}
+                    value={userHash}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        getCampaignReward();
+                      }
+                    }}
+                  />
+
+                </Col>
+                <Col md={4}>
+                  <ButtonSearch onClick={getCampaignReward} disabled={loading || !phone || !userHash}>
+                    {loading ? "..." : "Buscar"}
+                  </ButtonSearch>
+                </Col>
+              </Row>
             </RewardSearch>
-            <Container>
-              <FirstContent>
-                <CustomerInfo>
-                  <div className="first-content">
-                    <span>Cliente:</span>
-                    <span className="name">
-                      {customerReward?.customer_name || "-"}
-                    </span>
-                  </div>
-                </CustomerInfo>
 
-                <CustomerInfo>
-                  <span>Pontos disponíveis</span>
-                  <span className="result-points">
-                    {customerReward?.points_customer || "-"}
-                  </span>
-                </CustomerInfo>
+            {customerReward &&
+              (
+                <Container>
+                  <InfoClient><p>{customerReward.customer_name}</p></InfoClient>
+                  <PointsCustomerContainer>
+                    <DataClient>
+                      <ContentGeneral>
+                        <Value>
+                          <div>
+                            <span>Pontos disponíveis</span>
+                            <CustomerPoints available>{customerReward.points_customer}<span>pts</span></CustomerPoints>
+                          </div>
+                          <div>
+                            <span>Pontos gastos</span>
+                            <CustomerPoints available={false}>15<span>pts</span></CustomerPoints>
+                          </div>
+                        </Value>
 
-                <CustomerInfo>
-                  <span>Pontos utilizados</span>
-                  <span className="result-points">
-                    {totalPointsUsed() || "-"}
-                  </span>
-                </CustomerInfo>
+                        <ProgressBar>
+                          <ProgressBarActived actived={`${customerReward?.points_customer
+                            ? customerReward?.points_customer
+                            : 0
+                            }%`} />
+                        </ProgressBar>
 
-                <CustomerInfo>
-                  <span>Quantidade de itens</span>
-                  <span className="result-points">
-                    {selectedRewards?.length || "-"}
-                  </span>
-                </CustomerInfo>
-              </FirstContent>
+                        <span className="max-points">Máx. 100 pts</span>
+                      </ContentGeneral>
+                    </DataClient>
+                  </PointsCustomerContainer>
 
-              {rewards?.length !== 0 && (
-                <RewardContent>
-                  <Header>
-                    <Col sm={3}>Imagem</Col>
-                    <Col sm={11} style={{ justifyContent: "start" }}>
-                      Recompensa
-                    </Col>
-                    <Col sm={4}>Custo da recompensa</Col>
-                    <Col sm={8}>Itens</Col>
-                  </Header>
+                  <ContentReward>
+                    {rewards ? (
+                      <>
+                        <Container>
+                          <ContentReward>
+                            <TitleReward>{rewards.description}</TitleReward>
 
-                  <ContentItemRow>
-                    {rewards?.map((item, index) => (
-                      <CardReward
-                        key={item.id}
-                        invalid={
-                          item.points_reward > customerReward.points_customer
-                        }
-                      >
-                        <React.Fragment key={item.id}>
-                          <ColReward sm={3}>
-                            <ImgContent
-                              src={item.url_image}
-                              alt="imagem da recompensa"
-                            />
-                          </ColReward>
-                          <RewardDescription>
-                            <div className="content">
-                              <ColReward sm={12}>
-                                <div className="contentLeft">
-                                  {item.description}
-                                </div>
-                              </ColReward>
-                              <ColReward sm={4}>
-                                <div className="contentLeft">
-                                  {item.points_reward}
-                                </div>
-                              </ColReward>
-
-                              <ColReward sm={3}>
-                                <div className="counter">
-                                  <DecreaseIcon
-                                    onClick={() => handleDecressReward(item)}
-                                  />
-                                  <p>{getItemQuantity(item.product_id)}</p>
-                                  <PlusIconContainer
-                                    onClick={() => handleAddReward(item)}
-                                    disabled={
-                                      item.points_reward >
-                                      customerReward.points_customer
-                                    }
-                                  >
-                                    <PlusIcon />
-                                  </PlusIconContainer>
-                                </div>
-                              </ColReward>
-                            </div>
-                          </RewardDescription>
-                        </React.Fragment>
-                      </CardReward>
-                    ))}
-                  </ContentItemRow>
-                </RewardContent>
-              )}
-            </Container>
+                            <ImgReward src={rewards.url_image} />
+                          </ContentReward>
+                        </Container>
+                      </>
+                    ) : (
+                      <p>Não há recompensa disponível</p>
+                    )}
+                  </ContentReward>
+                </Container>
+              )
+            }
           </GlobalContainer>
         )
       ) : (
@@ -358,7 +336,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
           <Empty description="O caixa deve estar online" />
         </EmptyContainer>
       )}
-    </Modal>
+    </Modal >
   );
 };
 
