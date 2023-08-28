@@ -234,8 +234,10 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                   <InputSearchReward
                     placeholder="Digite o hashcode"
                     type="text"
+                    maxLength={8} 
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setUserHash(event.target.value.toUpperCase());
+                      const userInput = event.target.value.slice(0, 8).toUpperCase(); 
+                      setUserHash(userInput);
                     }}
                     value={userHash}
                     onKeyPress={(e) => {

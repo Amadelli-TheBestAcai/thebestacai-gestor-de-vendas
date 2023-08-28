@@ -40,7 +40,7 @@ export const Col = styled(ColAnt)`
   justify-content: center;
 `;
 
-export const InputSearchReward = styled(IMaskInput)`
+export const InputSearchReward = styled.input`
   height: 2.5rem;
   border: 1px solid var(--gray-50);
   padding: 5px;
