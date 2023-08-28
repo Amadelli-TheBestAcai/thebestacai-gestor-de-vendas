@@ -59,7 +59,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       }
 
       if (userHash === "" || phone === "") {
-        return notification.info({
+        return notification.warning({
           message: "Preencha todos os campos",
           duration: 5,
         });
