@@ -9,6 +9,8 @@ export interface CustomerReward {
   taked_at: string | null; 
   hash_code: string; 
   updated_at: string; 
+  max_points?: number;
+  total_accumulated_points?: number;
 }
 
 export interface Reward {

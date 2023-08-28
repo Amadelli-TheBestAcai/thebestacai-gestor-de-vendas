@@ -77,11 +77,13 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         });
       }
 
-      const { name, customer_reward, points_customer } = response;
+      const { name, customer_reward, points_customer, max_points, total_accumulated_points } = response;
 
       setCustomerReward({
         customer_name: name,
         points_customer,
+        max_points,
+        total_accumulated_points,
         ...customer_reward,
       });
 
@@ -250,7 +252,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                           </div>
                           <div>
                             <span>Pontos gastos</span>
-                            <CustomerPoints available={false}>15<span>pts</span></CustomerPoints>
+                            <CustomerPoints available={false}>{customerReward.total_accumulated_points}<span>pts</span></CustomerPoints>
                           </div>
                         </Value>
 
@@ -261,7 +263,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                             }%`} />
                         </ProgressBar>
 
-                        <span className="max-points">Máx. 100 pts</span>
+                        <span className="max-points">Máx. {customerReward.max_points} pts</span>
                       </ContentGeneral>
                     </DataClient>
                   </PointsCustomerContainer>

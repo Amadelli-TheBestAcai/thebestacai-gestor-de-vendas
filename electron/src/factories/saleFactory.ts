@@ -105,6 +105,8 @@ export const saleFactory = {
     await useCaseFactory.execute<{
       name: string;
       points_customer: number;
+      max_points: number;
+      total_accumulated_points: number;
       customer_reward: {
         id: number;
         customer_id: number;
