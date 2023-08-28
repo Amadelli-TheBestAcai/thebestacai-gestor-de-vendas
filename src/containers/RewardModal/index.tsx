@@ -43,7 +43,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [userHash, setUserHash] = useState("");
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward>();
-  const [phone, setPhone] = useState("")
+  const [phone, setPhone] = useState("");
 
   const { store } = useStore();
   const { user } = useUser();
@@ -87,7 +87,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
 
       setRewards(customer_reward.campaignReward);
       setUserHash(userHash);
-      setPhone(phone)
+      setPhone(phone);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -97,7 +97,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         duration: 5,
       });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -120,12 +120,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const useReward = async () => {
     setLoading(true);
     try {
-      // const _rewards = selectedRewards?.map((item) => ({
-      //   customer_id: customerReward.customer_id,
-      //   customer_campaign_id: customerReward.customer_campaign_id,
-      //   campaign_reward_id: item.id,
-      //   product_id: item.product_id,
-      // }));
       const payload = {
         store_id: store.company_id,
         user_name: user.name,
@@ -145,16 +139,15 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         });
         return;
       }
-
-      // const { has_internal_error: rewardError, error_message } =
-      //   await window.Main.sale.integrateRewardWithSale(_rewards);
-      // if (rewardError) {
-      //   notification.warning({
-      //     message: error_message,
-      //     duration: 5,
-      //   });
-      //   return;
-      // }
+      const { has_internal_error: rewardError, error_message } =
+        await window.Main.sale.integrateRewardWithSale(rewards.product_id);
+      if (rewardError) {
+        notification.warning({
+          message: error_message,
+          duration: 5,
+        });
+        return;
+      }
 
       notification.success({
         message: "Recompensa resgatada com sucesso",

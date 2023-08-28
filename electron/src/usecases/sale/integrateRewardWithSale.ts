@@ -9,7 +9,7 @@ import { v4 } from "uuid";
 import { buildNewSale } from "./buildNewSale";
 
 interface Request {
-  payload
+  product_id: number;
 }
 
 class IntegrateRewardWithSale implements IUseCaseFactory {
@@ -24,7 +24,7 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
     private buildNewSaleUseCase = buildNewSale
   ) {}
 
-  async execute({ payload }: Request): Promise<void> {
+  async execute({ product_id }: Request): Promise<void> {
     const { response: newSale, has_internal_error: errorOnBuildNewSale } =
       await useCaseFactory.execute<SaleDto>(this.buildNewSaleUseCase, {withPersistence: false});
 
@@ -34,35 +34,25 @@ class IntegrateRewardWithSale implements IUseCaseFactory {
     if (!newSale) {
       throw new Error("Nenhuma venda encontrada");
     }
-    
-    await Promise.all(
-      payload.map(async (item) => {
-        const product = await this.productRepository.getOne({
-          product_id: item.product_id,
-        });
 
-        if (!product) {
-          throw new Error("Essa recompensa não foi cadastrada em sua loja!");
-        }
+    const product = await this.productRepository.getOne({
+      product_id: product_id,
+    });
 
-        let qtd = Number(product?.quantity)
-        do {
-          newSale?.items.push({
-            created_at: moment(new Date()).format("DD/MM/yyyy HH:mm:ss"),
-            product: product.product,
-            quantity: 1,
-            storeProduct: product,
-            store_product_id: product.id,
-            total: Number(product.price_sell),
-            update_stock: false,
-            id: v4(),
-          });
-          newSale.quantity++
-          qtd -= 1;
-        } while(qtd >= 1)
-      })
-    );
+    if (!product) {
+      throw new Error("Essa recompensa não foi cadastrada em sua loja!");
+    }
 
+    newSale?.items.push({
+      created_at: moment(new Date()).format("DD/MM/yyyy HH:mm:ss"),
+      product: product.product,
+      quantity: 1,
+      storeProduct: product,
+      store_product_id: product.id,
+      total: Number(product.price_sell),
+      update_stock: false,
+      id: v4(),
+    });
     await this.notIntegratedSaleRepository.create(newSale);
 
     const {
