@@ -27,13 +27,13 @@ type Company = {
 };
 
 type Product = {
-  id: number;
-  voucher_id: number;
+  id?: number;
+  voucher_id?: number;
   product_name: string;
-  product_id: number;
+  product_id?: number;
   category_id?: number;
   price_sell: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
   deleted_at?: string;
 };

@@ -13,9 +13,8 @@ const CupomModal: React.FC<ICupomProps> = ({
   cupomModalState,
   setCupomModalState,
 }) => {
-  const { sale, setSale, onAddDiscount } = useSale();
+  const { sale, setSale } = useSale();
   const [cupom, setCupom] = useState(["", "", "", ""]);
-  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
   const products = sale.items.map((item) => item.product);
@@ -33,9 +32,9 @@ const CupomModal: React.FC<ICupomProps> = ({
       }
     } else {
       setCupom(["", "", "", ""]);
-      setPhone("");
     }
   }, [cupomModalState, sale]);
+
   useEffect(() => {
     if (!cupomModalState) setLoading(false);
   }, [cupomModalState]);
@@ -72,6 +71,13 @@ const CupomModal: React.FC<ICupomProps> = ({
   };
 
   const onFinish = async (): Promise<void> => {
+    if (cupom.some((value) => value.length != 2)) {
+      return notification.warn({
+        message:
+          "É necessário preencher todos os campos corretamente para adicionar o cupom!",
+        duration: 5,
+      });
+    }
     try {
       setLoading(true);
 
@@ -82,12 +88,8 @@ const CupomModal: React.FC<ICupomProps> = ({
         });
       }
 
-      const cleanPhoneNumber = phone.replace(/\D/g, "");
-      const { has_internal_error, response, error_message } =
-        await window.Main.sale.getVoucher(
-          cupom.join("").toUpperCase(),
-          cleanPhoneNumber
-        );
+      let { has_internal_error, response, error_message } =
+        await window.Main.sale.getVoucher(cupom.join("").toUpperCase());
 
       if (has_internal_error) {
         return notification.error({
@@ -102,18 +104,42 @@ const CupomModal: React.FC<ICupomProps> = ({
         .filter((itme) => itme.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
 
+      const totalOfCupomProducs = response.voucher.products.reduce(
+        (total, product) => total + +product.price_sell,
+        0
+      );
+
       let newTotalWithDiscount = 0;
 
-      if (response.voucher.self_service_discount_type === 1) {
-        newTotalWithDiscount =
-          totalSoldInSelfService -
-          totalSoldInSelfService *
+      if (response.voucher.self_service) {
+        if (response.voucher.self_service_discount_type === 1) {
+          newTotalWithDiscount =
+            totalSoldInSelfService -
+            totalSoldInSelfService *
+              +response.voucher.self_service_discount_amount;
+
+          response.voucher.products.push({
+            product_name: `Desconto de ${
+              +response.voucher.self_service_discount_amount * 100
+            }% em Self-service`,
+            price_sell: (newTotalWithDiscount - totalSoldInSelfService).toFixed(
+              2
+            ),
+          });
+        } else {
+          newTotalWithDiscount =
+            totalSoldInSelfService -
             +response.voucher.self_service_discount_amount;
-      } else {
-        newTotalWithDiscount =
-          totalSoldInSelfService -
-          +response.voucher.self_service_discount_amount;
+
+          response.voucher.products.push({
+            product_name: `Desconto de ${+response.voucher
+              .self_service_discount_amount}R$`,
+            price_sell: response.voucher.self_service_discount_amount,
+          });
+        }
       }
+
+      newTotalWithDiscount += totalOfCupomProducs;
 
       const payload = {
         ...sale,
@@ -191,7 +217,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       });
     } finally {
       setLoading(false);
-      setLoading(true);
+      setLoading(false);
     }
   };
 
@@ -280,19 +306,6 @@ const CupomModal: React.FC<ICupomProps> = ({
                 tabIndex={4}
               />
             </Col>
-
-            <Col sm={24} className="content-tel">
-              <label htmlFor="phone">Telefone: </label>
-              <Input
-                id="phone"
-                value={phone}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setPhone(event.target.value)
-                }
-                mask="(00) 00000-0000"
-                placeholder="(00) 00000-0000"
-              />
-            </Col>
           </Row>
           <span>
             <strong>Obs:</strong>O cupom deve ser aplicado antes de finalizar a
@@ -308,7 +321,6 @@ const CupomModal: React.FC<ICupomProps> = ({
             type="primary"
             loading={loading}
             onClick={onFinish}
-            disabled={!phone || cupom.some((value) => value === "")}
           >
             <span className="buttonSpan">Resgatar</span>
           </Button>

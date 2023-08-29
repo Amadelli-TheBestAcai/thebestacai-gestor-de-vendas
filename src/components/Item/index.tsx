@@ -177,13 +177,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           <Column span={4}>1</Column>
           <Column span={4}></Column>
           <Column span={4}>R$ {productVoucher.price_sell}</Column>
-          <Column span={2}>
-            <Tooltip title="Remover" placement="bottom">
-              <Button onClick={() => setModalState(true)}>
-                <DeleteIcon />
-              </Button>
-            </Tooltip>
-          </Column>
+          <Column span={2}></Column>
         </Container>
       )}
     </>
