@@ -20,6 +20,9 @@ export * from "./decressItem";
 export * from "./emitNfce";
 export * from "./deleteSaleDelivery";
 export * from "./cancelNfce";
+export * from "./getCustomerReward";
+export * from "./integrateRewardWithSale";
 export * from "./getCampaignReward";
 export * from "./integrateRewardWithSale";
 export * from "./getVoucher";
+
