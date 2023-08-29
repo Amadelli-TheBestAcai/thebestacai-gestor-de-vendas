@@ -67,7 +67,7 @@ export {
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
-export { AddToQueue, User } from "@styled-icons/boxicons-solid";
+export { AddToQueue, User, Discount } from "@styled-icons/boxicons-solid";
 export {
   ArrowFromLeft,
   ArrowFromRight,

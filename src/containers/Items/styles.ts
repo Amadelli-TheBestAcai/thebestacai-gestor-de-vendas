@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Row, Col } from "antd";
+import { Row as RowAnt, Col } from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -10,7 +10,7 @@ export const Container = styled.div`
   flex-direction: column;
 `;
 
-export const Header = styled(Row)`
+export const Header = styled(RowAnt)`
   display: flex;
   width: 100%;
   height: 3rem;
@@ -35,6 +35,11 @@ export const Header = styled(Row)`
   @media (max-width: 1366px) {
     height: 2.7rem;
   }
+`;
+
+export const Row = styled(RowAnt)`
+  display: flex;
+  width: 100%;
 `;
 
 export const Column = styled(Col)`

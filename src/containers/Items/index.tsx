@@ -27,10 +27,19 @@ const Items: React.FC = () => {
         <Column span={4}>Valor Total</Column>
         <Column span={2}>Ação</Column>
       </Header>
-      {sale?.items?.length !== 0 ? (
+
+      {sale?.items?.length ||
+      sale?.customerVoucher?.voucher?.products?.length ? (
         <>
           <ItemContainer>
             <ItemContent>
+              {sale?.customerVoucher?.voucher?.products?.length && (
+                <>
+                  {sale?.customerVoucher.voucher.products.map((product) => (
+                    <Item key={product.id} productVoucher={product} />
+                  ))}
+                </>
+              )}
               {sale?.items?.map((item) => (
                 <Item key={item.id} item={item} />
               ))}

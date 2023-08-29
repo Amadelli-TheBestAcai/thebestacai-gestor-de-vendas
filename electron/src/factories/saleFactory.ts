@@ -21,13 +21,19 @@ import {
   emitNfce,
   deleteSaleDelivery,
   cancelNfce,
+  getVoucher,
   onlineIntegration,
   getCampaignReward,
   integrateRewardWithSale,
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto } from "../models/gestor";
-import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
+import {
+  SaleFromApiDTO,
+  AppSaleDTO,
+  NfeDTO,
+  CustomerVoucherDTO,
+} from "../models/dtos";
 import { createCustomerReward } from "../usecases/sale/addCustomerReward";
 
 export const saleFactory = {
@@ -79,6 +85,8 @@ export const saleFactory = {
     }),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
+  getVoucher: async (hash_code: string) =>
+    await useCaseFactory.execute<CustomerVoucherDTO>(getVoucher, { hash_code }),
   deleteSaleFromApi: async (params: {
     id: number;
     cash_history: number;
