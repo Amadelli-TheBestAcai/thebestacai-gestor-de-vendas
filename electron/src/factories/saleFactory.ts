@@ -29,10 +29,13 @@ import {
 
 import { SaleDto, ProductDto } from "../models/gestor";
 
-import { SaleFromApiDTO, AppSaleDTO, NfeDTO, CustomerVoucherDTO } from "../models/dtos";
+import {
+  SaleFromApiDTO,
+  AppSaleDTO,
+  NfeDTO,
+  CustomerVoucherDTO,
+} from "../models/dtos";
 import { redeemReward } from "../usecases/sale/redeemReward";
-
-import { createCustomerReward } from "../usecases/sale/addCustomerReward";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -137,13 +140,12 @@ export const saleFactory = {
           product_id: number;
           expirated_at: string;
           observation: string;
-        }
-      }
-    }>(getCustomerReward,
-      {
-        phone,
-        hash_code
-      }),
+        };
+      };
+    }>(getCustomerReward, {
+      phone,
+      hash_code,
+    }),
   cancelNfce: async (sale_id: number, justify: string) =>
     await useCaseFactory.execute(cancelNfce, {
       sale_id,
