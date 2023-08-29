@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
-import { Col as ColAnt, Modal as ModalAnt, Button, Row as RowAnt, Input as InputAnt } from "antd";
-import { Search, MinusCircle, PlusCircle2 } from "../../styles/Icons";
+import { Col as ColAnt, Modal as ModalAnt, Row as RowAnt, Button as ButtonAnt } from "antd";
+import { Search } from "../../styles/Icons";
 import { IMaskInput } from "react-imask";
 
 export const GlobalContainer = styled.div`
@@ -57,7 +57,7 @@ export const InputMask = styled(IMaskInput)`
 `;
 
 
-export const ButtonSearch = styled.button`
+export const ButtonSearch = styled(ButtonAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,6 +69,17 @@ export const ButtonSearch = styled.button`
   padding: 5px;
   margin-left: 10px;
   cursor: pointer;
+
+  :disabled {
+    cursor: not-allowed;
+    background-color: var(--gray-50);
+
+    :hover {
+      cursor: not-allowed;
+    background-color: var(--gray-50);
+    opacity: 100%;
+    }
+  }
 
   :hover {
     background: var(--orange-250);
@@ -248,7 +259,7 @@ export const TitleReward = styled.span`
   font-weight: 500;
 `;
 
-export const ButtonSave = styled.button`
+export const ButtonSave = styled(ButtonAnt)`
   padding: 10px;
   font-weight: 500;
   border-radius: 5px;
@@ -257,9 +268,12 @@ export const ButtonSave = styled.button`
   color: white;
   transition: 0.5s;
   width: 12rem;
+  transition: .3s ease-out;
 
   :hover {
     background: var(--orange-200);
+    color: white;
+    opacity: 70%
   }
 
   /*Responsive 1366px*/
