@@ -21,7 +21,6 @@ type GlobalContextType = {
   setStoreCash: Dispatch<SetStateAction<StoreCashDto>>;
   loading: boolean;
   savingSale: boolean;
-  discountModalState: boolean;
   onAddItem: (
     product: StoreProductDto,
     quantity: number,
@@ -31,10 +30,13 @@ type GlobalContextType = {
   onAddDiscount: (value: number) => Promise<void>;
   onAddToQueue: (name: string) => Promise<void>;
   onRegisterSale: () => Promise<void>;
+  discountModalState: boolean;
   discountModalHandler: {
     openDiscoundModal: () => void;
     closeDiscoundModal: () => void;
   };
+  cupomModalState: boolean;
+  setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
   setUser: Dispatch<SetStateAction<UserDto | null>>;
   store: StoreDto | null;
@@ -50,6 +52,7 @@ export function GlobalProvider({ children }) {
   const [settings, setSettings] = useState<SettingsDto>();
   const [savingSale, setSavingSale] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [cupomModalState, setCupomModalState] = useState(false);
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
@@ -171,8 +174,8 @@ export function GlobalProvider({ children }) {
       if (
         +(sale.total_sold.toFixed(2) || 0) >
         sale.total_paid +
-          ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
-          0.5
+        ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
+        0.5
       ) {
         return notification.warning({
           message: "Pagamento inválido!",
@@ -247,7 +250,7 @@ export function GlobalProvider({ children }) {
         if (
           settings.should_open_casher === true &&
           error_message ===
-            "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
         ) {
           const {
             response: _newSettings,
@@ -270,13 +273,13 @@ export function GlobalProvider({ children }) {
 
         error_message
           ? notification.warning({
-              message: error_message,
-              duration: 5,
-            })
+            message: error_message,
+            duration: 5,
+          })
           : notification.error({
-              message: "Erro ao finalizar venda",
-              duration: 5,
-            });
+            message: "Erro ao finalizar venda",
+            duration: 5,
+          });
       }
 
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
@@ -379,6 +382,7 @@ export function GlobalProvider({ children }) {
     return user.permissions?.some((permission) => permission === _permission);
   };
 
+  
   return (
     <GlobalContext.Provider
       value={{
@@ -402,6 +406,8 @@ export function GlobalProvider({ children }) {
         hasPermission,
         store,
         setStore,
+        cupomModalState,
+        setCupomModalState,
       }}
     >
       {children}

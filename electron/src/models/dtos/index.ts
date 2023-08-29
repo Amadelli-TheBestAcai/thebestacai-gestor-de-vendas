@@ -6,3 +6,4 @@ export * from "./nfe";
 export * from "./productNfe";
 export * from "./salesFromApi";
 export * from "./storeCashHistory";
+export * from "./customerVoucher";

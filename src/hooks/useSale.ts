@@ -69,5 +69,6 @@ export function useSale() {
     onDecressItem,
     onRegisterSale,
     onAddToQueue,
+
   };
 }
