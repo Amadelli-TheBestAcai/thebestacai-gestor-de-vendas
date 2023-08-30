@@ -110,9 +110,19 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
 
-    .ant-notification-notice-warning {
-      background: var(--warning);
+    .ant-notification {
+      background: #fff !important;
+    }
+
+    html .ant-notification-notice-warning, body .ant-notification-notice-warning, #root .ant-notification-notice-warning {
+      background: var(--warning) !important;
       color: var(--black-opaco);
+    }
+
+    .ant-notification-notice-warning {
+      background: var(--white-70);
+      color: var(--black-opaco);
+      margin: 0;
     }
 
     .ant-notification-notice-success {
