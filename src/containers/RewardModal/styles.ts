@@ -268,6 +268,7 @@ export const ButtonSave = styled(ButtonAnt)`
   color: white;
   transition: 0.5s;
   width: 12rem;
+  height: 3rem;
   transition: .3s ease-out;
 
   :hover {
