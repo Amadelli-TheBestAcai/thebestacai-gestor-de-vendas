@@ -250,10 +250,10 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                             <span>Pontos disponíveis</span>
                             <CustomerPoints available>{customerReward.points_customer}<span>pts</span></CustomerPoints>
                           </div>
-                          <div>
-                            <span>Pontos gastos</span>
+                          {/* <div>
+                            <span>Total de pontos acumulados da campanha</span>
                             <CustomerPoints available={false}>{customerReward.total_accumulated_points}<span>pts</span></CustomerPoints>
-                          </div>
+                          </div> */}
                         </Value>
 
                         <ProgressBar>
