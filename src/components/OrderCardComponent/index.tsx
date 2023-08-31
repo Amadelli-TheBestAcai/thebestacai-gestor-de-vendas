@@ -70,7 +70,8 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                 {fullCode === "CANCELLED" && <CancelIcon />}
               </Tooltip>
 
-              {fullCode !== "PLACED" && (
+              {(fullCode.toUpperCase() === "CONCLUDED" ||
+                fullCode.toUpperCase() === "CANCELLED") && (
                 <Tooltip title="Deletar pedido">
                   <TrashIcon onClick={(id) => onDeleteCard(id)}>
                     excluir
@@ -79,11 +80,6 @@ const OrderCard: React.FC<IOrderCardProps> = ({
               )}
             </ContentIcons>
           </ContentTopInfo>
-          <StatusMessage>
-            {fullCode === "CONCLUDED" && "Concluído"}
-            {fullCode === "CANCELLED" && "Cancelado"}
-            {fullCode === "DISPATCHED" && "Despachado"}
-          </StatusMessage>
 
           <ContentDeliveryBox>
             <DeliveryBox>
