@@ -110,19 +110,33 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
 
-    .ant-notification-notice-warning {
-      background: var(--warning);
+    .ant-notification {
+      background: #fff !important;
+      margin: 0 !important;
+    }
+
+    html .ant-notification-notice-warning, body .ant-notification-notice-warning, #root .ant-notification-notice-warning {
+      background: var(--warning) !important;
       color: var(--black-opaco);
+      margin: 0 !important;
+    }
+
+    .ant-notification-notice-warning {
+      background: var(--white-70);
+      color: var(--black-opaco);
+      margin: 0 !important;
     }
 
     .ant-notification-notice-success {
       background: var(--success);
       color: var(--black-opaco);
+      margin: 0 !important;
     }
 
     .ant-notification-notice-error {
       background: var(--error);
       color: var(--black-opaco);
+      margin: 0 !important;
     }
 
     .ant-radio-group .ant-radio-group-outline{

@@ -128,34 +128,36 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         user_id: user.id,
         company_name: store.company.company_name,
       };
-
+  
       const {
         has_internal_error: createCustomerError,
         error_message: error_message_create_customer_reward,
       } = await window.Main.sale.redeemReward(customerReward.id, payload);
-
+  
       if (createCustomerError) {
         notification.error({
           message: error_message_create_customer_reward,
           duration: 5,
         });
-        return;
+        setLoading(false); 
+        return; 
       }
+  
       const { has_internal_error: rewardError, error_message } =
         await window.Main.sale.integrateRewardWithSale(rewards.product_id);
+  
       if (rewardError) {
         notification.warning({
           message: error_message,
           duration: 5,
         });
-        return;
       }
-
+  
       notification.success({
         message: "Recompensa resgatada com sucesso",
         duration: 5,
       });
-
+  
       resetModalState();
       setShouldSearch(true);
     } catch (err) {
@@ -168,7 +170,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       setLoading(false);
     }
   };
-
+  
   return (
     <Modal
       title="Recompensas"
@@ -250,10 +252,10 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                             <span>Pontos disponíveis</span>
                             <CustomerPoints available>{customerReward.points_customer}<span>pts</span></CustomerPoints>
                           </div>
-                          <div>
-                            <span>Pontos gastos</span>
+                          {/* <div>
+                            <span>Total de pontos acumulados da campanha</span>
                             <CustomerPoints available={false}>{customerReward.total_accumulated_points}<span>pts</span></CustomerPoints>
-                          </div>
+                          </div> */}
                         </Value>
 
                         <ProgressBar>

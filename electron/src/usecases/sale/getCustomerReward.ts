@@ -1,5 +1,8 @@
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import thorApi from "../../providers/thorApi";
+import { ProductDto } from "../../models/gestor";
+import { BaseRepository } from "../../repository/baseRepository";
+import { StorageNames } from "../../repository/storageNames";
 
 interface Request {
 	phone: string;
@@ -7,6 +10,13 @@ interface Request {
 }
 
 class GetCustomerReward implements IUseCaseFactory {
+	constructor(
+
+		private productRepository = new BaseRepository<ProductDto>(
+			StorageNames.Product
+		),
+
+	) { }
 	async execute({ phone, hash_code }: Request): Promise<
 		{
 			name: string;
@@ -44,6 +54,14 @@ class GetCustomerReward implements IUseCaseFactory {
 		const {
 			data: { content },
 		} = await thorApi.get(`/customer-reward/find-reward/?cell_number=${phone}&hash_code=${hash_code}`);
+
+		const product = await this.productRepository.getOne({
+			product_id: content.customer_reward.campaignReward.product_id,
+		  });
+	  
+		  if (!product) {
+			throw new Error("Essa recompensa não foi cadastrada em sua loja!");
+		  }
 
 		return content;
 	}
