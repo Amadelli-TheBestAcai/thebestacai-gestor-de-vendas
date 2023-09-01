@@ -1,11 +1,13 @@
 import { ipcRenderer } from "electron";
 import { AxiosRequestConfig } from "axios";
+import * as sound from "sound-play";
 
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import { IfoodDto } from "../../models/gestor/ifood";
+import { SettingsDto } from "../../models/gestor/settings";
 
 import { getMerchant } from "./getMerchant";
 import { findOrCreate } from "./findOrCreate";
@@ -13,7 +15,10 @@ import { authentication } from "./authentication";
 
 class Pooling implements IUseCaseFactory {
   constructor(
-    private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood)
+    private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood),
+    private settingsRepository = new BaseRepository<SettingsDto>(
+      StorageNames.Settings
+    )
   ) {}
 
   async execute(): Promise<{
@@ -93,6 +98,21 @@ class Pooling implements IUseCaseFactory {
           ifood.new_orders = ifood.orders.filter(
             (order) => order.fullCode === "PLACED"
           ).length;
+
+          if (ifood.new_orders > 0) {
+            const settings = await this.settingsRepository.getOne();
+            if (settings?.ifood_sound_path) {
+              try {
+                sound.play(settings.ifood_sound_path);
+              } catch (error) {
+                console.log({
+                  message: "Error to play ifood new order sound",
+                  path: settings.ifood_sound_path,
+                  error,
+                });
+              }
+            }
+          }
 
           await this.ifoodRepository.update(ifood.id, ifood);
           return {

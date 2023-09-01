@@ -9,6 +9,7 @@ export interface SettingsDto {
   should_open_casher?: boolean;
   rememberd_user?: string;
   balance_port?: string;
+  ifood_sound_path?: string;
   printer?: string;
   created_at?: Date;
 }

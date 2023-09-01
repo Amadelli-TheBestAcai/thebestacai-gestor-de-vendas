@@ -57,7 +57,7 @@ const Login: React.FC<IProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      window.Main.send_once("app_version", async (pkg_version) => {
+      window.Main.send("app_version", async (pkg_version) => {
         setVersion(pkg_version);
         const { response, has_internal_error: errorOnGetVersion } =
           await window.Main.common.checkForUpdates(pkg_version);

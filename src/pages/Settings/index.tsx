@@ -237,6 +237,24 @@ const Settings: React.FC = () => {
             </span>
           </ActionContainer>
         </CardSettings>
+        <CardSettings title="Audio para alerta de novo pedido no ifood">
+          <span style={{ padding: "2%" }}>
+            Selecione um audio para reprodução ao chegar um{" "}
+            <strong>novo pedido</strong> no ifood
+          </span>
+          <ActionContainer>
+            <input
+              type="file"
+              accept="mp3"
+              onChange={(e) =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  ifood_sound_path: e.target.files[0].path,
+                }))
+              }
+            />
+          </ActionContainer>
+        </CardSettings>
       </PageContent>
 
       <Footer>

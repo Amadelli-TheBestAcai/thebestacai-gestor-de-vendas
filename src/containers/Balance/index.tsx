@@ -93,7 +93,7 @@ const BalanceContainer: React.FC<IProps> = ({
   const getWeightByBalance = async (): Promise<void> => {
     if (!fetchingBalanceWeight) {
       setFetchingBalanceWeight(true);
-      window.Main.send_once("balance:get", ({ weight, error }) => {
+      window.Main.send("balance:get", ({ weight, error }) => {
         setFetchingBalanceWeight(false);
         if (error) {
           Modal.info({
@@ -108,7 +108,6 @@ const BalanceContainer: React.FC<IProps> = ({
       });
     }
   };
-
   const handlerEventKey = async (key: string): Promise<void> => {
     const lowerKey = key.toLowerCase();
     if (lowerKey === "a") {
