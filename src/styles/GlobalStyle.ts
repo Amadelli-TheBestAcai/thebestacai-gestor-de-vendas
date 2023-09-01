@@ -20,7 +20,7 @@ export const GlobalStyle = createGlobalStyle`
    --grey-90: #a2a2a2;
    --grey-100: #666666;
    --grey-200: #4D4D4D;
-
+   --gray-250: #3C4043
 
    --warning: #f8f2d1;
    --success: #f6ffed;
@@ -32,6 +32,7 @@ export const GlobalStyle = createGlobalStyle`
    --orange-400: #E98E4E;
    --orange-700: #DD610A;
    --brown-500: #aa6600;
+   --soft-orange: #FFFAF2;
 
    
    --green-200: #29ff6f;
@@ -120,19 +121,33 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
 
-    .ant-notification-notice-warning {
-      background: var(--warning);
+    .ant-notification {
+      background: #fff !important;
+      margin: 0 !important;
+    }
+
+    html .ant-notification-notice-warning, body .ant-notification-notice-warning, #root .ant-notification-notice-warning {
+      background: var(--warning) !important;
       color: var(--black-opaco);
+      margin: 0 !important;
+    }
+
+    .ant-notification-notice-warning {
+      background: var(--white-70);
+      color: var(--black-opaco);
+      margin: 0 !important;
     }
 
     .ant-notification-notice-success {
       background: var(--success);
       color: var(--black-opaco);
+      margin: 0 !important;
     }
 
     .ant-notification-notice-error {
       background: var(--error);
       color: var(--black-opaco);
+      margin: 0 !important;
     }
 
     .ant-radio-group .ant-radio-group-outline{

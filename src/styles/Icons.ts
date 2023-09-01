@@ -74,7 +74,7 @@ export {
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
 export { NotificationsCircle } from '@styled-icons/ionicons-outline';
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
-export { AddToQueue, User } from "@styled-icons/boxicons-solid";
+export { AddToQueue, User, Discount } from "@styled-icons/boxicons-solid";
 export {
   ArrowFromLeft,
   ArrowFromRight,

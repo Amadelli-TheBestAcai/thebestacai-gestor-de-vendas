@@ -26,35 +26,15 @@ class FinishSale implements IUseCaseFactory {
     ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private onlineIntegrationUseCase = onlineIntegration
-  ) {}
+  ) { }
 
   async execute({ payload, fromDelivery }: Request): Promise<void> {
-    if (payload.customer_nps_reward_id) {
+    if (payload.customerVoucher?.id) {
       const is_online = await checkInternet();
       if (!is_online) {
-        throw new Error(
-          "O sistema está offline, remova a recompensa de campanha para continuar"
-        );
+        throw new Error('Para finalizar a venda com cupom é necessário estar online')
       }
-
-      try {
-        const store = await this.storeRepository.getOne();
-        await thorApi.put(
-          `/customer-reward/${payload.customer_nps_reward_id}`,
-          {
-            is_app: false,
-            is_taked: true,
-            taked_at: new Date().toISOString(),
-            company_name: store?.company.company_name,
-            store_id: store?.company_id,
-          }
-        );
-      } catch (errorToUpdateCustomerReward) {
-        console.log({ errorToUpdateCustomerReward });
-        throw new Error(
-          "Falha ao atualizar a recompensa do usuário. Remova a recompensa para continuar e contate o suporte"
-        );
-      }
+      await thorApi.put(`/customerVoucher/mark-as-used/${payload.customerVoucher?.id}`)
     }
 
     payload.is_current = false;
