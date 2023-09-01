@@ -400,14 +400,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   </StatusCash>
                   <CloseCashContatiner>
                     <OpenCloseButton
-                      onClick={() =>
-                        storeCash?.is_opened &&
-                        !storeCash?.is_online &&
-                        !hasOpenedOnlineStoreCash
-                          ? (openOnlineStoreCash(storeCash?.code),
-                            setHasOpenedOnlineStoreCash(true))
-                          : setAmountModal(true)
-                      }
+                      onClick={changeStoreCashStatus}
                       _type={
                         storeCash?.is_opened && storeCash?.is_online
                           ? "close"
