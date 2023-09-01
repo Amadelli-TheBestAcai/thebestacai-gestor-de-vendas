@@ -286,7 +286,7 @@ export function GlobalProvider({ children }) {
           duration: 5,
         });
 
-        if (successOnSefaz) {
+        if (successOnSefaz && settings.should_print_nfce_per_sale) {
           await window.Main.common.printDanfe(response);
         }
 
