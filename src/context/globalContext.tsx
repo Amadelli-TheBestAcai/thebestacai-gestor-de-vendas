@@ -190,7 +190,7 @@ export function GlobalProvider({ children }) {
 
     setSavingSale(true);
 
-    if (settings.should_emit_nfce_per_sale) {
+    if (sale.items.length && settings.should_emit_nfce_per_sale) {
       const total = sale.items.reduce((total, item) => +item.total + total, 0);
       const nfePayload = {
         discount: +sale.discount,
