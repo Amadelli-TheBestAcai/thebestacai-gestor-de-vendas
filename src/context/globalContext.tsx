@@ -173,135 +173,127 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    if (sale.items.length) {
+    if (
+      +(sale.total_sold.toFixed(2) || 0) >
+      sale.total_paid +
+        ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
+        0.5
+    ) {
+      return notification.warning({
+        message: "Pagamento inválido!",
+        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
+        duration: 5,
+      });
+    }
+
+    sale.change_amount = sale.total_paid + sale.discount - sale.total_sold;
+
+    setSavingSale(true);
+
+    if (settings.should_emit_nfce_per_sale) {
+      const total = sale.items.reduce((total, item) => +item.total + total, 0);
+      const nfePayload = {
+        discount: +sale.discount,
+        change_amount: +sale.change_amount,
+        total: total,
+        store_id: +store.company_id,
+        items: sale.items.map((item) => ({
+          product_store_id: +item.store_product_id,
+          price_sell: +item.total,
+          quantity: +item.quantity,
+        })),
+        payments: sale.payments.map((payment) => ({
+          amount: +payment.amount,
+          type: +payment.type,
+          flag_card: +payment.flag_card,
+        })),
+        ref: sale.ref,
+      };
+
+      const {
+        response,
+        has_internal_error: errorOnEmitNfce,
+        error_message,
+      } = await window.Main.sale.emitNfce(nfePayload, sale.id, true);
+
+      if (errorOnEmitNfce) {
+        notification.error({
+          message: error_message || "Erro ao emitir NFCe",
+          duration: 5,
+        });
+      }
+
+      const successOnSefaz = response?.status_sefaz === "100";
+      notification[successOnSefaz ? "success" : "warning"]({
+        message: response?.mensagem_sefaz,
+        duration: 5,
+      });
+
+      if (successOnSefaz && settings.should_print_nfce_per_sale) {
+        await window.Main.common.printDanfe(response);
+      }
+
+      const { response: updatedSale } = await window.Main.sale.getCurrentSale();
+      sale.nfce_focus_id = updatedSale.nfce_focus_id;
+      sale.nfce_url = updatedSale.nfce_url;
+    }
+
+    const { has_internal_error: errorOnFinishSAle, error_message } =
+      await window.Main.sale.finishSale({
+        ...sale,
+        formated_type: SalesTypes[sale.type],
+      });
+
+    if (errorOnFinishSAle) {
       if (
-        +(sale.total_sold.toFixed(2) || 0) >
-        sale.total_paid +
-          ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
-          0.5
+        settings.should_open_casher === true &&
+        error_message ===
+          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
-        return notification.warning({
-          message: "Pagamento inválido!",
-          description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
-          duration: 5,
-        });
-      }
-
-      sale.change_amount = sale.total_paid + sale.discount - sale.total_sold;
-
-      setSavingSale(true);
-
-      if (settings.should_emit_nfce_per_sale) {
-        const total = sale.items.reduce(
-          (total, item) => +item.total + total,
-          0
-        );
-        const nfePayload = {
-          discount: +sale.discount,
-          change_amount: +sale.change_amount,
-          total: total,
-          store_id: +store.company_id,
-          items: sale.items.map((item) => ({
-            product_store_id: +item.store_product_id,
-            price_sell: +item.total,
-            quantity: +item.quantity,
-          })),
-          payments: sale.payments.map((payment) => ({
-            amount: +payment.amount,
-            type: +payment.type,
-            flag_card: +payment.flag_card,
-          })),
-          ref: sale.ref,
-        };
-
-        const {
-          response,
-          has_internal_error: errorOnEmitNfce,
-          error_message,
-        } = await window.Main.sale.emitNfce(nfePayload, sale.id, true);
-
-        if (errorOnEmitNfce) {
-          notification.error({
-            message: error_message || "Erro ao emitir NFCe",
-            duration: 5,
-          });
-        }
-
-        const successOnSefaz = response?.status_sefaz === "100";
-        notification[successOnSefaz ? "success" : "warning"]({
-          message: response?.mensagem_sefaz,
-          duration: 5,
-        });
-
-        if (successOnSefaz && settings.should_print_nfce_per_sale) {
-          await window.Main.common.printDanfe(response);
-        }
-
-        const { response: updatedSale } =
-          await window.Main.sale.getCurrentSale();
-        sale.nfce_focus_id = updatedSale.nfce_focus_id;
-        sale.nfce_url = updatedSale.nfce_url;
-      }
-
-      const { has_internal_error: errorOnFinishSAle, error_message } =
-        await window.Main.sale.finishSale({
-          ...sale,
-          formated_type: SalesTypes[sale.type],
-        });
-
-      if (errorOnFinishSAle) {
-        if (
-          settings.should_open_casher === true &&
-          error_message ===
-            "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
-        ) {
-          const {
-            response: _newSettings,
-            has_internal_error: errorOnSettings,
-          } = await window.Main.settings.update(settings.id, {
+        const { response: _newSettings, has_internal_error: errorOnSettings } =
+          await window.Main.settings.update(settings.id, {
             ...settings,
             should_open_casher: false,
           });
 
-          if (errorOnSettings) {
-            notification.error({
-              message: "Erro ao atualizar as configurações",
-              duration: 5,
-            });
-            return;
-          }
-          setSettings(_newSettings);
+        if (errorOnSettings) {
+          notification.error({
+            message: "Erro ao atualizar as configurações",
+            duration: 5,
+          });
+          return;
         }
-        setSavingSale(false);
-
-        error_message
-          ? notification.warning({
-              message: error_message,
-              duration: 5,
-            })
-          : notification.error({
-              message: "Erro ao finalizar venda",
-              duration: 5,
-            });
+        setSettings(_newSettings);
       }
-
-      const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
-        await window.Main.sale.buildNewSale();
-      if (errorOnBuildNewSale) {
-        notification.error({
-          message: "Erro ao criar uma venda",
-          duration: 5,
-        });
-        return;
-      }
-      setSale(_newSale);
       setSavingSale(false);
-      notification.success({
-        message: "Venda realizada com sucesso!",
-        description: `A venda foi registrada com sucesso.`,
-        duration: 3,
-      });
+
+      error_message
+        ? notification.warning({
+            message: error_message,
+            duration: 5,
+          })
+        : notification.error({
+            message: "Erro ao finalizar venda",
+            duration: 5,
+          });
     }
+
+    const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
+      await window.Main.sale.buildNewSale();
+    if (errorOnBuildNewSale) {
+      notification.error({
+        message: "Erro ao criar uma venda",
+        duration: 5,
+      });
+      return;
+    }
+    setSale(_newSale);
+    setSavingSale(false);
+    notification.success({
+      message: "Venda realizada com sucesso!",
+      description: `A venda foi registrada com sucesso.`,
+      duration: 3,
+    });
 
     if (settings.should_print_sale && settings.should_use_printer) {
       //@ts-expect-error
