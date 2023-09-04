@@ -162,8 +162,8 @@ export function GlobalProvider({ children }) {
     }
 
     if (
-      !sale.items.length ||
-      sale?.customerVoucher?.voucher?.products?.length
+      !sale.items.length &&
+      !sale?.customerVoucher?.voucher?.products?.length
     ) {
       notification.warning({
         message: "Oops! Carrinho vazio.",
