@@ -235,7 +235,7 @@ const CupomModal: React.FC<ICupomProps> = ({
     >
       {sale.customerVoucher ? (
         <>
-          <h3> Para remover o cupom utilizado click no botão abaixo</h3>
+          <h3> Para remover o cupom utilizado Clique no botão abaixo</h3>
           <br />
           <span>
             <strong>Obs:</strong>Caso a venda seja finalizada, não será possível
@@ -253,9 +253,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       ) : (
         <>
           <h2>Resgate de cupom</h2>
-          <p>
-            Digite o código do cupom abaixo para que o cupom seja resgatado.
-          </p>
+          <p>Digite abaixo o código do cupom para fazer o resgate.</p>
 
           <Row>
             <Col sm={5} xs={5}>
