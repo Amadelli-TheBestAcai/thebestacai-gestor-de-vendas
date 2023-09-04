@@ -81,13 +81,6 @@ const CupomModal: React.FC<ICupomProps> = ({
     try {
       setLoading(true);
 
-      if (!products.length) {
-        return notification.warn({
-          message: "É necessário adicionar um produto para adicionar o cupom!",
-          duration: 5,
-        });
-      }
-
       let { has_internal_error, response, error_message } =
         await window.Main.sale.getVoucher(cupom.join("").toUpperCase());
 
@@ -103,6 +96,14 @@ const CupomModal: React.FC<ICupomProps> = ({
       const totalSoldInSelfService = sale.items
         .filter((itme) => itme.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
+
+      if (totalSoldInSelfService <= 0) {
+        return notification.warn({
+          message:
+            "É necessário adicionar self-services para resgatar este cupom!",
+          duration: 5,
+        });
+      }
 
       const totalOfCupomProducs = response.voucher.products.reduce(
         (total, product) => total + +product.price_sell,
@@ -253,8 +254,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         <>
           <h2>Resgate de cupom</h2>
           <p>
-            Digite o código do cupom e o telefone do cliente abaixo para que o
-            cupom seja resgatado.
+            Digite o código do cupom abaixo para que o cupom seja resgatado.
           </p>
 
           <Row>

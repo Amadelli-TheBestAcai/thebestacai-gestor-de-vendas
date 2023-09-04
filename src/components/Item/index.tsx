@@ -43,6 +43,15 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [form] = Form.useForm();
 
   const removeItem = async (): Promise<void> => {
+    if (item.product.id === 1 && sale?.customerVoucher?.voucher?.self_service) {
+      notification.warning({
+        message: "Não é possível remover self-service",
+        description:
+          "Para remover self-serivces é necessário remover o cupom que está aplicado.",
+        duration: 5,
+      });
+      return;
+    }
     if (sale.discount > 0) {
       notification.warning({
         message: "Falha ao remover produto",
