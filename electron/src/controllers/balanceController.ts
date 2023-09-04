@@ -1,17 +1,18 @@
 import SerialPort from "serialport";
 import { ipcMain } from "electron";
 import { sleep } from "../helpers/sleep";
-import { settingsFactory } from '../factories/settingsFactory'
+import { settingsFactory } from "../factories/settingsFactory";
 
 let port: SerialPort | null = null;
 
 ipcMain.on("balance:connect", async (event) => {
   try {
-    const { has_internal_error, response: settings } = await settingsFactory.getSettings();
+    const { has_internal_error, response: settings } =
+      await settingsFactory.getSettings();
 
     if (has_internal_error) {
       event.reply("balance:get:response", { error: true });
-      return
+      return;
     }
 
     if (!settings?.balance_port) {
@@ -62,4 +63,83 @@ ipcMain.on("balance:get", async (event) => {
   });
   await sleep(2000);
   return event.reply("balance:get:response", { weight: 0 });
+});
+
+ipcMain.on("balance:testConnection", async (event, portCOM) => {
+  try {
+
+    if (port && port.isOpen) {
+      port?.close(function (err) {
+        if (err) {
+          console.log("Error closing port: ", err.message);
+          return event.reply("balance:testConnection:response", {
+            success: false,
+            message: `Erro ao tentar desconectar a porta ${port?.path}`,
+          });
+        }
+
+      });
+      return event.reply("balance:testConnection:response", {
+        success: false,
+        message: `A porta ${port?.path} foi desconectada`,
+      });
+    }
+
+    port = new SerialPort(
+      portCOM,
+      {
+        baudRate: 9600,
+        dataBits: 7,
+        stopBits: 1,
+        parity: "none",
+        autoOpen: true,
+      },
+      (err) => {
+        if (err) {
+          const errorFileNotFound = err?.message.toLowerCase().includes("file not found");
+          const errorAccessDenied = err?.message.toLowerCase().includes("access denied");
+          if (errorFileNotFound) {
+            return event.reply("balance:testConnection:response", {
+              success: false,
+              message: `A porta ${port?.path} não foi encontrada`,
+            });
+          }
+          if (errorAccessDenied) {
+            return event.reply("balance:testConnection:response", {
+              success: false,
+              message:
+                `A porta ${port?.path} já está sendo utilizada por outro dispositivo`,
+            });
+          }
+          console.log(err);
+          return event.reply("balance:testConnection:response", {
+            success: false,
+            message: "Falha ao conectar a balança",
+            error: err,
+          });
+        } else {
+          port?.on("error", function (err: any) {
+            console.log(err);
+            return event.reply("balance:testConnection:response", {
+              success: false,
+              message: "Falha ao conectar a balança",
+              error: err,
+            });
+          });
+          return event.reply("balance:testConnection:response", {
+            success: true,
+            message: "Conexão com a balança foi estabelecida com sucesso",
+            error: err,
+          });
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return event.reply("balance:testConnection:response", {
+      success: false,
+      message: "Falha ao conectar a balança",
+      error,
+    });
+  }
 });

@@ -21,14 +21,21 @@ import {
   emitNfce,
   deleteSaleDelivery,
   cancelNfce,
+  getVoucher,
   onlineIntegration,
-  getCampaignReward,
   integrateRewardWithSale,
+  getCustomerReward,
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto } from "../models/gestor";
-import { SaleFromApiDTO, AppSaleDTO, NfeDTO } from "../models/dtos";
-import { createCustomerReward } from "../usecases/sale/addCustomerReward";
+
+import {
+  SaleFromApiDTO,
+  AppSaleDTO,
+  NfeDTO,
+  CustomerVoucherDTO,
+} from "../models/dtos";
+import { redeemReward } from "../usecases/sale/redeemReward";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -61,8 +68,8 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto>(deletePayment, { id }),
   createDelivery: async (payload: any) =>
     await useCaseFactory.execute<void>(createDelivery, { payload }),
-  createCustomerReward: async (payload: any) =>
-    await useCaseFactory.execute<void>(createCustomerReward, { payload }),
+  redeemReward: async (id: number, payload: any) =>
+    await useCaseFactory.execute<void>(redeemReward, { id, payload }),
   deleteSaleDelivery: async (id: string) =>
     await useCaseFactory.execute<void>(deleteSaleDelivery, { id }),
   getAllDelivery: async () =>
@@ -79,6 +86,8 @@ export const saleFactory = {
     }),
   getAllIntegratedSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
+  getVoucher: async (hash_code: string) =>
+    await useCaseFactory.execute<CustomerVoucherDTO>(getVoucher, { hash_code }),
   deleteSaleFromApi: async (params: {
     id: number;
     cash_history: number;
@@ -101,27 +110,41 @@ export const saleFactory = {
       saleIdToUpdate,
       local_update,
     }),
-  getCampaignReward: async (cpf: string) =>
+  getCustomerReward: async (phone: string, hash_code: string) =>
     await useCaseFactory.execute<{
+      name: string;
       points_customer: number;
-      customer_name: string;
-      customer_id: number;
-      customer_campaign_id: number;
-      campaignReward: {
+      max_points: number;
+      total_accumulated_points: number;
+      customer_reward: {
         id: number;
-        campaign_id: number;
-        customer_reward_id: number;
-        description: string;
-        url_image: string;
-        s3_key: string;
-        points_reward: number;
+        customer_id: number;
+        customer_campaign_id: number;
+        campaign_reward_id: number;
         created_at: string;
         updated_at: string;
         deleted_at: string;
-        product_id: number;
-      }[];
-    }>(getCampaignReward, {
-      cpf,
+        hash_code: string;
+        taked_at: string;
+        campaignReward: {
+          id: number;
+          campaign_id: number;
+          customer_reward_id: number;
+          description: string;
+          url_image: string;
+          s3_key: string;
+          points_reward: number;
+          created_at: string;
+          updated_at: string;
+          deleted_at: string;
+          product_id: number;
+          expirated_at: string;
+          observation: string;
+        };
+      };
+    }>(getCustomerReward, {
+      phone,
+      hash_code,
     }),
   cancelNfce: async (sale_id: number, justify: string) =>
     await useCaseFactory.execute(cancelNfce, {
@@ -130,8 +153,8 @@ export const saleFactory = {
     }),
   onlineIntegration: async () =>
     await useCaseFactory.execute<void>(onlineIntegration),
-  integrateRewardWithSale: async (payload) =>
+  integrateRewardWithSale: async (product_id: number) =>
     await useCaseFactory.execute<void>(integrateRewardWithSale, {
-      payload,
+      product_id,
     }),
 };

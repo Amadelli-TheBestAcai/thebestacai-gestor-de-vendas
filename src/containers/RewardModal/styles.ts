@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
-import { Col as ColAnt, Modal as ModalAnt, Button as AntButton } from "antd";
-import { Search, MinusCircle, PlusCircle2 } from "../../styles/Icons";
+import { Col as ColAnt, Modal as ModalAnt, Row as RowAnt, Button as ButtonAnt } from "antd";
+import { Search } from "../../styles/Icons";
+import { IMaskInput } from "react-imask";
 
 export const GlobalContainer = styled.div`
   display: flex;
@@ -10,15 +11,20 @@ export const GlobalContainer = styled.div`
 
 export const Container = styled.div`
   flex: 1;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(0.5fr, 1.5fr);
-  grid-row-gap: 25px;
-  padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const Row = styled(RowAnt)`
+  width: 100%;
 `;
 
 export const Modal = styled(ModalAnt)`
   user-select: none;
+
+  .ant-modal-body {
+    padding: 20px;
+  }
   .ant-modal-title {
     font-size: 1.3rem;
   }
@@ -26,104 +32,36 @@ export const Modal = styled(ModalAnt)`
   max-height: 50rem !important;
   overflow-y: auto;
 `;
-
-export const FirstContent = styled.div`
-  display: grid;
-  grid-template-columns: 320px repeat(3, 1fr);
-  grid-template-rows: 1fr;
-  font-size: 1.1rem;
-  font-weight: 500;
-  border: 1px solid var(--gray-50);
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  align-items: center;
-
-  .name {
-    font-size: 1.4rem;
-    font-weight: 700;
-  }
-`;
-
-export const Header = styled.header`
-  display: flex;
-  width: 100%;
-  height: 3rem;
-  background: var(--black-opaco);
-  color: white;
-  border-radius: 12px;
-  text-transform: uppercase;
-
-  /*Responsive 1600*/
-  @media (max-width: 1600px) {
-    font-size: 0.9rem;
-  }
-
-  /*Responsive 1440*/
-  @media (max-width: 1440px) {
-    font-size: 0.8rem;
-  }
-
-  /*Responsive 1366*/
-  @media (max-width: 1366px) {
-    font-size: 0.7rem;
-  }
-`;
+;
 
 export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
 `;
-export const ColReward = styled(ColAnt)`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-`;
-
-export const CustomerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 1rem;
-  border-left: 1px solid var(--gray-50);
-
-  :first-child {
-    border: none;
-    padding: 0;
-  }
-
-  span {
-    text-transform: uppercase;
-    text-align: center;
-  }
-
-  .first-content {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: start;
-    width: 100%;
-  }
-
-  .result-points {
-    font-size: 1.7rem;
-    font-weight: 700;
-  }
-`;
 
 export const InputSearchReward = styled.input`
   height: 2.5rem;
-  width: 35%;
   border: 1px solid var(--gray-50);
   padding: 5px;
   border-radius: 5px;
+  width: 100%;
 `;
 
-export const ButtonSearch = styled.button`
+export const InputMask = styled(IMaskInput)`
+  width: 100%;
+  border: 1px solid var(--gray-50);
+  height: 2.5rem;
+  border-radius: 5px;
+  padding: 5px;
+`;
+
+
+export const ButtonSearch = styled(ButtonAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
+  width: 100%;
   height: 100%;
   background: var(--orange-250);
   color: white;
@@ -131,6 +69,17 @@ export const ButtonSearch = styled.button`
   padding: 5px;
   margin-left: 10px;
   cursor: pointer;
+
+  :disabled {
+    cursor: not-allowed;
+    background-color: var(--gray-50);
+
+    :hover {
+      cursor: not-allowed;
+    background-color: var(--gray-50);
+    opacity: 100%;
+    }
+  }
 
   :hover {
     background: var(--orange-250);
@@ -168,25 +117,100 @@ export const RewardRow = styled.div`
   }
 `;
 
-export const RewardContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-
-  overflow-y: auto;
-  overflow-x: hidden;
+export const InfoClient = styled.div`
+  display: block;
+  margin: 0 0 1rem 0;
+  p {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--gray-250);
+    text-transform: capitalize;
+    margin: 0;
+  }
 `;
 
-export const ContentItemRow = styled.div`
-  max-height: 20rem;
+export const ContentReward = styled.div`
   width: 100%;
-  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 
-  @media (max-width: 1600px) {
-    max-height: 15rem;
+interface ICustomerProps {
+  available: boolean;
+}
+
+export const DataClient = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  span {
+    font-weight: 700;
+    font-size: .8rem;
+    margin-bottom: .6rem;
+  }  
+`;
+
+export const ContentGeneral = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .max-points{
+    font-size: .8rem;
+    color: var(--grey-70);
+    font-weight: 400;
+    justify-content: end;
+    display: flex;
+    margin-top: .5rem;
   }
+`;
+
+export const Value = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+export const CustomerPoints = styled.div<ICustomerProps>`
+ text-align: center;
+ font-size: 2rem;
+ font-weight: 800;
+ color: ${({ available }) => (available ? 'var(--orange-250)' : 'var(--gray-250)')};
+
+ span{
+  color: var(--grey-100);
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: .2rem;
+ }
+`;
+
+export const PointsCustomerContainer = styled.div`
+  padding: 1.2rem;
+  background-color: var(--soft-orange);
+`;
+
+export const ProgressBar = styled.div`
+  width: 100%;
+  height: 8px;
+  background-color: var(--gray-25);
+  border-radius: 4px;
+`;
+
+interface IProgressBarProps {
+  actived: string;
+}
+
+export const ProgressBarActived = styled.div<IProgressBarProps>`
+  height: 8px;
+  background-color: var(--orange-250);
+  border-radius: 4px;
+  ${({ actived }) => css`
+    width: ${actived};
+  `}
 `;
 
 export const SearchIcon = styled(Search)`
@@ -198,55 +222,6 @@ export const SearchIcon = styled(Search)`
   @media (max-width: 1366px) {
     width: 0.8rem;
     height: 0.8rem;
-  }
-`;
-
-export const CardReward = styled.div<{ invalid: boolean }>`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  border-radius: 12px;
-  border: 1px solid var(--gray-50);
-  margin-bottom: 1rem;
-  cursor: ${(props) => (props.invalid ? "not-allowed" : "pointer")};
-  ${(props) => props.invalid && ` opacity: 30%; `}
-`;
-
-export const ImgContent = styled.img`
-  width: 9rem;
-  height: 5rem;
-  border-radius: 12px 0 0 12px;
-  border: 1px solid var(--gray-50);
-`;
-
-export const RewardDescription = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  width: 100%;
-
-  span {
-    display: block;
-  }
-
-  .content {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .contentLeft {
-    display: flex;
-    font-size: 1.2rem;
-  }
-
-  .counter {
-    display: flex;
-    align-items: center;
-
-    p {
-      font-size: 1.5rem;
-      margin: 0 10px;
-    }
   }
 `;
 
@@ -272,7 +247,19 @@ export const ButtonCancel = styled.button`
   margin-right: 3rem;
 `;
 
-export const ButtonSave = styled.button`
+export const ImgReward = styled.img`
+  width: 12rem;
+  height: 12rem;
+  object-fit: contain;
+  margin-top: 1rem;
+`;
+
+export const TitleReward = styled.span`
+  font-size: 2rem;
+  font-weight: 500;
+`;
+
+export const ButtonSave = styled(ButtonAnt)`
   padding: 10px;
   font-weight: 500;
   border-radius: 5px;
@@ -281,28 +268,17 @@ export const ButtonSave = styled.button`
   color: white;
   transition: 0.5s;
   width: 12rem;
+  height: 3rem;
+  transition: .3s ease-out;
 
   :hover {
     background: var(--orange-200);
+    color: white;
+    opacity: 70%
   }
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     font-size: 0.7rem;
   }
-`;
-
-export const PlusIcon = styled(PlusCircle2)`
-  ${Icon}
-  color: green;
-`;
-
-export const PlusIconContainer = styled.div<{ disabled: boolean }>`
-  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  opacity: ${(props) => (props.disabled ? 0.6 : 1)};
-  display: inline-block;
-`;
-export const DecreaseIcon = styled(MinusCircle)`
-  ${Icon}
-  color: red;
 `;

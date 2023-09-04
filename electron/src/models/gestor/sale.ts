@@ -1,3 +1,4 @@
+import { CustomerVoucherDTO } from '../dtos/customerVoucher'
 export interface SaleDto {
   id: string;
   gv_id?: number;
@@ -102,5 +103,6 @@ export interface SaleDto {
     created_at?: string;
     deleted_at?: string;
   }[];
+  customerVoucher?: CustomerVoucherDTO;
   ref?: string;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import CardSettings from "../../components/CardSettings";
 import { Modal, notification } from "antd";
@@ -14,6 +14,8 @@ import {
   SelectsContainer,
   Switch,
   InputPortCOM,
+  Button,
+  ContentButton,
 } from "./styles";
 
 import { useSettings } from "../../hooks/useSettings";
@@ -21,6 +23,7 @@ import { useSettings } from "../../hooks/useSettings";
 const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { settings, setSettings } = useSettings();
+  const [inputPortCOM, setInputPortCOM] = useState<string>();
 
   const handleSave = () => {
     Modal.confirm({
@@ -51,12 +54,33 @@ const Settings: React.FC = () => {
     });
   };
 
+  const testConnectionBalance = async (portCOM: string) => {
+    window.Main.send(
+      "balance:testConnection",
+      (response) => {
+        console.log(response);
+        if (response.success) {
+          notification.success({
+            message: "Sucesso: conexão estabelecida com a balança!",
+            duration: 5,
+          });
+        } else {
+          notification.warning({
+            message: response.message,
+            duration: 5,
+          });
+        }
+      },
+      portCOM
+    );
+  };
+
   return (
     <Container>
+      <Header>
+        <h2>Configurações</h2>
+      </Header>
       <PageContent>
-        <Header>
-          <h2>Configurações</h2>
-        </Header>
         <CardSettings title="Integração de Balança">
           <SelectsContainer>
             <InputPortCOM
@@ -66,30 +90,45 @@ const Settings: React.FC = () => {
               prefix={"COM"}
               min={0}
               max={99}
-              onChange={(value) =>
+              onChange={(value) => {
+                const balance_port = "COM" + parseInt(value.target.value);
                 setSettings((oldValues) => ({
                   ...oldValues,
-                  balance_port: "COM" + parseInt(value.target.value),
-                }))
-              }
+                  balance_port: balance_port,
+                }));
+                setInputPortCOM(balance_port);
+              }}
               placeholder={"Porta da balança"}
             />
           </SelectsContainer>
 
-          <ActionContainer>
-            <Switch
-              checked={settings.should_use_balance}
-              onChange={() =>
-                setSettings((oldValues) => ({
-                  ...oldValues,
-                  should_use_balance: !settings.should_use_balance,
-                }))
-              }
-            />
-            <span>
-              {!settings.should_use_balance ? "DESABILITADO" : "HABILITADO"}
-            </span>
-          </ActionContainer>
+          <ContentButton>
+            <Button
+              hidden={!settings.should_use_balance}
+              onClick={() => {
+                let portCOM = inputPortCOM
+                  ? inputPortCOM
+                  : "COM" + settings.balance_port?.replace(/\D/g, "");
+                testConnectionBalance(portCOM);
+              }}
+            >
+              Testar conexão
+            </Button>
+            <ActionContainer>
+              <Switch
+                checked={settings.should_use_balance}
+                onChange={() =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    should_use_balance: !settings.should_use_balance,
+                  }))
+                }
+              />
+              <span>
+                {!settings.should_use_balance ? "DESABILITADO" : "HABILITADO"}
+              </span>
+            </ActionContainer>
+          </ContentButton>
         </CardSettings>
 
         <CardSettings title="Integração de Impressora">
@@ -139,6 +178,9 @@ const Settings: React.FC = () => {
                   ...oldValues,
                   should_emit_nfce_per_sale:
                     !settings.should_emit_nfce_per_sale,
+                  should_print_nfce_per_sale: settings.should_emit_nfce_per_sale
+                    ? settings.should_print_nfce_per_sale
+                    : false,
                 }))
               }
             />
@@ -149,6 +191,32 @@ const Settings: React.FC = () => {
             </span>
           </ActionContainer>
         </CardSettings>
+
+        {settings.should_emit_nfce_per_sale && (
+          <CardSettings title="Impressão automática da DANFE">
+            <span style={{ padding: "2%" }}>
+              Ao habilitar, será impresso automaticamente a DANFE a cada nota
+              fiscal emitida com sucesso ao finalizar venda.
+            </span>
+            <ActionContainer>
+              <Switch
+                checked={settings.should_print_nfce_per_sale}
+                onChange={() =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    should_print_nfce_per_sale:
+                      !settings.should_print_nfce_per_sale,
+                  }))
+                }
+              />
+              <span>
+                {!settings.should_emit_nfce_per_sale
+                  ? "DESABILITADO"
+                  : "HABILITADO"}
+              </span>
+            </ActionContainer>
+          </CardSettings>
+        )}
 
         <CardSettings title="Impressão de cupom por venda">
           <span style={{ padding: "2%" }}>
@@ -169,13 +237,13 @@ const Settings: React.FC = () => {
             </span>
           </ActionContainer>
         </CardSettings>
-
-        <Footer>
-          <ButtonSave onClick={handleSave} loading={loading}>
-            Salvar
-          </ButtonSave>
-        </Footer>
       </PageContent>
+
+      <Footer>
+        <ButtonSave onClick={handleSave} loading={loading}>
+          Salvar
+        </ButtonSave>
+      </Footer>
     </Container>
   );
 };
