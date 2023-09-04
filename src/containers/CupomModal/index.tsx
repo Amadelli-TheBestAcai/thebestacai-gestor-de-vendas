@@ -97,7 +97,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         .filter((itme) => itme.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
 
-      if (totalSoldInSelfService <= 0) {
+      if (response.voucher?.self_service && totalSoldInSelfService <= 0) {
         return notification.warn({
           message:
             "É necessário adicionar self-services para resgatar este cupom!",
