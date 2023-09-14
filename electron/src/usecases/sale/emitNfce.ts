@@ -9,7 +9,7 @@ import moment from "moment";
 import midasApi from "../../providers/midasApi";
 
 import { buildNewSale, onlineIntegration } from "./index";
-import { SaleDto, StoreCashDto, ProductDto } from "../../models/gestor";
+import { SaleDto, StoreCashDto, ProductDto, StoreDto } from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
 
 interface Request {
@@ -20,7 +20,7 @@ interface Request {
 
 class EmitNfce implements IUseCaseFactory {
   constructor(
-    private storeCashRepository = new BaseRepository<StoreCashDto>(
+        private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
@@ -39,7 +39,7 @@ class EmitNfce implements IUseCaseFactory {
     if (!hasInternet) {
       throw new Error("Dispositivo sem conexão");
     }
-
+    
     const storeCash = await this.storeCashRepository.getOne();
 
     if (!storeCash || !storeCash.is_opened) {
@@ -63,6 +63,7 @@ class EmitNfce implements IUseCaseFactory {
       ...nfe,
       ref: nfe.ref || saleResponse.ref,
       sale_id: local_update ? null : saleIdToUpdate,
+      cash_history_id: saleResponse.cash_history_id
     });
 
     saleResponse.nfce_focus_id = data.id;
