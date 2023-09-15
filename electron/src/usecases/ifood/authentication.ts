@@ -67,6 +67,7 @@ class Authentication implements IUseCaseFactory {
               refresh_token: undefined,
               authorizationCode: undefined,
               authorizationCodeVerifier: undefined,
+              orders: [],
             })) as IfoodDto;
 
             return { response: updatedIfood, status: false };
