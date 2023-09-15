@@ -21,6 +21,7 @@ interface IProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedProduct: ProductDto | null;
+  selectedProductIsFruit: boolean;
   setSelectedProduct: Dispatch<SetStateAction<ProductDto | null>>;
 }
 
@@ -30,9 +31,12 @@ const ModalAddWaste: React.FC<IProps> = ({
   setLoading,
   selectedProduct,
   setSelectedProduct,
+  selectedProductIsFruit
 }) => {
   const [image, setImage] = useState(null);
-  const [value, setValue] = useState(Options.Quilograma);
+  const [value, setValue] = useState(
+    selectedProductIsFruit ? Options.Quilograma : Options.Unidade
+  );
   const [unitSuffix, setUnitSuffix] = useState("kg");
   const [quantity, setQuantity] = useState<number>(0);
   const [form] = Form.useForm();
@@ -144,8 +148,12 @@ const ModalAddWaste: React.FC<IProps> = ({
                 value={value}
                 style={{ alignItems: "center" }}
               >
-                <Radio value={Options.Quilograma}>Quilograma</Radio>
-                <Radio value={Options.Unidade}>Unidade</Radio>
+                <Radio value={Options.Quilograma} defaultChecked={true}>
+                  Quilograma
+                </Radio>
+                <Radio value={Options.Unidade} disabled={selectedProductIsFruit}>
+                  Unidade
+                </Radio>
               </Radio.Group>
             </Form.Item>
           </ColModal>
@@ -161,8 +169,8 @@ const ModalAddWaste: React.FC<IProps> = ({
                     value > 0
                       ? Promise.resolve()
                       : Promise.reject(
-                          new Error("A quantidade não pode ser negativa")
-                        ),
+                        new Error("A quantidade não pode ser negativa")
+                      ),
                 },
               ]}
             >
