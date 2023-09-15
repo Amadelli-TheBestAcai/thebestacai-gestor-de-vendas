@@ -21,8 +21,24 @@ interface IProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedProduct: ProductDto | null;
+  selectedProductIsFruit: boolean;
   setSelectedProduct: Dispatch<SetStateAction<ProductDto | null>>;
 }
+
+const options = [
+  "Produto quebrado",
+  "Montagem errada",
+  "Consumo de franqueados",
+  "Consumo de funcionário",
+  "Devolução de cliente",
+  "Consumo influencer",
+  "Fruta passada",
+  "Produto vencido",
+  "Açai/sorvete cristalizado",
+  "Cascas",
+  "Bonificação de cliente (voucher)",
+  "Outros",
+];
 
 const ModalAddWaste: React.FC<IProps> = ({
   setVisible,
@@ -30,9 +46,14 @@ const ModalAddWaste: React.FC<IProps> = ({
   setLoading,
   selectedProduct,
   setSelectedProduct,
+  selectedProductIsFruit
 }) => {
   const [image, setImage] = useState(null);
-  const [value, setValue] = useState(Options.Quilograma);
+  const [value, setValue] = useState(
+    selectedProductIsFruit ? Options.Quilograma : Options.Unidade
+  );
+  const [reasonOption, setReasonOption] = useState("");
+  const [showOtherInput, setShowOtherInput] = useState(false);
   const [unitSuffix, setUnitSuffix] = useState("kg");
   const [quantity, setQuantity] = useState<number>(0);
   const [form] = Form.useForm();
@@ -64,6 +85,14 @@ const ModalAddWaste: React.FC<IProps> = ({
         return;
       }
 
+      if (!reasonOption) {
+        notification.warning({
+          message: "Por favor, selecione ou digite um motivo",
+          duration: 5,
+        });
+        return;
+      }
+
       const file = await getBase64(image);
       const payload = {
         cash_history_id: cashHistoryId.history_id,
@@ -72,6 +101,7 @@ const ModalAddWaste: React.FC<IProps> = ({
         store_id: store.company_id,
         unity: values.unity,
         product_id: selectedProduct.id,
+        reason: reasonOption
       };
 
       await window.Main.productWaste.addWaste(payload);
@@ -144,8 +174,12 @@ const ModalAddWaste: React.FC<IProps> = ({
                 value={value}
                 style={{ alignItems: "center" }}
               >
-                <Radio value={Options.Quilograma}>Quilograma</Radio>
-                <Radio value={Options.Unidade}>Unidade</Radio>
+                <Radio value={Options.Quilograma} defaultChecked={true}>
+                  Quilograma
+                </Radio>
+                <Radio value={Options.Unidade} disabled={selectedProductIsFruit}>
+                  Unidade
+                </Radio>
               </Radio.Group>
             </Form.Item>
           </ColModal>
@@ -161,8 +195,8 @@ const ModalAddWaste: React.FC<IProps> = ({
                     value > 0
                       ? Promise.resolve()
                       : Promise.reject(
-                          new Error("A quantidade não pode ser negativa")
-                        ),
+                        new Error("A quantidade não pode ser negativa")
+                      ),
                 },
               ]}
             >
@@ -181,7 +215,7 @@ const ModalAddWaste: React.FC<IProps> = ({
               rules={[
                 {
                   required: true,
-                  message: "Por favor, faça o upload de uma imagem",
+                  message: "Por favor, digite o motivo",
                 },
               ]}
             >
@@ -189,6 +223,46 @@ const ModalAddWaste: React.FC<IProps> = ({
                 type="file"
                 onChange={({ target: { files } }) => setImage(files[0])}
               />
+            </Form.Item>
+          </ColModal>
+          <ColModal sm={24}>
+            <Form.Item
+              label="Motivo"
+              name="reason"
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, faça o upload de uma imagem",
+                },
+              ]}
+            >
+              <Radio.Group
+                onChange={(e) => {
+                  setReasonOption(e.target.value);
+                  setShowOtherInput(e.target.value === "Outros");
+                }}
+                value={reasonOption}
+              >
+                {options.map((option, index) => (
+                  <Radio key={index} value={option}>
+                    {option}
+                  </Radio>
+                ))}
+              </Radio.Group>
+
+              {showOtherInput && (
+                <ColModal sm={24}>
+                  <Form.Item label="Digite o motivo" name="motivo">
+                    <Input
+                      autoFocus={true}
+                      value={reasonOption}
+                      onChange={({ target: { value } }) =>
+                        setReasonOption(value)
+                      }
+                    />
+                  </Form.Item>
+                </ColModal>
+              )}
             </Form.Item>
           </ColModal>
         </ContentModalBody>
