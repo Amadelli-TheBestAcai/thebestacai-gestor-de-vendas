@@ -85,6 +85,14 @@ const ModalAddWaste: React.FC<IProps> = ({
         return;
       }
 
+      if (!reasonOption) {
+        notification.warning({
+          message: "Por favor, selecione ou digite um motivo",
+          duration: 5,
+        });
+        return;
+      }
+
       const file = await getBase64(image);
       const payload = {
         cash_history_id: cashHistoryId.history_id,
