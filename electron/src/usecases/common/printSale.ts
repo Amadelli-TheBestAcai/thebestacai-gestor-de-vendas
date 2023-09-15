@@ -7,12 +7,13 @@ import { SaleDto } from "../../models/gestor/sale";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
 import * as jwt from "jsonwebtoken";
 import env from "../../providers/env.json";
-import moment from 'moment';
+import moment from "moment";
 import {
   printer as ThermalPrinter,
   types as TermalTypes,
 } from "node-thermal-printer";
 import Printer from "printer";
+import axios from "axios";
 
 interface Request {
   sale: SaleFromApiDTO | SaleDto;
@@ -43,10 +44,14 @@ class PrintSale implements IUseCaseFactory {
     const settings = await this.settingsRepository.getOne();
 
     const printer = settings?.printer;
-    
-    const created_at = moment(sale.created_at).parseZone().format('YYYY-MM-DDTHH:mm:ss');
-    const expirationDate = moment(created_at).add(1, "day").format("DD/MM/YYYY HH:mm:ss");
-   
+
+    const created_at = moment(sale.created_at)
+      .parseZone()
+      .format("YYYY-MM-DDTHH:mm:ss");
+    const expirationDate = moment(created_at)
+      .add(1, "day")
+      .format("DD/MM/YYYY HH:mm:ss");
+
     if (!settings?.should_use_printer) {
       return;
     }
@@ -134,7 +139,8 @@ class PrintSale implements IUseCaseFactory {
     const totalItems = sale.items
       //@ts-ignore
       .reduce(
-        (total, item) => total + +item.storeProduct.price_unit * +item.quantity,
+        (total, item) =>
+          total + +(item?.storeProduct?.price_unit || 0) * +item.quantity,
         0
       )
       .toFixed(2)
@@ -167,7 +173,7 @@ class PrintSale implements IUseCaseFactory {
         cash_history_id: sale.cash_history_id,
         store_id: store?.company_id,
         total_sold: totalItems,
-        created_at: created_at
+        created_at: created_at,
       },
       env.TOKEN_SECRET_NPS,
       {
@@ -180,10 +186,16 @@ class PrintSale implements IUseCaseFactory {
       `Utilize este QRCode para ser direcionado para nos avaliar :)`
     );
     this.printerFormater.alignCenter();
-    this.printerFormater.printQR(`${env.NPS_URL}/${access_token}`, {
-      correction: "M",
-      cellSize: 5,
-    });
+
+    const qrcode_img = await axios.get(
+      `https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${env.NPS_URL}/${access_token}`,
+      {
+        responseType: "arraybuffer",
+      }
+    );
+
+    const qrcode_64 = Buffer.from(qrcode_img.data, "binary");
+    this.printerFormater.printImageBuffer(qrcode_64);
     this.printerFormater.newLine();
     this.printerFormater.print(
       `Data de expiração do QRCode: ${expirationDate}`

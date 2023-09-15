@@ -13,4 +13,5 @@ export interface NfeDTO {
     type: number,
   }[];
   ref?: string;
+  cash_history_id?: number;
 }
