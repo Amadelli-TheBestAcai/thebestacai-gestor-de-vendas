@@ -1,6 +1,5 @@
 import styled, { css } from "styled-components";
 import {
-  Trash,
   DeliveryDining,
   Check2Circle,
   Cancel,
@@ -94,11 +93,11 @@ const Icon = css`
   color: var(--grey-60);
 `;
 
-export const TrashIcon = styled(Trash)`
+export const RegisteredIcon = styled(Check2Circle)`
   ${Icon}
-  color: red;
-  width: 1.2rem;
-  height: 1.2rem;
+  color: #0089ff;
+  width: 1.4rem;
+  height: 1.4rem;
 `;
 
 export const CheckCircleFillIcon = styled(Check2Circle)`

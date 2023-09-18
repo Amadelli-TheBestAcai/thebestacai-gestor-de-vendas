@@ -6,7 +6,7 @@ import {
   StatusMessage,
   CardGeneral,
   ContentTopInfo,
-  TrashIcon,
+  RegisteredIcon,
   ContentDeliveryBox,
   ContentIcons,
   DeliveryDiningIcon,
@@ -23,7 +23,7 @@ interface IOrderCardProps {
   orderOn: string;
   fullCode: string;
   onClick: () => void;
-  onDeleteCard: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
+  onRegisterCard: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
 }
 
 const OrderCard: React.FC<IOrderCardProps> = ({
@@ -32,7 +32,7 @@ const OrderCard: React.FC<IOrderCardProps> = ({
   orderOn,
   fullCode,
   onClick,
-  onDeleteCard,
+  onRegisterCard,
 }) => {
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
 
@@ -72,10 +72,10 @@ const OrderCard: React.FC<IOrderCardProps> = ({
 
               {(fullCode.toUpperCase() === "CONCLUDED" ||
                 fullCode.toUpperCase() === "CANCELLED") && (
-                <Tooltip title="Deletar pedido">
-                  <TrashIcon onClick={(id) => onDeleteCard(id)}>
+                <Tooltip title="Registrar pedido">
+                  <RegisteredIcon onClick={(id) => onRegisterCard(id)}>
                     excluir
-                  </TrashIcon>
+                  </RegisteredIcon>
                 </Tooltip>
               )}
             </ContentIcons>

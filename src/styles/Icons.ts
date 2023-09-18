@@ -15,7 +15,6 @@ export {
   TrashRestoreAlt,
   ChartBar,
 } from "@styled-icons/fa-solid";
-
 export {
   Offer,
   CheckboxChecked,
@@ -25,8 +24,9 @@ export {
   LogInCircle,
   LogOutCircle,
   LogOut,
+  Registered,
 } from "@styled-icons/boxicons-regular";
-export { Money } from "@styled-icons/fluentui-system-regular"
+export { Money } from "@styled-icons/fluentui-system-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";
 export { Chatbubbles, Settings } from "@styled-icons/ionicons-sharp";
 export {
@@ -38,13 +38,17 @@ export {
   PlayCircle,
   PauseCircle,
   PinMap,
-  Check2Circle
+  Check2Circle,
 } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
 export { Grid3x2GapFill, UiChecks, Trash } from "@styled-icons/bootstrap";
 export { ViewList, Sparkles } from "@styled-icons/heroicons-outline";
-export { PhoneIphone, MoreHoriz, SettingsCell } from "@styled-icons/material-outlined";
+export {
+  PhoneIphone,
+  MoreHoriz,
+  SettingsCell,
+} from "@styled-icons/material-outlined";
 export { Ifood, Whatsapp, Aiqfome } from "@styled-icons/simple-icons";
 export { RemoveCircleOutline as RemoveCircle2 } from "@styled-icons/material-rounded/RemoveCircleOutline";
 export { Attachment } from "@styled-icons/material-sharp/Attachment";
@@ -52,7 +56,7 @@ export {
   CheckboxBlankCircle,
   CheckboxCircle,
   SendPlane,
-  Cellphone
+  Cellphone,
 } from "@styled-icons/remix-fill";
 
 export {
@@ -60,7 +64,7 @@ export {
   RemoveShoppingCart,
   Payments,
   Cancel,
-  DeliveryDining
+  DeliveryDining,
 } from "@styled-icons/material-outlined";
 export { PointOfSale } from "@styled-icons/material/PointOfSale";
 export {
@@ -69,10 +73,9 @@ export {
   CheckCircleFill,
   FileEarmarkPdf,
   Clock,
-
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
-export { NotificationsCircle } from '@styled-icons/ionicons-outline';
+export { NotificationsCircle } from "@styled-icons/ionicons-outline";
 export { RemoveCircle, AddCircle } from "@styled-icons/material";
 export { AddToQueue, User, Discount } from "@styled-icons/boxicons-solid";
 export {
@@ -81,7 +84,7 @@ export {
   HomeAlt,
   ListOl,
   MinusCircle,
-  PlusCircle as PlusCircle2
+  PlusCircle as PlusCircle2,
 } from "@styled-icons/boxicons-regular";
 export { CloseOutline, SettingsOutline } from "@styled-icons/evaicons-outline";
 export { Repeat } from "@styled-icons/evaicons-solid/Repeat";

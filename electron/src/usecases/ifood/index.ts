@@ -8,3 +8,4 @@ export * from "./updateProductStatus";
 export * from "./findOrCreate";
 export * from "./updateOrderStatus";
 export * from "./openExternalLink";
+export * from "./integrate";

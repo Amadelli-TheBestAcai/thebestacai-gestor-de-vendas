@@ -25,12 +25,9 @@ import {
   ContentButton,
   Tabs,
   PageContent,
-  Input,
   CardScheduled,
   ContentInsideMenu,
   TabPaneElement,
-  ContentHome,
-  CardHome,
   ContentSideMenu,
   Footer,
   Collapse,
@@ -82,18 +79,28 @@ const IFoodScreen: React.FC = () => {
   const { user } = useUser();
   const { ifood, setIfood } = useIfood();
   const { storeCash } = useSale();
-  const currentDate = moment();
-  const nextDate = moment().add(1, "day");
 
-  const handleDeleteOrder = (orderId: string) => {
+  const handleRegisterOrder = (orderId: string) => {
     Modal.confirm({
-      title: `Deseja remover o pedido?`,
+      title: `Deseja registrar o pedido?`,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
-
       async onOk() {
+        const order = ifood.orders.find((order) => order.id === orderId);
+
+        const { has_internal_error, error_message } =
+          await window.Main.ifood.integrate(order);
+
+        if (has_internal_error) {
+          notification.error({
+            message: error_message || "Oops, ocorreu um erro!",
+            duration: 5,
+          });
+          return;
+        }
+
         const updatedIfood = {
           ...ifood,
           orders: ifood.orders.filter((order) => order.id !== orderId),
@@ -278,8 +285,8 @@ const IFoodScreen: React.FC = () => {
                                     fullCode={order.fullCode}
                                     orderOn={order.salesChannel}
                                     onClick={() => setSelectedOrder(order)}
-                                    onDeleteCard={() =>
-                                      handleDeleteOrder(order.id)
+                                    onRegisterCard={() =>
+                                      handleRegisterOrder(order.id)
                                     }
                                   />
                                 </React.Fragment>

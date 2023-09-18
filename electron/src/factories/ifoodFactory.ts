@@ -11,9 +11,10 @@ import {
   reasonsToCancel,
   openExternalLink,
   findOrCreate,
+  integrate,
 } from "../usecases/ifood";
 
-import { IfoodDto } from "../models/gestor";
+import { IfoodDto, OrderDto } from "../models/gestor";
 
 import { CatalogDto, CodeVerifierDto } from "../usecases/ifood/dtos";
 
@@ -74,4 +75,6 @@ export const ifoodFactory = {
     }),
   openExternalLink: async (url: string) =>
     await useCaseFactory.execute<any>(openExternalLink, url),
+  integrate: async (payload: OrderDto) =>
+    await useCaseFactory.execute<any>(integrate, { payload }),
 };
