@@ -80,35 +80,18 @@ const IFoodScreen: React.FC = () => {
   const { ifood, setIfood } = useIfood();
   const { storeCash } = useSale();
 
-  const handleRegisterOrder = (orderId: string) => {
-    Modal.confirm({
-      title: `Deseja registrar o pedido?`,
-      okText: "Sim",
-      okType: "default",
-      cancelText: "Não",
-      centered: true,
-      async onOk() {
-        const order = ifood.orders.find((order) => order.id === orderId);
+  const handlePrintOrder = async (orderId: string) => {
+    const order = ifood.orders.find((order) => order.id === orderId);
 
-        const { has_internal_error, error_message } =
-          await window.Main.ifood.integrate(order);
+    const { has_internal_error, error_message } =
+      await window.Main.ifood.printOrder(order);
 
-        if (has_internal_error) {
-          notification.error({
-            message: error_message || "Oops, ocorreu um erro!",
-            duration: 5,
-          });
-          return;
-        }
-
-        const updatedIfood = {
-          ...ifood,
-          orders: ifood.orders.filter((order) => order.id !== orderId),
-        };
-        setIfood(updatedIfood);
-        await window.Main.ifood.update(updatedIfood);
-      },
-    });
+    if (has_internal_error) {
+      notification.error({
+        message: error_message || "Oops, ocorreu um erro!",
+        duration: 5,
+      });
+    }
   };
 
   const changeProductStatus = async (
@@ -144,7 +127,6 @@ const IFoodScreen: React.FC = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     async function getCatalog() {
       try {
@@ -285,8 +267,8 @@ const IFoodScreen: React.FC = () => {
                                     fullCode={order.fullCode}
                                     orderOn={order.salesChannel}
                                     onClick={() => setSelectedOrder(order)}
-                                    onRegisterCard={() =>
-                                      handleRegisterOrder(order.id)
+                                    onPrintCard={() =>
+                                      handlePrintOrder(order.id)
                                     }
                                   />
                                 </React.Fragment>

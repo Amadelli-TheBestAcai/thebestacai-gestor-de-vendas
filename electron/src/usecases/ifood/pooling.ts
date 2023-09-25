@@ -2,8 +2,11 @@ import { ipcRenderer } from "electron";
 import { AxiosRequestConfig } from "axios";
 import * as sound from "sound-play";
 
-import { BaseRepository } from "../../repository/baseRepository";
+import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
+import { integrate } from "./integrate";
+
+import { BaseRepository } from "../../repository/baseRepository";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import { IfoodDto } from "../../models/gestor/ifood";
@@ -18,7 +21,8 @@ class Pooling implements IUseCaseFactory {
     private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood),
     private settingsRepository = new BaseRepository<SettingsDto>(
       StorageNames.Settings
-    )
+    ),
+    private integrateUseCase = integrate
   ) {}
 
   async execute(): Promise<{
@@ -93,6 +97,26 @@ class Pooling implements IUseCaseFactory {
           }
 
           await getMerchant.execute();
+
+          const concludedOrCanlledOrders = ifood.orders.filter(
+            (_order) =>
+              _order.fullCode === "CONCLUDED" || _order.fullCode === "CANCELLED"
+          );
+          if (concludedOrCanlledOrders.length) {
+            await Promise.all(
+              concludedOrCanlledOrders.map(async (concludedOrCanlledOrder) => {
+                const { has_internal_error } =
+                  await useCaseFactory.execute<void>(this.integrateUseCase, {
+                    payload: concludedOrCanlledOrder,
+                  });
+                if (!has_internal_error) {
+                  ifood.orders = ifood.orders.filter(
+                    (_order) => _order.id !== concludedOrCanlledOrder.id
+                  );
+                }
+              })
+            );
+          }
 
           ifood.updated_at = new Date();
           ifood.new_orders = ifood.orders.filter(

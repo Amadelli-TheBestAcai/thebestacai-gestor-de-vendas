@@ -39,16 +39,42 @@ export interface DeliveryDto {
 }
 
 export interface OrderItemDto {
-  index: number;
-  id: string;
-  uniqueId: string;
-  name: string;
-  unit: string;
-  quantity: number;
   unitPrice: number;
-  optionsPrice: number;
+  quantity: number;
+  externalCode: string;
   totalPrice: number;
+  index: number;
+  unit: string;
+  ean: string;
   price: number;
+  scalePrices: {
+    defaultPrice: number;
+    scales: [
+      {
+        minQuantity: number;
+        price: number;
+      }
+    ];
+  };
+  observations: string;
+  imageUrl: string;
+  name: string;
+  options: [
+    {
+      unitPrice: number;
+      unit: string;
+      ean: string;
+      quantity: number;
+      externalCode: string;
+      price: number;
+      name: string;
+      index: number;
+      id: string;
+      addition: number;
+    }
+  ];
+  id: string;
+  optionsPrice: number;
 }
 
 export interface MerchantDto {

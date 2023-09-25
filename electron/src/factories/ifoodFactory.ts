@@ -11,7 +11,7 @@ import {
   reasonsToCancel,
   openExternalLink,
   findOrCreate,
-  integrate,
+  printOrder,
 } from "../usecases/ifood";
 
 import { IfoodDto, OrderDto } from "../models/gestor";
@@ -75,6 +75,6 @@ export const ifoodFactory = {
     }),
   openExternalLink: async (url: string) =>
     await useCaseFactory.execute<any>(openExternalLink, url),
-  integrate: async (payload: OrderDto) =>
-    await useCaseFactory.execute<any>(integrate, { payload }),
+  printOrder: async (order: OrderDto) =>
+    await useCaseFactory.execute<any>(printOrder, { order }),
 };

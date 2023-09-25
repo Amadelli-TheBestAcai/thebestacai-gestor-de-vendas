@@ -1,9 +1,10 @@
 import styled, { css } from "styled-components";
 import {
   DeliveryDining,
-  Check2Circle,
+  Printer,
   Cancel,
   NotificationsCircle,
+  Check2Circle,
 } from "../../styles/Icons";
 
 interface ICardProp {
@@ -93,7 +94,7 @@ const Icon = css`
   color: var(--grey-60);
 `;
 
-export const RegisteredIcon = styled(Check2Circle)`
+export const PrintIcon = styled(Printer)`
   ${Icon}
   color: #0089ff;
   width: 1.4rem;

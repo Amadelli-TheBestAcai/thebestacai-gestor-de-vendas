@@ -125,7 +125,12 @@ export function GlobalProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (window.iFoodWidget && ifood?.is_opened && ifood?.merchant_id) {
+    if (
+      window.iFoodWidget &&
+      ifood?.is_opened &&
+      ifood?.merchant_id &&
+      storeCash?.is_online
+    ) {
       window.iFoodWidget?.init({
         merchantIds: [ifood?.merchant_id],
         widgetId: "028f8be2-7696-4bc5-938e-831ac309ea5d",
@@ -134,7 +139,7 @@ export function GlobalProvider({ children }) {
     } else {
       window.iFoodWidget?.hide();
     }
-  }, [window.iFoodWidget, ifood?.is_opened]);
+  }, [window.iFoodWidget, ifood?.is_opened, storeCash?.is_online]);
 
   useEffect(() => {
     async function ifoodScheduler() {
@@ -161,14 +166,14 @@ export function GlobalProvider({ children }) {
       }
     }
     const taskScheduler = IfoodScheduler.getInstance(20, ifoodScheduler);
-    if (togleIfood) {
+    if (togleIfood && storeCash?.is_online) {
       console.log("starting ifood pooling");
       taskScheduler.start();
     } else {
       console.log("stoping ifood pooling");
       taskScheduler.stop();
     }
-  }, [togleIfood]);
+  }, [togleIfood, storeCash?.is_online]);
 
   const togleIfoodPooling = () => setTogleIfoodfood((oldValue) => !oldValue);
 
