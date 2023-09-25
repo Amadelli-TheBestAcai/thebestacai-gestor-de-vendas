@@ -1,8 +1,11 @@
-import { CustomerVoucherDTO } from '../dtos/customerVoucher'
+import { CustomerVoucherDTO } from "../dtos/customerVoucher";
 export interface SaleDto {
   id: string;
   gv_id?: number;
   name?: string;
+  client_cpf?: string;
+  client_phone?: string;
+  client_email?: string;
   user_id?: number;
   abstract_sale?: boolean;
   quantity: number;

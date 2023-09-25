@@ -1,12 +1,13 @@
 import React from "react";
 
 import { useSale } from "../../hooks/useSale";
+import ClientInfo from "../../components/ClientInfo";
 
 import { Spin } from "antd";
 import { Container, ContentValue, ButtonFinisher } from "./styles";
 
 const Register: React.FC = () => {
-  const { sale, onRegisterSale, isSavingSale } = useSale();
+  const { sale, setShouldOpenClientInfo, isSavingSale } = useSale();
   const monetaryFormat = (value: number): string => {
     if (!value) {
       return "0,00";
@@ -29,10 +30,11 @@ const Register: React.FC = () => {
           </strong>
         </span>
       </ContentValue>
-      <ButtonFinisher onClick={() => onRegisterSale()}>
+      <ButtonFinisher onClick={() => setShouldOpenClientInfo(true)}>
         {" "}
         {isSavingSale ? <Spin /> : "FINALIZAR [F1]"}
       </ButtonFinisher>
+      <ClientInfo />
     </Container>
   );
 };

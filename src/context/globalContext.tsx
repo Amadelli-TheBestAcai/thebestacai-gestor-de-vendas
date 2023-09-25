@@ -10,7 +10,7 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
-import moment from "moment";
+import { CampaignDto } from "../models/dtos/campaign";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -35,12 +35,16 @@ type GlobalContextType = {
     openDiscoundModal: () => void;
     closeDiscoundModal: () => void;
   };
+  shouldOpenClientInfo: boolean;
+  setShouldOpenClientInfo: Dispatch<SetStateAction<boolean>>;
   cupomModalState: boolean;
   setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
   setUser: Dispatch<SetStateAction<UserDto | null>>;
   store: StoreDto | null;
   setStore: Dispatch<SetStateAction<StoreDto | null>>;
+  campaign: CampaignDto | null;
+  setCampaign: Dispatch<SetStateAction<CampaignDto | null>>;
   hasPermission: (_permission: string) => boolean;
 };
 
@@ -56,6 +60,8 @@ export function GlobalProvider({ children }) {
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
+  const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
+  const [campaign, setCampaign] = useState<CampaignDto | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -402,6 +408,10 @@ export function GlobalProvider({ children }) {
         setStore,
         cupomModalState,
         setCupomModalState,
+        shouldOpenClientInfo,
+        setShouldOpenClientInfo,
+        campaign,
+        setCampaign,
       }}
     >
       {children}

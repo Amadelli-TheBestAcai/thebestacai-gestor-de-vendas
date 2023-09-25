@@ -24,3 +24,4 @@ export * from "./getCustomerReward";
 export * from "./integrateRewardWithSale";
 export * from "./integrateRewardWithSale";
 export * from "./getVoucher";
+export * from "./getCurrentCampaign";
