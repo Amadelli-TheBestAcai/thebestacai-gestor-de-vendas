@@ -183,6 +183,11 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         id: 8,
         label: "Resultado",
         value: currencyFormater(+_storeCashHistory?.result_cash),
+      },
+      {
+        id: 9,
+        label: "Pix",
+        value: currencyFormater(_balance?.store?.pix + _balance?.delivery?.pix),
       }
     );
 
