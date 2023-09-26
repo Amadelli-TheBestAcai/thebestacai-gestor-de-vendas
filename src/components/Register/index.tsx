@@ -5,15 +5,10 @@ import ClientInfo from "../../components/ClientInfo";
 
 import { Spin } from "antd";
 import { Container, ContentValue, ButtonFinisher } from "./styles";
+import { monetaryFormat } from "../../helpers/monetaryFormat";
 
 const Register: React.FC = () => {
   const { sale, setShouldOpenClientInfo, isSavingSale } = useSale();
-  const monetaryFormat = (value: number): string => {
-    if (!value) {
-      return "0,00";
-    }
-    return value.toFixed(2).replace(".", ",");
-  };
 
   return (
     <Container>
@@ -24,8 +19,8 @@ const Register: React.FC = () => {
             R${" "}
             {monetaryFormat(
               sale?.total_sold -
-                +(sale.customer_nps_reward_discount || 0) -
-                sale?.discount
+              +(sale.customer_nps_reward_discount || 0) -
+              sale?.discount
             )}
           </strong>
         </span>
