@@ -10,12 +10,20 @@ export const InfoWrapper = styled.div`
 
 export const Info = styled.span``;
 
+export const Footer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+`;
+
 export const MaskInput = styled(_MaskInput)`
   width: 100%;
   border: 1px solid var(--gray-50);
-  height: 2.5rem;
+  height: 2.7rem;
   border-radius: 5px;
-  padding-top: 2px;
+  padding: .6rem;
 `;
 
 export const FetchButtonWrapper = styled.div`
@@ -26,7 +34,17 @@ export const FetchButtonWrapper = styled.div`
   padding: 7px;
 `;
 
-export const Button = styled(ButtonAnt)``;
+export const Button = styled(ButtonAnt)`
+  border-radius: 5px;
+  border: 1px solid var(--orange-250);
+  color: var(--orange-250);
+
+  :hover, :focus {
+    border: 1px solid var(--orange-250);
+    color: var(--orange-250);
+    opacity: 70%;
+  }
+`;
 
 export const CampaignInfoWrapper = styled.div`
   display: flex;
@@ -34,4 +52,34 @@ export const CampaignInfoWrapper = styled.div`
   align-items: center;
 
   padding: 7px;
+`;
+
+export const ButtonSave = styled.button`
+  padding: 3px 7px;
+  font-weight: 500;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  background: var(--orange-250);
+  color: white;
+  transition: 0.5s;
+
+  :hover {
+    background: var(--orange-200);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
+`;
+
+export const ButtonCancel = styled.button`
+  font-size: 0.9rem;
+  color: var(--orange-250);
+  font-weight: 500;
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.8rem;
+  }
 `;

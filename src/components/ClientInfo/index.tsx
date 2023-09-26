@@ -9,10 +9,13 @@ import {
   FetchButtonWrapper,
   Button,
   CampaignInfoWrapper,
+  ButtonSave,
+  ButtonCancel,
+  Footer,
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 
-interface IProps {}
+interface IProps { }
 
 const ClientInfo: React.FC<IProps> = () => {
   const {
@@ -104,15 +107,30 @@ const ClientInfo: React.FC<IProps> = () => {
   return (
     <Container
       visible={shouldOpenClientInfo}
-      cancelButtonProps={{ hidden: true }}
       confirmLoading={loading}
       closable={false}
-      onOk={onFinish}
       destroyOnClose
+      footer={
+        <Footer>
+          <ButtonCancel
+            onClick={() => {
+              setShouldOpenClientInfo(false);
+            }}
+          >
+            Cancelar
+          </ButtonCancel>
+          <ButtonSave
+            onClick={onFinish}
+            disabled={info.phone.trim() === '' || info.email.trim() === '' || info.cpf.trim() === ''}
+          >
+            Salvar
+          </ButtonSave>
+        </Footer>
+      }
     >
       <FetchButtonWrapper>
         <Button onClick={onFetchLastCampaign} loading={fetchingLastCampaign}>
-          Buscar Última Campanha
+          Buscar última campanha
         </Button>
       </FetchButtonWrapper>
       <InfoWrapper>
