@@ -34,18 +34,6 @@ export const FetchButtonWrapper = styled.div`
   padding: 7px;
 `;
 
-export const Button = styled(ButtonAnt)`
-  border-radius: 5px;
-  border: 1px solid var(--orange-250);
-  color: var(--orange-250);
-
-  :hover, :focus {
-    border: 1px solid var(--orange-250);
-    color: var(--orange-250);
-    opacity: 70%;
-  }
-`;
-
 export const CampaignInfoWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -82,4 +70,38 @@ export const ButtonCancel = styled.button`
   @media (max-width: 1366px) {
     font-size: 0.8rem;
   }
+`;
+
+export const ContentReward = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--gray-50);
+  border-radius: 5px;
+  padding: .7rem;
+`;
+
+export const InfoClientReward = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--orange-200);
+  }
+
+  .borderedInfoClient {
+    border-right: 1px solid black;
+  }
+`;
+
+export const TitleReward = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0;
 `;
