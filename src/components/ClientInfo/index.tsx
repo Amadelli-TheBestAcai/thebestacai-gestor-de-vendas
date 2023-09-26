@@ -150,8 +150,7 @@ const ClientInfo: React.FC<IProps> = () => {
       <CampaignInfoWrapper>
         {!campaign && (
           <span>
-            Nenhuma campanha carregada. Para insights de venda sobre a camapanha
-            click no botão acima.
+            Nenhuma campanha carregada. 
           </span>
         )}
         {campaign && (
