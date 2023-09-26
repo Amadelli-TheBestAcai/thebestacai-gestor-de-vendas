@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { notification } from "antd";
+
+import { useSale } from "../../hooks/useSale";
+import { monetaryFormat } from "../../helpers/monetaryFormat";
 
 import {
   Container,
   MaskInput,
   InfoWrapper,
   Info,
-  FetchButtonWrapper,
-  Button,
   CampaignInfoWrapper,
+  ButtonSave,
+  ButtonCancel,
+  Footer,
+  ContentReward,
+  InfoClientReward,
+  TitleReward,
 } from "./styles";
-import { useSale } from "../../hooks/useSale";
 
-interface IProps {}
+interface IProps { }
 
 const ClientInfo: React.FC<IProps> = () => {
   const {
@@ -25,7 +30,6 @@ const ClientInfo: React.FC<IProps> = () => {
     setCampaign,
   } = useSale();
   const [loading, setLoading] = useState(false);
-  const [fetchingLastCampaign, setFetchingLastCampaign] = useState(false);
   const [info, setInfo] = useState({
     cpf: "",
     phone: "",
@@ -49,10 +53,11 @@ const ClientInfo: React.FC<IProps> = () => {
         setCampaign(response);
       }
     };
+
     if (!campaign) {
       fetchCampaign();
     }
-  }, [campaign]);
+  }, [campaign])
 
   const onFinish = async () => {
     setLoading(true);
@@ -85,36 +90,35 @@ const ClientInfo: React.FC<IProps> = () => {
     setInfo((oldValues) => ({ ...oldValues, [key]: value }));
   };
 
-  const onFetchLastCampaign = async () => {
-    setFetchingLastCampaign(true);
-    const { has_internal_error, error_message, response } =
-      await window.Main.sale.getCurrentCampaign();
-    if (has_internal_error) {
-      return notification.error({
-        message: error_message || "Oops, ocorreu um erro ao obter campanha",
-        duration: 5,
-      });
-    }
-
-    setCampaign(response);
-
-    setFetchingLastCampaign(false);
-  };
-
   return (
     <Container
       visible={shouldOpenClientInfo}
-      cancelButtonProps={{ hidden: true }}
       confirmLoading={loading}
       closable={false}
-      onOk={onFinish}
+      onCancel={() => setShouldOpenClientInfo(false)}
       destroyOnClose
+      footer={
+        <Footer>
+          <ButtonCancel
+            onClick={() => {
+              setShouldOpenClientInfo(false);
+            }}
+          >
+            Cancelar
+          </ButtonCancel>
+          <ButtonSave
+            onClick={onFinish}
+            disabled={
+              info.phone.trim() === "" ||
+              info.email.trim() === "" ||
+              info.cpf.trim() === ""
+            }
+          >
+            Salvar
+          </ButtonSave>
+        </Footer>
+      }
     >
-      <FetchButtonWrapper>
-        <Button onClick={onFetchLastCampaign} loading={fetchingLastCampaign}>
-          Buscar Última Campanha
-        </Button>
-      </FetchButtonWrapper>
       <InfoWrapper>
         <Info>CPF:</Info>
         <MaskInput
@@ -147,13 +151,29 @@ const ClientInfo: React.FC<IProps> = () => {
       </InfoWrapper>
       <CampaignInfoWrapper>
         {!campaign && (
-          <>
-            Nenhuma campanha carregada. Para insights de venda sobre a camapanha
-            click no botão acima.
-          </>
+          <span>
+            Nenhuma campanha carregada.
+          </span>
         )}
-        {/* {!campaign?.actived && <>Nenhuma campanha ativa no momento</>} */}
-        {campaign && <>Campanha carregada, exibir insights</>}
+        {campaign && (
+          <ContentReward>
+            <InfoClientReward className="borderedInfoClient">
+              <TitleReward>
+                Com mais
+              </TitleReward>
+
+              <span>
+                R${" "}{monetaryFormat(campaign.average_ticket -
+                  (sale?.total_sold - (sale.customer_nps_reward_discount || 0) - sale?.discount))}{" "}
+              </span>
+
+              <TitleReward>
+                você ganha +1 ponto
+              </TitleReward>
+            </InfoClientReward>
+          </ContentReward>
+        )}
+
       </CampaignInfoWrapper>
     </Container>
   );
