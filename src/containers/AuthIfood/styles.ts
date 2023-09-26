@@ -15,11 +15,7 @@ export const Instruction = styled.p`
   color: var(--black);
   font-weight: 700;
   font-size: 1.2rem;
-  width: 100%;
-
-  span {
-    margin-right: 40px;
-  }
+  width: 90%;
 `;
 
 export const Title = styled.h1`
@@ -30,7 +26,7 @@ export const InfoContent = styled.div`
   width: 90%;
   display: flex;
   justify-content: center;
-  text-align: center;
+  text-align: initial;
   padding: 1rem;
   border-top: 1px solid var(--grey-60);
 `;
@@ -46,13 +42,22 @@ export const ContentButtons = styled.div`
   :nth-child(1) {
     border: none;
   }
+
+  .secondTitle {
+    display: flex;
+    margin-left: 6rem;
+    color: var(--black);
+    font-weight: 700;
+    font-size: 1.2rem;
+    width: 100%;
+  }
 `;
 
 export const SubtitleAuth = styled.span`
   font-size: 1rem;
   display: block;
   font-weight: 500;
-  margin: 2.5rem 0 0 0;
+  width: 90%;
 `;
 
 export const ButtonLink = styled(ButtonAnt)`
@@ -78,7 +83,7 @@ export const Input = styled(InputAnt)`
   height: 4.2rem;
   background-color: #f7f7f7;
   border: 1px solid #bebebebe;
-  margin: 0.8rem 0;
+  margin: 0.38rem 0;
   text-transform: uppercase;
 
   ::placeholder {

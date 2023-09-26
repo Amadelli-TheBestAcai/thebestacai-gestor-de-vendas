@@ -54,12 +54,12 @@ const AuthIfood = () => {
         <ContentButtons>
           <Instruction>
             1.Copie o código de autorização disponibilizado no site do Ifood.
-            <SubtitleAuth>
-              Ao clicar no botão. você será redirecionado para o site do Ifood.
-              Copie o código de autorização e cole no passo 2. Faça o login, se
-              necessário.
-            </SubtitleAuth>
           </Instruction>
+          <SubtitleAuth>
+            Ao clicar no botão, você será redirecionado para o site do Ifood.
+            Copie o código de autorização e cole no passo 2. Faça o login, se
+            necessário.
+          </SubtitleAuth>
           <ButtonLink
             onClick={async () => await window.Main.ifood.getCodeVerifier()}
           >
@@ -68,7 +68,7 @@ const AuthIfood = () => {
           <Image src={ImageCode} />
         </ContentButtons>
         <ContentButtons>
-          <Instruction>2.Cole o código da autorização</Instruction>
+          <p className="secondTitle">2.Cole o código da autorização</p>
           <Input
             placeholder="Cole o código de autorização"
             onChange={({ target: { value } }) => setCode(value)}
