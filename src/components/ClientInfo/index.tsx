@@ -49,7 +49,6 @@ const ClientInfo: React.FC<IProps> = () => {
         if (response) {
           setCampaign(response);
         }
-        console.log(response, 'ana teste de response')
       };
 
       if (!campaign) {
@@ -172,20 +171,6 @@ const ClientInfo: React.FC<IProps> = () => {
                 você ganha +1 ponto
               </TitleReward>
             </InfoClientReward>
-
-            {/* <InfoClientReward>
-              <TitleReward>
-                Total da compra
-              </TitleReward>
-              <span>
-                R${" "}
-                {monetaryFormat(
-                  sale?.total_sold -
-                  +(sale.customer_nps_reward_discount || 0) -
-                  sale?.discount
-                )}
-              </span>
-            </InfoClientReward> */}
           </ContentReward>
         )}
 
