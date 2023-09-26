@@ -243,9 +243,13 @@ const Settings: React.FC = () => {
             <strong>novo pedido</strong> no ifood
           </span>
           <ActionContainer>
+            <label htmlFor="inputFile" className="labelFile">
+              Selecione um arquivo
+            </label>
             <input
               type="file"
               accept="mp3"
+              id="inputFile"
               onChange={(e) =>
                 setSettings((oldValues) => ({
                   ...oldValues,

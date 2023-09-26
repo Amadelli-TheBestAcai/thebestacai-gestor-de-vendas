@@ -150,6 +150,26 @@ export const ActionContainer = styled.div`
     font-size: 0.9rem;
     margin-top: 3%;
   }
+  .labelFile {
+    display: flex;
+    color: white;
+    background: var(--orange-250);
+    border-radius: 5px;
+    width: 5rem;
+    font-size: 0.9rem;
+    height: 3rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+
+    :hover {
+      background: var(--orange-200);
+    }
+  }
+  #inputFile {
+    display: none;
+  }
 
   /*Responsive 1600px*/
   @media (max-width: 1600px) {

@@ -269,8 +269,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
               novos pedidos pelo mesmo motivo.
             </p>
             <p className="attention">
-              ATENÇÃO: Muitos cancelamos pela falta de confirmação podem fechar
-              seu restaurante na plataforma.
+              ATENÇÃO: Muitos cancelamentos podem fechar sua loja no iFood.
             </p>
             <p>
               Selecione o motivo pelo qual você não pode aceitar esse pedido

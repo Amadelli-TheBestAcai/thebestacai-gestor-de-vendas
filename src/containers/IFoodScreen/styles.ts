@@ -6,7 +6,6 @@ import {
   Tabs as TabsAnt,
   Input as InputAnt,
   Collapse as CollapseAnt,
-
 } from "antd";
 const { Panel } = CollapseAnt;
 
@@ -18,7 +17,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  p{
+  p {
     color: var(--grey-100);
   }
 `;
@@ -57,8 +56,8 @@ export const SideMenu = styled.div`
   min-width: 23rem;
   height: 84vh;
   box-shadow: 4px 0px 4px 0px rgba(0, 0, 0, 0.25);
-  
-  @media screen and (max-width: 1600px){
+
+  @media screen and (max-width: 1600px) {
     height: 80vh;
   }
 `;
@@ -67,13 +66,9 @@ export const ContentCards = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 39.2rem;
+  height: 100%;
   overflow: scroll;
   overflow-x: hidden;
-
-  @media screen and (max-width: 1600px){
-    max-height: 25.2rem;
-  }
 `;
 
 interface IStatusProps {
@@ -83,14 +78,14 @@ interface IStatusProps {
 export const HeaderCard = styled.header<IStatusProps>`
   display: flex;
   width: 100%;
-  padding: .2rem 1rem;
+  padding: 0.2rem 1rem;
   justify-content: space-between;
   background-color: var(--orange-250);
-  font-size: .9rem;
+  font-size: 0.9rem;
   color: var(--white);
 
-  :first-child{
-    margin-top: .5rem;
+  :first-child {
+    margin-top: 0.5rem;
   }
 `;
 
@@ -98,7 +93,6 @@ export const ContentCollapse = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  
 `;
 
 export const MenuContainer = styled.div`
@@ -113,7 +107,7 @@ export const ContentMenu = styled.div`
 `;
 
 export const ContentSelect = styled.div`
-  padding: 0 0 0 16px; 
+  padding: 0 0 0 16px;
   width: 100%;
 `;
 
@@ -191,18 +185,18 @@ export const Tabs = styled(TabsAnt)`
     justify-content: start !important;
   }
 
-  .ant-tabs-tab-btn:hover{
+  .ant-tabs-tab-btn:hover {
     opacity: 50% !important;
   }
-  .ant-tabs-tab-btn:focus{
+  .ant-tabs-tab-btn:focus {
     color: var(--orange-250) !important;
   }
 
   .ant-tabs-tab-btn.ant-tabs-tab-active {
-    color: var(--orange-250) !important; 
+    color: var(--orange-250) !important;
   }
 
-  .ant-tabs-tab-btn:active{
+  .ant-tabs-tab-btn:active {
     color: var(--orange-250) !important;
   }
 
@@ -218,10 +212,10 @@ export const FilterButton = styled.div`
 `;
 
 export const ContentTitleCollapse = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: 100%;
 `;
 
 export const TitleDisposition = styled.div`
@@ -233,7 +227,7 @@ export const TitleDisposition = styled.div`
 export const TitleDispositionBottom = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const ComplementalGroupName = styled.span`
@@ -264,15 +258,15 @@ export const PageContent = styled.div`
 `;
 
 export const Card = styled.div`
-    width: 250px;
-    height: 67px;
-    color: red;
-    margin-left: 20px;
+  width: 250px;
+  height: 67px;
+  color: red;
+  margin-left: 20px;
 `;
 
 export const Input = styled(InputAnt)`
-   padding: .5rem;
-   width: 50%;
+  padding: 0.5rem;
+  width: 50%;
 `;
 
 export const ButtonPause = styled(ButtonAnt)`
@@ -283,7 +277,7 @@ export const ButtonPause = styled(ButtonAnt)`
   border: 1px solid var(--orange-250);
   color: var(--orange-250);
   padding: 1.2rem 1rem;
-  border-radius: .4rem;
+  border-radius: 0.4rem;
   width: 100%;
 `;
 
@@ -291,7 +285,7 @@ export const CardScheduled = styled.div`
   width: 40rem;
   height: 100%;
   box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.15);
-  border-radius: .4rem;
+  border-radius: 0.4rem;
   padding: 2rem;
 
   p {
@@ -301,7 +295,7 @@ export const CardScheduled = styled.div`
     display: block;
   }
 
-  b{
+  b {
     font-weight: 500;
     color: var(--grey-100);
   }
@@ -316,28 +310,28 @@ export const ContentSideMenu = styled.div`
 `;
 
 export const Footer = styled.footer`
-    position: absolute;
-    width: 100%;
-    border-top: 1px solid var(--grey-60);
-    padding: 1rem;
-    bottom: 0;
+  width: 100%;
+  border-top: 1px solid var(--grey-60);
+  padding: 1rem;
+  bottom: 0;
 
-    .content-footer{
-      display:flex;
-      justify-content: space-between;
-      width: 90%;
-    }
+  .content-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    height: 7rem;
+  }
 
-    .order-name{
-      font-size: 1.1rem;
-      color: var(--gray-100);
-    }
+  .order-name {
+    font-size: 1.1rem;
+    color: var(--gray-100);
+  }
 
-    span{
-      display: block;
-      color: var(--grey-100);
-      font-size: 1rem;
-    }
+  span {
+    display: block;
+    color: var(--grey-100);
+    font-size: 1rem;
+  }
 `;
 
 export const ContentInsideMenu = styled.div`
@@ -365,29 +359,29 @@ export const ContentHome = styled.div`
 export const CardHome = styled.div`
   background-color: var(--gray-10);
   padding: 1.3rem;
-  border-radius: .9rem;
+  border-radius: 0.9rem;
   display: flex;
   flex-direction: column;
   font-weight: 400;
   color: var(--grey-100);
 
-  h3{
-    font-size: .9rem;
+  h3 {
+    font-size: 0.9rem;
   }
 
-  span{
+  span {
     font-size: 1rem;
     margin-bottom: 1.2rem;
   }
 
-  p{
+  p {
     font-size: 2rem;
     font-weight: bold;
     color: black;
     margin-bottom: 0;
   }
 
-  .content{
+  .content {
     display: flex;
     align-items: start;
     flex-direction: column;
@@ -399,22 +393,22 @@ export const CardHome = styled.div`
     width: 65%;
   }
 
-  .hourTime{
+  .hourTime {
     background-color: white;
-    border-radius: .3rem;
-    padding: .2rem;
+    border-radius: 0.3rem;
+    padding: 0.2rem;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .infoDelivery{
+  .infoDelivery {
     display: flex;
     flex-direction: column;
 
-    span{
-      font-size: .9rem;
+    span {
+      font-size: 0.9rem;
       color: var(--gray-60);
     }
   }
@@ -481,7 +475,7 @@ export const CollapseHeader = styled.div`
   color: var(--grey-100);
   background-color: var(--gray-10);
   border: 1px solid var(--grey-60);
-  border-radius: .4rem .4rem 0 0;
+  border-radius: 0.4rem 0.4rem 0 0;
   margin-top: 1rem;
 `;
 
@@ -505,7 +499,7 @@ export const ItemDescription = styled.span`
 `;
 
 export const ItemPrice = styled.span`
-  font-size: .9rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--grey-100);
   width: 5%;
@@ -515,12 +509,12 @@ export const PlayIcon = styled(PlayCircle)`
   width: 1.5rem;
   height: 1.5rem;
   color: var(--grey-100);
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 `;
 
 export const PauseIcon = styled(PauseCircle)`
   width: 1.5rem;
   height: 1.5rem;
   color: var(--grey-100);
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 `;
