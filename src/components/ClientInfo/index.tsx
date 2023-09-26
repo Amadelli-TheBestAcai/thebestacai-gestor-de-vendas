@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 
+import { useSale } from "../../hooks/useSale";
+import { monetaryFormat } from "../../helpers/monetaryFormat";
+
 import {
   Container,
   MaskInput,
@@ -13,8 +16,6 @@ import {
   InfoClientReward,
   TitleReward,
 } from "./styles";
-import { useSale } from "../../hooks/useSale";
-import { monetaryFormat } from "../../helpers/monetaryFormat";
 
 interface IProps { }
 
