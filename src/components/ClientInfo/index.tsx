@@ -42,20 +42,21 @@ const ClientInfo: React.FC<IProps> = () => {
         phone: sale.client_phone || "",
         email: sale.client_email || "",
       });
-
-      const fetchCampaign = async () => {
-        const { response } = await window.Main.sale.getCurrentCampaign();
-        if (response) {
-          setCampaign(response);
-        }
-      };
-
-      if (!campaign) {
-        fetchCampaign();
-      }
-
     }
-  }, [shouldOpenClientInfo, campaign, setCampaign]);
+  }, [shouldOpenClientInfo]);
+
+  useEffect(() => {
+    const fetchCampaign = async () => {
+      const { response } = await window.Main.sale.getCurrentCampaign();
+      if (response) {
+        setCampaign(response);
+      }
+    };
+
+    if (!campaign) {
+      fetchCampaign();
+    }
+  }, [campaign])
 
   const onFinish = async () => {
     setLoading(true);
@@ -150,7 +151,7 @@ const ClientInfo: React.FC<IProps> = () => {
       <CampaignInfoWrapper>
         {!campaign && (
           <span>
-            Nenhuma campanha carregada. 
+            Nenhuma campanha carregada.
           </span>
         )}
         {campaign && (
