@@ -43,6 +43,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [form] = Form.useForm();
 
   const removeItem = async (): Promise<void> => {
+    await form.validateFields()
     if (item.product.id === 1 && sale?.customerVoucher?.voucher?.self_service) {
       notification.warning({
         message: "Não é possível remover self-service",
@@ -164,8 +165,9 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
 
                 {showOtherInput && (
                   <Col sm={24}>
-                    <Form.Item label="Digite o motivo" name="motivo">
+                    <Form.Item rules={[{ required: true, message: "Campo obrigatório" }]} label="Digite o motivo" name="motivo">
                       <Input
+                        required={true}
                         autoFocus={true}
                         value={reasonOption}
                         onChange={({ target: { value } }) =>
