@@ -76,7 +76,7 @@ const ModalAddWaste: React.FC<IProps> = ({
     await form.validateFields();
     setLoading(true);
     try {
-      const values = form.getFieldsValue()
+      const values = form.getFieldsValue();
 
       const file = await getBase64(image);
       const payload = {
@@ -155,12 +155,11 @@ const ModalAddWaste: React.FC<IProps> = ({
               rules={[{ required: true, message: "Selecione uma unidade" }]}
             >
               <Radio.Group
-                defaultValue={selectedProductIsFruit && Options.Quilograma}
                 onChange={(e) => setValue(e.target.value)}
                 value={value}
                 style={{ alignItems: "center" }}
               >
-                <Radio value={Options.Quilograma} defaultChecked={true}>
+                <Radio value={Options.Quilograma} checked>
                   Quilograma
                 </Radio>
                 <Radio value={Options.Unidade} disabled={selectedProductIsFruit}>
@@ -213,20 +212,15 @@ const ModalAddWaste: React.FC<IProps> = ({
           </ColModal>
           <ColModal sm={24}>
             <Form.Item
-              label="Motivo"
+              label="Selecione um motivo"
               name="reason"
-              rules={[
-                {
-                  required: true,
-                  message: "Por favor, selecione um motivo",
-                },
-              ]}
+              rules={[{ required: true, message: "Selecione um motivo" }]}
             >
               <Radio.Group
                 onChange={(e) => {
                   setReasonOption(e.target.value);
                   setShowOtherInput(e.target.value === "Outros");
-                  form.setFieldsValue({ reason: e.target.value }); 
+                  form.setFieldsValue({ reason: e.target.value });
                 }}
                 value={reasonOption}
               >
@@ -236,22 +230,24 @@ const ModalAddWaste: React.FC<IProps> = ({
                   </Radio>
                 ))}
               </Radio.Group>
-
-              {showOtherInput && (
-                <ColModal sm={24}>
-                  <Form.Item label="Digite o motivo" name="motivo">
-                    <Input
-                      autoFocus={true}
-                      value={reasonOption}
-                      onChange={({ target: { value } }) =>
-                        setReasonOption(value)
-                      }
-                    />
-                  </Form.Item>
-                </ColModal>
-              )}
             </Form.Item>
           </ColModal>
+
+          {showOtherInput && (
+            <ColModal sm={24}>
+              <Form.Item label="Digite o motivo" name="motivo">
+                <Input
+                  autoFocus={true}
+                  value={reasonOption}
+                  onChange={({ target: { value } }) =>
+                    setReasonOption(value)
+                  }
+
+                />
+              </Form.Item>
+            </ColModal>
+          )}
+
         </ContentModalBody>
       </Form>
     </Modal>
