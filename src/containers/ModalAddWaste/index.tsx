@@ -140,7 +140,7 @@ const ModalAddWaste: React.FC<IProps> = ({
           >
             Cancelar
           </ButtonCancel>
-          <ButtonSave onClick={handleSave} disabled={quantity <= 0 || !form.isFieldsTouched(true)}>
+          <ButtonSave onClick={handleSave} disabled={quantity <= 0}>
             Salvar
           </ButtonSave>
         </Footer>
