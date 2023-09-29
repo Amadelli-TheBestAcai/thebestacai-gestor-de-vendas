@@ -73,25 +73,10 @@ const ModalAddWaste: React.FC<IProps> = ({
   }, [value]);
 
   const handleSave = async () => {
+    await form.validateFields();
     setLoading(true);
     try {
-      const values = await form.validateFields();
-
-      if (!image) {
-        notification.warning({
-          message: "Por favor, anexe uma imagem",
-          duration: 5,
-        });
-        return;
-      }
-
-      if (!reasonOption) {
-        notification.warning({
-          message: "Por favor, selecione ou digite um motivo",
-          duration: 5,
-        });
-        return;
-      }
+      const values = form.getFieldsValue()
 
       const file = await getBase64(image);
       const payload = {
@@ -215,7 +200,7 @@ const ModalAddWaste: React.FC<IProps> = ({
               rules={[
                 {
                   required: true,
-                  message: "Por favor, digite o motivo",
+                  message: "Por favor, faça o upload de uma imagem",
                 },
               ]}
             >
@@ -232,7 +217,7 @@ const ModalAddWaste: React.FC<IProps> = ({
               rules={[
                 {
                   required: true,
-                  message: "Por favor, faça o upload de uma imagem",
+                  message: "Por favor, selecione um motivo",
                 },
               ]}
             >
@@ -240,6 +225,7 @@ const ModalAddWaste: React.FC<IProps> = ({
                 onChange={(e) => {
                   setReasonOption(e.target.value);
                   setShowOtherInput(e.target.value === "Outros");
+                  form.setFieldsValue({ reason: e.target.value }); 
                 }}
                 value={reasonOption}
               >
