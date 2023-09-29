@@ -76,13 +76,12 @@ const ModalAddWaste: React.FC<IProps> = ({
     await form.validateFields();
     setLoading(true);
     try {
-      const values = form.getFieldsValue();
 
       const file = await getBase64(image);
       const payload = {
         cash_history_id: cashHistoryId.history_id,
         file,
-        quantity: +values.quantity,
+        quantity: quantity,
         store_id: store.company_id,
         unity: value,
         product_id: selectedProduct.id,
