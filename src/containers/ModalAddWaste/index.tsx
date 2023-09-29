@@ -140,7 +140,7 @@ const ModalAddWaste: React.FC<IProps> = ({
           >
             Cancelar
           </ButtonCancel>
-          <ButtonSave onClick={handleSave} disabled={quantity <= 0}>
+          <ButtonSave onClick={handleSave} disabled={quantity <= 0 || !form.isFieldsTouched(true)}>
             Salvar
           </ButtonSave>
         </Footer>
@@ -155,6 +155,7 @@ const ModalAddWaste: React.FC<IProps> = ({
               rules={[{ required: true, message: "Selecione uma unidade" }]}
             >
               <Radio.Group
+                defaultValue={selectedProductIsFruit && Options.Quilograma}
                 onChange={(e) => setValue(e.target.value)}
                 value={value}
                 style={{ alignItems: "center" }}
