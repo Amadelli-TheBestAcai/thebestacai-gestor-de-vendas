@@ -84,7 +84,7 @@ const ModalAddWaste: React.FC<IProps> = ({
         file,
         quantity: +values.quantity,
         store_id: store.company_id,
-        unity: values.unity,
+        unity: value,
         product_id: selectedProduct.id,
         reason: reasonOption
       };
@@ -188,7 +188,10 @@ const ModalAddWaste: React.FC<IProps> = ({
               <Input
                 type="number"
                 placeholder="Digite aqui"
-                onChange={(e) => setQuantity(+e.target.value)}
+                value={quantity}
+                onChange={(e) => {
+                  setQuantity(+e.target.value)
+                }}
                 addonAfter={unitSuffix}
               />
             </Form.Item>
