@@ -23,7 +23,7 @@ export const MaskInput = styled(_MaskInput)`
   border: 1px solid var(--gray-50);
   height: 2.7rem;
   border-radius: 5px;
-  padding: .6rem;
+  padding: 0.6rem;
 `;
 
 export const FetchButtonWrapper = styled.div`
@@ -47,7 +47,6 @@ export const ButtonSave = styled.button`
   font-weight: 500;
   border-radius: 1rem;
   font-size: 0.9rem;
-  background: var(--orange-250);
   color: white;
   transition: 0.5s;
 
@@ -80,7 +79,7 @@ export const ContentReward = styled.div`
 
   border: 1px solid var(--gray-50);
   border-radius: 5px;
-  padding: .7rem;
+  padding: 0.7rem;
 `;
 
 export const InfoClientReward = styled.div`

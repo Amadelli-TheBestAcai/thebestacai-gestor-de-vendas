@@ -17,7 +17,7 @@ import {
   TitleReward,
 } from "./styles";
 
-interface IProps { }
+interface IProps {}
 
 const ClientInfo: React.FC<IProps> = () => {
   const {
@@ -28,6 +28,7 @@ const ClientInfo: React.FC<IProps> = () => {
     onRegisterSale,
     campaign,
     setCampaign,
+    isSavingSale,
   } = useSale();
   const [loading, setLoading] = useState(false);
   const [info, setInfo] = useState({
@@ -57,7 +58,7 @@ const ClientInfo: React.FC<IProps> = () => {
     if (!campaign) {
       fetchCampaign();
     }
-  }, [campaign])
+  }, [campaign]);
 
   const onFinish = async () => {
     setLoading(true);
@@ -77,7 +78,7 @@ const ClientInfo: React.FC<IProps> = () => {
   };
 
   const onPressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" || event.key === "F1") {
       onFinish();
     }
   };
@@ -88,6 +89,14 @@ const ClientInfo: React.FC<IProps> = () => {
   ) => {
     const value = event.target.value;
     setInfo((oldValues) => ({ ...oldValues, [key]: value }));
+  };
+
+  const getCampaignPointsPlus = () => {
+    let points = Math.floor(sale.total_sold / campaign.average_ticket);
+    points += 1;
+    points *= campaign.average_ticket;
+    points -= sale.total_sold;
+    return points;
   };
 
   return (
@@ -108,11 +117,10 @@ const ClientInfo: React.FC<IProps> = () => {
           </ButtonCancel>
           <ButtonSave
             onClick={onFinish}
-            disabled={
-              info.phone.trim() === "" ||
-              info.email.trim() === "" ||
-              info.cpf.trim() === ""
-            }
+            disabled={isSavingSale}
+            style={{
+              background: isSavingSale ? "#ff9d0a63" : "var(--orange-250)",
+            }}
           >
             Salvar
           </ButtonSave>
@@ -150,30 +158,18 @@ const ClientInfo: React.FC<IProps> = () => {
         />
       </InfoWrapper>
       <CampaignInfoWrapper>
-        {!campaign && (
-          <span>
-            Nenhuma campanha carregada.
-          </span>
-        )}
+        {!campaign && <span>Nenhuma campanha carregada.</span>}
         {campaign && (
           <ContentReward>
             <InfoClientReward className="borderedInfoClient">
-              <TitleReward>
-                Com mais
-              </TitleReward>
+              <TitleReward>Com mais</TitleReward>
 
-              <span>
-                R${" "}{monetaryFormat(campaign.average_ticket -
-                  (sale?.total_sold - (sale.customer_nps_reward_discount || 0) - sale?.discount))}{" "}
-              </span>
+              <span>R$ {monetaryFormat(getCampaignPointsPlus())} </span>
 
-              <TitleReward>
-                você ganha +1 ponto
-              </TitleReward>
+              <TitleReward>você ganha +1 ponto</TitleReward>
             </InfoClientReward>
           </ContentReward>
         )}
-
       </CampaignInfoWrapper>
     </Container>
   );
