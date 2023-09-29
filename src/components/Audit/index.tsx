@@ -5,13 +5,14 @@ import { Audit as AuditModel } from "../../models/dtos/audit";
 import { Container, ArrowRightIcon, Action, Col } from "./styles";
 
 const Audit: React.FC<AuditModel> = (props) => {
+ 
   const {
     created_at,
     new_value,
     old_value,
     user_id,
     field,
-    user: { name: author },
+    user,
   } = props;
 
   const [date, time] = created_at.split(" ");
@@ -44,7 +45,7 @@ const Audit: React.FC<AuditModel> = (props) => {
       </Col>
       <Col sm={5} xs={24}>
         {`[${user_id}] `}
-        {author}
+        {user?.name ? user.name : 'Usuário não encontrado'}
       </Col>
       <Col sm={5} xs={24}>
         {field && ` ${field}: `} {+old_value || 0} <ArrowRightIcon />{" "}
