@@ -80,53 +80,6 @@ const IFoodScreen: React.FC = () => {
   const { ifood, setIfood } = useIfood();
   const { storeCash } = useSale();
 
-  const handlePrintOrder = async (orderId: string) => {
-    const order = ifood.orders.find((order) => order.id === orderId);
-
-    const { has_internal_error, error_message } =
-      await window.Main.ifood.printOrder(order);
-
-    if (has_internal_error) {
-      notification.error({
-        message: error_message || "Oops, ocorreu um erro!",
-        duration: 5,
-      });
-    }
-  };
-
-  const changeProductStatus = async (
-    status: string,
-    catalog_id?: string,
-    category_id?: string,
-    product_id?: string,
-    option_id?: string
-  ) => {
-    try {
-      console.log({
-        status: status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE",
-        category_id,
-        product_id,
-        catalog_id,
-        option_id,
-      });
-      setLoading(true);
-      await window.Main.ifood.updateProductStatus(
-        status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE",
-        category_id,
-        product_id,
-        catalog_id,
-        option_id
-      );
-      setShouldReload(true);
-    } catch (error) {
-      notification.error({
-        message: "Oops, ocorreu um erro!",
-        duration: 5,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
     async function getCatalog() {
       try {
@@ -154,6 +107,66 @@ const IFoodScreen: React.FC = () => {
     );
     setSelectedOrder(newSelectedOrder[0]);
   }, [ifood]);
+
+  const handlePrintOrder = async (orderId: string) => {
+    const order = ifood.orders.find((order) => order.id === orderId);
+
+    const { has_internal_error, error_message } =
+      await window.Main.ifood.printOrder(order);
+
+    if (has_internal_error) {
+      notification.error({
+        message: error_message || "Oops, ocorreu um erro!",
+        duration: 5,
+      });
+    }
+  };
+
+  const integrateOrder = async (orderId: string) => {
+    const order = ifood.orders.find((order) => order.id === orderId);
+
+    const { has_internal_error, error_message } =
+      await window.Main.ifood.integrate(order);
+
+    if (has_internal_error) {
+      notification.error({
+        message: error_message || "Oops, ocorreu um erro!",
+        duration: 5,
+      });
+    }
+
+    const { response } = await window.Main.ifood.update({
+      orders: ifood.orders.filter((_order) => _order.id !== orderId),
+    });
+    setIfood(response);
+  };
+
+  const changeProductStatus = async (
+    status: string,
+    catalog_id?: string,
+    category_id?: string,
+    product_id?: string,
+    option_id?: string
+  ) => {
+    try {
+      setLoading(true);
+      await window.Main.ifood.updateProductStatus(
+        status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE",
+        category_id,
+        product_id,
+        catalog_id,
+        option_id
+      );
+      setShouldReload(true);
+    } catch (error) {
+      notification.error({
+        message: "Oops, ocorreu um erro!",
+        duration: 5,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -269,6 +282,9 @@ const IFoodScreen: React.FC = () => {
                                     onClick={() => setSelectedOrder(order)}
                                     onPrintCard={() =>
                                       handlePrintOrder(order.id)
+                                    }
+                                    onIntegrateCard={() =>
+                                      integrateOrder(order.id)
                                     }
                                   />
                                 </React.Fragment>

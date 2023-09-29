@@ -344,6 +344,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       setHasOpenedOnlineStoreCash(true);
     } else {
       if (
+        storeCash?.is_opened &&
         ifood.orders.some(
           (order) =>
             !["cancelled", "concluded"].some(

@@ -12,6 +12,7 @@ import {
   openExternalLink,
   findOrCreate,
   printOrder,
+  integrate,
 } from "../usecases/ifood";
 
 import { IfoodDto, OrderDto } from "../models/gestor";
@@ -77,4 +78,6 @@ export const ifoodFactory = {
     await useCaseFactory.execute<any>(openExternalLink, url),
   printOrder: async (order: OrderDto) =>
     await useCaseFactory.execute<any>(printOrder, { order }),
+  integrate: async (payload: OrderDto) =>
+    await useCaseFactory.execute<any>(integrate, { payload }),
 };

@@ -98,26 +98,6 @@ class Pooling implements IUseCaseFactory {
 
           await getMerchant.execute();
 
-          const concludedOrCanlledOrders = ifood.orders.filter(
-            (_order) =>
-              _order.fullCode === "CONCLUDED" || _order.fullCode === "CANCELLED"
-          );
-          if (concludedOrCanlledOrders.length) {
-            await Promise.all(
-              concludedOrCanlledOrders.map(async (concludedOrCanlledOrder) => {
-                const { has_internal_error } =
-                  await useCaseFactory.execute<void>(this.integrateUseCase, {
-                    payload: concludedOrCanlledOrder,
-                  });
-                if (!has_internal_error) {
-                  ifood.orders = ifood.orders.filter(
-                    (_order) => _order.id !== concludedOrCanlledOrder.id
-                  );
-                }
-              })
-            );
-          }
-
           ifood.updated_at = new Date();
           ifood.new_orders = ifood.orders.filter(
             (order) => order.fullCode === "PLACED"

@@ -5,6 +5,7 @@ import {
   Cancel,
   NotificationsCircle,
   Check2Circle,
+  ArrowUpCircle,
 } from "../../styles/Icons";
 
 interface ICardProp {
@@ -97,6 +98,13 @@ const Icon = css`
 export const PrintIcon = styled(Printer)`
   ${Icon}
   color: #0089ff;
+  width: 1.4rem;
+  height: 1.4rem;
+`;
+
+export const IntegrateIcon = styled(ArrowUpCircle)`
+  ${Icon}
+  color: #ff9d0a;
   width: 1.4rem;
   height: 1.4rem;
 `;

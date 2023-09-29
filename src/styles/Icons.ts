@@ -73,6 +73,7 @@ export {
   CheckCircleFill,
   FileEarmarkPdf,
   Clock,
+  ArrowUpCircle,
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
 export { NotificationsCircle } from "@styled-icons/ionicons-outline";

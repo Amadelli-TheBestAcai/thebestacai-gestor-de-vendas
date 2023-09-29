@@ -14,6 +14,7 @@ import {
   InsideCard,
   CancelIcon,
   NotificationsCircleIcon,
+  IntegrateIcon,
 } from "./styles";
 import { Tooltip } from "antd";
 
@@ -24,6 +25,7 @@ interface IOrderCardProps {
   fullCode: string;
   onClick: () => void;
   onPrintCard: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
+  onIntegrateCard: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
 }
 
 const OrderCard: React.FC<IOrderCardProps> = ({
@@ -33,6 +35,7 @@ const OrderCard: React.FC<IOrderCardProps> = ({
   fullCode,
   onClick,
   onPrintCard,
+  onIntegrateCard,
 }) => {
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
 
@@ -75,6 +78,15 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                   Imprimir
                 </PrintIcon>
               </Tooltip>
+              {["CONCLUDED", "CANCELLED", "DISPATCHED"].some(
+                (status) => status === fullCode
+              ) && (
+                <Tooltip title="Registrar pedido ao caixa">
+                  <IntegrateIcon onClick={(id) => onIntegrateCard(id)}>
+                    IntegrateIcon
+                  </IntegrateIcon>
+                </Tooltip>
+              )}
             </ContentIcons>
           </ContentTopInfo>
 
