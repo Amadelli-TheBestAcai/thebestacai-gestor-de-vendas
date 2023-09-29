@@ -153,12 +153,22 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
           <OrderDetailsBox>
             <h3>Itens no pedido</h3>
             {order.items.map((item) => (
-              <ContentInsideOrderDetailsBox key={item.id}>
-                <span>
-                  {item.quantity}x {item.name}
-                </span>
-                <span className="price">R$ {item.totalPrice.toFixed(2)}</span>
-              </ContentInsideOrderDetailsBox>
+              <>
+                <ContentInsideOrderDetailsBox key={item.id}>
+                  <span>
+                    {item.quantity}x {item.name}
+                  </span>
+                  <span className="price">R$ {item.totalPrice.toFixed(2)}</span>
+                </ContentInsideOrderDetailsBox>
+                <>
+                  {item.observations && (
+                    <>
+                      <span>Observação:</span>
+                      <span>{item.observations}</span>
+                    </>
+                  )}
+                </>
+              </>
             ))}
             <hr />
             <ContentInsideOrderDetailsBox>
@@ -201,10 +211,6 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
           </PaymentOrderBox>
           <ContentAcceptORDeniedOrder>
             <>
-              <div>
-                <span>Novo pedido</span>
-              </div>
-
               <div className="btn-content">
                 {!["cancelled", "concluded"].some(
                   (status) => status === order.fullCode.toLowerCase()
