@@ -65,7 +65,7 @@ const ClientInfo: React.FC<IProps> = () => {
 
   const validateCPF = () => {
     const cpfValue = info.cpf.replace(/\D/g, '');
-    if (!cpfValidator.isValid(cpfValue)) {
+    if (cpfValue && !cpfValidator.isValid(cpfValue)) {
       message.error('Digite um CPF válido.');
       return false;
     }
@@ -97,7 +97,7 @@ const ClientInfo: React.FC<IProps> = () => {
 
   const onPressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'F1') {
-      validateCPF();
+      onFinish();
     }
   };
 
