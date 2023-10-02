@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { cpf as cpfValidator } from 'cpf-cnpj-validator';
+
 import { useSale } from "../../hooks/useSale";
 import { monetaryFormat } from "../../helpers/monetaryFormat";
 
@@ -16,8 +18,9 @@ import {
   InfoClientReward,
   TitleReward,
 } from "./styles";
+import { message } from "antd";
 
-interface IProps {}
+interface IProps { }
 
 const ClientInfo: React.FC<IProps> = () => {
   const {
@@ -60,8 +63,23 @@ const ClientInfo: React.FC<IProps> = () => {
     }
   }, [campaign]);
 
+  const validateCPF = () => {
+    const cpfValue = info.cpf.replace(/\D/g, '');
+    if (!cpfValidator.isValid(cpfValue)) {
+      message.error('Digite um CPF válido.');
+      return false;
+    }
+    return true;
+  };
+
   const onFinish = async () => {
     setLoading(true);
+    const isValidCPF = validateCPF();
+    if (!isValidCPF) {
+      setLoading(false);
+      return;
+    }
+
     const { response: updatedSale } = await window.Main.sale.updateSale(
       sale.id,
       {
@@ -78,8 +96,8 @@ const ClientInfo: React.FC<IProps> = () => {
   };
 
   const onPressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" || event.key === "F1") {
-      onFinish();
+    if (event.key === 'Enter' || event.key === 'F1') {
+      validateCPF();
     }
   };
 
