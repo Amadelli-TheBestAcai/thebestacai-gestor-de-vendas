@@ -17,6 +17,7 @@ import { findOrCreate } from "./findOrCreate";
 import { authentication } from "./authentication";
 
 class Pooling implements IUseCaseFactory {
+  isRuning = false;
   constructor(
     private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood),
     private settingsRepository = new BaseRepository<SettingsDto>(
@@ -31,7 +32,8 @@ class Pooling implements IUseCaseFactory {
     error_message?: string;
   }> {
     let ifood = await findOrCreate.execute();
-
+    if (this.isRuning) return { response: ifood, has_error: false };
+    this.isRuning = true;
     if (ifood.is_opened) {
       const hasInternet = await checkInternet();
       if (hasInternet) {
@@ -39,6 +41,7 @@ class Pooling implements IUseCaseFactory {
           const { response, status } = await authentication.execute();
 
           if (!status) {
+            this.isRuning = false;
             return {
               response: response,
               has_error: true,
@@ -119,16 +122,19 @@ class Pooling implements IUseCaseFactory {
           }
 
           await this.ifoodRepository.update(ifood.id, ifood);
+          this.isRuning = false;
           return {
             response: ifood,
             has_error: false,
           };
         }
+        this.isRuning = false;
         return {
           response: ifood,
           has_error: false,
         };
       } else {
+        this.isRuning = false;
         return {
           response: ifood,
           has_error: true,
@@ -136,6 +142,7 @@ class Pooling implements IUseCaseFactory {
         };
       }
     } else {
+      this.isRuning = false;
       return {
         response: ifood,
         has_error: false,
