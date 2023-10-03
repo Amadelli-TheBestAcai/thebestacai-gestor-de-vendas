@@ -19,6 +19,7 @@ export const CardGeneral = styled.div`
 
 export const InsideCard = styled.div<ICardProp>`
   width: 100%;
+
   border-left: 5px solid var(--gray-10);
   ${({ isSelected }) =>
     isSelected &&
@@ -34,15 +35,20 @@ export const ContentTopInfo = styled.div`
   width: 100%;
 `;
 
-export const Container = styled.div`
+export const Container = styled.div<ICardProp>`
   display: flex;
   flex-direction: column;
   align-items: start;
   justify-content: center;
-  background-color: var(--gray-10);
+  background-color: var(--white);
   width: 100%;
   padding: 0.7rem 1rem;
   cursor: pointer;
+  ${({ isSelected }) =>
+    isSelected &&
+    css`
+      background-color: var(--orange-10);
+    `}
 `;
 
 export const StatusMessage = styled.span`
