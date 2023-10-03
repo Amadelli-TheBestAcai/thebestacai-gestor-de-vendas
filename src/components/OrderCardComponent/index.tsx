@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Container,
   DeliveryBox,
@@ -17,9 +17,11 @@ import {
   IntegrateIcon,
 } from "./styles";
 import { Tooltip } from "antd";
+import { OrderDto } from "../../models/dtos/ifood";
 
 interface IOrderCardProps {
-  order: string;
+  selectedOrder: OrderDto;
+  order: OrderDto;
   delivery: string;
   orderOn: string;
   fullCode: string;
@@ -33,25 +35,17 @@ const OrderCard: React.FC<IOrderCardProps> = ({
   delivery,
   orderOn,
   fullCode,
+  selectedOrder,
   onClick,
   onPrintCard,
   onIntegrateCard,
 }) => {
-  const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
-
-  const handleCardClick = () => {
-    setSelectedOrder(selectedOrder === order ? null : order);
-  };
-
   return (
     <CardGeneral onClick={onClick}>
-      <InsideCard
-        onClick={handleCardClick}
-        isSelected={selectedOrder === order}
-      >
-        <Container>
+      <InsideCard isSelected={selectedOrder?.displayId === order?.displayId}>
+        <Container isSelected={selectedOrder?.displayId === order?.displayId}>
           <ContentTopInfo>
-            <Order>#{order}</Order>
+            <Order>#{order?.displayId}</Order>
 
             <ContentIcons>
               <Tooltip title="Novo pedido">

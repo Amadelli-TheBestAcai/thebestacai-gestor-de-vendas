@@ -275,7 +275,8 @@ const IFoodScreen: React.FC = () => {
                                     </span>
                                   </HeaderCard>
                                   <CardComponent
-                                    order={order.displayId}
+                                    selectedOrder={selectedOrder}
+                                    order={order}
                                     delivery={order.orderType}
                                     fullCode={order.fullCode}
                                     orderOn={order.salesChannel}
