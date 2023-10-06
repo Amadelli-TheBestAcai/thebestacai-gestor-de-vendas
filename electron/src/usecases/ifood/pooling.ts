@@ -17,7 +17,7 @@ import { findOrCreate } from "./findOrCreate";
 import { authentication } from "./authentication";
 
 class Pooling implements IUseCaseFactory {
-  isRuning = false;
+  public isRuning = false;
   constructor(
     private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood),
     private settingsRepository = new BaseRepository<SettingsDto>(
@@ -32,7 +32,6 @@ class Pooling implements IUseCaseFactory {
     error_message?: string;
   }> {
     let ifood = await findOrCreate.execute();
-    throw new Error("ruim");
     try {
       if (this.isRuning) return { response: ifood, has_error: false };
       this.isRuning = true;
