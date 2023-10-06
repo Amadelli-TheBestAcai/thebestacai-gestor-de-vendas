@@ -186,21 +186,6 @@ class PrintSale implements IUseCaseFactory {
       `Utilize este QRCode para ser direcionado para nos avaliar :)`
     );
     this.printerFormater.alignCenter();
-
-    const qrcode_img = await axios.get(
-      `https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${env.NPS_URL}/${access_token}`,
-      {
-        responseType: "arraybuffer",
-      }
-    );
-
-    const qrcode_64 = Buffer.from(qrcode_img.data, "binary");
-    this.printerFormater.printImageBuffer(qrcode_64);
-    this.printerFormater.newLine();
-    this.printerFormater.print(
-      `Data de expiração do QRCode: ${expirationDate}`
-    );
-    this.printerFormater.newLine();
     this.printerFormater.cut();
 
     Printer.printDirect({
