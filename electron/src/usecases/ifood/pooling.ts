@@ -2,10 +2,7 @@ import { ipcRenderer } from "electron";
 import { AxiosRequestConfig } from "axios";
 import * as sound from "sound-play";
 
-import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
-import { integrate } from "./integrate";
-
 import { BaseRepository } from "../../repository/baseRepository";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
@@ -16,14 +13,15 @@ import { getMerchant } from "./getMerchant";
 import { findOrCreate } from "./findOrCreate";
 import { authentication } from "./authentication";
 
+import { sleep } from "../../helpers/sleep";
+
 class Pooling implements IUseCaseFactory {
   public isRuning = false;
   constructor(
     private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood),
     private settingsRepository = new BaseRepository<SettingsDto>(
       StorageNames.Settings
-    ),
-    private integrateUseCase = integrate
+    )
   ) {}
 
   async execute(): Promise<{
@@ -33,7 +31,10 @@ class Pooling implements IUseCaseFactory {
   }> {
     let ifood = await findOrCreate.execute();
     try {
-      if (this.isRuning) return { response: ifood, has_error: false };
+      if (pooling.isRuning) {
+        await sleep(1000);
+        console.log("Waiting pooling to finish");
+      }
       this.isRuning = true;
       if (ifood.is_opened) {
         const hasInternet = await checkInternet();

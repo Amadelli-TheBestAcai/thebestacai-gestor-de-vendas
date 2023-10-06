@@ -65,8 +65,8 @@ class Integrate implements IUseCaseFactory {
       sale.items = [];
       sale.quantity = payload.items.length;
       sale.ref = payload.id;
-      sale.total_paid = payload.total.subTotal;
-      sale.total_sold = payload.total.subTotal;
+      sale.total_paid = payload.total.orderAmount;
+      sale.total_sold = payload.total.orderAmount;
       sale.type = 1;
       sale.payments = payload.payments.methods.map((method, index) => ({
         id: (index + 1).toString(),
