@@ -111,6 +111,7 @@ class EmitNfce implements IUseCaseFactory {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
           nfce_focus_id: saleResponse.nfce_focus_id,
+          nfce_url: saleResponse.nfce_url
         });
       } catch {
         throw new Error(
