@@ -31,10 +31,12 @@ class Pooling implements IUseCaseFactory {
   }> {
     let ifood = await findOrCreate.execute();
     try {
-      if (pooling.isRuning) {
-        await sleep(1000);
-        console.log("Waiting pooling to finish");
-      }
+      do {
+        if (this.isRuning) {
+          await sleep(1000);
+          console.log("Waiting pooling to finish");
+        }
+      } while (this.isRuning);
       this.isRuning = true;
       if (ifood.is_opened) {
         const hasInternet = await checkInternet();
