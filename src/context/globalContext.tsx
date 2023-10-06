@@ -197,7 +197,7 @@ export function GlobalProvider({ children }) {
     }
 
     currentSale.change_amount =
-      currentSale.total_paid + currentSale.discount - currentSale.total_sold;
+      +(currentSale.total_paid + currentSale.discount - currentSale.total_sold).toFixed(2);
 
     setSavingSale(true);
 
@@ -217,7 +217,7 @@ export function GlobalProvider({ children }) {
           quantity: +item.quantity,
         })),
         payments: currentSale.payments.map((payment) => ({
-          amount: +payment.amount,
+          amount: +payment.amount.toFixed(2),
           type: +payment.type,
           flag_card: +payment.flag_card,
         })),
