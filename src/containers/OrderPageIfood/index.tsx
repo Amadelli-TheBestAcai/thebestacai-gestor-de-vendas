@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import moment from "moment";
 import {
   Container,
@@ -37,9 +37,16 @@ import { useIfood } from "../../hooks/useIfood";
 interface IPageIfoodProps {
   order: OrderDto;
   closePage: () => void;
+  changingStatus: boolean;
+  setChangingStatus: Dispatch<SetStateAction<boolean>>;
 }
 
-const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
+const OrderPageIfood: React.FC<IPageIfoodProps> = ({
+  order,
+  closePage,
+  changingStatus,
+  setChangingStatus,
+}) => {
   const timeAgo = calculateTimeAgo(order.delivery.deliveryDateTime);
   const [modalState, setModalState] = useState(false);
   const [reasonsToCancel, setReasonsToCancel] = useState<
@@ -48,7 +55,6 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({ order, closePage }) => {
       description: string;
     }[]
   >([]);
-  const [changingStatus, setChangingStatus] = useState(false);
   const [cancellingStatus, setCancellingStatus] = useState(false);
   const [reasonOption, setReasonOption] = useState("");
   const [form] = Form.useForm();

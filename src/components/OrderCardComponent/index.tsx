@@ -28,6 +28,7 @@ interface IOrderCardProps {
   onClick: () => void;
   onPrintCard: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
   onIntegrateCard: (id: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
+  changingOrderStatus: boolean;
 }
 
 const OrderCard: React.FC<IOrderCardProps> = ({
@@ -39,6 +40,7 @@ const OrderCard: React.FC<IOrderCardProps> = ({
   onClick,
   onPrintCard,
   onIntegrateCard,
+  changingOrderStatus,
 }) => {
   return (
     <CardGeneral onClick={onClick}>
@@ -74,13 +76,14 @@ const OrderCard: React.FC<IOrderCardProps> = ({
               </Tooltip>
               {["CONCLUDED", "CANCELLED"].some(
                 (status) => status === fullCode
-              ) && (
-                <Tooltip title="Registrar pedido ao caixa">
-                  <IntegrateIcon onClick={(id) => onIntegrateCard(id)}>
-                    IntegrateIcon
-                  </IntegrateIcon>
-                </Tooltip>
-              )}
+              ) &&
+                !changingOrderStatus && (
+                  <Tooltip title="Registrar pedido ao caixa">
+                    <IntegrateIcon onClick={(id) => onIntegrateCard(id)}>
+                      IntegrateIcon
+                    </IntegrateIcon>
+                  </Tooltip>
+                )}
             </ContentIcons>
           </ContentTopInfo>
 

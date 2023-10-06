@@ -3,6 +3,7 @@ import { AxiosRequestConfig } from "axios";
 import * as sound from "sound-play";
 
 import { IUseCaseFactory } from "../useCaseFactory.interface";
+
 import { BaseRepository } from "../../repository/baseRepository";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
@@ -12,8 +13,6 @@ import { SettingsDto } from "../../models/gestor/settings";
 import { getMerchant } from "./getMerchant";
 import { findOrCreate } from "./findOrCreate";
 import { authentication } from "./authentication";
-
-import { sleep } from "../../helpers/sleep";
 
 class Pooling implements IUseCaseFactory {
   public isRuning = false;
@@ -31,12 +30,6 @@ class Pooling implements IUseCaseFactory {
   }> {
     let ifood = await findOrCreate.execute();
     try {
-      do {
-        if (this.isRuning) {
-          await sleep(1000);
-          console.log("Waiting pooling to finish");
-        }
-      } while (this.isRuning);
       this.isRuning = true;
       if (ifood.is_opened) {
         const hasInternet = await checkInternet();

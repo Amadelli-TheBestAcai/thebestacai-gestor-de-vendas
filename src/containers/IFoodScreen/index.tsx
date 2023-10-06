@@ -75,6 +75,7 @@ const IFoodScreen: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string>("agora");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [changingOrderStatus, setChangingOrderStatus] = useState(false);
 
   const { user } = useUser();
   const { ifood, setIfood } = useIfood();
@@ -123,6 +124,7 @@ const IFoodScreen: React.FC = () => {
   };
 
   const integrateOrder = async (orderId: string) => {
+    setChangingOrderStatus(true);
     const order = ifood.orders.find((order) => order.id === orderId);
 
     const { has_internal_error, error_message } =
@@ -139,6 +141,7 @@ const IFoodScreen: React.FC = () => {
       orders: ifood.orders.filter((_order) => _order.id !== orderId),
     });
     setIfood(response);
+    setChangingOrderStatus(false);
   };
 
   const changeProductStatus = async (
@@ -280,7 +283,11 @@ const IFoodScreen: React.FC = () => {
                                     delivery={order.orderType}
                                     fullCode={order.fullCode}
                                     orderOn={order.salesChannel}
-                                    onClick={() => setSelectedOrder(order)}
+                                    changingOrderStatus={changingOrderStatus}
+                                    onClick={() => {
+                                      if (!changingOrderStatus)
+                                        setSelectedOrder(order);
+                                    }}
                                     onPrintCard={() =>
                                       handlePrintOrder(order.id)
                                     }
@@ -367,6 +374,8 @@ const IFoodScreen: React.FC = () => {
                         key={selectedOrder.id}
                         order={selectedOrder}
                         closePage={() => setSelectedOrder(null)}
+                        changingStatus={changingOrderStatus}
+                        setChangingStatus={setChangingOrderStatus}
                       />
                     ) : (
                       <>
