@@ -72,7 +72,7 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                   Imprimir
                 </PrintIcon>
               </Tooltip>
-              {["CONCLUDED", "CANCELLED", "DISPATCHED"].some(
+              {["CONCLUDED", "CANCELLED"].some(
                 (status) => status === fullCode
               ) && (
                 <Tooltip title="Registrar pedido ao caixa">
