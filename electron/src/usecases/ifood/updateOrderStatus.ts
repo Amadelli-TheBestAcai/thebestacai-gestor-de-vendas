@@ -1,4 +1,6 @@
 import { ipcRenderer } from "electron";
+import { BaseRepository } from "../../repository/baseRepository";
+import { StorageNames } from "../../repository/storageNames";
 import { AxiosRequestConfig } from "axios";
 
 import { IUseCaseFactory } from "../useCaseFactory.interface";
@@ -9,7 +11,7 @@ import { authentication } from "./authentication";
 import { pooling } from "./pooling";
 import { sleep } from "../../helpers/sleep";
 
-import { CatalogDto } from "./dtos";
+import { IfoodDto } from "../../models/gestor";
 
 interface Request {
   id: string;
@@ -26,8 +28,45 @@ interface Request {
   };
 }
 
+/*
+"fullCode":"PLACED","code":"PLC"
+"fullCode":"CONFIRMED","code":"CFM"
+"fullCode":"READY_TO_PICKUP","code":"RTP"
+"fullCode":"DISPATCHED","code":"DSP"
+"fullCode":"CONCLUDED","code":"CON"
+"fullCode":"CANCELLED","code":"CAN"
+*/
+
+const getStatusCode = (code: string): { fullCode: string; code: string } => {
+  if (code === "confirm") {
+    return {
+      fullCode: "CONFIRMED",
+      code: "CFM",
+    };
+  } else if (code === "readyToPickup") {
+    return {
+      fullCode: "READY_TO_PICKUP",
+      code: "RTP",
+    };
+  } else if (code === "dispatch") {
+    return {
+      fullCode: "DISPATCHED",
+      code: "DSP",
+    };
+  } else {
+    return {
+      fullCode: "CANCELLED",
+      code: "CAN",
+    };
+  }
+};
+
 class UpdateOrderStatus implements IUseCaseFactory {
-  async execute({ id, status, reasson }: Request): Promise<CatalogDto[]> {
+  constructor(
+    private ifoodRepository = new BaseRepository<IfoodDto>(StorageNames.Ifood)
+  ) {}
+
+  async execute({ id, status, reasson }: Request): Promise<void> {
     do {
       if (pooling.isRuning) {
         await sleep(1000);
@@ -51,7 +90,19 @@ class UpdateOrderStatus implements IUseCaseFactory {
         headers: { Authorization: `Bearer ${response.token}` },
       } as AxiosRequestConfig);
 
-      return await getCatalogs.execute();
+      const ifood = (await this.ifoodRepository.getOne()) as IfoodDto;
+      const orderIndex = ifood?.orders.findIndex(
+        (order) => order.id === id
+      ) as number;
+      if (orderIndex >= 0) {
+        ifood.orders[orderIndex].code = getStatusCode(
+          status.toLowerCase()
+        ).code;
+        ifood.orders[orderIndex].fullCode = getStatusCode(
+          status.toLowerCase()
+        ).fullCode;
+        await this.ifoodRepository.update(ifood.id, ifood);
+      }
     }
 
     throw new Error("Falha ao estabelecer conexão com internet");
