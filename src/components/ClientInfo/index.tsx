@@ -85,7 +85,7 @@ const ClientInfo: React.FC<IProps> = () => {
       {
         ...sale,
         client_cpf: info.cpf.replace(/\D/g, ""),
-        client_phone: info.phone.replace(/\D/g, ""),
+        client_phone: info.phone?.replace(/\D/g, ""),
         client_email: info.email,
       }
     );
