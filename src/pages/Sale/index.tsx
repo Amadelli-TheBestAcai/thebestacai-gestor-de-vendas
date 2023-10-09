@@ -588,7 +588,7 @@ const Sale: React.FC<IProps> = () => {
               Cancelar
             </ButtonCancel>
             <ButtonSave onClick={() => handleEmit()} loading={isLoading}>
-              Enviar novemente
+              Enviar novamente
             </ButtonSave>
           </Footer>
         }
