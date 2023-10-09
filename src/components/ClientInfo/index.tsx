@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { cpf as cpfValidator } from 'cpf-cnpj-validator';
+import { cpf as cpfValidator } from "cpf-cnpj-validator";
 
 import { useSale } from "../../hooks/useSale";
 import { monetaryFormat } from "../../helpers/monetaryFormat";
@@ -18,9 +18,9 @@ import {
   InfoClientReward,
   TitleReward,
 } from "./styles";
-import { message } from "antd";
+import { message, notification } from "antd";
 
-interface IProps { }
+interface IProps {}
 
 const ClientInfo: React.FC<IProps> = () => {
   const {
@@ -64,9 +64,9 @@ const ClientInfo: React.FC<IProps> = () => {
   }, [campaign]);
 
   const validateCPF = () => {
-    const cpfValue = info.cpf.replace(/\D/g, '');
+    const cpfValue = info.cpf.replace(/\D/g, "");
     if (cpfValue && !cpfValidator.isValid(cpfValue)) {
-      message.error('Digite um CPF válido.');
+      message.error("Digite um CPF válido.");
       return false;
     }
     return true;
@@ -96,17 +96,40 @@ const ClientInfo: React.FC<IProps> = () => {
   };
 
   const onPressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === 'F1') {
+    if (event.key === "Enter" || event.key === "F1") {
       onFinish();
     }
   };
 
-  const onChange = (
+  const onChange = async (
     key: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value;
     setInfo((oldValues) => ({ ...oldValues, [key]: value }));
+
+    if (key === "cpf") {
+      if (value.replace(/\D/g, "").length === 11) {
+        setLoading(true);
+        const { has_internal_error, response, error_message } =
+          await window.Main.user.getCustomerByCpf(value.replace(/\D/g, ""));
+
+        if (has_internal_error) {
+          return notification.error({
+            message: error_message || "Erro ao obter voucher",
+            duration: 5,
+          });
+        }
+
+        setInfo({
+          cpf: response.cpf,
+          email: response.email,
+          phone: response.cell_number,
+        });
+
+        setLoading(false);
+      }
+    }
   };
 
   const getCampaignPointsPlus = () => {
@@ -135,9 +158,10 @@ const ClientInfo: React.FC<IProps> = () => {
           </ButtonCancel>
           <ButtonSave
             onClick={onFinish}
-            disabled={isSavingSale}
+            disabled={isSavingSale || loading}
             style={{
-              background: isSavingSale ? "#ff9d0a63" : "var(--orange-250)",
+              background:
+                isSavingSale || loading ? "#ff9d0a63" : "var(--orange-250)",
             }}
           >
             Salvar
@@ -157,7 +181,7 @@ const ClientInfo: React.FC<IProps> = () => {
           onChange={(event) => onChange("cpf", event)}
         />
       </InfoWrapper>
-      <InfoWrapper>
+      {/* <InfoWrapper>
         <Info>Telefone:</Info>
         <MaskInput
           mask={"(99) 99999-9999"}
@@ -174,7 +198,7 @@ const ClientInfo: React.FC<IProps> = () => {
           value={info.email}
           onChange={(event) => onChange("email", event)}
         />
-      </InfoWrapper>
+      </InfoWrapper> */}
       <CampaignInfoWrapper>
         {!campaign && <span>Nenhuma campanha carregada.</span>}
         {campaign && (
