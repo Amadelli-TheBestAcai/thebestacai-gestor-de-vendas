@@ -378,8 +378,8 @@ const Login: React.FC<IProps> = ({ history }) => {
         }
       >
         <TextModalVersion>
-        Seu Gestor de Vendas está <b>desatualizado</b>, o que pode resultar em mau funcionamento e vulnerabilidades de segurança.
-          <span>Entre em contato com o suporte para atualiza-lo.</span>
+          Seu Gestor de Vendas está <b>desatualizado</b>, o que pode resultar em mau funcionamento e vulnerabilidades de segurança.
+          <span>Reinicie o Gestor de Vendas e aguarde a atualização, caso a mesma não aconteça automaticamente, baixe a versão mais recente no Autenticador!</span>
         </TextModalVersion>
         <Checkbox
           checked={isCheckboxChecked}
