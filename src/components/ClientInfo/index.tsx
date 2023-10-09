@@ -122,9 +122,9 @@ const ClientInfo: React.FC<IProps> = () => {
         }
 
         setInfo({
-          cpf: response.cpf,
-          email: response.email,
-          phone: response.cell_number,
+          cpf: value.replace(/\D/g, ""),
+          email: response?.email,
+          phone: response?.cell_number,
         });
 
         setLoading(false);
