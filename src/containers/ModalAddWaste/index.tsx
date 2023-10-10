@@ -14,6 +14,7 @@ import {
 } from "./styles";
 import { ProductDto } from "../../models/dtos/product";
 import { useStore } from "../../hooks/useStore";
+import MonetaryInput from "../../components/MonetaryInput";
 
 interface IProps {
   visible: boolean;
@@ -46,7 +47,7 @@ const ModalAddWaste: React.FC<IProps> = ({
   setLoading,
   selectedProduct,
   setSelectedProduct,
-  selectedProductIsFruit
+  selectedProductIsFruit,
 }) => {
   const [image, setImage] = useState(null);
   const [value, setValue] = useState(
@@ -56,12 +57,18 @@ const ModalAddWaste: React.FC<IProps> = ({
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [unitSuffix, setUnitSuffix] = useState("kg");
   const [quantity, setQuantity] = useState<number>(0);
+  const [price, setPrice] = useState<number>();
+
   const [form] = Form.useForm();
   const { store } = useStore();
   const { cashHistoryId } = useCashHistoryId();
 
   useEffect(() => {
-    if (!visible) setSelectedProduct(null);
+    if (!visible) {
+      setSelectedProduct(null);
+    } else {
+      setPrice(+selectedProduct?.price_sell);
+    }
   }, [visible]);
 
   useEffect(() => {
@@ -76,7 +83,6 @@ const ModalAddWaste: React.FC<IProps> = ({
     await form.validateFields();
     setLoading(true);
     try {
-
       const file = await getBase64(image);
       const payload = {
         cash_history_id: cashHistoryId.history_id,
@@ -85,7 +91,8 @@ const ModalAddWaste: React.FC<IProps> = ({
         store_id: store.company_id,
         unity: value,
         product_id: selectedProduct.id,
-        reason: reasonOption
+        reason: reasonOption,
+        price_sell: price,
       };
 
       await window.Main.productWaste.addWaste(payload);
@@ -161,7 +168,10 @@ const ModalAddWaste: React.FC<IProps> = ({
                 <Radio value={Options.Quilograma} checked>
                   Quilograma
                 </Radio>
-                <Radio value={Options.Unidade} disabled={selectedProductIsFruit}>
+                <Radio
+                  value={Options.Unidade}
+                  disabled={selectedProductIsFruit}
+                >
                   Unidade
                 </Radio>
               </Radio.Group>
@@ -179,8 +189,8 @@ const ModalAddWaste: React.FC<IProps> = ({
                     value > 0
                       ? Promise.resolve()
                       : Promise.reject(
-                        new Error("A quantidade não pode ser negativa")
-                      ),
+                          new Error("A quantidade não pode ser negativa")
+                        ),
                 },
               ]}
             >
@@ -189,9 +199,18 @@ const ModalAddWaste: React.FC<IProps> = ({
                 placeholder="Digite aqui"
                 value={quantity}
                 onChange={(e) => {
-                  setQuantity(+e.target.value)
+                  setQuantity(+e.target.value);
                 }}
                 addonAfter={unitSuffix}
+              />
+            </Form.Item>
+
+            <Form.Item label="Valor do Produto" name="price">
+              <MonetaryInput
+                defaultValue={price}
+                getValue={(e) => {
+                  setPrice(e);
+                }}
               />
             </Form.Item>
           </ColModal>
@@ -241,15 +260,11 @@ const ModalAddWaste: React.FC<IProps> = ({
                 <Input
                   autoFocus={true}
                   value={reasonOption}
-                  onChange={({ target: { value } }) =>
-                    setReasonOption(value)
-                  }
-
+                  onChange={({ target: { value } }) => setReasonOption(value)}
                 />
               </Form.Item>
             </ColModal>
           )}
-
         </ContentModalBody>
       </Form>
     </Modal>
