@@ -20,7 +20,7 @@ import {
 } from "./styles";
 import { message, notification } from "antd";
 
-interface IProps {}
+interface IProps { }
 
 const ClientInfo: React.FC<IProps> = () => {
   const {
@@ -204,11 +204,15 @@ const ClientInfo: React.FC<IProps> = () => {
         {campaign && (
           <ContentReward>
             <InfoClientReward className="borderedInfoClient">
-              <TitleReward>Com mais</TitleReward>
+              <TitleReward onClick={() => console.log(campaign)}>Com mais</TitleReward>
 
               <span>R$ {monetaryFormat(getCampaignPointsPlus())} </span>
 
               <TitleReward>você ganha +1 ponto</TitleReward>
+
+              <div className="totalPoints">Quantidade de pontos conquistados: {Math.floor(
+                sale.total_sold / campaign.average_ticket,
+              )}</div>
             </InfoClientReward>
           </ContentReward>
         )}

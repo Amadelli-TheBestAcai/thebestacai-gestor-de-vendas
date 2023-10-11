@@ -97,6 +97,12 @@ export const InfoClientReward = styled.div`
   .borderedInfoClient {
     border-right: 1px solid black;
   }
+
+  .totalPoints {
+    margin-top: 1rem;
+    font-weight: 400;
+    font-size: .9rem;
+  }
 `;
 
 export const TitleReward = styled.h3`
