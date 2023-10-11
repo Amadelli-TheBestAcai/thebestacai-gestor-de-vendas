@@ -31,9 +31,6 @@ class CloseStoreCash implements IUseCaseFactory {
     private deliverySaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Delivery_Sale
     ),
-    private stepSaleRepository = new BaseRepository<SaleDto>(
-      StorageNames.Step_Sale
-    ),
     private integrateProductWasteUseCase = integrateProductWaste
   ) {}
 
@@ -44,12 +41,8 @@ class CloseStoreCash implements IUseCaseFactory {
     const isConnected = await checkInternet();
     if (isConnected) {
       const deliverySales = await this.deliverySaleRepository.getAll();
-      const stepSale = await this.stepSaleRepository.getAll()
       if (deliverySales.length > 0) {
         throw new Error("Você ainda possui vendas pendentes no delivery");
-      }
-      if (stepSale.length > 0) {
-        throw new Error("Você ainda possui comandas pendentes no carrinho");
       }
       const { has_internal_error: errorOnUpdateBalanceHistory } =
         await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
