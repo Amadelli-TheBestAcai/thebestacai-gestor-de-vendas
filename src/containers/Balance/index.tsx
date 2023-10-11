@@ -33,6 +33,7 @@ const BalanceContainer: React.FC<IProps> = ({
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
     useState<boolean>(false);
   const [balanceAmount, setBalanceAmount] = useState<number>();
+  const { isSavingSale } = useSale()
 
   useEffect(() => {
     async function init() {
@@ -179,6 +180,7 @@ const BalanceContainer: React.FC<IProps> = ({
                 getValue={(value) => setBalanceAmount(value)}
                 onEnterPress={handleEnterToSubmit}
                 onPressKey={handlerEventKey}
+                readOnly={isSavingSale}
               />
             )}
           </RightSide>

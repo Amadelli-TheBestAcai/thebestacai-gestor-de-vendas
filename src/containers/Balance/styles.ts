@@ -77,8 +77,14 @@ export const RightSide = styled.div`
   input {
     ${InputCSS};
     height: 100%;
+    
   }
 
+  #balanceInput{
+    :read-only {
+      color: var(--grey-80);
+    }
+  };
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
     input {
