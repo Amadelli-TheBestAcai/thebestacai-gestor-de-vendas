@@ -210,7 +210,7 @@ const ClientInfo: React.FC<IProps> = () => {
 
               <TitleReward>você ganha +1 ponto</TitleReward>
 
-              <div className="totalPoints">Quantidade de pontos conquistados: {Math.floor(
+              <div className="totalPoints">Pontos ganhos nessa compra: {Math.floor(
                 sale.total_sold / campaign.average_ticket,
               )}</div>
             </InfoClientReward>
