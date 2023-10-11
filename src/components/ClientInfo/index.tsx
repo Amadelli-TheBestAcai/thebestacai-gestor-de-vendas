@@ -204,7 +204,7 @@ const ClientInfo: React.FC<IProps> = () => {
         {campaign && (
           <ContentReward>
             <InfoClientReward className="borderedInfoClient">
-              <TitleReward onClick={() => console.log(campaign)}>Com mais</TitleReward>
+              <TitleReward>Com mais</TitleReward>
 
               <span>R$ {monetaryFormat(getCampaignPointsPlus())} </span>
 
