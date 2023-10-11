@@ -9,6 +9,7 @@ type IProps = {
   defaultValue?: number;
   id?: string;
   autoFocus?: boolean;
+  readOnly?: boolean;
 };
 
 const currencyConfig = {
@@ -32,6 +33,7 @@ const MonetaryInput: React.FC<IProps> = ({
   id,
   onPressKey,
   autoFocus,
+  readOnly,
 }) => {
   const [amount, setAmount] = useState<number>(defaultValue || 0);
 
@@ -71,6 +73,7 @@ const MonetaryInput: React.FC<IProps> = ({
       onClick={({ target }) => {
         target.selectionStart = 10000;
       }}
+      readOnly={readOnly}
     />
   );
 };

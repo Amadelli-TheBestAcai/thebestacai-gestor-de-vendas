@@ -28,6 +28,7 @@ type GlobalContextType = {
   ) => Promise<void>;
   onDecressItem: (id: string) => Promise<void>;
   onAddDiscount: (value: number) => Promise<void>;
+  onRemoveDiscount: (id: string) => Promise<void>;
   onAddToQueue: (name: string) => Promise<void>;
   onRegisterSale: () => Promise<void>;
   discountModalState: boolean;
@@ -387,6 +388,27 @@ export function GlobalProvider({ children }) {
     document.getElementById("balanceInput")?.focus();
   };
 
+  const onRemoveDiscount = async (id: string): Promise<void> => {
+    const { response: updatedSale, has_internal_error: errorOnDiscount } =
+    await window.Main.sale.updateSale(id, {
+      ...sale,
+      discount: 0,
+    });
+    if (errorOnDiscount) {
+      return notification.error({
+        message: "Erro ao remover desconto",
+        duration: 5,
+      });
+    }
+
+    notification.success({
+      message: "Desconto removido com sucesso!",
+      description: `O desconto selecionado foi retirado.`,
+      duration: 3,
+    });
+    setSale(updatedSale);
+  };
+
   const hasPermission = (_permission: string): boolean => {
     return user.permissions?.some((permission) => permission === _permission);
   };
@@ -405,6 +427,7 @@ export function GlobalProvider({ children }) {
         discountModalState,
         discountModalHandler,
         onAddDiscount,
+        onRemoveDiscount,
         onAddItem,
         onDecressItem,
         onRegisterSale,

@@ -50,6 +50,10 @@ export function useSale() {
     GlobalContext,
     (globalContext) => globalContext.onAddDiscount
   );
+  const onRemoveDiscount = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.onRemoveDiscount
+  );
   const onDecressItem = useContextSelector(
     GlobalContext,
     (globalContext) => globalContext.onDecressItem
@@ -82,6 +86,7 @@ export function useSale() {
     discountModalHandler,
     onAddItem,
     onAddDiscount,
+    onRemoveDiscount,
     loadingSale,
     isSavingSale,
     onDecressItem,

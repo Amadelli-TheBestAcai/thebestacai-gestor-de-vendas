@@ -66,7 +66,7 @@ const PaymentsContainer: React.FC<IProps> = ({
   setFlagCard,
   flagCard,
 }) => {
-const { setSale } = useSale();
+const { onRemoveDiscount } = useSale();
 
   const onModalCancel = (): void => {
     setModalState(false);
@@ -186,7 +186,7 @@ const { setSale } = useSale();
               {((sale.customer_nps_reward_discount || 0) + sale?.discount)
                 .toFixed(2)
                 .replace(".", ",")}
-              {sale?.discount > 0 && <RemoveIcon onClick={() => setSale(oldValues => ({...oldValues, discount: 0}))}/>}
+              {sale?.discount > 0 && <RemoveIcon onClick={() => onRemoveDiscount(sale.id)}/>}
             </strong>
           </ValueInfo>
           <ValueInfo>

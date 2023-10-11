@@ -20,7 +20,7 @@ import {
 } from "./styles";
 import { message, notification } from "antd";
 
-interface IProps {}
+interface IProps { }
 
 const ClientInfo: React.FC<IProps> = () => {
   const {
@@ -95,9 +95,10 @@ const ClientInfo: React.FC<IProps> = () => {
     setShouldOpenClientInfo(false);
   };
 
-  const onPressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onPressEnter = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (loading) return;
     if (event.key === "Enter" || event.key === "F1") {
-      onFinish();
+      await onFinish();
     }
   };
 
@@ -157,7 +158,10 @@ const ClientInfo: React.FC<IProps> = () => {
             Cancelar
           </ButtonCancel>
           <ButtonSave
-            onClick={onFinish}
+            onClick={async () => {
+              if (loading) return;
+              await onFinish();
+            }}
             disabled={isSavingSale || loading}
             style={{
               background:
@@ -209,6 +213,10 @@ const ClientInfo: React.FC<IProps> = () => {
               <span>R$ {monetaryFormat(getCampaignPointsPlus())} </span>
 
               <TitleReward>você ganha +1 ponto</TitleReward>
+
+              <div className="totalPoints">Pontos ganhos nessa compra: {Math.floor(
+                sale.total_sold / campaign.average_ticket,
+              )}</div>
             </InfoClientReward>
           </ContentReward>
         )}
