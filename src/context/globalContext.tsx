@@ -10,7 +10,7 @@ import { StoreCashDto } from "../models/dtos/storeCash";
 import { UserDto } from "../models/dtos/user";
 import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
-import moment from "moment";
+import { CampaignDto } from "../models/dtos/campaign";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -35,12 +35,16 @@ type GlobalContextType = {
     openDiscoundModal: () => void;
     closeDiscoundModal: () => void;
   };
+  shouldOpenClientInfo: boolean;
+  setShouldOpenClientInfo: Dispatch<SetStateAction<boolean>>;
   cupomModalState: boolean;
   setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
   setUser: Dispatch<SetStateAction<UserDto | null>>;
   store: StoreDto | null;
   setStore: Dispatch<SetStateAction<StoreDto | null>>;
+  campaign: CampaignDto | null;
+  setCampaign: Dispatch<SetStateAction<CampaignDto | null>>;
   hasPermission: (_permission: string) => boolean;
 };
 
@@ -56,6 +60,8 @@ export function GlobalProvider({ children }) {
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
+  const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
+  const [campaign, setCampaign] = useState<CampaignDto | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -161,9 +167,11 @@ export function GlobalProvider({ children }) {
       return;
     }
 
+    const { response: currentSale } = await window.Main.sale.getCurrentSale();
+
     if (
-      !sale.items.length &&
-      !sale?.customerVoucher?.voucher?.products?.length
+      !currentSale.items.length &&
+      !currentSale?.customerVoucher?.voucher?.products?.length
     ) {
       notification.warning({
         message: "Oops! Carrinho vazio.",
@@ -171,12 +179,14 @@ export function GlobalProvider({ children }) {
                       ao carrinho para que seja possível finalizá-la.`,
         duration: 5,
       });
+      return;
     }
 
     if (
-      +(sale.total_sold.toFixed(2) || 0) >
-      sale.total_paid +
-        ((sale.discount || 0) + (sale.customer_nps_reward_discount || 0)) +
+      +(currentSale.total_sold.toFixed(2) || 0) >
+      currentSale.total_paid +
+        ((currentSale.discount || 0) +
+          (currentSale.customer_nps_reward_discount || 0)) +
         0.5
     ) {
       return notification.warning({
@@ -186,35 +196,39 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    sale.change_amount = sale.total_paid + sale.discount - sale.total_sold;
+    currentSale.change_amount =
+      +(currentSale.total_paid + currentSale.discount - currentSale.total_sold).toFixed(2);
 
     setSavingSale(true);
 
-    if (sale.items.length && settings.should_emit_nfce_per_sale) {
-      const total = sale.items.reduce((total, item) => +item.total + total, 0);
+    if (currentSale.items.length && settings.should_emit_nfce_per_sale) {
+      const total = currentSale.items.reduce(
+        (total, item) => +item.total + total,
+        0
+      );
       const nfePayload = {
-        discount: +sale.discount,
-        change_amount: +sale.change_amount,
+        discount: +currentSale.discount,
+        change_amount: +currentSale.change_amount,
         total: total,
         store_id: +store.company_id,
-        items: sale.items.map((item) => ({
+        items: currentSale.items.map((item) => ({
           product_store_id: +item.store_product_id,
           price_sell: +item.total,
           quantity: +item.quantity,
         })),
-        payments: sale.payments.map((payment) => ({
-          amount: +payment.amount,
+        payments: currentSale.payments.map((payment) => ({
+          amount: +payment.amount.toFixed(2),
           type: +payment.type,
           flag_card: +payment.flag_card,
         })),
-        ref: sale.ref,
+        ref: currentSale.ref,
       };
 
       const {
         response,
         has_internal_error: errorOnEmitNfce,
         error_message,
-      } = await window.Main.sale.emitNfce(nfePayload, sale.id, true);
+      } = await window.Main.sale.emitNfce(nfePayload, currentSale.id, true);
 
       if (errorOnEmitNfce) {
         notification.error({
@@ -234,14 +248,14 @@ export function GlobalProvider({ children }) {
       }
 
       const { response: updatedSale } = await window.Main.sale.getCurrentSale();
-      sale.nfce_focus_id = updatedSale.nfce_focus_id;
-      sale.nfce_url = updatedSale.nfce_url;
+      currentSale.nfce_focus_id = updatedSale.nfce_focus_id;
+      currentSale.nfce_url = updatedSale.nfce_url;
     }
 
     const { has_internal_error: errorOnFinishSAle, error_message } =
       await window.Main.sale.finishSale({
-        ...sale,
-        formated_type: SalesTypes[sale.type],
+        ...currentSale,
+        formated_type: SalesTypes[currentSale.type],
       });
 
     if (errorOnFinishSAle) {
@@ -297,7 +311,7 @@ export function GlobalProvider({ children }) {
 
     if (settings.should_print_sale && settings.should_use_printer) {
       //@ts-expect-error
-      window.Main.common.printSale(sale);
+      window.Main.common.printSale(currentSale);
     }
 
     document.getElementById("balanceInput")?.focus();
@@ -402,6 +416,10 @@ export function GlobalProvider({ children }) {
         setStore,
         cupomModalState,
         setCupomModalState,
+        shouldOpenClientInfo,
+        setShouldOpenClientInfo,
+        campaign,
+        setCampaign,
       }}
     >
       {children}

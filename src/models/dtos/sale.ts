@@ -6,6 +6,9 @@ export type SaleDto = {
   id: string;
   user_id?: number;
   name?: string;
+  client_cpf?: string;
+  client_phone?: string;
+  client_email?: string;
   quantity: number;
   change_amount: number;
   type: number;

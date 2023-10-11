@@ -25,9 +25,10 @@ import {
   onlineIntegration,
   integrateRewardWithSale,
   getCustomerReward,
+  getCurrentCampaign,
 } from "../usecases/sale";
 
-import { SaleDto, ProductDto } from "../models/gestor";
+import { SaleDto, ProductDto, CampaignDto } from "../models/gestor";
 
 import {
   SaleFromApiDTO,
@@ -157,4 +158,6 @@ export const saleFactory = {
     await useCaseFactory.execute<void>(integrateRewardWithSale, {
       product_id,
     }),
+  getCurrentCampaign: async () =>
+    await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
 };

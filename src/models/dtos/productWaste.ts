@@ -2,6 +2,7 @@ export interface ProductWasteDTO {
   id: number;
   name: string;
   category_id: number;
+  reason?: string;
   category: {
     id: number;
     name: string;
@@ -60,4 +61,5 @@ export interface ProductStoreWasteDto {
   s3_key: string;
   created_at: string;
   deleted_at: string;
+  reason: string;
 }

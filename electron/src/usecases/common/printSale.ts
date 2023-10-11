@@ -5,7 +5,6 @@ import { StoreDto, SettingsDto } from "../../models/gestor";
 import { SaleFromApiDTO } from "../../models/dtos/salesFromApi";
 import { SaleDto } from "../../models/gestor/sale";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
-import * as jwt from "jsonwebtoken";
 import env from "../../providers/env.json";
 import moment from "moment";
 import {
@@ -166,41 +165,11 @@ class PrintSale implements IUseCaseFactory {
       this.printerFormater.newLine();
     }
 
-    const access_token = jwt.sign(
-      {
-        ref: sale.ref,
-        cpf: null,
-        cash_history_id: sale.cash_history_id,
-        store_id: store?.company_id,
-        total_sold: totalItems,
-        created_at: created_at,
-      },
-      env.TOKEN_SECRET_NPS,
-      {
-        expiresIn: "1d",
-      }
-    );
-
     this.printerFormater.table(["QRCode Avaliação NPS"]);
     this.printerFormater.println(
       `Utilize este QRCode para ser direcionado para nos avaliar :)`
     );
     this.printerFormater.alignCenter();
-
-    const qrcode_img = await axios.get(
-      `https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${env.NPS_URL}/${access_token}`,
-      {
-        responseType: "arraybuffer",
-      }
-    );
-
-    const qrcode_64 = Buffer.from(qrcode_img.data, "binary");
-    this.printerFormater.printImageBuffer(qrcode_64);
-    this.printerFormater.newLine();
-    this.printerFormater.print(
-      `Data de expiração do QRCode: ${expirationDate}`
-    );
-    this.printerFormater.newLine();
     this.printerFormater.cut();
 
     Printer.printDirect({

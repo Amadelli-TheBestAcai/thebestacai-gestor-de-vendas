@@ -83,6 +83,11 @@ export const ButtonSave = styled.button`
     background: var(--orange-200);
   }
 
+  :disabled {
+    cursor: not-allowed;
+    opacity: 50%;
+  }
+
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     font-size: 0.7rem;

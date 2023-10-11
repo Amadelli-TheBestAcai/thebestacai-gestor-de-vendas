@@ -15,6 +15,7 @@ interface Request {
     store_id: number;
     unity: number;
     product_id: number;
+    reason: string;
   };
 }
 

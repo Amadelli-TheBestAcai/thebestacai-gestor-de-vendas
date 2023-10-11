@@ -6,4 +6,5 @@ export interface ProductWasteDTO {
   store_id: number;
   unity: number;
   product_id: number;
+  reason: string;
 }

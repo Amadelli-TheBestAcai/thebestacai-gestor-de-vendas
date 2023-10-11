@@ -14,6 +14,7 @@ import {
 } from "./styles";
 import { ProductDto } from "../../models/dtos/product";
 import { useStore } from "../../hooks/useStore";
+import MonetaryInput from "../../components/MonetaryInput";
 
 interface IProps {
   visible: boolean;
@@ -21,8 +22,24 @@ interface IProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedProduct: ProductDto | null;
+  selectedProductIsFruit: boolean;
   setSelectedProduct: Dispatch<SetStateAction<ProductDto | null>>;
 }
+
+const options = [
+  "Produto quebrado",
+  "Montagem errada",
+  "Consumo de franqueados",
+  "Consumo de funcionário",
+  "Devolução de cliente",
+  "Consumo influencer",
+  "Fruta passada",
+  "Produto vencido",
+  "Açai/sorvete cristalizado",
+  "Cascas",
+  "Bonificação de cliente (voucher)",
+  "Outros",
+];
 
 const ModalAddWaste: React.FC<IProps> = ({
   setVisible,
@@ -30,17 +47,28 @@ const ModalAddWaste: React.FC<IProps> = ({
   setLoading,
   selectedProduct,
   setSelectedProduct,
+  selectedProductIsFruit,
 }) => {
   const [image, setImage] = useState(null);
-  const [value, setValue] = useState(Options.Quilograma);
+  const [value, setValue] = useState(
+    selectedProductIsFruit ? Options.Quilograma : Options.Unidade
+  );
+  const [reasonOption, setReasonOption] = useState("");
+  const [showOtherInput, setShowOtherInput] = useState(false);
   const [unitSuffix, setUnitSuffix] = useState("kg");
   const [quantity, setQuantity] = useState<number>(0);
+  const [price, setPrice] = useState<number>();
+
   const [form] = Form.useForm();
   const { store } = useStore();
   const { cashHistoryId } = useCashHistoryId();
 
   useEffect(() => {
-    if (!visible) setSelectedProduct(null);
+    if (!visible) {
+      setSelectedProduct(null);
+    } else {
+      setPrice(+selectedProduct?.price_sell);
+    }
   }, [visible]);
 
   useEffect(() => {
@@ -52,26 +80,19 @@ const ModalAddWaste: React.FC<IProps> = ({
   }, [value]);
 
   const handleSave = async () => {
+    await form.validateFields();
     setLoading(true);
     try {
-      const values = await form.validateFields();
-
-      if (!image) {
-        notification.warning({
-          message: "Por favor, anexe uma imagem",
-          duration: 5,
-        });
-        return;
-      }
-
       const file = await getBase64(image);
       const payload = {
         cash_history_id: cashHistoryId.history_id,
         file,
-        quantity: +values.quantity,
+        quantity: quantity,
         store_id: store.company_id,
-        unity: values.unity,
+        unity: value,
         product_id: selectedProduct.id,
+        reason: reasonOption,
+        price_sell: price,
       };
 
       await window.Main.productWaste.addWaste(payload);
@@ -144,8 +165,15 @@ const ModalAddWaste: React.FC<IProps> = ({
                 value={value}
                 style={{ alignItems: "center" }}
               >
-                <Radio value={Options.Quilograma}>Quilograma</Radio>
-                <Radio value={Options.Unidade}>Unidade</Radio>
+                <Radio value={Options.Quilograma} checked>
+                  Quilograma
+                </Radio>
+                <Radio
+                  value={Options.Unidade}
+                  disabled={selectedProductIsFruit}
+                >
+                  Unidade
+                </Radio>
               </Radio.Group>
             </Form.Item>
           </ColModal>
@@ -169,8 +197,20 @@ const ModalAddWaste: React.FC<IProps> = ({
               <Input
                 type="number"
                 placeholder="Digite aqui"
-                onChange={(e) => setQuantity(+e.target.value)}
+                value={quantity}
+                onChange={(e) => {
+                  setQuantity(+e.target.value);
+                }}
                 addonAfter={unitSuffix}
+              />
+            </Form.Item>
+
+            <Form.Item label="Valor do Produto" name="price">
+              <MonetaryInput
+                defaultValue={price}
+                getValue={(e) => {
+                  setPrice(e);
+                }}
               />
             </Form.Item>
           </ColModal>
@@ -191,6 +231,40 @@ const ModalAddWaste: React.FC<IProps> = ({
               />
             </Form.Item>
           </ColModal>
+          <ColModal sm={24}>
+            <Form.Item
+              label="Selecione um motivo"
+              name="reason"
+              rules={[{ required: true, message: "Selecione um motivo" }]}
+            >
+              <Radio.Group
+                onChange={(e) => {
+                  setReasonOption(e.target.value);
+                  setShowOtherInput(e.target.value === "Outros");
+                  form.setFieldsValue({ reason: e.target.value });
+                }}
+                value={reasonOption}
+              >
+                {options.map((option, index) => (
+                  <Radio key={index} value={option}>
+                    {option}
+                  </Radio>
+                ))}
+              </Radio.Group>
+            </Form.Item>
+          </ColModal>
+
+          {showOtherInput && (
+            <ColModal sm={24}>
+              <Form.Item label="Digite o motivo" name="motivo">
+                <Input
+                  autoFocus={true}
+                  value={reasonOption}
+                  onChange={({ target: { value } }) => setReasonOption(value)}
+                />
+              </Form.Item>
+            </ColModal>
+          )}
         </ContentModalBody>
       </Form>
     </Modal>

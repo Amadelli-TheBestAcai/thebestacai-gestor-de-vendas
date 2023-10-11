@@ -323,7 +323,7 @@ const Sale: React.FC<IProps> = () => {
   const getNfceDanfe = async (sale: SaleFromApi) => {
     const { data } = await axios({
       method: "GET",
-      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.ref}/danfe`,
+      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.id}/danfe`,
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
@@ -588,7 +588,7 @@ const Sale: React.FC<IProps> = () => {
               Cancelar
             </ButtonCancel>
             <ButtonSave onClick={() => handleEmit()} loading={isLoading}>
-              Enviar novemente
+              Enviar novamente
             </ButtonSave>
           </Footer>
         }

@@ -8,6 +8,9 @@ export const salesFormaterToIntegrate = (
     return payload.map((_payload) => ({
       quantity: _payload.quantity,
       gv_id: _payload.gv_id,
+      client_cpf: _payload.client_cpf,
+      client_phone: _payload.client_phone,
+      client_email: _payload.client_email,
       abstract_sale: _payload.abstract_sale,
       change_amount: _payload.change_amount,
       type: _payload.type,
@@ -107,6 +110,9 @@ export const salesFormaterToIntegrate = (
     const response = {
       quantity: payload.quantity,
       gv_id: payload.gv_id,
+      client_cpf: payload.client_cpf,
+      client_phone: payload.client_phone,
+      client_email: payload.client_email,
       cash_id: payload.cash_id || storeCash.cash_id,
       cash_history_id: payload.cash_history_id || storeCash.history_id,
       abstract_sale: payload.abstract_sale,

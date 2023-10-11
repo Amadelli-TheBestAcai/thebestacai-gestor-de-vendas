@@ -8,17 +8,19 @@ import { ProductDto } from "../../models/dtos/product";
 const Waste: React.FC = () => {
   const [productList, setProductList] = useState<ProductDto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProductIsFruit, setSelectedProductIsFruit] = useState(false);
 
   useEffect(() => {
     async function fetchProductStoreList() {
       setLoading(true);
-      const { response: products } =
-        await window.Main.productWaste.getAllProductsToWaste();
-      console.log(products);
+      const { response: products } = await window.Main.productWaste.getAllProductsToWaste();
       setProductList(products);
+  
+      const hasFruits = products.some((product) => product.category.name === 'frutas');
+      setSelectedProductIsFruit(hasFruits);
       setLoading(false);
     }
-
+  
     fetchProductStoreList();
   }, []);
 
@@ -37,6 +39,8 @@ const Waste: React.FC = () => {
                 products={productList}
                 setLoading={setLoading}
                 loading={false}
+                selectedProductIsFruit={selectedProductIsFruit}
+                setSelectedProductIsFruit={setSelectedProductIsFruit}
               />
             </Content>
           </>
