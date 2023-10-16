@@ -34,7 +34,7 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
       });
     }
 
-    const { response: _printHandler, has_internal_error: errorOHandler } =
+    const { response: _printHandler, has_internal_error: errorOnHandler } =
       await window.Main.common.printHandler(handler)
 
     // @ts-ignore
@@ -46,7 +46,7 @@ const HandlerItem: React.FC<IProps> = ({ handler, onDelete }) => {
       });
     }
 
-    if (errorOHandler) {
+    if (errorOnHandler) {
       return notification.error({
         message: "Erro ao tentar imprimir",
         duration: 5,
