@@ -245,7 +245,25 @@ export function GlobalProvider({ children }) {
       });
 
       if (successOnSefaz && settings.should_print_nfce_per_sale) {
-        await window.Main.common.printDanfe(response);
+        const { response: _printDanfe, has_internal_error: errorOnDanfe } =
+          await window.Main.common.printDanfe(response);
+
+        // @ts-ignore
+        if (!_printDanfe) {
+          notification.warning({
+            message: "Não foi possível concluir a impressão da NFC-e.",
+            description: `Por favor, verifique a conexão da sua impressora.
+            Após isso tente emitir novamente pela tela de vendas.`,
+            duration: 5,
+          });
+        }
+
+        if (errorOnDanfe) {
+          notification.error({
+            message: "Erro ao tentar imprimir",
+            duration: 5,
+          });
+        }
       }
 
       const { response: updatedSale } = await window.Main.sale.getCurrentSale();
