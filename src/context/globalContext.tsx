@@ -252,7 +252,8 @@ export function GlobalProvider({ children }) {
         if (!_printDanfe) {
           notification.warning({
             message: "Não foi possível concluir a impressão da NFC-e.",
-            description: "Por favor, verifique a conexão da sua impressora.",
+            description: `Por favor, verifique a conexão da sua impressora.
+            Após isso tente emitir novamente pela tela de vendas.`,
             duration: 5,
           });
         }
