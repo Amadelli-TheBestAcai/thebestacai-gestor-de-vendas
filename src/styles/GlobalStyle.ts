@@ -13,12 +13,12 @@ export const GlobalStyle = createGlobalStyle`
    --black-opaco: #1C1E23;
    --gray-25: #e3e3e3;
    --gray-50: #e0e0e0;
-   --grey-60: #c4c4c4;
-   --grey-70: #bebebe;
-   --grey-80: #acacac;
-   --grey-90: #a2a2a2;
-   --grey-100: #666666;
-   --grey-200: #4D4D4D;
+   --gray-60: #c4c4c4;
+   --gray-70: #bebebe;
+   --gray-80: #acacac;
+   --gray-90: #a2a2a2;
+   --gray-100: #666666;
+   --gray-200: #4D4D4D;
    --gray-250: #3C4043
 
    --warning: #f8f2d1;
