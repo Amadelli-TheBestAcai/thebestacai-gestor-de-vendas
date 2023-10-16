@@ -348,20 +348,37 @@ const Sale: React.FC<IProps> = () => {
     const { response: _settings, has_internal_error: errorOnSettings } =
       await window.Main.settings.getSettings();
     if (errorOnSettings) {
-      notification.error({
+      return notification.error({
         message: "Erro ao encontrar configurações",
         duration: 5,
       });
     }
 
     if (_settings.should_use_printer === false) {
-      return notification.warning({
-        message: "Habilite a impressora na tela de configurações",
+      return  notification.warning({
+        message: "Habilite a impressora na tela de configurações.",
         duration: 5,
       });
     }
 
-    window.Main.common.printSale(sale);
+    const { response: _printSale, has_internal_error: errorOPrintSale } =
+      await window.Main.common.printSale(sale);
+
+    // @ts-ignore
+    if (!_printSale) {
+      return notification.warning({
+        message: "Não foi possível concluir a impressão da venda.",
+        description: "Por favor, verifique a conexão da sua impressora.",
+        duration: 5,
+      });
+    }
+
+    if (errorOPrintSale) {
+      return notification.error({
+        message: "Erro ao tentar imprimir",
+        duration: 5,
+      });
+    }
   };
 
   const nfceInfo = (selectedSale: SaleFromApi) => {

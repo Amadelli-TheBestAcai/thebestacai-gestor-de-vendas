@@ -43,14 +43,7 @@ class PrintSale implements IUseCaseFactory {
     const settings = await this.settingsRepository.getOne();
 
     const printer = settings?.printer;
-
-    const created_at = moment(sale.created_at)
-      .parseZone()
-      .format("YYYY-MM-DDTHH:mm:ss");
-    const expirationDate = moment(created_at)
-      .add(1, "day")
-      .format("DD/MM/YYYY HH:mm:ss");
-
+    
     if (!settings?.should_use_printer) {
       return;
     }
