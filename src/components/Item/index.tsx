@@ -43,7 +43,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [form] = Form.useForm();
 
   const removeItem = async (): Promise<void> => {
-    await form.validateFields()
+    await form.validateFields();
     if (item.product.id === 1 && sale?.customerVoucher?.voucher?.self_service) {
       notification.warning({
         message: "Não é possível remover self-service",
@@ -70,7 +70,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
         "Digite um motivo válido para a remoção do item de seu carrinho.";
     }
 
-    if (reasonOption.length > 100) {
+    if (reasonOption.length > 150) {
       errorMessage = "O motivo não deve ultrapassar 100 caracteres.";
     }
 
@@ -165,10 +165,15 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
 
                 {showOtherInput && (
                   <Col sm={24}>
-                    <Form.Item rules={[{ required: true, message: "Campo obrigatório" }]} label="Digite o motivo" name="motivo">
+                    <Form.Item
+                      rules={[{ required: true, message: "Campo obrigatório" }]}
+                      label="Digite o motivo"
+                      name="motivo"
+                    >
                       <Input
                         required={true}
                         autoFocus={true}
+                        maxLength={150}
                         value={reasonOption}
                         onChange={({ target: { value } }) =>
                           setReasonOption(value)
