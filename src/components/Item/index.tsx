@@ -41,6 +41,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [reasonOption, setReasonOption] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [form] = Form.useForm();
+  const [count, setCount] = useState(Number);
 
   const removeItem = async (): Promise<void> => {
     await form.validateFields();
@@ -175,11 +176,16 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
                         autoFocus={true}
                         maxLength={150}
                         value={reasonOption}
-                        onChange={({ target: { value } }) =>
-                          setReasonOption(value)
-                        }
+                        onChange={({ target: { value } }) => {
+                          const countNumber = value.length;
+                          setCount(countNumber);
+                          setReasonOption(value);
+                        }}
                       />
                     </Form.Item>
+                    <div className="characters">
+                      <p>{count} / 150 caracteres</p>
+                    </div>
                   </Col>
                 )}
               </Row>
