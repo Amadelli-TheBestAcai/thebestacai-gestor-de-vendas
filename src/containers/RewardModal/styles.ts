@@ -1,5 +1,10 @@
 import styled, { css } from "styled-components";
-import { Col as ColAnt, Modal as ModalAnt, Row as RowAnt, Button as ButtonAnt } from "antd";
+import {
+  Col as ColAnt,
+  Modal as ModalAnt,
+  Row as RowAnt,
+  Button as ButtonAnt,
+} from "antd";
 import { Search } from "../../styles/Icons";
 import { IMaskInput } from "react-imask";
 
@@ -16,6 +21,8 @@ export const Container = styled.div`
 `;
 
 export const Row = styled(RowAnt)`
+  display: flex;
+  justify-content: center;
   width: 100%;
 `;
 
@@ -32,8 +39,6 @@ export const Modal = styled(ModalAnt)`
   max-height: 50rem !important;
   overflow-y: auto;
 `;
-;
-
 export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
@@ -42,10 +47,14 @@ export const Col = styled(ColAnt)`
 
 export const InputSearchReward = styled.input`
   height: 2.5rem;
-  border: 1px solid var(--gray-50);
+  border: 1px solid var(--gray-90);
   padding: 5px;
   border-radius: 5px;
   width: 100%;
+
+  :focus {
+    border: 2px solid var(--gray-100);
+  }
 `;
 
 export const InputMask = styled(IMaskInput)`
@@ -55,7 +64,6 @@ export const InputMask = styled(IMaskInput)`
   border-radius: 5px;
   padding: 5px;
 `;
-
 
 export const ButtonSearch = styled(ButtonAnt)`
   display: flex;
@@ -76,8 +84,8 @@ export const ButtonSearch = styled(ButtonAnt)`
 
     :hover {
       cursor: not-allowed;
-    background-color: var(--gray-50);
-    opacity: 100%;
+      background-color: var(--gray-50);
+      opacity: 100%;
     }
   }
 
@@ -148,9 +156,9 @@ export const DataClient = styled.div`
 
   span {
     font-weight: 700;
-    font-size: .8rem;
-    margin-bottom: .6rem;
-  }  
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
 `;
 
 export const ContentGeneral = styled.div`
@@ -158,13 +166,13 @@ export const ContentGeneral = styled.div`
   flex-direction: column;
   width: 100%;
 
-  .max-points{
-    font-size: .8rem;
+  .max-points {
+    font-size: 0.8rem;
     color: var(--grey-70);
     font-weight: 400;
     justify-content: end;
     display: flex;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
   }
 `;
 
@@ -175,17 +183,18 @@ export const Value = styled.div`
 `;
 
 export const CustomerPoints = styled.div<ICustomerProps>`
- text-align: center;
- font-size: 2rem;
- font-weight: 800;
- color: ${({ available }) => (available ? 'var(--orange-250)' : 'var(--gray-250)')};
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: ${({ available }) =>
+    available ? "var(--orange-250)" : "var(--gray-250)"};
 
- span{
-  color: var(--grey-100);
-  font-size: 1rem;
-  font-weight: 400;
-  margin-left: .2rem;
- }
+  span {
+    color: var(--grey-100);
+    font-size: 1rem;
+    font-weight: 400;
+    margin-left: 0.2rem;
+  }
 `;
 
 export const PointsCustomerContainer = styled.div`
@@ -269,12 +278,12 @@ export const ButtonSave = styled(ButtonAnt)`
   transition: 0.5s;
   width: 12rem;
   height: 3rem;
-  transition: .3s ease-out;
+  transition: 0.3s ease-out;
 
   :hover {
     background: var(--orange-200);
     color: white;
-    opacity: 70%
+    opacity: 70%;
   }
 
   /*Responsive 1366px*/
