@@ -47,13 +47,13 @@ export const Col = styled(ColAnt)`
 
 export const InputSearchReward = styled.input`
   height: 2.5rem;
-  border: 1px solid var(--gray-90);
+  border: 1px solid var(--grey-90);
   padding: 5px;
   border-radius: 5px;
   width: 100%;
 
   :focus {
-    border: 2px solid var(--gray-100);
+    border: 2px solid var(--grey-100);
   }
 `;
 
