@@ -83,6 +83,10 @@ export const DeleteIcon = styled(TrashRestoreAlt)`
 `;
 
 export const Modal = styled(ModalAnt)`
+  .characters {
+    display: flex;
+    justify-content: end;
+  }
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
     width: 450px !important;
