@@ -62,6 +62,7 @@ class EmitNfce implements IUseCaseFactory {
     } = await midasApi.post("/nfce", {
       ...nfe,
       ref: nfe.ref || saleResponse.ref,
+      cash_history_id: storeCash.history_id
     });
 
     saleResponse.nfce_focus_id = data.id;
