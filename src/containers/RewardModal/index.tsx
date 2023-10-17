@@ -179,7 +179,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       centered
       visible={isVisible}
       onCancel={resetModalState}
-      width={"60%"}
+      width={"40%"}
       destroyOnClose
       footer={
         <>
