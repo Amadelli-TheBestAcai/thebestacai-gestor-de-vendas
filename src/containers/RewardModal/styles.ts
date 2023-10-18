@@ -132,7 +132,7 @@ export const InfoClient = styled.div`
     font-size: 1.2rem;
     color: var(--gray-250);
     text-transform: capitalize;
-    margin: 0;
+    margin: 1rem 0 0 0;
   }
 `;
 
