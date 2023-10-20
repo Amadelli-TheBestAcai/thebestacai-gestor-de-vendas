@@ -23,7 +23,6 @@ import {
   Value,
   TitleReward,
   ImgReward,
-  InputMask
 } from "./styles";
 import { useStore } from "../../hooks/useStore";
 import { CustomerReward, Reward } from "../../models/dtos/customerReward";
@@ -43,7 +42,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [userHash, setUserHash] = useState("");
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward>();
-  const [phone, setPhone] = useState("");
 
   const { store } = useStore();
   const { user } = useUser();
@@ -58,7 +56,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         });
       }
 
-      if (userHash === "" || phone === "") {
+      if (userHash === "") {
         return notification.warning({
           message: "Preencha todos os campos",
           duration: 5,
@@ -67,7 +65,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
 
       setLoading(true);
       const { has_internal_error, error_message, response } =
-        await window.Main.sale.getCustomerReward(phone, userHash.toUpperCase());
+        await window.Main.sale.getCustomerReward(userHash.toUpperCase());
 
       if (has_internal_error) {
         setLoading(false);
@@ -77,7 +75,13 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         });
       }
 
-      const { name, customer_reward, points_customer, max_points, total_accumulated_points } = response;
+      const {
+        name,
+        customer_reward,
+        points_customer,
+        max_points,
+        total_accumulated_points,
+      } = response;
 
       setCustomerReward({
         customer_name: name,
@@ -89,7 +93,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
 
       setRewards(customer_reward.campaignReward);
       setUserHash(userHash);
-      setPhone(phone);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -104,7 +107,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   };
 
   useEffect(() => {
-    if (shouldSearch && userHash && phone) {
+    if (shouldSearch && userHash) {
       getCampaignReward();
     }
   }, [shouldSearch]);
@@ -113,7 +116,6 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     setLoading(false);
     setShouldSearch(false);
     setUserHash("");
-    setPhone("");
     setRewards(null);
     setIsVisible(false);
     setCustomerReward(null);
@@ -128,36 +130,36 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         user_id: user.id,
         company_name: store.company.company_name,
       };
-  
+
       const {
         has_internal_error: createCustomerError,
         error_message: error_message_create_customer_reward,
       } = await window.Main.sale.redeemReward(customerReward.id, payload);
-  
+
       if (createCustomerError) {
         notification.error({
           message: error_message_create_customer_reward,
           duration: 5,
         });
-        setLoading(false); 
-        return; 
+        setLoading(false);
+        return;
       }
-  
+
       const { has_internal_error: rewardError, error_message } =
         await window.Main.sale.integrateRewardWithSale(rewards.product_id);
-  
+
       if (rewardError) {
         notification.warning({
           message: error_message,
           duration: 5,
         });
       }
-  
+
       notification.success({
         message: "Recompensa resgatada com sucesso",
         duration: 5,
       });
-  
+
       resetModalState();
       setShouldSearch(true);
     } catch (err) {
@@ -170,14 +172,14 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <Modal
       title="Recompensas"
       centered
       visible={isVisible}
       onCancel={resetModalState}
-      width={"60%"}
+      width={"40%"}
       destroyOnClose
       footer={
         <>
@@ -185,7 +187,9 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
             <Footer>
               {storeCash?.is_opened && storeCash.is_online && (
                 <>
-                  <ButtonCancel onClick={resetModalState}>Cancelar</ButtonCancel>
+                  <ButtonCancel onClick={resetModalState}>
+                    Cancelar
+                  </ButtonCancel>
                   <ButtonSave onClick={useReward} disabled={loading}>
                     Resgatar recompensa
                   </ButtonSave>
@@ -202,26 +206,16 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         ) : (
           <GlobalContainer>
             <RewardSearch>
-              <Row gutter={12}>
-                <Col md={10}>
-                  <InputMask
-                    placeholder="Digite o telefone"
-                    mask="(00) 00000-0000"
-                    value={phone}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const inputValue = event.target.value;
-                      const numericValue = inputValue.replace(/\D/g, '');
-                      setPhone(numericValue);
-                    }}
-                  />
-                </Col>
+              <Row>
                 <Col md={10}>
                   <InputSearchReward
                     placeholder="Digite o hashcode"
                     type="text"
                     maxLength={8}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const userInput = event.target.value.slice(0, 8).toUpperCase();
+                      const userInput = event.target.value
+                        .slice(0, 8)
+                        .toUpperCase();
                       setUserHash(userInput);
                     }}
                     value={userHash}
@@ -232,62 +226,74 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
                     }}
                   />
                 </Col>
+
                 <Col md={4}>
-                  <ButtonSearch onClick={getCampaignReward} disabled={loading || !phone || !userHash}>
+                  <ButtonSearch
+                    onClick={getCampaignReward}
+                    disabled={loading || !userHash}
+                  >
                     {loading ? "..." : "Buscar"}
                   </ButtonSearch>
                 </Col>
               </Row>
             </RewardSearch>
 
-            {customerReward &&
-              (
-                <Container>
-                  <InfoClient><p>{customerReward.customer_name}</p></InfoClient>
-                  <PointsCustomerContainer>
-                    <DataClient>
-                      <ContentGeneral>
-                        <Value>
-                          <div>
-                            <span>Pontos disponíveis</span>
-                            <CustomerPoints available>{customerReward.points_customer}<span>pts</span></CustomerPoints>
-                          </div>
-                          {/* <div>
+            {customerReward && (
+              <Container>
+                <InfoClient>
+                  <p>{customerReward.customer_name}</p>
+                </InfoClient>
+                <PointsCustomerContainer>
+                  <DataClient>
+                    <ContentGeneral>
+                      <Value>
+                        <div>
+                          <span>Pontos disponíveis</span>
+                          <CustomerPoints available>
+                            {customerReward.points_customer}
+                            <span>pts</span>
+                          </CustomerPoints>
+                        </div>
+                        {/* <div>
                             <span>Total de pontos acumulados da campanha</span>
                             <CustomerPoints available={false}>{customerReward.total_accumulated_points}<span>pts</span></CustomerPoints>
                           </div> */}
-                        </Value>
+                      </Value>
 
-                        <ProgressBar>
-                          <ProgressBarActived actived={`${customerReward?.points_customer
-                            ? customerReward?.points_customer
-                            : 0
-                            }%`} />
-                        </ProgressBar>
+                      <ProgressBar>
+                        <ProgressBarActived
+                          actived={`${
+                            customerReward?.points_customer
+                              ? customerReward?.points_customer
+                              : 0
+                          }%`}
+                        />
+                      </ProgressBar>
 
-                        <span className="max-points">Máx. {customerReward.max_points} pts</span>
-                      </ContentGeneral>
-                    </DataClient>
-                  </PointsCustomerContainer>
+                      <span className="max-points">
+                        Máx. {customerReward.max_points} pts
+                      </span>
+                    </ContentGeneral>
+                  </DataClient>
+                </PointsCustomerContainer>
 
-                  <ContentReward>
-                    {rewards ? (
-                      <>
-                        <Container>
-                          <ContentReward>
-                            <TitleReward>{rewards.description}</TitleReward>
+                <ContentReward>
+                  {rewards ? (
+                    <>
+                      <Container>
+                        <ContentReward>
+                          <TitleReward>{rewards.description}</TitleReward>
 
-                            <ImgReward src={rewards.url_image} />
-                          </ContentReward>
-                        </Container>
-                      </>
-                    ) : (
-                      <p>Não há recompensa disponível</p>
-                    )}
-                  </ContentReward>
-                </Container>
-              )
-            }
+                          <ImgReward src={rewards.url_image} />
+                        </ContentReward>
+                      </Container>
+                    </>
+                  ) : (
+                    <p>Não há recompensa disponível</p>
+                  )}
+                </ContentReward>
+              </Container>
+            )}
           </GlobalContainer>
         )
       ) : (
@@ -295,7 +301,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
           <Empty description="O caixa deve estar online" />
         </EmptyContainer>
       )}
-    </Modal >
+    </Modal>
   );
 };
 

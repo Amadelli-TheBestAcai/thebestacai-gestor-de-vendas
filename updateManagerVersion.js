@@ -7,7 +7,7 @@ async function boostrap() {
     try {
         const { data } = await axios({
             method: 'PUT',
-            url: `${env.API_DASH}/version`,
+            url: `${env.API_DASH}/version?app=gestor_2_0`,
             data: {
                 version: pkg_version,
             },

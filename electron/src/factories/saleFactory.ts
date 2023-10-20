@@ -111,7 +111,7 @@ export const saleFactory = {
       saleIdToUpdate,
       local_update,
     }),
-  getCustomerReward: async (phone: string, hash_code: string) =>
+  getCustomerReward: async (hash_code: string) =>
     await useCaseFactory.execute<{
       name: string;
       points_customer: number;
@@ -144,7 +144,6 @@ export const saleFactory = {
         };
       };
     }>(getCustomerReward, {
-      phone,
       hash_code,
     }),
   cancelNfce: async (sale_id: number, justify: string) =>

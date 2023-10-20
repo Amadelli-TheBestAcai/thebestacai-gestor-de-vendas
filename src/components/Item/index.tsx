@@ -41,9 +41,10 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [reasonOption, setReasonOption] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [form] = Form.useForm();
+  const [count, setCount] = useState(Number);
 
   const removeItem = async (): Promise<void> => {
-    await form.validateFields()
+    await form.validateFields();
     if (item.product.id === 1 && sale?.customerVoucher?.voucher?.self_service) {
       notification.warning({
         message: "Não é possível remover self-service",
@@ -70,7 +71,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
         "Digite um motivo válido para a remoção do item de seu carrinho.";
     }
 
-    if (reasonOption.length > 100) {
+    if (reasonOption.length > 150) {
       errorMessage = "O motivo não deve ultrapassar 100 caracteres.";
     }
 
@@ -165,16 +166,26 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
 
                 {showOtherInput && (
                   <Col sm={24}>
-                    <Form.Item rules={[{ required: true, message: "Campo obrigatório" }]} label="Digite o motivo" name="motivo">
+                    <Form.Item
+                      rules={[{ required: true, message: "Campo obrigatório" }]}
+                      label="Digite o motivo"
+                      name="motivo"
+                    >
                       <Input
                         required={true}
                         autoFocus={true}
+                        maxLength={150}
                         value={reasonOption}
-                        onChange={({ target: { value } }) =>
-                          setReasonOption(value)
-                        }
+                        onChange={({ target: { value } }) => {
+                          const countNumber = value.length;
+                          setCount(countNumber);
+                          setReasonOption(value);
+                        }}
                       />
                     </Form.Item>
+                    <div className="characters">
+                      <p>{count} / 150 caracteres</p>
+                    </div>
                   </Col>
                 )}
               </Row>
