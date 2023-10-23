@@ -167,7 +167,7 @@ export const CpfContent = styled.div`
     display: flex;
     margin-top: .5rem;
     span{
-      font-size: 1.1rem;
+      font-size: .9rem;
 
       :last-child{
         margin-left: 1rem;
