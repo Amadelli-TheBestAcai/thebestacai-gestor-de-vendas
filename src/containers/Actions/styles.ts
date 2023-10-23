@@ -102,8 +102,8 @@ export const Container = styled.div`
 export const ContentGeneral = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
   width: 100%;
+  margin-bottom: 1rem;
 `;
 
 export const ActionButtons = styled.div`
@@ -121,8 +121,8 @@ export const InfosAndChat = styled.div`
 
 export const ContentHeaderInfos = styled.div`
   ${BasicCSS}
-  width: 12rem;
-  height: 4.4rem;
+  width: 11rem;
+  height: 3.3rem;
   background: var(--white);
   border: 1px solid var(--gray-50);
   box-sizing: border-box;
@@ -130,35 +130,27 @@ export const ContentHeaderInfos = styled.div`
   border-radius: 10px;
   font-size: 1rem;
 
-  /* Responsive 1600 */
-  @media (max-width: 1680px) {
-    height: 4rem;
-
-    @media (max-height: 900px) {
-      height: 3.7rem;
-      font-size: 0.9rem;
-    }
-  }
-
   /*Responsive 1440px*/
   @media (max-width: 1440px) {
-    height: 3.6rem;
-    font-size: 0.8rem;
+    width: 6.8rem;
+    height: 2.8rem;
   }
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
-    height: 3.2rem;
-    font-size: 0.7rem;
+    width: 6.3rem;
+    height: 2.4rem;
+    font-size: 0.8rem;
   }
 
   /*Responsive 1280px*/
   @media (max-width: 1280px) {
-    height: 3.7rem;
-    font-size: 0.7rem;
+    width: 6rem;
+    height: 2rem;
 
     @media (max-height: 800px) {
       height: 3.2rem;
+      font-size: 0.75rem;
     }
   }
 `;
@@ -172,7 +164,7 @@ export const CpfContetGeneral = styled.div`
 
 export const CpfContent = styled.div`
     display: flex;
-
+    margin-top: .5rem;
     span{
       font-size: 1.1rem;
     }
