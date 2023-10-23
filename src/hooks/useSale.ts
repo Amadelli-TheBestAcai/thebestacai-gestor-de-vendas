@@ -59,15 +59,6 @@ export function useSale() {
     (globalContext) => globalContext.onDecressItem
   );
 
-  const shouldOpenClientInfo = useContextSelector(
-    GlobalContext,
-    (globalContext) => globalContext.shouldOpenClientInfo
-  );
-  const setShouldOpenClientInfo = useContextSelector(
-    GlobalContext,
-    (globalContext) => globalContext.setShouldOpenClientInfo
-  );
-
   const campaign = useContextSelector(
     GlobalContext,
     (globalContext) => globalContext.campaign
@@ -92,8 +83,6 @@ export function useSale() {
     onDecressItem,
     onRegisterSale,
     onAddToQueue,
-    shouldOpenClientInfo,
-    setShouldOpenClientInfo,
     campaign,
     setCampaign,
   };
