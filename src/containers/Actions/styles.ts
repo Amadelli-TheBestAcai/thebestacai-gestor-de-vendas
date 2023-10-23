@@ -6,7 +6,8 @@ import {
   DocumentBulletList,
   LogOutCircle,
   TrophyFill,
-  Discount
+  Discount,
+  IdCard
 } from "../../styles/Icons";
 
 const BasicCSS = css`
@@ -183,6 +184,10 @@ export const Button = styled.button`
 `;
 
 export const OfferIcon = styled(Offer)`
+  ${IconCSS}
+`;
+
+export const IdIcon = styled(IdCard)`
   ${IconCSS}
 `;
 
