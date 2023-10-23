@@ -32,6 +32,7 @@ import { useStore } from "../../hooks/useStore";
 import RewardModal from "../RewardModal";
 import CupomModal from "../CupomModal";
 import ClientCPFInfo from "../../components/ClientCPFInfo";
+import { SaleDto } from "../../models/dtos/sale";
 
 type ComponentProps = RouteComponentProps;
 
@@ -41,6 +42,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   const [clientCpfModalState, setclientCpfModalState] = useState(false)
   const { store } = useStore();
   const [cash, setCash] = useState<string | undefined>("");
+  const [username, setUsername] = useState<SaleDto>();
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
   const [handlerOutState, setHandlerOutState] = useState(false);
@@ -54,6 +56,16 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
     }
     init();
   }, [history.location]);
+
+  useEffect(() => {
+    const getCustomerName = async () => {
+      const { response } =
+        await window.Main.user.getCustomerByCpf(sale.client_cpf);
+      setUsername(response)
+    }
+
+    getCustomerName()
+  }, [sale.client_cpf])
 
   return (
     <Container>
@@ -118,6 +130,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         </ActionButtons>
 
         <CpfContent>
+          <span>Nome: {sale.client_cpf ? username?.name : "Não informado"}</span>
+
           <span>CPF: {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
         </CpfContent>
       </ContentGeneral>

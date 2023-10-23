@@ -168,6 +168,10 @@ export const CpfContent = styled.div`
     margin-top: .5rem;
     span{
       font-size: 1.1rem;
+
+      :last-child{
+        margin-left: 1rem;
+      }
     }
   `;
 
