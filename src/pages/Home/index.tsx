@@ -30,15 +30,17 @@ import {
 
 import { PaymentType } from "../../models/enums/paymentType";
 import CupomModal from "../../containers/CupomModal";
+import ClientCPFInfo from "../../components/ClientCPFInfo";
 
 const Home: React.FC = () => {
-  const { sale, setSale, setShouldOpenClientInfo, discountModalHandler } =
+  const { sale, setSale, discountModalHandler } =
     useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [flagCard, setFlagCard] = useState<number | null>(99);
   const [cupomModalState, setCupomModalState] = useState(false);
+  const [cpfModalState, setCpfModalState] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
@@ -168,6 +170,8 @@ const Home: React.FC = () => {
     INSERT_DISCOUNT: "R",
     insert_cupom: "c",
     INSERT_CUPOM: "C",
+    insert_cpf: "i",
+    INSERT_CPF: "I",
   };
 
   const handlers = {
@@ -183,13 +187,14 @@ const Home: React.FC = () => {
     TICKET: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),
     PIX: () => handleOpenPayment(PaymentType.PIX, "PIX"),
-    REGISTER: () => setShouldOpenClientInfo(true),
     focus_balance: () => sendFocusToBalance(),
     FOCUS_BALANCE: () => sendFocusToBalance(),
     insert_discount: () => discountModalHandler.openDiscoundModal(),
     INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
     insert_cupom: () => setCupomModalState(true),
     INSERT_CUPOM: () => setCupomModalState(true),
+    insert_cpf: () => setCpfModalState(true),
+    INSERT_CPF: () => setCpfModalState(true),
   };
 
   return (
@@ -251,6 +256,10 @@ const Home: React.FC = () => {
                         <CupomModal
                           cupomModalState={cupomModalState}
                           setCupomModalState={setCupomModalState}
+                        />
+                        <ClientCPFInfo
+                          clientCpfModalState={cpfModalState}
+                          setclientCpfModalState={setCpfModalState}
                         />
                         <RegisterContent>
                           <Register />
