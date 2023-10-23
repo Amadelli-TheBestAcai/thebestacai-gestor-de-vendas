@@ -20,6 +20,7 @@ export const GeneralContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 `;
 
 export const LeftSide = styled.div`
@@ -66,7 +67,7 @@ export const TopActions = styled.div`
 export const Content = styled.div`
   flex-direction: column;
   width: 100%;
-  height: 91%;
+  height: 100%;
   ${ContentCSS}
 `;
 

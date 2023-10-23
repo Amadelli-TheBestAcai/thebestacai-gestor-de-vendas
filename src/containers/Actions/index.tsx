@@ -109,7 +109,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         </ActionButtons>
 
         <CpfContent>
-          cpf teste
+          <span>CPF: Não informado</span>
         </CpfContent>
       </ContentGeneral>
 

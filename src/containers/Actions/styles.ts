@@ -170,6 +170,11 @@ export const CpfContetGeneral = styled.div`
 
 export const CpfContent = styled.div`
     display: flex;
+
+    span{
+      font-size: 1.1rem;
+      color: var(--gray-50);
+    }
   `;
 
 export const InfoStore = styled.div`
