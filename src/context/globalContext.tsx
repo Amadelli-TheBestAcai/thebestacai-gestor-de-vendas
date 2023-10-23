@@ -36,8 +36,6 @@ type GlobalContextType = {
     openDiscoundModal: () => void;
     closeDiscoundModal: () => void;
   };
-  shouldOpenClientInfo: boolean;
-  setShouldOpenClientInfo: Dispatch<SetStateAction<boolean>>;
   cupomModalState: boolean;
   setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
@@ -61,7 +59,6 @@ export function GlobalProvider({ children }) {
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
-  const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
 
   useEffect(() => {
@@ -457,8 +454,6 @@ export function GlobalProvider({ children }) {
         setStore,
         cupomModalState,
         setCupomModalState,
-        shouldOpenClientInfo,
-        setShouldOpenClientInfo,
         campaign,
         setCampaign,
       }}
