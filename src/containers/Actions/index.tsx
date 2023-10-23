@@ -24,18 +24,21 @@ import {
   CpfContent,
   CpfContetGeneral,
   ContentGeneral,
+  IdIcon,
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
 import { useStore } from "../../hooks/useStore";
 import RewardModal from "../RewardModal";
 import CupomModal from "../CupomModal";
+import ClientCPFInfo from "../../components/ClientCPFInfo";
 
 type ComponentProps = RouteComponentProps;
 
 const Actions: React.FC<ComponentProps> = ({ history }) => {
-  const { discountModalHandler } = useSale();
+  const { discountModalHandler, sale } = useSale();
   const [cupomModalState, setCupomModalState] = useState(false)
+  const [clientCpfModalState, setclientCpfModalState] = useState(false)
   const { store } = useStore();
   const [cash, setCash] = useState<string | undefined>("");
   const [commandState, setCommandState] = useState(false);
@@ -57,8 +60,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <ContentGeneral>
         <ActionButtons>
           <CpfContetGeneral>
-            <Button onClick={() => discountModalHandler.openDiscoundModal()}>
-              <OfferIcon />
+            <Button onClick={() => setclientCpfModalState(true)}>
+              <IdIcon />
               Inserir CPF [i]
             </Button>
 
@@ -115,7 +118,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         </ActionButtons>
 
         <CpfContent>
-          <span>CPF: Não informado</span>
+          <span>CPF: {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
         </CpfContent>
       </ContentGeneral>
 
@@ -123,6 +126,10 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <CupomModal
         cupomModalState={cupomModalState}
         setCupomModalState={setCupomModalState}
+      />
+      <ClientCPFInfo
+        clientCpfModalState={clientCpfModalState}
+        setclientCpfModalState={setclientCpfModalState}
       />
       <RegistrationCard
         modalState={commandState}

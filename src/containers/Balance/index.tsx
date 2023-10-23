@@ -24,7 +24,7 @@ const BalanceContainer: React.FC<IProps> = ({
   handleOpenPayment,
   openDiscoundModal,
 }) => {
-  const { onAddItem, setShouldOpenClientInfo } = useSale();
+  const { onAddItem, onRegisterSale } = useSale();
   const [selfService, setselfService] = useState<StoreProductDto | undefined>(
     undefined
   );
@@ -131,7 +131,7 @@ const BalanceContainer: React.FC<IProps> = ({
       handleEnterToSubmit();
     }
     if (lowerKey === "f1") {
-      setShouldOpenClientInfo(true);
+      onRegisterSale();
     }
     if (lowerKey === "r") {
       openDiscoundModal();
