@@ -97,16 +97,22 @@ export const Container = styled.div`
   width: 100%;
 `;
 
+export const ContentGeneral = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  width: 100%;
+`;
+
 export const ActionButtons = styled.div`
   ${BasicCSS}
   align-items: flex-start;
-  width: 80%;
+  width: 100%;
   justify-content: space-between;
 `;
 
 export const InfosAndChat = styled.div`
   ${BasicCSS}
-  width: 20%;
   align-items: flex-start;
   justify-content: flex-end;
 `;
@@ -154,6 +160,17 @@ export const ContentHeaderInfos = styled.div`
     }
   }
 `;
+
+export const CpfContetGeneral = styled.div`
+    display: flex;
+    width: 65%;
+    justify-content: space-between;
+    align-items: center;
+  `;
+
+export const CpfContent = styled.div`
+    display: flex;
+  `;
 
 export const InfoStore = styled.div`
   ${BasicCSS}

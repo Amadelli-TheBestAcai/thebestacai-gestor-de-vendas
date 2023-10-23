@@ -3,6 +3,7 @@ import { HotKeys } from "react-hotkeys";
 
 export const Container = styled(HotKeys)`
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   padding: 0.8rem;
@@ -13,6 +14,12 @@ const ContentCSS = css`
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
   padding: 1rem;
+`;
+
+export const GeneralContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const LeftSide = styled.div`
@@ -53,7 +60,7 @@ export const RightSide = styled.div`
 
 export const TopActions = styled.div`
   width: 100%;
-  height: 9%;
+  height: 12%;
 `;
 
 export const Content = styled.div`

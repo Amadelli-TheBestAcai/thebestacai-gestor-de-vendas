@@ -21,6 +21,9 @@ import {
   InfoStore,
   TrophyIcon,
   DiscountIcon,
+  CpfContent,
+  CpfContetGeneral,
+  ContentGeneral,
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
@@ -51,56 +54,64 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
   return (
     <Container>
-      <ActionButtons>
-        <Button
-          onClick={() =>
-            setCupomModalState((oldValue) => {
-              return !oldValue;
-            })
-          }
-        >
-          <DiscountIcon />
-          Cupom [C]
-        </Button>
-        <Button onClick={() => discountModalHandler.openDiscoundModal()}>
-          <OfferIcon />
-          Desconto [R]
-        </Button>
-
-        <Button onClick={() => setHandlerInState(true)}>
-          <InputIcon />
-          Entrada
-        </Button>
-
-        <Button onClick={() => setHandlerOutState(true)}>
-          <OutputIcon />
-          Saída
-        </Button>
-        <Button onClick={() => setCommandState(true)}>
-          <ListIcon />
-          Comanda
-        </Button>
-
-        <Button onClick={() => setRewardModal(true)}>
-          <TrophyIcon />
-          Recompensas
-        </Button>
-      </ActionButtons>
-
-      <InfosAndChat>
-        <ContentHeaderInfos>
-          <InfoStore>
-            {store?.company?.company_name?.toUpperCase()} <br />
-            <span
-              style={{
-                color: cash === "ABERTO" ? "green" : "red",
-              }}
+      <ContentGeneral>
+        <ActionButtons>
+          <CpfContetGeneral>
+            <Button
+              onClick={() =>
+                setCupomModalState((oldValue) => {
+                  return !oldValue;
+                })
+              }
             >
-              {cash}
-            </span>
-          </InfoStore>
-        </ContentHeaderInfos>
-      </InfosAndChat>
+              <DiscountIcon />
+              Cupom [C]
+            </Button>
+            <Button onClick={() => discountModalHandler.openDiscoundModal()}>
+              <OfferIcon />
+              Desconto [R]
+            </Button>
+
+            <Button onClick={() => setHandlerInState(true)}>
+              <InputIcon />
+              Entrada
+            </Button>
+
+            <Button onClick={() => setHandlerOutState(true)}>
+              <OutputIcon />
+              Saída
+            </Button>
+            <Button onClick={() => setCommandState(true)}>
+              <ListIcon />
+              Comanda
+            </Button>
+
+            <Button onClick={() => setRewardModal(true)}>
+              <TrophyIcon />
+              Recompensas
+            </Button>
+          </CpfContetGeneral>
+
+          <InfosAndChat>
+            <ContentHeaderInfos>
+              <InfoStore>
+                {store?.company?.company_name?.toUpperCase()} <br />
+                <span
+                  style={{
+                    color: cash === "ABERTO" ? "green" : "red",
+                  }}
+                >
+                  {cash}
+                </span>
+              </InfoStore>
+            </ContentHeaderInfos>
+          </InfosAndChat>
+        </ActionButtons>
+
+        <CpfContent>
+          cpf teste
+        </CpfContent>
+      </ContentGeneral>
 
       <DiscountForm />
       <CupomModal

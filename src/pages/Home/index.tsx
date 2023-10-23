@@ -25,6 +25,7 @@ import {
   PaymentsContainer,
   PaymentsContent,
   RegisterContent,
+  GeneralContent,
 } from "./styles";
 
 import { PaymentType } from "../../models/enums/paymentType";
@@ -205,55 +206,59 @@ const Home: React.FC = () => {
           <>
             {storeCash?.is_opened ? (
               <>
-                <LeftSide>
-                  <BalanceContainer>
-                    <Balance
-                      handleOpenPayment={handleOpenPayment}
-                      openDiscoundModal={discountModalHandler.openDiscoundModal}
-                    />
-                  </BalanceContainer>
+                <TopActions>
+                  <Actions />
+                </TopActions>
 
-                  <ItemsContainer>
-                    <Products />
-                  </ItemsContainer>
-                </LeftSide>
-
-                <RightSide>
-                  <TopActions>
-                    <Actions />
-                  </TopActions>
-                  <Content>
-                    <ItemsCardContainer>
-                      <Items />
-                    </ItemsCardContainer>
-
-                    <PaymentsContainer>
-                      <PaymentsContent>
-                        <Payments
-                          sale={sale}
-                          addPayment={addPayment}
-                          removePayment={removePayment}
-                          setCurrentPayment={setCurrentPayment}
-                          modalState={paymentModal}
-                          modalTitle={paymentModalTitle}
-                          setModalState={setPaymentModal}
-                          handleOpenPayment={handleOpenPayment}
-                          shouldViewValues={true}
-                          shouldDisableButtons={true}
-                          flagCard={flagCard}
-                          setFlagCard={setFlagCard}
-                        />
-                      </PaymentsContent>
-                      <CupomModal
-                        cupomModalState={cupomModalState}
-                        setCupomModalState={setCupomModalState}
+                <GeneralContent>
+                  <LeftSide>
+                    <BalanceContainer>
+                      <Balance
+                        handleOpenPayment={handleOpenPayment}
+                        openDiscoundModal={discountModalHandler.openDiscoundModal}
                       />
-                      <RegisterContent>
-                        <Register />
-                      </RegisterContent>
-                    </PaymentsContainer>
-                  </Content>
-                </RightSide>
+                    </BalanceContainer>
+
+                    <ItemsContainer>
+                      <Products />
+                    </ItemsContainer>
+                  </LeftSide>
+
+                  <RightSide>
+
+                    <Content>
+                      <ItemsCardContainer>
+                        <Items />
+                      </ItemsCardContainer>
+
+                      <PaymentsContainer>
+                        <PaymentsContent>
+                          <Payments
+                            sale={sale}
+                            addPayment={addPayment}
+                            removePayment={removePayment}
+                            setCurrentPayment={setCurrentPayment}
+                            modalState={paymentModal}
+                            modalTitle={paymentModalTitle}
+                            setModalState={setPaymentModal}
+                            handleOpenPayment={handleOpenPayment}
+                            shouldViewValues={true}
+                            shouldDisableButtons={true}
+                            flagCard={flagCard}
+                            setFlagCard={setFlagCard}
+                          />
+                        </PaymentsContent>
+                        <CupomModal
+                          cupomModalState={cupomModalState}
+                          setCupomModalState={setCupomModalState}
+                        />
+                        <RegisterContent>
+                          <Register />
+                        </RegisterContent>
+                      </PaymentsContainer>
+                    </Content>
+                  </RightSide>
+                </GeneralContent>
               </>
             ) : (
               <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas." />
