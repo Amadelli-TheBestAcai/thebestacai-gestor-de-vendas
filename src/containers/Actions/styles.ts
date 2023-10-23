@@ -28,6 +28,8 @@ const ButtonCSS = css`
   box-sizing: border-box;
   box-shadow: 0px 0px 6px 1px rgb(163 163 163 / 28%);
   border-radius: 10px;
+  padding: .5rem;
+  background-color: white;
 
   :hover {
     border: 1px solid var(--orange-250);
@@ -45,7 +47,7 @@ const ButtonCSS = css`
 
   /* Responsive 1600 */
   @media (max-width: 1600px) {
-    width: 7.5rem;
+    width: 8.5rem;
     height: 3.5rem;
     @media (max-height: 900px) {
       height: 3.2rem;
@@ -163,7 +165,7 @@ export const ContentHeaderInfos = styled.div`
 
 export const CpfContetGeneral = styled.div`
     display: flex;
-    width: 65%;
+    width: 75%;
     justify-content: space-between;
     align-items: center;
   `;
@@ -173,7 +175,6 @@ export const CpfContent = styled.div`
 
     span{
       font-size: 1.1rem;
-      color: var(--gray-50);
     }
   `;
 

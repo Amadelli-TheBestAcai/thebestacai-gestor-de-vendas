@@ -57,6 +57,11 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <ContentGeneral>
         <ActionButtons>
           <CpfContetGeneral>
+            <Button onClick={() => discountModalHandler.openDiscoundModal()}>
+              <OfferIcon />
+              Inserir CPF [i]
+            </Button>
+
             <Button
               onClick={() =>
                 setCupomModalState((oldValue) => {
@@ -67,6 +72,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               <DiscountIcon />
               Cupom [C]
             </Button>
+
             <Button onClick={() => discountModalHandler.openDiscoundModal()}>
               <OfferIcon />
               Desconto [R]
