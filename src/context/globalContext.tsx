@@ -141,13 +141,11 @@ export function GlobalProvider({ children }) {
     }
 
     setSale(updatedSale);
-    if (updatedSale.items.length === 1) {
-      console.log('asdafasdf')
+    if (updatedSale.items.length === 1 && !sale.client_cpf) {
       setShouldOpenClientInfo(true)
     } else {
       setShouldOpenClientInfo(false)
     }
-    console.log(updatedSale)
     document.getElementById("balanceInput")?.focus();
   };
 
