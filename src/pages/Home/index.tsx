@@ -30,17 +30,15 @@ import {
 
 import { PaymentType } from "../../models/enums/paymentType";
 import CupomModal from "../../containers/CupomModal";
-import ClientCPFInfo from "../../components/ClientCPFInfo";
 
 const Home: React.FC = () => {
-  const { sale, setSale, discountModalHandler } =
+  const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
     useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [flagCard, setFlagCard] = useState<number | null>(99);
   const [cupomModalState, setCupomModalState] = useState(false);
-  const [cpfModalState, setCpfModalState] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
@@ -193,8 +191,8 @@ const Home: React.FC = () => {
     INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
     insert_cupom: () => setCupomModalState(true),
     INSERT_CUPOM: () => setCupomModalState(true),
-    insert_cpf: () => setCpfModalState(true),
-    INSERT_CPF: () => setCpfModalState(true),
+    insert_cpf: () => setShouldOpenClientInfo(true),
+    INSERT_CPF: () => setShouldOpenClientInfo(true),
   };
 
   return (
@@ -256,10 +254,6 @@ const Home: React.FC = () => {
                         <CupomModal
                           cupomModalState={cupomModalState}
                           setCupomModalState={setCupomModalState}
-                        />
-                        <ClientCPFInfo
-                          clientCpfModalState={cpfModalState}
-                          setclientCpfModalState={setCpfModalState}
                         />
                         <RegisterContent>
                           <Register />

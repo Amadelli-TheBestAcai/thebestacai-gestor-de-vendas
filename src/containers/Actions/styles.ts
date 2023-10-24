@@ -169,9 +169,13 @@ export const CpfContent = styled.div`
     span{
       font-size: .9rem;
 
-      :last-child{
+      :nth-child(2){
         margin-left: 1rem;
       }
+    }
+
+    div {
+      display: flex;
     }
   `;
 

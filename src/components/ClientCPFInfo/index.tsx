@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import React, { useState, useEffect } from "react";
 
 import { cpf as cpfValidator } from "cpf-cnpj-validator";
 
@@ -19,24 +19,24 @@ import {
   TitleReward,
 } from "./styles";
 import { message, notification } from "antd";
+import { CampaignDto } from "../../models/dtos/campaign";
 
 interface IProps {
-  clientCpfModalState: boolean;
-  setclientCpfModalState: Dispatch<SetStateAction<boolean>>;
+  campaign?: CampaignDto;
+  getCampaignPointsPlus?: () => number;
 }
 
 const ClientInfo: React.FC<IProps> = ({
-  clientCpfModalState,
-  setclientCpfModalState
+  campaign,
+  getCampaignPointsPlus
 }) => {
   const {
     sale,
     setSale,
-    campaign,
-    setCampaign,
     isSavingSale,
   } = useSale();
   const [loading, setLoading] = useState(false);
+  const { shouldOpenClientInfo, setShouldOpenClientInfo } = useSale();
   const [info, setInfo] = useState({
     cpf: "",
     phone: "",
@@ -44,27 +44,16 @@ const ClientInfo: React.FC<IProps> = ({
   });
 
   useEffect(() => {
-    if (clientCpfModalState) {
+    if (shouldOpenClientInfo) {
       setInfo({
         cpf: sale.client_cpf || "",
         phone: sale.client_phone || "",
         email: sale.client_email || "",
       });
     }
-  }, [clientCpfModalState]);
 
-  useEffect(() => {
-    const fetchCampaign = async () => {
-      const { response } = await window.Main.sale.getCurrentCampaign();
-      if (response) {
-        setCampaign(response);
-      }
-    };
+  }, [shouldOpenClientInfo]);
 
-    if (!campaign) {
-      fetchCampaign();
-    }
-  }, [campaign]);
 
   const validateCPF = () => {
     const cpfValue = info.cpf.replace(/\D/g, "");
@@ -94,7 +83,7 @@ const ClientInfo: React.FC<IProps> = ({
     );
     setSale(updatedSale);
     setLoading(false);
-    setclientCpfModalState(false);
+    setShouldOpenClientInfo(false);
     document.getElementById("mainContainer").focus()
   };
 
@@ -136,14 +125,6 @@ const ClientInfo: React.FC<IProps> = ({
     }
   };
 
-  const getCampaignPointsPlus = () => {
-    let points = Math.floor(sale.total_sold / campaign.average_ticket);
-    points += 1;
-    points *= campaign.average_ticket;
-    points -= sale.total_sold;
-    return points;
-  };
-
   const onQuit = async () => {
     const { response: updatedSale } = await window.Main.sale.updateSale(
       sale.id,
@@ -156,13 +137,12 @@ const ClientInfo: React.FC<IProps> = ({
     );
     setSale(updatedSale);
     document.getElementById("mainContainer").focus()
-    setclientCpfModalState(false)
+    setShouldOpenClientInfo(false)
   }
-
 
   return (
     <Container
-      visible={clientCpfModalState}
+      visible={shouldOpenClientInfo}
       confirmLoading={loading}
       closable={false}
       onCancel={async () => await onQuit()}
@@ -221,7 +201,6 @@ const ClientInfo: React.FC<IProps> = ({
         />
       </InfoWrapper> */}
       <CampaignInfoWrapper>
-        {!campaign && <span>Nenhuma campanha carregada.</span>}
         {campaign && (
           <ContentReward>
             <InfoClientReward className="borderedInfoClient">

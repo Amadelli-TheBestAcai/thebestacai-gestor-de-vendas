@@ -36,6 +36,8 @@ type GlobalContextType = {
     openDiscoundModal: () => void;
     closeDiscoundModal: () => void;
   };
+  shouldOpenClientInfo: boolean;
+  setShouldOpenClientInfo: Dispatch<SetStateAction<boolean>>;
   cupomModalState: boolean;
   setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
@@ -59,6 +61,7 @@ export function GlobalProvider({ children }) {
   const [discountModalState, setDiscountModalState] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
+  const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
 
   useEffect(() => {
@@ -138,7 +141,13 @@ export function GlobalProvider({ children }) {
     }
 
     setSale(updatedSale);
-
+    if (updatedSale.items.length === 1) {
+      console.log('asdafasdf')
+      setShouldOpenClientInfo(true)
+    } else {
+      setShouldOpenClientInfo(false)
+    }
+    console.log(updatedSale)
     document.getElementById("balanceInput")?.focus();
   };
 
@@ -183,9 +192,9 @@ export function GlobalProvider({ children }) {
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-        ((currentSale.discount || 0) +
-          (currentSale.customer_nps_reward_discount || 0)) +
-        0.5
+      ((currentSale.discount || 0) +
+        (currentSale.customer_nps_reward_discount || 0)) +
+      0.5
     ) {
       return notification.warning({
         message: "Pagamento inválido!",
@@ -278,7 +287,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -299,13 +308,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
+          message: error_message,
+          duration: 5,
+        })
         : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+          message: "Erro ao finalizar venda",
+          duration: 5,
+        });
     }
 
     const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
@@ -405,10 +414,10 @@ export function GlobalProvider({ children }) {
 
   const onRemoveDiscount = async (id: string): Promise<void> => {
     const { response: updatedSale, has_internal_error: errorOnDiscount } =
-    await window.Main.sale.updateSale(id, {
-      ...sale,
-      discount: 0,
-    });
+      await window.Main.sale.updateSale(id, {
+        ...sale,
+        discount: 0,
+      });
     if (errorOnDiscount) {
       return notification.error({
         message: "Erro ao remover desconto",
@@ -454,6 +463,8 @@ export function GlobalProvider({ children }) {
         setStore,
         cupomModalState,
         setCupomModalState,
+        shouldOpenClientInfo,
+        setShouldOpenClientInfo,
         campaign,
         setCampaign,
       }}

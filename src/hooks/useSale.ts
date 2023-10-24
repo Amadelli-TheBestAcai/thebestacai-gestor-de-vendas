@@ -42,6 +42,14 @@ export function useSale() {
     GlobalContext,
     (globalContext) => globalContext.onAddItem
   );
+  const shouldOpenClientInfo = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.shouldOpenClientInfo
+  );
+  const setShouldOpenClientInfo = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.setShouldOpenClientInfo
+  );
   const onAddToQueue = useContextSelector(
     GlobalContext,
     (globalContext) => globalContext.onAddToQueue
@@ -78,6 +86,8 @@ export function useSale() {
     onAddItem,
     onAddDiscount,
     onRemoveDiscount,
+    shouldOpenClientInfo,	
+    setShouldOpenClientInfo,
     loadingSale,
     isSavingSale,
     onDecressItem,

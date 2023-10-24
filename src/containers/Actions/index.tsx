@@ -33,13 +33,13 @@ import RewardModal from "../RewardModal";
 import CupomModal from "../CupomModal";
 import ClientCPFInfo from "../../components/ClientCPFInfo";
 import { SaleDto } from "../../models/dtos/sale";
+import { monetaryFormat } from "../../helpers/monetaryFormat";
 
 type ComponentProps = RouteComponentProps;
 
 const Actions: React.FC<ComponentProps> = ({ history }) => {
-  const { discountModalHandler, sale } = useSale();
+  const { discountModalHandler, sale, campaign, setCampaign, setShouldOpenClientInfo } = useSale();
   const [cupomModalState, setCupomModalState] = useState(false)
-  const [clientCpfModalState, setclientCpfModalState] = useState(false)
   const { store } = useStore();
   const [cash, setCash] = useState<string | undefined>("");
   const [username, setUsername] = useState<SaleDto>();
@@ -58,6 +58,27 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   }, [history.location]);
 
   useEffect(() => {
+    const fetchCampaign = async () => {
+      const { response } = await window.Main.sale.getCurrentCampaign();
+      if (response) {
+        setCampaign(response);
+      }
+    };
+
+    if (!campaign) {
+      fetchCampaign();
+    }
+  }, [campaign]);
+
+  const getCampaignPointsPlus = () => {
+    let points = Math.floor(sale.total_sold / campaign.average_ticket);
+    points += 1;
+    points *= campaign.average_ticket;
+    points -= sale.total_sold;
+    return points;
+  };
+
+  useEffect(() => {
     const getCustomerName = async () => {
       const { response } =
         await window.Main.user.getCustomerByCpf(sale.client_cpf);
@@ -72,7 +93,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <ContentGeneral>
         <ActionButtons>
           <CpfContetGeneral>
-            <Button onClick={() => setclientCpfModalState(true)}>
+            <Button onClick={() => setShouldOpenClientInfo(true)}>
               <IdIcon />
               Inserir CPF [i]
             </Button>
@@ -130,9 +151,23 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         </ActionButtons>
 
         <CpfContent>
-          <span>Nome: {sale.client_cpf ? username?.name : "Não informado"}</span>
+          <span>Nome: {sale.client_cpf ? username?.name : "Não informado"}</span> {" "}
 
           <span>CPF: {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
+
+          <div>
+            {campaign && sale.client_cpf ? (
+              <div>
+                Com mais
+                <span>R$ {monetaryFormat(getCampaignPointsPlus())} </span>
+                <span>você ganha +1 ponto</span>
+                <div className="totalPoints">Pontos ganhos nessa compra: {Math.floor(
+                  sale.total_sold / campaign.average_ticket,
+                )}</div>
+
+              </div>
+            ) : null}
+          </div>
         </CpfContent>
       </ContentGeneral>
 
@@ -142,8 +177,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         setCupomModalState={setCupomModalState}
       />
       <ClientCPFInfo
-        clientCpfModalState={clientCpfModalState}
-        setclientCpfModalState={setclientCpfModalState}
+        campaign={campaign}
+        getCampaignPointsPlus={getCampaignPointsPlus}
       />
       <RegistrationCard
         modalState={commandState}
@@ -165,7 +200,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <RewardModal isVisible={rewardModal} setIsVisible={setRewardModal} />
 
       <ChatForm isVisible={openChat} setIsVisible={setOpenChat} />
-    </Container>
+    </Container >
   );
 };
 
