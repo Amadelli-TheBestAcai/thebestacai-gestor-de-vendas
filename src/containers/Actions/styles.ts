@@ -197,6 +197,7 @@ export const ContentUserInfo = styled.div`
 
   margin-right: 5rem;
 `;
+
 export const ContentPointsInfo = styled.div`
   display: flex;
 `;

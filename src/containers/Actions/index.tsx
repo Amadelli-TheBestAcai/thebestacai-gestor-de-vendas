@@ -160,15 +160,12 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
           <ContentPointsInfo>
             {campaign && sale.client_cpf ? (
-              <div>
-                Com mais
-                <span>R$ {monetaryFormat(getCampaignPointsPlus())} </span>
-                <span>você ganha +1 ponto</span>
-                <div className="totalPoints">Pontos ganhos nessa compra: {Math.floor(
+              <>
+                <span>Com mais R$ {monetaryFormat(getCampaignPointsPlus())} você ganha +1 ponto.</span>
+                <span><b>Pontos ganhos nessa compra: </b>{Math.floor(
                   sale.total_sold / campaign.average_ticket,
-                )}</div>
-
-              </div>
+                )}</span>
+              </>
             ) : <span><b>*Insira um CPF, e ganhe pontos!</b></span>}
           </ContentPointsInfo>
         </CpfContent>
