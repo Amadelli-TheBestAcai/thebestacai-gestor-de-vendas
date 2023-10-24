@@ -175,8 +175,9 @@ export const CpfContent = styled.div<ICpfBackgroundProps>`
     border-radius: 4px;
     background-color:  ${({ haveCpf }) => !haveCpf ? '#FF8D3A33' : '#00BF0A33'};
     span{
-      font-size: .9rem;
-
+      font-size: 1rem;
+      font-weight: 400;
+      color: #4D4D4D;
       :nth-child(2){
         margin-left: 1rem;
       }

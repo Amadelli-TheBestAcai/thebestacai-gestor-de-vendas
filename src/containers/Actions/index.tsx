@@ -154,8 +154,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
         <CpfContent haveCpf={sale.client_cpf}>
           <ContentUserInfo>
-            <span>Nome: {sale.client_cpf ? username?.name : "Não informado"}</span> {" "}
-            <span>CPF: {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
+            <span><b>Nome:</b> {sale.client_cpf ? username?.name : "Não informado"}</span> {" "}
+            <span><b>CPF:</b> {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
           </ContentUserInfo>
 
           <ContentPointsInfo>
@@ -169,7 +169,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
                 )}</div>
 
               </div>
-            ) : <span>*Insira um CPF, e ganhe pontos!</span>}
+            ) : <span><b>*Insira um CPF, e ganhe pontos!</b></span>}
           </ContentPointsInfo>
         </CpfContent>
       </ContentGeneral>
