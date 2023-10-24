@@ -25,6 +25,8 @@ import {
   CpfContetGeneral,
   ContentGeneral,
   IdIcon,
+  ContentPointsInfo,
+  ContentUserInfo
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
@@ -150,12 +152,13 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
           </InfosAndChat>
         </ActionButtons>
 
-        <CpfContent>
-          <span>Nome: {sale.client_cpf ? username?.name : "Não informado"}</span> {" "}
+        <CpfContent haveCpf={sale.client_cpf}>
+          <ContentUserInfo>
+            <span>Nome: {sale.client_cpf ? username?.name : "Não informado"}</span> {" "}
+            <span>CPF: {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
+          </ContentUserInfo>
 
-          <span>CPF: {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
-
-          <div>
+          <ContentPointsInfo>
             {campaign && sale.client_cpf ? (
               <div>
                 Com mais
@@ -166,8 +169,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
                 )}</div>
 
               </div>
-            ) : null}
-          </div>
+            ) : <span>*Insira um CPF, e ganhe pontos!</span>}
+          </ContentPointsInfo>
         </CpfContent>
       </ContentGeneral>
 

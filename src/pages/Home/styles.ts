@@ -61,7 +61,7 @@ export const RightSide = styled.div`
 
 export const TopActions = styled.div`
   width: 100%;
-  height: 12%;
+  height: 15%;
 `;
 
 export const Content = styled.div`

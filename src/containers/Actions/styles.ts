@@ -163,19 +163,23 @@ export const CpfContetGeneral = styled.div`
     align-items: center;
   `;
 
-export const CpfContent = styled.div`
+interface ICpfBackgroundProps {
+  haveCpf: string;
+}
+
+export const CpfContent = styled.div<ICpfBackgroundProps>`
     display: flex;
-    margin-top: .5rem;
+    align-items: center;
+    padding: 1rem;
+    margin-top: .4rem;
+    border-radius: 4px;
+    background-color:  ${({ haveCpf }) => !haveCpf ? '#FF8D3A33' : '#00BF0A33'};
     span{
       font-size: .9rem;
 
       :nth-child(2){
         margin-left: 1rem;
       }
-    }
-
-    div {
-      display: flex;
     }
   `;
 
@@ -185,6 +189,15 @@ export const InfoStore = styled.div`
   width: 100%;
   justify-content: center;
   border-right: 1px solid var(--gray-25);
+`;
+
+export const ContentUserInfo = styled.div`
+  display: flex;
+
+  margin-right: 5rem;
+`;
+export const ContentPointsInfo = styled.div`
+  display: flex;
 `;
 
 export const Button = styled.button`
