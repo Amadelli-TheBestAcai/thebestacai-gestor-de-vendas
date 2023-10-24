@@ -25,6 +25,10 @@ import {
   CancelButton,
   SparklesIcon,
   ContentBoxes,
+  ContainerOrder,
+  OrderAdress,
+  TypeDelivery,
+  DeliveryIcon,
 } from "./styles";
 import { calculateTimeAgo } from "../../helpers/orderTime";
 import { Col, Modal, notification } from "antd";
@@ -153,24 +157,53 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
 
           <OrderBoxItems>
             <span>Status do pedido</span>
-            <p>{orderStatus[order.fullCode.toLowerCase()]}</p>
+            <p>{orderStatus[order?.fullCode?.toLowerCase()]}</p>
             <span>{timeAgo}</span>
           </OrderBoxItems>
+          <OrderAdress>
+            <TypeDelivery delivery={order.delivery.deliveredBy}>
+              <DeliveryIcon />
+              <span>
+                {" "}
+                {order.delivery.deliveredBy === "IFOOD"
+                  ? "Entrega Parceira"
+                  : "Entrega Própia"}
+              </span>
+            </TypeDelivery>
+            <span>
+              {order.delivery.deliveryAddress.streetName},
+              {order.delivery.deliveryAddress.streetNumber} -{" "}
+              {order.delivery.deliveryAddress.neighborhood} -{" "}
+              {order.delivery.deliveryAddress.city} •{" "}
+              {order.delivery.deliveryAddress.postalCode}
+            </span>
+          </OrderAdress>
           <OrderDetailsBox>
             <h3>Itens no pedido</h3>
-            {order.items.map((item) => (
+            {order?.items?.map((item) => (
               <>
-                <ContentInsideOrderDetailsBox key={item.id}>
-                  <span>
-                    {item.quantity}x {item.name}
+                <ContentInsideOrderDetailsBox key={item?.id}>
+                  <ContainerOrder>
+                    <span>
+                      {item?.quantity}x {item?.name}
+                    </span>
+                    <ol className="options">
+                      {item?.options?.map((opt) => (
+                        <li>
+                          {opt?.quantity}x {opt?.name}
+                        </li>
+                      ))}
+                    </ol>
+                  </ContainerOrder>
+                  <span className="price">
+                    R$ {item?.totalPrice?.toFixed(2)}
                   </span>
-                  <span className="price">R$ {item.totalPrice.toFixed(2)}</span>
                 </ContentInsideOrderDetailsBox>
                 <>
-                  {item.observations && (
+                  {item?.observations && (
                     <>
                       <span>Observação:</span>
-                      <span>{item.observations}</span>
+                      <span>{item?.observations}</span>
                     </>
                   )}
                 </>
@@ -180,14 +213,14 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
             <ContentInsideOrderDetailsBox>
               <span className="tax">Taxa de entrega</span>
               <span className="price">
-                R$ {order.total.deliveryFee.toFixed(2)}
+                R$ {order?.total?.deliveryFee?.toFixed(2)}
               </span>
             </ContentInsideOrderDetailsBox>
             <hr />
             <ContentInsideOrderDetailsBox>
               <span className="tax">Subtotal</span>
               <span className="price">
-                R$ {order.total.orderAmount.toFixed(2)}
+                R$ {order?.total?.orderAmount?.toFixed(2)}
               </span>
             </ContentInsideOrderDetailsBox>
           </OrderDetailsBox>
@@ -199,7 +232,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                     <span>
                       <Checked /> Pago via iFood, não precisa cobrar na entrega
                     </span>
-                    <span>
+                    <span className="deliveryDetails">
                       <MoneyIcon />
                       Dados do pagamento - {method.card.brand} - {method.type}
                     </span>
@@ -207,10 +240,34 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 ) : (
                   <span>Cobrar pedido na entrega</span>
                 )}
-                {order.customer.documentNumber ? (
-                  <span>Incluir CPF na nota fiscal</span>
+                {method.cash?.changeFor ? (
+                  <>
+                    <br />
+                    <span className="deliveryDetails">
+                      Valor a receber em dinheiro: R${" "}
+                      {method.cash.changeFor.toFixed(2)}
+                    </span>
+                    <br />
+
+                    <span className="deliveryDetails">
+                      Valor para levar de troco: R${" "}
+                      {(
+                        method.cash.changeFor - order.total.orderAmount
+                      ).toFixed(2)}
+                    </span>
+                    <br />
+                  </>
                 ) : (
-                  <span>Usuário sem CPF vinculado</span>
+                  <></>
+                )}
+                {order.customer.documentNumber ? (
+                  <span className="deliveryDetails">
+                    Incluir CPF na nota fiscal {order.customer.documentNumber}
+                  </span>
+                ) : (
+                  <span className="deliveryDetails">
+                    Usuário sem CPF vinculado
+                  </span>
                 )}
               </div>
             ))}

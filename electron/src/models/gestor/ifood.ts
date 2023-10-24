@@ -94,6 +94,9 @@ interface OrderPaymentMethodDto {
   currency: string;
   method: string;
   type: string;
+  cash: {
+    changeFor: number;
+  };
   card: {
     brand: string;
   };
