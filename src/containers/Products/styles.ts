@@ -111,27 +111,8 @@ export const ProductsContent = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 64vh;
+  height: 100%;
   overflow-y: scroll;
-
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    height: 63vh;
-
-    @media (max-height: 900px) {
-      height: 60vh;
-    }
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    height: 55vh;
-  }
-
-  /*Responsive 1280px*/
-  @media (max-width: 1280px) {
-    height: 53vh;
-  }
 `;
 
 export const LoadingContainer = styled.div`

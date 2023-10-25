@@ -25,13 +25,14 @@ import {
   PaymentsContainer,
   PaymentsContent,
   RegisterContent,
+  GeneralContent,
 } from "./styles";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import CupomModal from "../../containers/CupomModal";
 
 const Home: React.FC = () => {
-  const { sale, setSale, setShouldOpenClientInfo, discountModalHandler } =
+  const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
     useSale();
   const [loading, setLoading] = useState(true);
   const [currentPayment, setCurrentPayment] = useState(0);
@@ -167,6 +168,8 @@ const Home: React.FC = () => {
     INSERT_DISCOUNT: "R",
     insert_cupom: "c",
     INSERT_CUPOM: "C",
+    insert_cpf: "i",
+    INSERT_CPF: "I",
   };
 
   const handlers = {
@@ -182,13 +185,14 @@ const Home: React.FC = () => {
     TICKET: () => handleOpenPayment(PaymentType.TICKET, "Ticket"),
     pix: () => handleOpenPayment(PaymentType.PIX, "PIX"),
     PIX: () => handleOpenPayment(PaymentType.PIX, "PIX"),
-    REGISTER: () => setShouldOpenClientInfo(true),
     focus_balance: () => sendFocusToBalance(),
     FOCUS_BALANCE: () => sendFocusToBalance(),
     insert_discount: () => discountModalHandler.openDiscoundModal(),
     INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
     insert_cupom: () => setCupomModalState(true),
     INSERT_CUPOM: () => setCupomModalState(true),
+    insert_cpf: () => setShouldOpenClientInfo(true),
+    INSERT_CPF: () => setShouldOpenClientInfo(true),
   };
 
   return (
@@ -205,55 +209,59 @@ const Home: React.FC = () => {
           <>
             {storeCash?.is_opened ? (
               <>
-                <LeftSide>
-                  <BalanceContainer>
-                    <Balance
-                      handleOpenPayment={handleOpenPayment}
-                      openDiscoundModal={discountModalHandler.openDiscoundModal}
-                    />
-                  </BalanceContainer>
+                <TopActions>
+                  <Actions />
+                </TopActions>
 
-                  <ItemsContainer>
-                    <Products />
-                  </ItemsContainer>
-                </LeftSide>
-
-                <RightSide>
-                  <TopActions>
-                    <Actions />
-                  </TopActions>
-                  <Content>
-                    <ItemsCardContainer>
-                      <Items />
-                    </ItemsCardContainer>
-
-                    <PaymentsContainer>
-                      <PaymentsContent>
-                        <Payments
-                          sale={sale}
-                          addPayment={addPayment}
-                          removePayment={removePayment}
-                          setCurrentPayment={setCurrentPayment}
-                          modalState={paymentModal}
-                          modalTitle={paymentModalTitle}
-                          setModalState={setPaymentModal}
-                          handleOpenPayment={handleOpenPayment}
-                          shouldViewValues={true}
-                          shouldDisableButtons={true}
-                          flagCard={flagCard}
-                          setFlagCard={setFlagCard}
-                        />
-                      </PaymentsContent>
-                      <CupomModal
-                        cupomModalState={cupomModalState}
-                        setCupomModalState={setCupomModalState}
+                <GeneralContent>
+                  <LeftSide>
+                    <BalanceContainer>
+                      <Balance
+                        handleOpenPayment={handleOpenPayment}
+                        openDiscoundModal={discountModalHandler.openDiscoundModal}
                       />
-                      <RegisterContent>
-                        <Register />
-                      </RegisterContent>
-                    </PaymentsContainer>
-                  </Content>
-                </RightSide>
+                    </BalanceContainer>
+
+                    <ItemsContainer>
+                      <Products />
+                    </ItemsContainer>
+                  </LeftSide>
+
+                  <RightSide>
+
+                    <Content>
+                      <ItemsCardContainer>
+                        <Items />
+                      </ItemsCardContainer>
+
+                      <PaymentsContainer>
+                        <PaymentsContent>
+                          <Payments
+                            sale={sale}
+                            addPayment={addPayment}
+                            removePayment={removePayment}
+                            setCurrentPayment={setCurrentPayment}
+                            modalState={paymentModal}
+                            modalTitle={paymentModalTitle}
+                            setModalState={setPaymentModal}
+                            handleOpenPayment={handleOpenPayment}
+                            shouldViewValues={true}
+                            shouldDisableButtons={true}
+                            flagCard={flagCard}
+                            setFlagCard={setFlagCard}
+                          />
+                        </PaymentsContent>
+                        <CupomModal
+                          cupomModalState={cupomModalState}
+                          setCupomModalState={setCupomModalState}
+                        />
+                        <RegisterContent>
+                          <Register />
+                        </RegisterContent>
+                      </PaymentsContainer>
+                    </Content>
+                  </RightSide>
+                </GeneralContent>
               </>
             ) : (
               <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas." />
