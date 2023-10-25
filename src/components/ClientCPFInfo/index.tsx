@@ -19,21 +19,24 @@ import {
   TitleReward,
 } from "./styles";
 import { message, notification } from "antd";
+import { CampaignDto } from "../../models/dtos/campaign";
 
-interface IProps { }
+interface IProps {
+  campaign?: CampaignDto;
+  getCampaignPointsPlus?: () => number;
+}
 
-const ClientInfo: React.FC<IProps> = () => {
+const ClientInfo: React.FC<IProps> = ({
+  campaign,
+  getCampaignPointsPlus
+}) => {
   const {
     sale,
     setSale,
-    shouldOpenClientInfo,
-    setShouldOpenClientInfo,
-    onRegisterSale,
-    campaign,
-    setCampaign,
     isSavingSale,
   } = useSale();
   const [loading, setLoading] = useState(false);
+  const { shouldOpenClientInfo, setShouldOpenClientInfo } = useSale();
   const [info, setInfo] = useState({
     cpf: "",
     phone: "",
@@ -48,20 +51,9 @@ const ClientInfo: React.FC<IProps> = () => {
         email: sale.client_email || "",
       });
     }
+
   }, [shouldOpenClientInfo]);
 
-  useEffect(() => {
-    const fetchCampaign = async () => {
-      const { response } = await window.Main.sale.getCurrentCampaign();
-      if (response) {
-        setCampaign(response);
-      }
-    };
-
-    if (!campaign) {
-      fetchCampaign();
-    }
-  }, [campaign]);
 
   const validateCPF = () => {
     const cpfValue = info.cpf.replace(/\D/g, "");
@@ -90,9 +82,9 @@ const ClientInfo: React.FC<IProps> = () => {
       }
     );
     setSale(updatedSale);
-    await onRegisterSale();
     setLoading(false);
     setShouldOpenClientInfo(false);
+    document.getElementById("mainContainer").focus()
   };
 
   const onPressEnter = async (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -133,27 +125,32 @@ const ClientInfo: React.FC<IProps> = () => {
     }
   };
 
-  const getCampaignPointsPlus = () => {
-    let points = Math.floor(sale.total_sold / campaign.average_ticket);
-    points += 1;
-    points *= campaign.average_ticket;
-    points -= sale.total_sold;
-    return points;
-  };
+  const onQuit = async () => {
+    const { response: updatedSale } = await window.Main.sale.updateSale(
+      sale.id,
+      {
+        ...sale,
+        client_cpf: null,
+        client_phone: null,
+        client_email: null,
+      }
+    );
+    setSale(updatedSale);
+    document.getElementById("mainContainer").focus()
+    setShouldOpenClientInfo(false)
+  }
 
   return (
     <Container
       visible={shouldOpenClientInfo}
       confirmLoading={loading}
       closable={false}
-      onCancel={() => setShouldOpenClientInfo(false)}
+      onCancel={async () => await onQuit()}
       destroyOnClose
       footer={
         <Footer>
           <ButtonCancel
-            onClick={() => {
-              setShouldOpenClientInfo(false);
-            }}
+            onClick={async () => await onQuit()}
           >
             Cancelar
           </ButtonCancel>
@@ -204,7 +201,6 @@ const ClientInfo: React.FC<IProps> = () => {
         />
       </InfoWrapper> */}
       <CampaignInfoWrapper>
-        {!campaign && <span>Nenhuma campanha carregada.</span>}
         {campaign && (
           <ContentReward>
             <InfoClientReward className="borderedInfoClient">

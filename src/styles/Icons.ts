@@ -20,6 +20,7 @@ export {
   Offer,
   CheckboxChecked,
   BookmarkMinus,
+  IdCard
 } from "@styled-icons/boxicons-solid";
 export {
   LogInCircle,
