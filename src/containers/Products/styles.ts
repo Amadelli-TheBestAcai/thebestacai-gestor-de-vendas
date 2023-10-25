@@ -112,7 +112,6 @@ export const ProductsContent = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
 `;
 
 export const LoadingContainer = styled.div`

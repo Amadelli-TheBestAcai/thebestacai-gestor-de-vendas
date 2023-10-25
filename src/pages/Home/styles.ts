@@ -20,7 +20,7 @@ export const GeneralContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 85%;
 `;
 
 export const LeftSide = styled.div`
@@ -45,7 +45,9 @@ export const BalanceContainer = styled.div`
 export const ItemsContainer = styled.div`
   display: flex;
   width: 100%;
-  height: 85%;
+  max-height: 85%;
+  overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 export const RightSide = styled.div`
