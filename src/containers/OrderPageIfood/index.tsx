@@ -275,7 +275,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
           <ContentAcceptORDeniedOrder>
             <>
               <div className="btn-content">
-                {!["cancelled", "concluded"].some(
+                {!["cancelled", "concluded", "dispatched"].some(
                   (status) => status === order.fullCode.toLowerCase()
                 ) && (
                   <CancelButton onClick={() => setModalState(true)}>
