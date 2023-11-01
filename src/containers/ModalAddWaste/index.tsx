@@ -85,14 +85,14 @@ const ModalAddWaste: React.FC<IProps> = ({
     try {
       const file = await getBase64(image);
       const payload = {
+        product_store_id: selectedProduct.id,
         cash_history_id: cashHistoryId.history_id,
-        file,
-        quantity: quantity,
-        store_id: store.company_id,
         unity: value,
-        product_id: selectedProduct.id,
-        reason: reasonOption,
+        store_id: store.company_id,
+        quantity: quantity,
         price_sell: price,
+        reason: reasonOption,
+        file,
       };
 
       await window.Main.productWaste.addWaste(payload);
