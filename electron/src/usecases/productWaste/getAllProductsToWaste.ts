@@ -12,7 +12,7 @@ class GetAllProductsToWaste implements IUseCaseFactory {
     private productToWasteRepository = new BaseRepository<any>(
       StorageNames.Products_To_Waste
     )
-  ) {}
+  ) { }
 
   async execute(): Promise<ProductDto[]> {
     const hasInternet = await checkInternet();
@@ -28,12 +28,15 @@ class GetAllProductsToWaste implements IUseCaseFactory {
         data: { data },
       } = await odinApi.get("/product_categories/products/storable");
 
-      let response = [...content.map((storeProduct) => storeProduct.product)];
+      let response = content.map((storeProduct) => ({
+        ...storeProduct.product,
+        product_store_id: content.find(item => item.product_id === storeProduct.product.id).id
+      }));
 
       data.map((category) => {
         const { products, ...categoryProps } = category;
 
-        response.push(
+        content.push(
           ...products.map((_product) => ({
             ..._product,
             category: categoryProps,
