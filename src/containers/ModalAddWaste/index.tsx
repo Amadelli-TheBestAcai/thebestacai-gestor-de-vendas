@@ -49,7 +49,7 @@ const ModalAddWaste: React.FC<IProps> = ({
 }) => {
   const [image, setImage] = useState(null);
   const [value, setValue] = useState(
-     Options.Quilograma
+    Options.Quilograma
   );
   const [reasonOption, setReasonOption] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
@@ -162,12 +162,14 @@ const ModalAddWaste: React.FC<IProps> = ({
                 onChange={(e) => setValue(e.target.value)}
                 value={value}
                 style={{ alignItems: "center" }}
+                defaultValue={Options.Quilograma}
               >
                 <Radio value={Options.Quilograma} checked>
                   Quilograma
                 </Radio>
                 <Radio
                   value={Options.Unidade}
+                  disabled={selectedProduct?.category_id === 10}
                 >
                   Unidade
                 </Radio>
@@ -186,8 +188,8 @@ const ModalAddWaste: React.FC<IProps> = ({
                     value > 0
                       ? Promise.resolve()
                       : Promise.reject(
-                          new Error("A quantidade não pode ser negativa")
-                        ),
+                        new Error("A quantidade não pode ser negativa")
+                      ),
                 },
               ]}
             >
