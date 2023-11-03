@@ -22,7 +22,6 @@ interface IProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedProduct: ProductDto | null;
-  selectedProductIsFruit: boolean;
   setSelectedProduct: Dispatch<SetStateAction<ProductDto | null>>;
 }
 
@@ -47,11 +46,10 @@ const ModalAddWaste: React.FC<IProps> = ({
   setLoading,
   selectedProduct,
   setSelectedProduct,
-  selectedProductIsFruit,
 }) => {
   const [image, setImage] = useState(null);
   const [value, setValue] = useState(
-    selectedProductIsFruit ? Options.Quilograma : Options.Unidade
+     Options.Quilograma
   );
   const [reasonOption, setReasonOption] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
@@ -85,14 +83,14 @@ const ModalAddWaste: React.FC<IProps> = ({
     try {
       const file = await getBase64(image);
       const payload = {
-        product_store_id: selectedProduct.id,
         cash_history_id: cashHistoryId.history_id,
-        unity: value,
-        store_id: store.company_id,
-        quantity: quantity,
-        price_sell: price,
-        reason: reasonOption,
         file,
+        quantity: quantity,
+        store_id: store.company_id,
+        unity: value,
+        product_store_id: selectedProduct.product_store_id,
+        reason: reasonOption,
+        price_sell: price,
       };
 
       await window.Main.productWaste.addWaste(payload);
@@ -170,7 +168,6 @@ const ModalAddWaste: React.FC<IProps> = ({
                 </Radio>
                 <Radio
                   value={Options.Unidade}
-                  disabled={selectedProductIsFruit}
                 >
                   Unidade
                 </Radio>
