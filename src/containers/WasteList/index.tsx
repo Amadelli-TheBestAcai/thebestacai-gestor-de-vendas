@@ -62,8 +62,8 @@ const WasteList: React.FC<IProps> = ({ products, setLoading, loading }) => {
               <ContentGeneral>
                 {findProduct(productSearch).map((product) => {
                   return (
-                    <Tupla key={product.id}>
-                      <Col sm={4}>{product.id}</Col>
+                    <Tupla key={product.product_store_id}>
+                      <Col sm={4}>{product.product_store_id}</Col>
                       <Col sm={6}>{product.category.name}</Col>
                       <Col sm={10}>{product.name}</Col>
                       <Col sm={4}>
