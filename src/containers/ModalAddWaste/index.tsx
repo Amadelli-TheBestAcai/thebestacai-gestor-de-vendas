@@ -48,9 +48,7 @@ const ModalAddWaste: React.FC<IProps> = ({
   setSelectedProduct,
 }) => {
   const [image, setImage] = useState(null);
-  const [value, setValue] = useState(
-    Options.Quilograma
-  );
+  const [value, setValue] = useState(Options.Quilograma);
   const [reasonOption, setReasonOption] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [unitSuffix, setUnitSuffix] = useState("kg");
