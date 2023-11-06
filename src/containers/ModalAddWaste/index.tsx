@@ -160,7 +160,6 @@ const ModalAddWaste: React.FC<IProps> = ({
                 onChange={(e) => setValue(e.target.value)}
                 value={value}
                 style={{ alignItems: "center" }}
-                defaultValue={Options.Quilograma}
               >
                 <Radio value={Options.Quilograma} checked>
                   Quilograma
