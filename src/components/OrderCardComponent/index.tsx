@@ -69,11 +69,13 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                 {fullCode === "CANCELLED" && <CancelIcon />}
               </Tooltip>
 
-              <Tooltip title="Imprimir pedido">
-                <PrintIcon onClick={(id) => onPrintCard(id)}>
-                  Imprimir
-                </PrintIcon>
-              </Tooltip>
+              {order.orderTiming !== "SCHEDULED" && (
+                <Tooltip title="Imprimir pedido">
+                  <PrintIcon onClick={(id) => onPrintCard(id)}>
+                    Imprimir
+                  </PrintIcon>
+                </Tooltip>
+              )}
               {["CONCLUDED", "CANCELLED"].some(
                 (status) => status === fullCode
               ) &&
