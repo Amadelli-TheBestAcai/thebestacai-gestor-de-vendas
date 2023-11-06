@@ -50,9 +50,7 @@ const ModalAddWaste: React.FC<IProps> = ({
   selectedProductIsFruit,
 }) => {
   const [image, setImage] = useState(null);
-  const [value, setValue] = useState(
-    selectedProductIsFruit ? Options.Quilograma : Options.Unidade
-  );
+  const [value, setValue] = useState(Options.Quilograma);
   const [reasonOption, setReasonOption] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [unitSuffix, setUnitSuffix] = useState("kg");
@@ -189,8 +187,8 @@ const ModalAddWaste: React.FC<IProps> = ({
                     value > 0
                       ? Promise.resolve()
                       : Promise.reject(
-                          new Error("A quantidade não pode ser negativa")
-                        ),
+                        new Error("A quantidade não pode ser negativa")
+                      ),
                 },
               ]}
             >
