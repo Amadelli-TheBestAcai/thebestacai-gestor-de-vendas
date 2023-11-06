@@ -2,6 +2,7 @@ export interface ProductDto {
   id: number;
   name: string;
   category_id: number;
+  product_store_id?: number;
   category: {
     id: number;
     name: string;
