@@ -132,6 +132,10 @@ export const Select = styled(SelectAnt)`
     display: flex;
     align-items: end;
   }
+
+  .ant-select-selection-item {
+    display: flex;
+  }
 `;
 
 export const Button = styled(ButtonAnt)`

@@ -85,8 +85,7 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
 
   const getAction = {
     placed: "confirm",
-    confirmed: "readyToPickup",
-    ready_to_pickup: "dispatch",
+    confirmed: "dispatch",
   };
 
   const handleChangeOrderStatus = async () => {
@@ -284,19 +283,16 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 )}
                 {["placed", "confirmed", "ready_to_pickup"].some(
                   (status) => status === order.fullCode.toLowerCase()
-                ) && (
-                  <Button
-                    id="change-order-status-btn"
-                    onClick={handleChangeOrderStatus}
-                    loading={changingStatus}
-                  >
-                    {order.fullCode === "PLACED"
-                      ? "Confirmar"
-                      : order.fullCode === "READY_TO_PICKUP"
-                      ? "Despachar"
-                      : "Pronto para retirada"}
-                  </Button>
-                )}
+                ) &&
+                  order.orderTiming !== "SCHEDULED" && (
+                    <Button
+                      id="change-order-status-btn"
+                      onClick={handleChangeOrderStatus}
+                      loading={changingStatus}
+                    >
+                      {order.fullCode === "PLACED" ? "Confirmar" : "Despachar"}
+                    </Button>
+                  )}
               </div>
             </>
           </ContentAcceptORDeniedOrder>

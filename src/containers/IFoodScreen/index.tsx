@@ -58,10 +58,12 @@ import {
 const screenTypes = [
   {
     id: 1,
+    type: "scheduled",
     value: "agora",
   },
   {
     id: 2,
+    type: "immediate",
     value: "agendado",
   },
 ];
@@ -206,7 +208,15 @@ const IFoodScreen: React.FC = () => {
                         >
                           {screenTypes.map((item) => (
                             <Option key={item.id} value={item.value}>
-                              {item.value}
+                              {`
+                              ${
+                                ifood?.orders.filter(
+                                  (order) =>
+                                    order.orderTiming.toUpperCase() !==
+                                    item.type.toUpperCase()
+                                ).length
+                              }
+                               pedidos em ${item.value}`}
                             </Option>
                           ))}
                         </Select>
@@ -251,6 +261,9 @@ const IFoodScreen: React.FC = () => {
                           </ContentButton>
                           <ContentCards>
                             {ifood.orders
+                              .filter(
+                                (order) => order.orderTiming !== "SCHEDULED"
+                              )
                               .filter(
                                 (order) =>
                                   selectedStatuses.length === 0 ||
@@ -298,7 +311,6 @@ const IFoodScreen: React.FC = () => {
                                 </React.Fragment>
                               ))}
                           </ContentCards>
-
                           <Footer>
                             <div className="content-footer">
                               <div className="items">
@@ -362,8 +374,58 @@ const IFoodScreen: React.FC = () => {
                         </ContentSideMenu>
                       ) : (
                         <ContentInsideMenu>
-                          <p>aqui vai ficar um card</p>
-                          <ButtonPause>Pausar agendamento</ButtonPause>
+                          <ContentCards>
+                            {ifood.orders
+                              .filter(
+                                (order) => order.orderTiming === "SCHEDULED"
+                              )
+                              .filter(
+                                (order) =>
+                                  selectedStatuses.length === 0 ||
+                                  selectedStatuses.includes(
+                                    order?.fullCode?.toLowerCase()
+                                  )
+                              )
+                              .sort((a, b) =>
+                                b?.createdAt?.localeCompare(a.createdAt)
+                              )
+                              .map((order) => (
+                                <React.Fragment key={order.id}>
+                                  <HeaderCard>
+                                    {
+                                      orderStatus[
+                                        order?.fullCode?.toLowerCase()
+                                      ]
+                                    }
+                                    <span onClick={() => console.log(order)}>
+                                      {order.orderTiming !== "SCHEDULED" &&
+                                        moment(new Date()).diff(
+                                          order.preparationStartDateTime,
+                                          "minutes"
+                                        ) + "min."}
+                                    </span>
+                                  </HeaderCard>
+                                  <CardComponent
+                                    selectedOrder={selectedOrder}
+                                    order={order}
+                                    delivery={order.orderType}
+                                    fullCode={order.fullCode}
+                                    orderOn={order.salesChannel}
+                                    changingOrderStatus={changingOrderStatus}
+                                    onClick={() => {
+                                      if (!changingOrderStatus)
+                                        setSelectedOrder(order);
+                                    }}
+                                    onPrintCard={() =>
+                                      handlePrintOrder(order.id)
+                                    }
+                                    onIntegrateCard={() =>
+                                      integrateOrder(order.id)
+                                    }
+                                  />
+                                </React.Fragment>
+                              ))}
+                          </ContentCards>
                         </ContentInsideMenu>
                       )}
                     </>
