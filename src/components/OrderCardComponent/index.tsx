@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React from "react";
+import moment from 'moment'
 import {
   Container,
   DeliveryBox,
@@ -69,7 +70,10 @@ const OrderCard: React.FC<IOrderCardProps> = ({
                 {fullCode === "CANCELLED" && <CancelIcon />}
               </Tooltip>
 
-              {order.orderTiming !== "SCHEDULED" && (
+              {moment(new Date()).diff(
+                order.preparationStartDateTime,
+                "minutes"
+              ) >= 0 && (
                 <Tooltip title="Imprimir pedido">
                   <PrintIcon onClick={(id) => onPrintCard(id)}>
                     Imprimir

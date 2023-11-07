@@ -299,7 +299,10 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 {["placed", "confirmed", "ready_to_pickup"].some(
                   (status) => status === order.fullCode.toLowerCase()
                 ) &&
-                  order.orderTiming !== "SCHEDULED" && (
+                moment(new Date()).diff(
+                  order.preparationStartDateTime,
+                  "minutes"
+                ) >= 0 && (
                     <Button
                       id="change-order-status-btn"
                       onClick={handleChangeOrderStatus}
