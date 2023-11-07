@@ -29,9 +29,10 @@ import {
   OrderAdress,
   TypeDelivery,
   DeliveryIcon,
+  InfoTaxIcon,
 } from "./styles";
 import { calculateTimeAgo } from "../../helpers/orderTime";
-import { Col, Modal, notification } from "antd";
+import { Col, Modal, Tooltip, notification } from "antd";
 import { orderStatus } from "../../models/dtos/ifood/orderStatus";
 
 import { OrderDto } from "../../models/dtos/ifood";
@@ -215,6 +216,20 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 R$ {order?.total?.deliveryFee?.toFixed(2)}
               </span>
             </ContentInsideOrderDetailsBox>
+            <hr />
+            {order?.total?.additionalFees !== 0 ? (
+              <ContentInsideOrderDetailsBox>
+                <span className="tax">
+                  Taxa de serviço{" "}
+                  <Tooltip title="Taxa de serviço cobrada quando o valor do pedido é inferior ao pedido mínimo.">
+                    <InfoTaxIcon></InfoTaxIcon>
+                  </Tooltip>
+                </span>
+                <span className="price">R$ {order?.total?.additionalFees}</span>
+              </ContentInsideOrderDetailsBox>
+            ) : (
+              <></>
+            )}
             <hr />
             <ContentInsideOrderDetailsBox>
               <span className="tax">Subtotal</span>

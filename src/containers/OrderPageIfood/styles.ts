@@ -13,6 +13,7 @@ import {
   PinMap,
   CheckCircleFill,
   Money,
+  InfoCircle,
 } from "../../styles/Icons";
 import { OrderDto } from "../../models/dtos/ifood";
 
@@ -265,6 +266,9 @@ export const PinMapIcon = styled(PinMap)`
   ${Icon}
 `;
 export const Checked = styled(CheckCircleFill)`
+  ${Icon}
+`;
+export const InfoTaxIcon = styled(InfoCircle)`
   ${Icon}
 `;
 export const MoneyIcon = styled(Money)`

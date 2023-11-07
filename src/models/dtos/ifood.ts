@@ -133,6 +133,16 @@ export interface OrderAdditionalInfoDto {
   };
 }
 
+export interface OrderAdditionalFees {
+  type: string;
+  value: number;
+  description: string;
+  fullDescription: string;
+  liabilities: {
+    name: string;
+    percentage: number;
+  };
+}
 export interface OrderDto {
   id: string;
   fullCode: string;
@@ -151,4 +161,5 @@ export interface OrderDto {
   total: TotalOrderDto;
   payments: OrderPaymentDto;
   additionalInfo: OrderAdditionalInfoDto;
+  additionalFees?: OrderAdditionalFees;
 }
