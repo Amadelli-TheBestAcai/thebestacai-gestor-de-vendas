@@ -262,7 +262,11 @@ const IFoodScreen: React.FC = () => {
                           <ContentCards>
                             {ifood.orders
                               .filter(
-                                (order) => order.orderTiming !== "SCHEDULED"
+                                (order) => 
+                                moment(new Date()).diff(
+                                  order.preparationStartDateTime,
+                                  "minutes"
+                                ) >= 0
                               )
                               .filter(
                                 (order) =>
@@ -377,7 +381,11 @@ const IFoodScreen: React.FC = () => {
                           <ContentCards>
                             {ifood.orders
                               .filter(
-                                (order) => order.orderTiming === "SCHEDULED"
+                                (order) => 
+                                moment(new Date()).diff(
+                                  order.preparationStartDateTime,
+                                  "minutes"
+                                ) < 0
                               )
                               .filter(
                                 (order) =>
