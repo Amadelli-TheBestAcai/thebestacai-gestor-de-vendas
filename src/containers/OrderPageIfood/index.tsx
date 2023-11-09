@@ -266,8 +266,8 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                       : "Cupom Ifood"}
                   </span>
                 </div>
-                <span className="price">
-                  R$ - {order?.total?.benefits.toFixed(2)}
+                <span className="cupomPrice">
+                  -R$ {order?.total?.benefits.toFixed(2)}
                 </span>
               </ContentInsideOrderDetailsBox>
             ) : (

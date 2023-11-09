@@ -211,6 +211,12 @@ export const ContentInsideOrderDetailsBox = styled.div`
   .tax {
     text-transform: capitalize;
   }
+
+  .cupomPrice {
+    font-size: 1rem;
+    color: var(--red-600);
+    font-weight: 400;
+  }
   .cupomTax {
     border-left: 1px solid;
     padding-left: 10px;
