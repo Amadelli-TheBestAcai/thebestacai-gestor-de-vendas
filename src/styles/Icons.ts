@@ -25,6 +25,7 @@ export {
   LogOutCircle,
   LogOut,
   Registered,
+  Store,
 } from "@styled-icons/boxicons-regular";
 export { Money } from "@styled-icons/fluentui-system-regular";
 export { DocumentBulletList } from "@styled-icons/fluentui-system-filled/DocumentBulletList";

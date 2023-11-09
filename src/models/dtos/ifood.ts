@@ -143,6 +143,21 @@ export interface OrderAdditionalFees {
     percentage: number;
   };
 }
+
+export interface OrderBenefits {
+  value: number;
+  sponsorshipValues: {
+    name: string;
+    value: number;
+    description: string;
+  }[];
+  target: string;
+  campaign: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface OrderDto {
   id: string;
   fullCode: string;
@@ -162,4 +177,5 @@ export interface OrderDto {
   payments: OrderPaymentDto;
   additionalInfo: OrderAdditionalInfoDto;
   additionalFees?: OrderAdditionalFees;
+  benefits?: OrderBenefits;
 }

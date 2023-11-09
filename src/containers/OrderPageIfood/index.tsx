@@ -30,6 +30,7 @@ import {
   TypeDelivery,
   DeliveryIcon,
   InfoTaxIcon,
+  StoreIcon,
 } from "./styles";
 import { calculateTimeAgo } from "../../helpers/orderTime";
 import { Col, Modal, Tooltip, notification } from "antd";
@@ -237,6 +238,41 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 R$ {order?.total?.orderAmount?.toFixed(2)}
               </span>
             </ContentInsideOrderDetailsBox>
+
+            <hr />
+            {order?.total?.benefits !== 0 ? (
+              <ContentInsideOrderDetailsBox>
+                <div>
+                  <span className="tax">
+                    <StoreIcon />
+                    {order?.benefits?.[0]?.sponsorshipValues?.some(
+                      (benefit) => benefit?.value === 0
+                    ) ||
+                    order?.benefits?.[1]?.sponsorshipValues?.some(
+                      (benefit) => benefit?.value === 0
+                    )
+                      ? "Incentivos e cobranças da Loja"
+                      : "Incentivos e cobranças do Ifood"}
+                  </span>
+                  <br />
+                  <span className="cupomTax">
+                    {order?.benefits?.[0]?.sponsorshipValues?.some(
+                      (benefit) => benefit?.value === 0
+                    ) ||
+                    order?.benefits?.[1]?.sponsorshipValues?.some(
+                      (benefit) => benefit?.value === 0
+                    )
+                      ? "Cupom Parceiro"
+                      : "Cupom Ifood"}
+                  </span>
+                </div>
+                <span className="price">
+                  R$ - {order?.total?.benefits.toFixed(2)}
+                </span>
+              </ContentInsideOrderDetailsBox>
+            ) : (
+              <></>
+            )}
           </OrderDetailsBox>
           <PaymentOrderBox>
             {order.payments.methods.map((method, index) => (
@@ -299,10 +335,10 @@ const OrderPageIfood: React.FC<IPageIfoodProps> = ({
                 {["placed", "confirmed", "ready_to_pickup"].some(
                   (status) => status === order.fullCode.toLowerCase()
                 ) &&
-                moment(new Date()).diff(
-                  order.preparationStartDateTime,
-                  "minutes"
-                ) >= 0 && (
+                  moment(new Date()).diff(
+                    order.preparationStartDateTime,
+                    "minutes"
+                  ) >= 0 && (
                     <Button
                       id="change-order-status-btn"
                       onClick={handleChangeOrderStatus}

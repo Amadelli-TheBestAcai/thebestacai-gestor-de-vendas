@@ -14,6 +14,7 @@ import {
   CheckCircleFill,
   Money,
   InfoCircle,
+  Store,
 } from "../../styles/Icons";
 import { OrderDto } from "../../models/dtos/ifood";
 
@@ -210,6 +211,14 @@ export const ContentInsideOrderDetailsBox = styled.div`
   .tax {
     text-transform: capitalize;
   }
+  .cupomTax {
+    border-left: 1px solid;
+    padding-left: 10px;
+    font-size: 1rem;
+    text-transform: capitalize;
+    margin-left: 2.2rem;
+    color: var(--grey-90);
+  }
 `;
 
 export const ContainerOrder = styled.div`
@@ -271,10 +280,16 @@ export const Checked = styled(CheckCircleFill)`
 export const InfoTaxIcon = styled(InfoCircle)`
   ${Icon}
 `;
+
+export const StoreIcon = styled(Store)`
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-right: 10px;
+`;
 export const MoneyIcon = styled(Money)`
-  width: 1.2rem;
-  height: 1.2rem;
-  ${Icon}
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-right: 10px;
 `;
 
 export const ContentBoxes = styled.div`
