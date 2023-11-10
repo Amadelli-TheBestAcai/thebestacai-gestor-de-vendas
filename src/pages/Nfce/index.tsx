@@ -116,11 +116,21 @@ const Nfce: React.FC = () => {
   };
 
   const handleEnterToSubmit = () => {
-    const selfService = findSelfService(products);
+    if (selfServiceAmount !== 0) {
+      const selfService = findSelfService(products);
 
-    const quantity = +(selfServiceAmount / +selfService?.price_unit).toFixed(4);
+      const quantity = +(selfServiceAmount / +selfService?.price_unit).toFixed(
+        4
+      );
 
-    handleSelectProduct(selfService, quantity);
+      handleSelectProduct(selfService, quantity);
+      setSelfServiceAmount(0);
+    } else {
+      notification.error({
+        message: "Digite um valor",
+        duration: 5,
+      });
+    }
   };
 
   const handleUpdateNfe = (name, value) => {
