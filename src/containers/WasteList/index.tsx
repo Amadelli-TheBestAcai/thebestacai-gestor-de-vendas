@@ -20,13 +20,11 @@ import {
 
 interface IProps {
   products: ProductDto[];
-  selectedProductIsFruit: boolean;
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  setSelectedProductIsFruit: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const WasteList: React.FC<IProps> = ({ products, setLoading, loading, selectedProductIsFruit, setSelectedProductIsFruit }) => {
+const WasteList: React.FC<IProps> = ({ products, setLoading, loading }) => {
   const [productSearch, setProductSearch] = useState("");
   const [modalState, setModalState] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(
@@ -64,8 +62,8 @@ const WasteList: React.FC<IProps> = ({ products, setLoading, loading, selectedPr
               <ContentGeneral>
                 {findProduct(productSearch).map((product) => {
                   return (
-                    <Tupla key={product.id}>
-                      <Col sm={4}>{product.id}</Col>
+                    <Tupla key={product.product_store_id}>
+                      <Col sm={4}>{product.product_store_id}</Col>
                       <Col sm={6}>{product.category.name}</Col>
                       <Col sm={10}>{product.name}</Col>
                       <Col sm={4}>
@@ -76,7 +74,6 @@ const WasteList: React.FC<IProps> = ({ products, setLoading, loading, selectedPr
                             onClick={() => {
                               setModalState(true);
                               setSelectedProduct(product);
-                              setSelectedProductIsFruit(product.category.name === 'frutas');
                             }}
                           />
                         </Tooltip>
@@ -104,7 +101,6 @@ const WasteList: React.FC<IProps> = ({ products, setLoading, loading, selectedPr
         loading={loading}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
-        selectedProductIsFruit={selectedProductIsFruit}
       />
     </Container>
   );

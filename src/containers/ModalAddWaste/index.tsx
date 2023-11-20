@@ -22,7 +22,6 @@ interface IProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedProduct: ProductDto | null;
-  selectedProductIsFruit: boolean;
   setSelectedProduct: Dispatch<SetStateAction<ProductDto | null>>;
 }
 
@@ -47,12 +46,9 @@ const ModalAddWaste: React.FC<IProps> = ({
   setLoading,
   selectedProduct,
   setSelectedProduct,
-  selectedProductIsFruit,
 }) => {
   const [image, setImage] = useState(null);
-  const [value, setValue] = useState(
-    selectedProductIsFruit ? Options.Quilograma : Options.Unidade
-  );
+  const [value, setValue] = useState(Options.Quilograma);
   const [reasonOption, setReasonOption] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [unitSuffix, setUnitSuffix] = useState("kg");
@@ -90,7 +86,7 @@ const ModalAddWaste: React.FC<IProps> = ({
         quantity: quantity,
         store_id: store.company_id,
         unity: value,
-        product_id: selectedProduct.id,
+        product_store_id: selectedProduct.product_store_id,
         reason: reasonOption,
         price_sell: price,
       };
@@ -170,7 +166,7 @@ const ModalAddWaste: React.FC<IProps> = ({
                 </Radio>
                 <Radio
                   value={Options.Unidade}
-                  disabled={selectedProductIsFruit}
+                  disabled={selectedProduct?.category_id === 10}
                 >
                   Unidade
                 </Radio>
@@ -189,8 +185,8 @@ const ModalAddWaste: React.FC<IProps> = ({
                     value > 0
                       ? Promise.resolve()
                       : Promise.reject(
-                          new Error("A quantidade não pode ser negativa")
-                        ),
+                        new Error("A quantidade não pode ser negativa")
+                      ),
                 },
               ]}
             >
