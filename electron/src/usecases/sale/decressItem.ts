@@ -42,6 +42,11 @@ class DecressItem implements IUseCaseFactory {
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
+    if (sale.customerVoucher?.voucher?.products?.length)
+      sale.customerVoucher?.voucher?.products.forEach(
+        (product) => (sale.total_sold -= +product.price_sell)
+      );
+
     sale.quantity = sale.items.reduce(
       (total, item) =>
         +item.product?.category.id === 1 ? 1 + total : item.quantity + total,

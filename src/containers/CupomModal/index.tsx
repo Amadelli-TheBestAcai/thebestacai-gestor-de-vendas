@@ -13,7 +13,7 @@ const CupomModal: React.FC<ICupomProps> = ({
   cupomModalState,
   setCupomModalState,
 }) => {
-  const { sale, setSale, onAddItem } = useSale();
+  const { sale, setSale } = useSale();
   const [cupom, setCupom] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,10 @@ const CupomModal: React.FC<ICupomProps> = ({
   }, [cupomModalState, sale]);
 
   useEffect(() => {
-    if (!cupomModalState) setLoading(false);
+    if (!cupomModalState) {
+      setLoading(false);
+      document.getElementById("balanceInput")?.focus();
+    }
   }, [cupomModalState]);
 
   const handleCupomState = (
@@ -66,6 +69,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         previousInput?.focus();
       }
     }
+    if (key === "Enter") onFinish();
   };
 
   const onFinish = async (): Promise<void> => {
@@ -304,6 +308,7 @@ const CupomModal: React.FC<ICupomProps> = ({
                   handleCupomState(0, value, "1")
                 }
                 onKeyDown={({ key }) => handleKeyDown(key, "1")}
+                autoFocus
                 tabIndex={1}
               />
             </Col>
