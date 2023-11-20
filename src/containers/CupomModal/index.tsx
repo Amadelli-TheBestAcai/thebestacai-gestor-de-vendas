@@ -179,10 +179,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       });
 
       totalOfSelfServiceDiscount = Math.abs(totalOfSelfServiceDiscount);
-      console.log({
-        totalOfCupomProducs,
-        totalOfSelfServiceDiscount,
-      });
+
       totalOfSelfServiceDiscount += totalOfCupomProducs;
 
       const payload = {
@@ -230,6 +227,7 @@ const CupomModal: React.FC<ICupomProps> = ({
 
       const payload = {
         ...sale,
+        discount: 0,
         customerVoucher: null,
         total_sold: newTotal,
       };

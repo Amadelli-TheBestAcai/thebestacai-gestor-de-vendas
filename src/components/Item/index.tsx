@@ -101,7 +101,6 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
     setModalState(false);
     setdisabled(false);
   };
-  console.log({ productVoucher, item });
 
   return (
     <>
