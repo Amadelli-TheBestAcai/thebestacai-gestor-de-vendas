@@ -85,7 +85,7 @@ const BalanceContainer: React.FC<IProps> = ({
     if (!balanceAmount) {
       return;
     }
-    document.getElementById("mainContainer").focus();
+    document.getElementById("balanceInput").focus();
     onAddItem(selfService, getQuantity(), balanceAmount);
 
     setBalanceAmount(undefined);

@@ -26,15 +26,8 @@ interface IProps {
   getCampaignPointsPlus?: () => number;
 }
 
-const ClientInfo: React.FC<IProps> = ({
-  campaign,
-  getCampaignPointsPlus
-}) => {
-  const {
-    sale,
-    setSale,
-    isSavingSale,
-  } = useSale();
+const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
+  const { sale, setSale, isSavingSale } = useSale();
   const [loading, setLoading] = useState(false);
   const { shouldOpenClientInfo, setShouldOpenClientInfo } = useSale();
   const [info, setInfo] = useState({
@@ -51,9 +44,7 @@ const ClientInfo: React.FC<IProps> = ({
         email: sale.client_email || "",
       });
     }
-
   }, [shouldOpenClientInfo]);
-
 
   const validateCPF = () => {
     const cpfValue = info.cpf.replace(/\D/g, "");
@@ -84,7 +75,7 @@ const ClientInfo: React.FC<IProps> = ({
     setSale(updatedSale);
     setLoading(false);
     setShouldOpenClientInfo(false);
-    document.getElementById("mainContainer").focus()
+    document.getElementById("balanceInput").focus();
   };
 
   const onPressEnter = async (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,22 +127,21 @@ const ClientInfo: React.FC<IProps> = ({
       }
     );
     setSale(updatedSale);
-    document.getElementById("mainContainer").focus()
-    setShouldOpenClientInfo(false)
-  }
+    document.getElementById("balanceInput").focus();
+    setShouldOpenClientInfo(false);
+  };
 
   return (
     <Container
       visible={shouldOpenClientInfo}
       confirmLoading={loading}
       closable={false}
+      afterClose={() => document.getElementById("balanceInput")?.focus()}
       onCancel={async () => await onQuit()}
       destroyOnClose
       footer={
         <Footer>
-          <ButtonCancel
-            onClick={async () => await onQuit()}
-          >
+          <ButtonCancel onClick={async () => await onQuit()}>
             Cancelar
           </ButtonCancel>
           <ButtonSave
@@ -210,9 +200,10 @@ const ClientInfo: React.FC<IProps> = ({
 
               <TitleReward>você ganha +1 ponto</TitleReward>
 
-              <div className="totalPoints">Pontos ganhos nessa compra: {Math.floor(
-                sale.total_sold / campaign.average_ticket,
-              )}</div>
+              <div className="totalPoints">
+                Pontos ganhos nessa compra:{" "}
+                {Math.floor(sale.total_sold / campaign.average_ticket)}
+              </div>
             </InfoClientReward>
           </ContentReward>
         )}

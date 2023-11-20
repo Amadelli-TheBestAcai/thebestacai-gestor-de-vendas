@@ -130,7 +130,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
             destroyOnClose={true}
             closable={true}
             centered
-            afterClose={() => document.getElementById("mainContainer").focus()}
+            afterClose={() => document.getElementById("balanceInput")?.focus()}
             footer={
               <Footer>
                 <ButtonCancel onClick={() => setModalState(false)}>
