@@ -33,6 +33,8 @@ type Product = {
   product_id?: number;
   category_id?: number;
   price_sell: string;
+  is_registred?: boolean;
+  in_sale?: boolean;
   created_at?: string;
   updated_at?: string;
   deleted_at?: string;

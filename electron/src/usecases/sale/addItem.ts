@@ -48,7 +48,7 @@ class AddItem implements IUseCaseFactory {
         update_stock: product?.category.id !== 1 ? true : false,
         product,
         storeProduct,
-        total: price ? price : + (productToAdd.price_unit || 0) * quantity,
+        total: price ? price : +(productToAdd.price_unit || 0) * quantity,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
@@ -56,6 +56,11 @@ class AddItem implements IUseCaseFactory {
     sale.total_sold = +sale.items
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
+
+    if (sale.customerVoucher?.voucher?.products?.length)
+      sale.customerVoucher?.voucher?.products.forEach(
+        (product) => (sale.total_sold -= +product.price_sell)
+      );
 
     sale.quantity = sale.items.reduce(
       (total, item) =>

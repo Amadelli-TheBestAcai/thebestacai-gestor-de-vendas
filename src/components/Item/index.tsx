@@ -19,6 +19,7 @@ import {
   ButtonCancel,
   Radio,
   Form,
+  InfoIcon,
 } from "./styles";
 
 type IProps = {
@@ -100,6 +101,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
     setModalState(false);
     setdisabled(false);
   };
+  console.log({ productVoucher, item });
 
   return (
     <>
@@ -195,10 +197,24 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
       )}
       {productVoucher && (
         <Container>
-          <Column span={10}>[CUPOM] {productVoucher.product_name}</Column>
+          <Column
+            span={10}
+            style={{
+              textDecoration: productVoucher.is_registred
+                ? "none"
+                : "line-through",
+            }}
+          >
+            [CUPOM] {productVoucher.product_name}
+            {!productVoucher.is_registred && (
+              <Tooltip title="Produto não cadastrado. Para cadastrar, acesso o dashboard.">
+                <InfoIcon />
+              </Tooltip>
+            )}
+          </Column>
           <Column span={4}>1</Column>
           <Column span={4}></Column>
-          <Column span={4}>R$ {productVoucher.price_sell}</Column>
+          <Column span={4}>R$ -{productVoucher.price_sell}</Column>
           <Column span={2}></Column>
         </Container>
       )}
