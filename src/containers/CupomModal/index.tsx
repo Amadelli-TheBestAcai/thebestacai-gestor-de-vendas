@@ -273,6 +273,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       centered={true}
       width={400}
       destroyOnClose
+      afterClose={() => document.getElementById("balanceInput")?.focus()}
     >
       {sale.customerVoucher ? (
         <>

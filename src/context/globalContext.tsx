@@ -176,6 +176,7 @@ export function GlobalProvider({ children }) {
       duration: 3,
     });
     setSale(updatedSale);
+    document.getElementById("balanceInput")?.focus();
   };
 
   const onRegisterSale = async (): Promise<void> => {

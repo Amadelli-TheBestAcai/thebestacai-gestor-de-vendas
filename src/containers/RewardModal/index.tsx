@@ -170,6 +170,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     } finally {
       setShouldSearch(false);
       setLoading(false);
+      document.getElementById("balanceInput").focus();
     }
   };
 
@@ -181,6 +182,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       onCancel={resetModalState}
       width={"40%"}
       destroyOnClose
+      afterClose={() => document.getElementById("balanceInput").focus()}
       footer={
         <>
           {customerReward && (

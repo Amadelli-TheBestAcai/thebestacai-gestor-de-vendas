@@ -94,6 +94,7 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
     setSale(_updatedSale);
     setLoading(false);
     setModalState(false);
+    document.getElementById("balanceInput").focus();
     return notification.success({
       message: "Comanda restaurada com sucesso!",
       description:
@@ -110,6 +111,7 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
       closable={true}
       onCancel={() => setModalState(false)}
       width={800}
+      afterClose={() => document.getElementById("balanceInput").focus()}
       destroyOnClose={true}
       footer={null}
     >
