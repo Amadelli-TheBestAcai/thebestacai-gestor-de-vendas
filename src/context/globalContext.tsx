@@ -142,9 +142,9 @@ export function GlobalProvider({ children }) {
 
     setSale(updatedSale);
     if (updatedSale.items.length === 1 && !sale.client_cpf) {
-      setShouldOpenClientInfo(true)
+      setShouldOpenClientInfo(true);
     } else {
-      setShouldOpenClientInfo(false)
+      setShouldOpenClientInfo(false);
     }
     document.getElementById("balanceInput")?.focus();
   };
@@ -165,6 +165,7 @@ export function GlobalProvider({ children }) {
       duration: 3,
     });
     setSale(updatedSale);
+    document.getElementById("balanceInput")?.focus();
   };
 
   const onRegisterSale = async (): Promise<void> => {
@@ -190,9 +191,9 @@ export function GlobalProvider({ children }) {
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-      ((currentSale.discount || 0) +
-        (currentSale.customer_nps_reward_discount || 0)) +
-      0.5
+        ((currentSale.discount || 0) +
+          (currentSale.customer_nps_reward_discount || 0)) +
+        0.5
     ) {
       return notification.warning({
         message: "Pagamento inválido!",
@@ -201,8 +202,11 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    currentSale.change_amount =
-      +(currentSale.total_paid + currentSale.discount - currentSale.total_sold).toFixed(2);
+    currentSale.change_amount = +(
+      currentSale.total_paid +
+      currentSale.discount -
+      currentSale.total_sold
+    ).toFixed(2);
 
     setSavingSale(true);
 
@@ -285,7 +289,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -306,13 +310,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-          message: error_message,
-          duration: 5,
-        })
+            message: error_message,
+            duration: 5,
+          })
         : notification.error({
-          message: "Erro ao finalizar venda",
-          duration: 5,
-        });
+            message: "Erro ao finalizar venda",
+            duration: 5,
+          });
     }
 
     const { response: _newSale, has_internal_error: errorOnBuildNewSale } =

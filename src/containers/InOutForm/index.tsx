@@ -276,6 +276,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       destroyOnClose={true}
       closable={false}
       centered
+      afterClose={() => document.getElementById("balanceInput").focus()}
       onCancel={() => handleClose()}
       footer={
         <Footer>
