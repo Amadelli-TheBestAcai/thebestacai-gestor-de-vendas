@@ -2,7 +2,7 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 
 import { notification } from "antd";
 import { useSale } from "../../hooks/useSale";
-import { Container, Row, Col, InputCode, Button, Input } from "./styles";
+import { Container, Row, Col, InputCode, Button } from "./styles";
 
 interface ICupomProps {
   cupomModalState: boolean;
@@ -16,8 +16,6 @@ const CupomModal: React.FC<ICupomProps> = ({
   const { sale, setSale } = useSale();
   const [cupom, setCupom] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
-
-  const products = sale.items.map((item) => item.product);
 
   useEffect(() => {
     if (cupomModalState) {
@@ -36,7 +34,10 @@ const CupomModal: React.FC<ICupomProps> = ({
   }, [cupomModalState, sale]);
 
   useEffect(() => {
-    if (!cupomModalState) setLoading(false);
+    if (!cupomModalState) {
+      setLoading(false);
+      document.getElementById("balanceInput")?.focus();
+    }
   }, [cupomModalState]);
 
   const handleCupomState = (
@@ -68,6 +69,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         previousInput?.focus();
       }
     }
+    if (key === "Enter") onFinish();
   };
 
   const onFinish = async (): Promise<void> => {
@@ -91,10 +93,14 @@ const CupomModal: React.FC<ICupomProps> = ({
         });
       }
 
+      const { response: products } = await window.Main.product.getProducts(
+        true
+      );
+
       delete response.voucher.companies;
 
       const totalSoldInSelfService = sale.items
-        .filter((itme) => itme.product.id === 1)
+        .filter((item) => item.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
 
       if (response.voucher?.self_service && totalSoldInSelfService <= 0) {
@@ -105,47 +111,81 @@ const CupomModal: React.FC<ICupomProps> = ({
         });
       }
 
-      const totalOfCupomProducs = response.voucher.products.reduce(
-        (total, product) => total + +product.price_sell,
-        0
-      );
-
-      let newTotalWithDiscount = 0;
+      let totalOfSelfServiceDiscount = 0;
 
       if (response.voucher.self_service) {
         if (response.voucher.self_service_discount_type === 1) {
-          newTotalWithDiscount =
-            totalSoldInSelfService -
-            totalSoldInSelfService *
-              +response.voucher.self_service_discount_amount;
+          const percentOfDiscount =
+            +response.voucher.self_service_discount_amount / 100;
+          totalOfSelfServiceDiscount =
+            totalSoldInSelfService * percentOfDiscount;
 
           response.voucher.products.push({
+            product_id: 1,
             product_name: `Desconto de ${
-              +response.voucher.self_service_discount_amount * 100
+              percentOfDiscount * 100
             }% em Self-service`,
-            price_sell: (newTotalWithDiscount - totalSoldInSelfService).toFixed(
-              2
-            ),
+            price_sell: totalOfSelfServiceDiscount.toFixed(2),
           });
         } else {
-          newTotalWithDiscount =
-            totalSoldInSelfService -
-            +response.voucher.self_service_discount_amount;
+          const totalQuantity = sale.items
+            .filter((item) => item.product.id === 1)
+            .reduce((total, item) => total + item.quantity, 0);
+
+          totalOfSelfServiceDiscount = +(
+            +response.voucher.self_service_discount_amount * totalQuantity
+          ).toFixed(2);
+
+          totalOfSelfServiceDiscount -= totalSoldInSelfService;
 
           response.voucher.products.push({
+            product_id: 1,
             product_name: `Desconto de ${+response.voucher
               .self_service_discount_amount}R$`,
-            price_sell: response.voucher.self_service_discount_amount,
+            price_sell: Math.abs(totalOfSelfServiceDiscount).toString(),
           });
         }
       }
 
-      newTotalWithDiscount += totalOfCupomProducs;
+      let totalOfCupomProducs = 0;
+
+      response.voucher.products.forEach((productVoucher, index) => {
+        const product = products.find(
+          (product) => product.product_id === productVoucher.product_id
+        );
+        const item = sale.items.find(
+          (item) => item.product.id === productVoucher.product_id
+        );
+
+        if (product) {
+          let price_sell = 0;
+          response.voucher.products[index].is_registred = true;
+          if (productVoucher.product_id !== 1) {
+            if (item)
+              price_sell = +product.price_unit - +productVoucher.price_sell;
+            response.voucher.products[index].price_sell = price_sell.toFixed(2);
+          }
+          totalOfCupomProducs += price_sell;
+        } else {
+          response.voucher.products[index].is_registred = false;
+          response.voucher.products[index].price_sell = "0.00";
+        }
+
+        if (item) {
+          response.voucher.products[index].in_sale = true;
+        } else {
+          response.voucher.products[index].in_sale = false;
+        }
+      });
+
+      totalOfSelfServiceDiscount = Math.abs(totalOfSelfServiceDiscount);
+
+      totalOfSelfServiceDiscount += totalOfCupomProducs;
 
       const payload = {
         ...sale,
         customerVoucher: response,
-        total_sold: newTotalWithDiscount,
+        total_sold: sale.total_sold - totalOfSelfServiceDiscount,
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
@@ -187,6 +227,7 @@ const CupomModal: React.FC<ICupomProps> = ({
 
       const payload = {
         ...sale,
+        discount: 0,
         customerVoucher: null,
         total_sold: newTotal,
       };
@@ -232,6 +273,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       centered={true}
       width={400}
       destroyOnClose
+      afterClose={() => document.getElementById("balanceInput")?.focus()}
     >
       {sale.customerVoucher ? (
         <>
@@ -265,6 +307,7 @@ const CupomModal: React.FC<ICupomProps> = ({
                   handleCupomState(0, value, "1")
                 }
                 onKeyDown={({ key }) => handleKeyDown(key, "1")}
+                autoFocus
                 tabIndex={1}
               />
             </Col>

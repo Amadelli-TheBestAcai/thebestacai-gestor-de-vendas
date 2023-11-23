@@ -30,6 +30,8 @@ export type ProductVoucher = {
   id?: number;
   voucher_id?: number;
   product_name: string;
+  is_registred?: boolean;
+  in_sale?: boolean;
   product_id?: number;
   category_id?: number;
   price_sell: string;

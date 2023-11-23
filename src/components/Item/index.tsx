@@ -19,6 +19,7 @@ import {
   ButtonCancel,
   Radio,
   Form,
+  InfoIcon,
 } from "./styles";
 
 type IProps = {
@@ -128,7 +129,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
             destroyOnClose={true}
             closable={true}
             centered
-            afterClose={() => document.getElementById("mainContainer").focus()}
+            afterClose={() => document.getElementById("balanceInput")?.focus()}
             footer={
               <Footer>
                 <ButtonCancel onClick={() => setModalState(false)}>
@@ -195,10 +196,26 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
       )}
       {productVoucher && (
         <Container>
-          <Column span={10}>[CUPOM] {productVoucher.product_name}</Column>
-          <Column span={4}>1</Column>
+          <Column
+            span={10}
+            style={{
+              textDecoration: productVoucher.is_registred
+                ? "none"
+                : "line-through",
+            }}
+          >
+            [CUPOM] {productVoucher.product_name}
+            {!productVoucher.is_registred && (
+              <Tooltip title="Produto não cadastrado. Para cadastrar, acesse o dashboard.">
+                <InfoIcon />
+              </Tooltip>
+            )}
+          </Column>
+          <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
           <Column span={4}></Column>
-          <Column span={4}>R$ {productVoucher.price_sell}</Column>
+          <Column span={4}>
+            R$ -{(+productVoucher.price_sell).toFixed(2)}
+          </Column>
           <Column span={2}></Column>
         </Container>
       )}

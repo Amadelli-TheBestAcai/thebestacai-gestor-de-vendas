@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import {
   Row,
@@ -9,7 +9,7 @@ import {
   Radio as RadioAnt,
 } from "antd";
 
-import { TrashRestoreAlt } from "../../styles/Icons";
+import { TrashRestoreAlt, InfoCircle } from "../../styles/Icons";
 
 export const Container = styled(Row)`
   display: flex;
@@ -62,7 +62,7 @@ export const Button = styled.button`
   padding: 5%;
 `;
 
-export const DeleteIcon = styled(TrashRestoreAlt)`
+const iconCSS = css`
   width: 1.2rem;
   height: 1.2rem;
   color: var(--red-600);
@@ -80,6 +80,14 @@ export const DeleteIcon = styled(TrashRestoreAlt)`
     width: 1rem;
     height: 1rem;
   }
+`;
+
+export const DeleteIcon = styled(TrashRestoreAlt)`
+  ${iconCSS}
+`;
+
+export const InfoIcon = styled(InfoCircle)`
+  ${iconCSS}
 `;
 
 export const Modal = styled(ModalAnt)`

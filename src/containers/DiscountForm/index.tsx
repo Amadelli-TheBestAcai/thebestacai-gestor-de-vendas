@@ -15,12 +15,8 @@ import {
 } from "./styles";
 
 const DiscountForm: React.FC = () => {
-  const {
-    discountModalState,
-    onAddDiscount,
-    discountModalHandler,
-    sale,
-  } = useSale();
+  const { discountModalState, onAddDiscount, discountModalHandler, sale } =
+    useSale();
   const [value, setValue] = useState<number>();
   const [discountType, setDiscountType] = useState(1);
 
@@ -32,7 +28,7 @@ const DiscountForm: React.FC = () => {
     setValue(0);
     setDiscountType(1);
     onAddDiscount(value);
-    document.getElementById("mainContainer").focus();
+    document.getElementById("balanceInput").focus();
   };
 
   const getAmount = (amount: number): void => {
@@ -66,7 +62,7 @@ const DiscountForm: React.FC = () => {
       onOk={handleSubmit}
       closable={true}
       onCancel={() => {
-        document.getElementById("mainContainer").focus();
+        document.getElementById("balanceInput").focus();
         discountModalHandler.closeDiscoundModal();
       }}
       destroyOnClose={true}
