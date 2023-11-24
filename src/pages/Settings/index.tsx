@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import CardSettings from "../../components/CardSettings";
-import { Modal, notification } from "antd";
+import { Modal, notification, Tooltip } from "antd";
+
 import {
   Container,
   PageContent,
@@ -16,13 +18,20 @@ import {
   InputPortCOM,
   Button,
   ContentButton,
+  InfoIcon,
 } from "./styles";
 
 import { useSettings } from "../../hooks/useSettings";
+import { useStore } from "../../hooks/useStore";
+import { useSale } from "../../hooks/useSale";
 
-const Settings: React.FC = () => {
+type IProps = RouteComponentProps;
+
+const Settings: React.FC<IProps> = ({ history }) => {
   const [loading, setLoading] = useState(false);
   const { settings, setSettings } = useSettings();
+  const { setStore } = useStore();
+  const { storeCash } = useSale();
   const [inputPortCOM, setInputPortCOM] = useState<string>();
 
   const handleSave = () => {
@@ -50,6 +59,41 @@ const Settings: React.FC = () => {
           duration: 5,
         });
         setLoading(false);
+      },
+    });
+  };
+
+  const changeStore = () => {
+    Modal.confirm({
+      content: "Tem certeza que gostaria de trocar a loja?",
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+      async onOk() {
+        setLoading(true);
+        const { has_internal_error } = await window.Main.store.create(null);
+
+        if (has_internal_error) {
+          notification.error({
+            message: "Erro ao iniciar alteração da loja",
+            duration: 5,
+          });
+          return;
+        }
+
+        setStore(null);
+
+        notification.success({
+          message: "Desvinculação da loja realizada com sucesso",
+          description:
+            "Para selecionar a nova loja, realize o login novamente.",
+          duration: 5,
+        });
+
+        setLoading(false);
+
+        return history.push("/login");
       },
     });
   };
@@ -237,6 +281,25 @@ const Settings: React.FC = () => {
             </span>
           </ActionContainer>
         </CardSettings>
+
+        <CardSettings title="Alterar loja">
+          <span style={{ padding: "2%" }}>
+            Ao solicitar a alteração de loja, será necessário refazer o login.
+          </span>
+          <ButtonSave
+            onClick={changeStore}
+            loading={loading}
+            disabled={storeCash?.is_opened}
+            style={{ color: "white" }}
+          >
+            Alterar{" "}
+            {storeCash?.is_opened && (
+              <Tooltip title="Para alterar a loja é necessário que o caixa esteja fechado">
+                <InfoIcon />
+              </Tooltip>
+            )}
+          </ButtonSave>
+        </CardSettings>
       </PageContent>
 
       <Footer>
@@ -248,4 +311,4 @@ const Settings: React.FC = () => {
   );
 };
 
-export default Settings;
+export default withRouter(Settings);

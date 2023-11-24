@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { InfoCircle } from "../../styles/Icons";
 
 import {
   Select as SelectAnt,
@@ -185,5 +186,25 @@ export const Switch = styled(SwitchAnt)`
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     zoom: 0.8;
+  }
+`;
+
+export const InfoIcon = styled(InfoCircle)`
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--red-600);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 1rem;
+    height: 1rem;
   }
 `;
