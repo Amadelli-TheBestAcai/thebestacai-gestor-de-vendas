@@ -101,59 +101,59 @@ const Sale: React.FC<IProps> = () => {
 
 
   const onDelete = async (sale) => {
+    const hasNfce = selectedSale.nfce;
+  
+    const renderTextarea = hasNfce && (
+      <Textarea
+        id="nfceDeleteJustifyInput"
+        placeholder="Justificativa - 15 a 255 caracteres"
+        minLength={15}
+        maxLength={255}
+        style={{ width: "100%" }}
+        onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+      />
+    );
+  
     Modal.confirm({
       title: "Tem certeza que gostaria de remover esta venda?",
-      content: (
-        <Textarea
-          id="nfceDeleteJustifyInput"
-          placeholder="Justificativa - 15 a 255 caracteres"
-          minLength={15}
-          maxLength={255}
-          style={{ width: "100%" }}
-          onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
-        />
-      ),
+      content: renderTextarea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
       onOk: async () => {
-        //@ts-ignore
-        const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
-        if (!justify || justify.length < 15 || justify.length > 255) {
-          return notification.warning({
-            message: "Justificativa deve ter entre 15 e 255 caracteres",
-            duration: 5,
-          });
-        }
-
         try {
           setIsLoading(true);
-          const { has_internal_error } = await window.Main.sale.cancelNfce(sale.id, justify);
+  
+          if (hasNfce) {
 
-          if (has_internal_error) {
-            return notification.warning({
-              message: "NFC-e autorizada ha mais de 30 minutos",
-              duration: 5,
-            });
+            //@ts-ignore
+            const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
+            if (!justify || justify.length < 15 || justify.length > 255) {
+              throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
+            }
+  
+            const { has_internal_error } = await window.Main.sale.cancelNfce(sale.id, justify);
+  
+            if (has_internal_error) {
+              throw new Error("NFC-e autorizada há mais de 30 minutos");
+            }
           }
-
+  
           const success = await window.Main.sale.deleteSaleFromApi(sale.id);
-
+  
           if (!success) {
-            return notification.error({
-              message: "Oops! Falha ao remover venda.",
-              duration: 5,
-            });
+            throw new Error("Oops! Falha ao remover venda.");
           }
-
-          return notification.success({
+  
+          notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
           });
         } catch (error) {
           notification.error({
-            message: "Erro ao tentar remover a venda. Por favor, tente novamente.",
+            //@ts-ignore
+            message: error.message || "Erro ao tentar remover a venda. Por favor, tente novamente.",
             duration: 5,
           });
         } finally {
@@ -163,6 +163,7 @@ const Sale: React.FC<IProps> = () => {
       },
     });
   };
+  
 
   const findSale = ({ target: { value } }) => {
     const filteredSale = sales.filter((_sale) =>
