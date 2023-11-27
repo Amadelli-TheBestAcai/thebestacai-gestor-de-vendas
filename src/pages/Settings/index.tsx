@@ -19,6 +19,8 @@ import {
   Button,
   ContentButton,
   InfoIcon,
+  ButtonSaveStore,
+  StoreChange,
 } from "./styles";
 
 import { useSettings } from "../../hooks/useSettings";
@@ -283,22 +285,37 @@ const Settings: React.FC<IProps> = ({ history }) => {
         </CardSettings>
 
         <CardSettings title="Alterar loja">
-          <span style={{ padding: "2%" }}>
-            Ao solicitar a alteração de loja, será necessário refazer o login.
-          </span>
-          <ButtonSave
-            onClick={changeStore}
-            loading={loading}
-            disabled={storeCash?.is_opened}
-            style={{ color: "white" }}
-          >
-            Alterar{" "}
+          <StoreChange>
+            <span className="descriptionStore">
+              Ao solicitar a alteração de loja, será necessário refazer o login.
+            </span>
             {storeCash?.is_opened && (
-              <Tooltip title="Para alterar a loja é necessário que o caixa esteja fechado">
-                <InfoIcon />
-              </Tooltip>
+              <span className="storeObservation">
+                Para alterar a loja é necessário que o caixa esteja fechado
+              </span>
             )}
-          </ButtonSave>
+          </StoreChange>
+          {storeCash?.is_opened ? (
+            <Tooltip title="Para alterar a loja é necessário que o caixa esteja fechado">
+              <ButtonSaveStore
+                onClick={changeStore}
+                loading={loading}
+                disabled={storeCash?.is_opened}
+                style={{ color: "gray" }}
+              >
+                Alterar Loja
+              </ButtonSaveStore>
+            </Tooltip>
+          ) : (
+            <ButtonSaveStore
+              onClick={changeStore}
+              loading={loading}
+              disabled={storeCash?.is_opened}
+              style={{ color: "white" }}
+            >
+              Alterar
+            </ButtonSaveStore>
+          )}
         </CardSettings>
       </PageContent>
 
