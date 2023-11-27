@@ -44,8 +44,6 @@ class DeleteSaleFromApi implements IUseCaseFactory {
     const saleToDelete = await this.integratedSaleRepository.getOne({
       cash_history_id,
       gv_id,
-      store_id,
-      justify
     })
 
     await this.integratedSaleRepository.update(saleToDelete?.id, { ...saleToDelete, deleted_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss") })
