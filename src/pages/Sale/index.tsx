@@ -46,7 +46,6 @@ import {
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
-import { v4 } from "uuid";
 
 type IProps = RouteComponentProps;
 
@@ -83,9 +82,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-              (total, _payment) => total + _payment.amount,
-              0
-            ),
+            (total, _payment) => total + _payment.amount,
+            0
+          ),
       }));
 
       if (_sales.length) {
@@ -100,17 +99,48 @@ const Sale: React.FC<IProps> = () => {
     }
   }, [shouldSearch]);
 
-  const onDelete = (params): void => {
+
+  const onDelete = async (sale) => {
     Modal.confirm({
-      content: "Tem certeza que gostaria de remover esta venda",
+      title: "Tem certeza que gostaria de remover esta venda?",
+      content: (
+        <Textarea
+          id="nfceDeleteJustifyInput"
+          placeholder="Justificativa - 15 a 255 caracteres"
+          minLength={15}
+          maxLength={255}
+          style={{ width: "100%" }}
+          onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+        />
+      ),
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
-      async onOk() {
+      onOk: async () => {
+
+        //@ts-ignore
+        const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
+        if (!justify || justify.length < 15 || justify.length > 255) {
+          return notification.warning({
+            message: "Justificativa deve ter entre 15 e 255 caracteres",
+            duration: 5,
+          });
+        }
+
         try {
           setIsLoading(true);
-          const success = await window.Main.sale.deleteSaleFromApi(params);
+          const { error_message, has_internal_error } = await window.Main.sale.cancelNfce(sale.id, justify);
+
+          if (has_internal_error) {
+            return notification.warning({
+              message: error_message,
+              duration: 5,
+            });
+          }
+
+          const success = await window.Main.sale.deleteSaleFromApi(sale.id);
+
           if (!success) {
             return notification.error({
               message: "Oops! Falha ao remover venda.",
@@ -118,12 +148,15 @@ const Sale: React.FC<IProps> = () => {
             });
           }
 
-          return notification.success({
+          notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
           });
         } catch (error) {
-          console.log(error);
+          notification.error({
+            message: "Erro ao tentar remover a venda. Por favor, tente novamente.",
+            duration: 5,
+          });
         } finally {
           setIsLoading(false);
           setShouldSearch(true);
@@ -355,7 +388,7 @@ const Sale: React.FC<IProps> = () => {
     }
 
     if (_settings.should_use_printer === false) {
-      return  notification.warning({
+      return notification.warning({
         message: "Habilite a impressora na tela de configurações.",
         duration: 5,
       });
@@ -549,7 +582,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                        +_item.storeProduct.price_unit
+                                      +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>
