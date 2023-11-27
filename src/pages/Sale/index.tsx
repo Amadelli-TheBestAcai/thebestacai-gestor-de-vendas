@@ -134,7 +134,7 @@ const Sale: React.FC<IProps> = () => {
 
           if (has_internal_error) {
             return notification.warning({
-              message: error_message,
+              message: "NFC-e autorizada ha mais de 30 minutos",
               duration: 5,
             });
           }
@@ -232,10 +232,7 @@ const Sale: React.FC<IProps> = () => {
           duration: 5,
         });
       }
-      notification.success({
-        message: response,
-        duration: 5,
-      });
+      alert(response?.mensagem_sefaz)
     } catch (error) {
       console.log(error);
     } finally {
