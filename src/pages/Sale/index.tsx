@@ -232,7 +232,10 @@ const Sale: React.FC<IProps> = () => {
           duration: 5,
         });
       }
-      alert(response?.mensagem_sefaz)
+      return notification.success({
+        message: response?.mensagem_sefaz,
+        duration: 5,
+      });
     } catch (error) {
       console.log(error);
     } finally {
