@@ -102,7 +102,6 @@ const Sale: React.FC<IProps> = () => {
 
   const onDelete = async (sale) => {
     const hasNfce = selectedSale.nfce;
-  
     const renderTextarea = hasNfce && (
       <Textarea
         id="nfceDeleteJustifyInput"
