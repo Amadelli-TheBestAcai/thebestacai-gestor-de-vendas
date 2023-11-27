@@ -74,7 +74,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
       centered: true,
       async onOk() {
         setLoading(true);
-        const { has_internal_error } = await window.Main.store.create(null);
+        const { has_internal_error } = await window.Main.store.remove();
 
         if (has_internal_error) {
           notification.error({
