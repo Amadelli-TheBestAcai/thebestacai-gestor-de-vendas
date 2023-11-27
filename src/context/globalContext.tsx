@@ -46,6 +46,8 @@ type GlobalContextType = {
   setStore: Dispatch<SetStateAction<StoreDto | null>>;
   campaign: CampaignDto | null;
   setCampaign: Dispatch<SetStateAction<CampaignDto | null>>;
+  openedStepSale: number;
+  setOpenedStepSale: Dispatch<SetStateAction<number>>;
   hasPermission: (_permission: string) => boolean;
 };
 
@@ -63,6 +65,7 @@ export function GlobalProvider({ children }) {
   const [store, setStore] = useState<StoreDto | null>(null);
   const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
+  const [openedStepSale, setOpenedStepSale] = useState(0);
 
   useEffect(() => {
     async function init() {
@@ -111,6 +114,10 @@ export function GlobalProvider({ children }) {
         });
         return;
       }
+
+      const { response: stepSales } = await window.Main.sale.getAllStepSales();
+
+      setOpenedStepSale(stepSales.filter((sale) => sale.enabled).length);
       setSettings(_settings);
       setSale(_sale);
       setUser(_user);
@@ -480,6 +487,8 @@ export function GlobalProvider({ children }) {
         setShouldOpenClientInfo,
         campaign,
         setCampaign,
+        openedStepSale,
+        setOpenedStepSale,
       }}
     >
       {children}

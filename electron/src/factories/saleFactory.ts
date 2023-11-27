@@ -26,6 +26,8 @@ import {
   integrateRewardWithSale,
   getCustomerReward,
   getCurrentCampaign,
+  updateStepSale,
+  removeStepSale,
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto, CampaignDto } from "../models/gestor";
@@ -59,6 +61,10 @@ export const saleFactory = {
     }),
   updateSale: async (id: string | number, payload: SaleDto) =>
     await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),
+  updateStepSale: async (id: string | number, payload: SaleDto) =>
+    await useCaseFactory.execute<SaleDto>(updateStepSale, { id, payload }),
+  removeStepSale: async (id: string) =>
+    await useCaseFactory.execute<void>(removeStepSale, { id }),
   getAllStepSales: async () =>
     await useCaseFactory.execute<SaleDto[]>(getAllStepSales),
   createStepSale: async (name: string) =>

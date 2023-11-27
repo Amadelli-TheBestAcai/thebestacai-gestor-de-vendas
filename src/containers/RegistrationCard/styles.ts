@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-import { RepeatOutline } from "../../styles/Icons";
+import { RepeatOutline, CheckCircle, RemoveCircle } from "../../styles/Icons";
 
 import {
   Modal as ModalAnt,
@@ -13,7 +13,7 @@ export const Container = styled(ModalAnt)`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  
+
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
     @media (max-height: 900px) {
@@ -24,7 +24,6 @@ export const Container = styled(ModalAnt)`
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     width: 550px !important;
-
   }
 `;
 
@@ -135,15 +134,40 @@ export const Col = styled(ColAnt)`
   }
 `;
 
-export const RestoreIcon = styled(RepeatOutline)`
+const iconCSS = css`
   cursor: pointer;
   width: 1.2rem;
   height: 1.2rem;
-  color: var(--green-600);
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     width: 1rem;
     height: 1rem;
   }
+`;
+
+export const RestoreIcon = styled(RepeatOutline)`
+  ${iconCSS};
+  color: var(--green-600);
+`;
+
+interface IDisableIcon {
+  enabled?: boolean;
+}
+
+export const DisableIcon = styled(CheckCircle)<IDisableIcon>`
+  ${iconCSS};
+  ${({ enabled }) =>
+    enabled
+      ? css`
+          color: green;
+        `
+      : css`
+          color: gray;
+        `};
+`;
+
+export const RemoveIcon = styled(RemoveCircle)`
+  ${iconCSS};
+  color: red;
 `;

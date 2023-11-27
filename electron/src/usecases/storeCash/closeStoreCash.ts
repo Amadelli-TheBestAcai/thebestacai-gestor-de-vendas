@@ -20,6 +20,9 @@ interface Request {
 
 class CloseStoreCash implements IUseCaseFactory {
   constructor(
+    private stepSaleRepository = new BaseRepository<SaleDto>(
+      StorageNames.Step_Sale
+    ),
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
@@ -40,6 +43,12 @@ class CloseStoreCash implements IUseCaseFactory {
   }: Request): Promise<StoreCashDto | undefined> {
     const isConnected = await checkInternet();
     if (isConnected) {
+      let stepSales = (await this.stepSaleRepository.getAll()).filter(
+        (sale) => sale.enabled
+      );
+      if (stepSales.length > 0) {
+        throw new Error("Você ainda possui comandas pendentes");
+      }
       const deliverySales = await this.deliverySaleRepository.getAll();
       if (deliverySales.length > 0) {
         throw new Error("Você ainda possui vendas pendentes no delivery");

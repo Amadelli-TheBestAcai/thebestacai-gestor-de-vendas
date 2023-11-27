@@ -3,6 +3,7 @@ export interface SaleDto {
   id: string;
   gv_id?: number;
   name?: string;
+  enabled?: boolean;
   client_cpf?: string;
   client_phone?: string;
   client_email?: string;

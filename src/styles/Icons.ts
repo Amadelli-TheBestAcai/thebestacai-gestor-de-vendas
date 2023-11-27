@@ -20,7 +20,7 @@ export {
   Offer,
   CheckboxChecked,
   BookmarkMinus,
-  IdCard
+  IdCard,
 } from "@styled-icons/boxicons-solid";
 export {
   LogInCircle,
@@ -35,7 +35,6 @@ export {
   Image,
   TrophyFill,
   PlusCircle,
-  
 } from "@styled-icons/bootstrap";
 export { RepeatOutline } from "@styled-icons/evaicons-outline/RepeatOutline";
 export { AttachMoney } from "@styled-icons/material/AttachMoney";
@@ -64,6 +63,7 @@ export {
   ArrowLeftRight,
   CreditCard2Back,
   CheckCircleFill,
+  CheckCircle,
   FileEarmarkPdf,
 } from "@styled-icons/bootstrap";
 export { BarChart } from "@styled-icons/ionicons-sharp/BarChart";
@@ -75,7 +75,7 @@ export {
   HomeAlt,
   ListOl,
   MinusCircle,
-  PlusCircle as PlusCircle2
+  PlusCircle as PlusCircle2,
 } from "@styled-icons/boxicons-regular";
 export { CloseOutline, SettingsOutline } from "@styled-icons/evaicons-outline";
 export { Repeat } from "@styled-icons/evaicons-solid/Repeat";

@@ -25,3 +25,5 @@ export * from "./integrateRewardWithSale";
 export * from "./integrateRewardWithSale";
 export * from "./getVoucher";
 export * from "./getCurrentCampaign";
+export * from "./updateStepSale";
+export * from "./removeStepSale";
