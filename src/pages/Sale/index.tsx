@@ -118,7 +118,6 @@ const Sale: React.FC<IProps> = () => {
       cancelText: "Não",
       centered: true,
       onOk: async () => {
-
         //@ts-ignore
         const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
         if (!justify || justify.length < 15 || justify.length > 255) {
@@ -130,7 +129,7 @@ const Sale: React.FC<IProps> = () => {
 
         try {
           setIsLoading(true);
-          const { error_message, has_internal_error } = await window.Main.sale.cancelNfce(sale.id, justify);
+          const { has_internal_error } = await window.Main.sale.cancelNfce(sale.id, justify);
 
           if (has_internal_error) {
             return notification.warning({
@@ -148,7 +147,7 @@ const Sale: React.FC<IProps> = () => {
             });
           }
 
-          notification.success({
+          return notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
           });
