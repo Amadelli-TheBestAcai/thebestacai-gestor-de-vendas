@@ -26,6 +26,7 @@ import {
   IdIcon,
   ContentPointsInfo,
   ContentUserInfo,
+  ButtonCommands,
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
@@ -132,10 +133,13 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               <OutputIcon />
               Saída
             </Button>
-            <Button onClick={() => setCommandState(true)}>
+            <ButtonCommands onClick={() => setCommandState(true)}>
               <ListIcon />
-              Comanda [{openedStepSale}]
-            </Button>
+              Comanda{" "}
+              {openedStepSale > 0 && (
+                <span className="badge">{openedStepSale}</span>
+              )}
+            </ButtonCommands>
 
             <Button onClick={() => setRewardModal(true)}>
               <TrophyIcon />
