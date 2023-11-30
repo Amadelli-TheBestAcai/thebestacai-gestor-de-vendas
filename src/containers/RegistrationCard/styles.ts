@@ -1,12 +1,13 @@
 import styled, { css } from "styled-components";
 
-import { RepeatOutline, CheckCircle, RemoveCircle } from "../../styles/Icons";
+import { RepeatOutline, CheckCircle, Trash } from "../../styles/Icons";
 
 import {
   Modal as ModalAnt,
   Input as InputAnt,
   Row as RowAnt,
   Col as ColAnt,
+  Switch as SwitchAnt,
 } from "antd";
 
 export const Container = styled(ModalAnt)`
@@ -17,7 +18,7 @@ export const Container = styled(ModalAnt)`
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
     @media (max-height: 900px) {
-      width: 700px !important;
+      width: 1000px !important;
     }
   }
 
@@ -117,10 +118,15 @@ export const Card = styled(RowAnt)`
   width: 100%;
   height: 50px;
   margin-top: 8px;
-  background: var(--white-40);
   color: var(--grey-200);
   font-weight: 500;
   font-size: 1rem;
+
+  transition: ease-in-out background 150ms;
+
+  :hover {
+    background-color: rgb(213, 213, 213, 0.44);
+  }
 `;
 
 export const Col = styled(ColAnt)`
@@ -151,23 +157,15 @@ export const RestoreIcon = styled(RepeatOutline)`
   color: var(--green-600);
 `;
 
-interface IDisableIcon {
-  enabled?: boolean;
-}
-
-export const DisableIcon = styled(CheckCircle)<IDisableIcon>`
-  ${iconCSS};
-  ${({ enabled }) =>
-    enabled
-      ? css`
-          color: green;
-        `
-      : css`
-          color: gray;
-        `};
+export const SwitchIcon = styled(SwitchAnt)`
+  min-width: 30px;
 `;
-
-export const RemoveIcon = styled(RemoveCircle)`
+export const RemoveIcon = styled(Trash)`
   ${iconCSS};
   color: red;
+  transition: ease-in-out 200ms;
+
+  :hover {
+    filter: saturate(0.3);
+  }
 `;

@@ -162,6 +162,16 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
             storeCash?.code,
             total
           );
+          if (
+            errorMessageCloseStoreCash ===
+            "Você ainda possui comandas pendentes"
+          ) {
+            notification.warning({
+              message: "Você ainda possui comandas pendentes",
+              duration: 5,
+            });
+            return;
+          }
           if (errorOnStoreCash) {
             notification.error({
               message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",

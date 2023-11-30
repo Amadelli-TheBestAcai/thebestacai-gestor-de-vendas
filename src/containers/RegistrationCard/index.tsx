@@ -17,8 +17,8 @@ import {
   Content,
   Card,
   RestoreIcon,
-  DisableIcon,
   RemoveIcon,
+  SwitchIcon,
 } from "./styles";
 interface IProps {
   modalState: boolean;
@@ -139,7 +139,16 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
 
   const handleEnable = async (sale: SaleDto) => {
     Modal.confirm({
-      content: "Tem certeza que gostaria de prosseguir?",
+      title: `${
+        sale.enabled
+          ? "Deseja habilitar comanda de funcionário?"
+          : "Deseja desabilitar comanda de funcionário?"
+      }`,
+      content: `${
+        sale.enabled
+          ? "Essa comanda não será considerada no fechamento de caixa."
+          : "Essa comanda será considerada no fechamento de caixa."
+      }`,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
@@ -204,10 +213,12 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
           <ListContainer>
             <Header>
               <Col sm={5}>Nome Cliente</Col>
-              <Col sm={6}>Data</Col>
+              <Col sm={4}>Data</Col>
               <Col sm={2}>Nº Comanda</Col>
-              <Col sm={6}>Qtd. itens</Col>
-              <Col sm={5}>Ação</Col>
+              <Col sm={3}>Valor</Col>
+              <Col sm={2}>Qtd. itens</Col>
+              <Col sm={4}>Funcionário</Col>
+              <Col sm={3}>Ação</Col>
             </Header>
 
             <Content>
@@ -215,32 +226,36 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
                 <React.Fragment key={_stepSale.id}>
                   <Card>
                     <Col sm={5}>{_stepSale.name}</Col>
-                    <Col sm={6}>
+                    <Col sm={4}>
                       {moment(_stepSale.created_at).format(
                         "DD/MM/YYYY HH:mm:ss"
                       )}
                     </Col>
                     <Col sm={2}>{index + 1}</Col>
-                    <Col sm={6}>{_stepSale.quantity}</Col>
-                    <Col sm={5} style={{ justifyContent: "space-evenly" }}>
+                    <Col sm={3}>R$ {_stepSale.total_sold.toFixed(2)}</Col>
+                    <Col sm={2}>{_stepSale.quantity}</Col>
+                    <Col sm={4}>
+                      {" "}
+                      <Tooltip
+                        title={
+                          _stepSale.enabled
+                            ? "Comanda Cliente"
+                            : "Comanda Funcionário"
+                        }
+                        placement="bottom"
+                      >
+                        <SwitchIcon
+                          checked={!_stepSale.enabled}
+                          onChange={async () => await handleEnable(_stepSale)}
+                        />
+                      </Tooltip>
+                    </Col>
+                    <Col sm={3} style={{ justifyContent: "space-evenly" }}>
                       <Tooltip title={"Retornar a comanda"} placement="bottom">
                         <RestoreIcon
                           onClick={async () =>
                             await handleRestore(_stepSale.id)
                           }
-                        />
-                      </Tooltip>
-                      <Tooltip
-                        title={
-                          _stepSale.enabled
-                            ? "Desativar a comanda"
-                            : "Ativar a comanda"
-                        }
-                        placement="bottom"
-                      >
-                        <DisableIcon
-                          enabled={_stepSale.enabled}
-                          onClick={async () => await handleEnable(_stepSale)}
                         />
                       </Tooltip>
                       <Tooltip title={"Remover a comanda"} placement="bottom">
