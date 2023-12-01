@@ -54,10 +54,10 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
       setName("");
       setLoading(false);
     }
-    if (modalState) {
+    if (modalState || loading) {
       init();
     }
-  }, [modalState]);
+  }, [modalState, loading]);
 
   const handleSubmit = async () => {
     if (name.length < 3) {
@@ -132,7 +132,6 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
         }
         await updateOpenedStepSale();
         setLoading(false);
-        setModalState(false);
       },
     });
   };
@@ -174,7 +173,6 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
         }
         await updateOpenedStepSale();
         setLoading(false);
-        setModalState(false);
       },
     });
   };
