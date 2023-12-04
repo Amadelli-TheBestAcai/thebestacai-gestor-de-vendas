@@ -23,7 +23,7 @@ class GetProducts implements IUseCaseFactory {
       const store = await this.storeRepository.getOne();
       const {
         data: { content },
-      } = await odinApi.get(`products_store/store/${store?.company_id}`);
+      } = await odinApi.get(`products_store/store/${store?.company_id}?product_is_enable=true`);
       await this.productRepository.clear();
       await this.productRepository.createMany(content);
       return content;
