@@ -123,6 +123,20 @@ const Sale: React.FC<IProps> = () => {
       async onOk() {
         try {
           setIsLoading(true);
+
+          if (hasNfce) {
+            //@ts-ignore
+            const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
+            if (!justify || justify.length < 15 || justify.length > 255) {
+              throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
+            }
+            params = {
+              ...params,
+              justify: justify
+            }
+          }
+          
+          
           const success = await window.Main.sale.deleteSaleFromApi(params);
           if (!success) {
             return notification.error({
@@ -504,7 +518,7 @@ const Sale: React.FC<IProps> = () => {
                                           id: selectedSale.id,
                                           cash_history_id:
                                             selectedSale.cash_history_id,
-                                          gv_id: selectedSale.gv_id,
+                                          ref: selectedSale.ref,
                                         });
                                       }}
                                     />

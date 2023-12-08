@@ -9,7 +9,7 @@ import moment from "moment";
 interface Request {
   id: number,
   cash_history_id: number,
-  gv_id: number,
+  ref: string,
   justify: string
 }
 
@@ -23,7 +23,7 @@ class DeleteSaleFromApi implements IUseCaseFactory {
     )
   ) { }
 
-  async execute({ id, cash_history_id, gv_id, justify }: Request): Promise<void> {
+  async execute({ id, cash_history_id, ref, justify }: Request): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
       return;
@@ -41,10 +41,10 @@ class DeleteSaleFromApi implements IUseCaseFactory {
     }
 
     await midasApi.delete(`/sales/${id}?justify=${justify}`);
-
+  
     const saleToDelete = await this.integratedSaleRepository.getOne({
       cash_history_id,
-      gv_id
+      ref
     })
     console.log(saleToDelete);
     await this.integratedSaleRepository.update(saleToDelete?.id, { ...saleToDelete, deleted_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss") })
