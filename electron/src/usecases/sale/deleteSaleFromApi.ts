@@ -10,6 +10,7 @@ interface Request {
   id: number,
   cash_history_id: number,
   gv_id: number,
+  justify: string
 }
 
 class DeleteSaleFromApi implements IUseCaseFactory {
@@ -22,7 +23,7 @@ class DeleteSaleFromApi implements IUseCaseFactory {
     )
   ) { }
 
-  async execute({ id, cash_history_id, gv_id }: Request): Promise<void> {
+  async execute({ id, cash_history_id, gv_id, justify }: Request): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
       return;
@@ -39,13 +40,13 @@ class DeleteSaleFromApi implements IUseCaseFactory {
       return;
     }
 
-    await midasApi.delete(`/sales/${id}`);
+    await midasApi.delete(`/sales/${id}?justify=${justify}`);
 
     const saleToDelete = await this.integratedSaleRepository.getOne({
       cash_history_id,
       gv_id
     })
-
+    console.log(saleToDelete);
     await this.integratedSaleRepository.update(saleToDelete?.id, { ...saleToDelete, deleted_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss") })
   }
 }

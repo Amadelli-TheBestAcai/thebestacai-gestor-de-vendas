@@ -101,8 +101,21 @@ const Sale: React.FC<IProps> = () => {
   }, [shouldSearch]);
 
   const onDelete = (params): void => {
+    const hasNfce = selectedSale.nfce;
+    const renderTextarea = hasNfce && (
+      <Textarea
+        id="nfceDeleteJustifyInput"
+        placeholder="Justificativa - 15 a 255 caracteres"
+        minLength={15}
+        maxLength={255}
+        style={{ width: "100%" }}
+        onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+      />
+    );
+
     Modal.confirm({
-      content: "Tem certeza que gostaria de remover esta venda",
+      title: "Tem certeza que gostaria de remover esta venda",
+      content: renderTextarea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
