@@ -23,7 +23,7 @@ class DeleteSaleFromApi implements IUseCaseFactory {
     )
   ) { }
 
-  async execute({ id, cash_history_id, gv_id, justify}: Request): Promise<void> {
+  async execute({ id, cash_history_id, gv_id}: Request): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
       return;
