@@ -182,6 +182,7 @@ const Login: React.FC<IProps> = ({ history }) => {
       });
       return;
     }
+
     setContextStore(_store);
     window.Main.message("balance:connect");
     await window.Main.product.getAllPurchaseProducts(false);
@@ -378,8 +379,13 @@ const Login: React.FC<IProps> = ({ history }) => {
         }
       >
         <TextModalVersion>
-          Seu Gestor de Vendas está <b>desatualizado</b>, o que pode resultar em mau funcionamento e vulnerabilidades de segurança.
-          <span>Reinicie o Gestor de Vendas e aguarde a atualização, caso a mesma não aconteça automaticamente, baixe a versão mais recente no Autenticador!</span>
+          Seu Gestor de Vendas está <b>desatualizado</b>, o que pode resultar em
+          mau funcionamento e vulnerabilidades de segurança.
+          <span>
+            Reinicie o Gestor de Vendas e aguarde a atualização, caso a mesma
+            não aconteça automaticamente, baixe a versão mais recente no
+            Autenticador!
+          </span>
         </TextModalVersion>
         <Checkbox
           checked={isCheckboxChecked}

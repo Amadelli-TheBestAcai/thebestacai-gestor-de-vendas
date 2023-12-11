@@ -1,5 +1,10 @@
 import { useCaseFactory } from "../usecases/useCaseFactory";
-import { createStore, hasRegistration, getFromApi } from "../usecases/store";
+import {
+  createStore,
+  hasRegistration,
+  getFromApi,
+  removeStore,
+} from "../usecases/store";
 import { StoreDto } from "../models/gestor";
 
 export const storeFactory = {
@@ -10,4 +15,6 @@ export const storeFactory = {
     await useCaseFactory.execute<StoreDto | undefined>(createStore, {
       payload,
     }),
+  remove: async () =>
+    await useCaseFactory.execute<StoreDto | undefined>(removeStore),
 };

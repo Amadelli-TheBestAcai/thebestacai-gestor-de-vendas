@@ -46,7 +46,6 @@ import {
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
-import { v4 } from "uuid";
 
 type IProps = RouteComponentProps;
 
@@ -83,9 +82,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-              (total, _payment) => total + _payment.amount,
-              0
-            ),
+            (total, _payment) => total + _payment.amount,
+            0
+          ),
       }));
 
       if (_sales.length) {
@@ -100,30 +99,62 @@ const Sale: React.FC<IProps> = () => {
     }
   }, [shouldSearch]);
 
-  const onDelete = (params): void => {
+
+  const onDelete = async (sale) => {
+    const hasNfce = selectedSale.nfce;
+    const renderTextarea = hasNfce && (
+      <Textarea
+        id="nfceDeleteJustifyInput"
+        placeholder="Justificativa - 15 a 255 caracteres"
+        minLength={15}
+        maxLength={255}
+        style={{ width: "100%" }}
+        onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+      />
+    );
+  
     Modal.confirm({
-      content: "Tem certeza que gostaria de remover esta venda",
+      title: "Tem certeza que gostaria de remover esta venda?",
+      content: renderTextarea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
-      async onOk() {
+      onOk: async () => {
         try {
           setIsLoading(true);
-          const success = await window.Main.sale.deleteSaleFromApi(params);
-          if (!success) {
-            return notification.error({
-              message: "Oops! Falha ao remover venda.",
-              duration: 5,
-            });
-          }
+  
+          if (hasNfce) {
 
-          return notification.success({
+            //@ts-ignore
+            const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
+            if (!justify || justify.length < 15 || justify.length > 255) {
+              throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
+            }
+  
+            const { has_internal_error } = await window.Main.sale.cancelNfce(sale.id, justify);
+  
+            if (has_internal_error) {
+              throw new Error("NFC-e autorizada há mais de 30 minutos");
+            }
+          }
+  
+          const success = await window.Main.sale.deleteSaleFromApi(sale.id);
+  
+          if (!success) {
+            throw new Error("Oops! Falha ao remover venda.");
+          }
+  
+          notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
           });
         } catch (error) {
-          console.log(error);
+          notification.error({
+            //@ts-ignore
+            message: error.message || "Erro ao tentar remover a venda. Por favor, tente novamente.",
+            duration: 5,
+          });
         } finally {
           setIsLoading(false);
           setShouldSearch(true);
@@ -131,6 +162,7 @@ const Sale: React.FC<IProps> = () => {
       },
     });
   };
+  
 
   const findSale = ({ target: { value } }) => {
     const filteredSale = sales.filter((_sale) =>
@@ -199,8 +231,8 @@ const Sale: React.FC<IProps> = () => {
           duration: 5,
         });
       }
-      notification.success({
-        message: response,
+      return notification.success({
+        message: response?.mensagem_sefaz,
         duration: 5,
       });
     } catch (error) {
@@ -355,7 +387,7 @@ const Sale: React.FC<IProps> = () => {
     }
 
     if (_settings.should_use_printer === false) {
-      return  notification.warning({
+      return notification.warning({
         message: "Habilite a impressora na tela de configurações.",
         duration: 5,
       });
@@ -549,7 +581,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                        +_item.storeProduct.price_unit
+                                      +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>

@@ -31,6 +31,7 @@ class CreateStepSale implements IUseCaseFactory {
     }
 
     currentSale.name = name;
+    currentSale.enabled = true;
     currentSale.is_current = false;
 
     await this.saleRepository.deleteById(currentSale.id);

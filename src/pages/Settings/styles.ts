@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { InfoCircle } from "../../styles/Icons";
 
 import {
   Select as SelectAnt,
@@ -95,6 +96,8 @@ export const ButtonSave = styled(ButtonAnt)`
   border: none;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 
+  margin-right: 1.5rem;
+
   :active,
   :hover,
   :focus {
@@ -185,5 +188,82 @@ export const Switch = styled(SwitchAnt)`
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     zoom: 0.8;
+  }
+`;
+
+export const StoreChange = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  .descriptionStore {
+    margin-left: 10px;
+  }
+  .storeObservation {
+    border-left: 1px solid;
+    margin-left: 1rem;
+    padding: 2px;
+    color: var(--grey-80);
+    font-size: 14px;
+  }
+`;
+
+export const ButtonSaveStore = styled(ButtonAnt)`
+  width: 113px;
+  height: 50px;
+  background: var(--orange-250);
+  color: var(--brown-500);
+  border-radius: 5px;
+  font-weight: 500;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+
+  margin-right: 1.5rem;
+
+  &.disabled-button {
+    ${DisabledButtonStyle}
+  }
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--orange-250);
+    color: var(--brown-500);
+    border: none;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 105px;
+      height: 40px;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    width: 100px;
+    height: 35px;
+    font-size: 0.8rem;
+  }
+`;
+
+export const InfoIcon = styled(InfoCircle)`
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--red-600);
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+
+  /*Responsive 1440px*/
+  @media (max-width: 1440px) {
+    width: 1rem;
+    height: 1rem;
   }
 `;

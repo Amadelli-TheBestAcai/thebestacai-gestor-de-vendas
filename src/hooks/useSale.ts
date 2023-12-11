@@ -76,6 +76,16 @@ export function useSale() {
     (globalContext) => globalContext.setCampaign
   );
 
+  const openedStepSale = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.openedStepSale
+  );
+
+  const setOpenedStepSale = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.setOpenedStepSale
+  );
+
   return {
     sale,
     setSale,
@@ -86,7 +96,7 @@ export function useSale() {
     onAddItem,
     onAddDiscount,
     onRemoveDiscount,
-    shouldOpenClientInfo,	
+    shouldOpenClientInfo,
     setShouldOpenClientInfo,
     loadingSale,
     isSavingSale,
@@ -95,5 +105,7 @@ export function useSale() {
     onAddToQueue,
     campaign,
     setCampaign,
+    openedStepSale,
+    setOpenedStepSale,
   };
 }

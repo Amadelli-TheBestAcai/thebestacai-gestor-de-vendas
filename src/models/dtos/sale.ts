@@ -5,6 +5,7 @@ import { CustomerVoucherDto } from "./customerVoucher";
 export type SaleDto = {
   id: string;
   user_id?: number;
+  enabled?: boolean;
   name?: string;
   client_cpf?: string;
   client_phone?: string;

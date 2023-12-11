@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import { useUser } from "../../hooks/useUser";
 import RegistrationCard from "../RegistrationCard";
 import DiscountForm from "../DiscountForm";
 import InOutForm from "../InOutForm";
@@ -26,7 +25,8 @@ import {
   ContentGeneral,
   IdIcon,
   ContentPointsInfo,
-  ContentUserInfo
+  ContentUserInfo,
+  ButtonCommands,
 } from "./styles";
 
 import { useSale } from "../../hooks/useSale";
@@ -40,8 +40,14 @@ import { monetaryFormat } from "../../helpers/monetaryFormat";
 type ComponentProps = RouteComponentProps;
 
 const Actions: React.FC<ComponentProps> = ({ history }) => {
-  const { discountModalHandler, sale, campaign, setCampaign, setShouldOpenClientInfo } = useSale();
-  const [cupomModalState, setCupomModalState] = useState(false)
+  const {
+    discountModalHandler,
+    sale,
+    campaign,
+    setCampaign,
+    setShouldOpenClientInfo,
+  } = useSale();
+  const [cupomModalState, setCupomModalState] = useState(false);
   const { store } = useStore();
   const [cash, setCash] = useState<string | undefined>("");
   const [username, setUsername] = useState<SaleDto>();
@@ -50,6 +56,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   const [handlerOutState, setHandlerOutState] = useState(false);
   const [rewardModal, setRewardModal] = useState(false);
   const [openChat, setOpenChat] = useState(false);
+  const { openedStepSale } = useSale();
 
   useEffect(() => {
     async function init() {
@@ -82,13 +89,14 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
   useEffect(() => {
     const getCustomerName = async () => {
-      const { response } =
-        await window.Main.user.getCustomerByCpf(sale.client_cpf);
-      setUsername(response)
-    }
+      const { response } = await window.Main.user.getCustomerByCpf(
+        sale.client_cpf
+      );
+      setUsername(response);
+    };
 
-    getCustomerName()
-  }, [sale.client_cpf])
+    getCustomerName();
+  }, [sale.client_cpf]);
 
   return (
     <Container>
@@ -125,10 +133,13 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               <OutputIcon />
               Saída
             </Button>
-            <Button onClick={() => setCommandState(true)}>
+            <ButtonCommands onClick={() => setCommandState(true)}>
               <ListIcon />
-              Comanda
-            </Button>
+              Comanda{" "}
+              {openedStepSale > 0 && (
+                <span className="badge">{openedStepSale}</span>
+              )}
+            </ButtonCommands>
 
             <Button onClick={() => setRewardModal(true)}>
               <TrophyIcon />
@@ -154,19 +165,31 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
 
         <CpfContent haveCpf={sale.client_cpf}>
           <ContentUserInfo>
-            <span><b>Nome:</b> {sale.client_cpf ? username?.name : "Não informado"}</span> {" "}
-            <span><b>CPF:</b> {sale.client_cpf ? sale.client_cpf : "Não informado"}</span>
+            <span>
+              <b>Nome:</b> {sale.client_cpf ? username?.name : "Não informado"}
+            </span>{" "}
+            <span>
+              <b>CPF:</b> {sale.client_cpf ? sale.client_cpf : "Não informado"}
+            </span>
           </ContentUserInfo>
 
           <ContentPointsInfo>
             {campaign && sale.client_cpf ? (
               <>
-                <span>Com mais R$ {monetaryFormat(getCampaignPointsPlus())} você ganha +1 ponto.</span>
-                <span><b>Pontos ganhos nessa compra: </b>{Math.floor(
-                  sale.total_sold / campaign.average_ticket,
-                )}</span>
+                <span>
+                  Com mais R$ {monetaryFormat(getCampaignPointsPlus())} você
+                  ganha +1 ponto.
+                </span>
+                <span>
+                  <b>Pontos ganhos nessa compra: </b>
+                  {Math.floor(sale.total_sold / campaign.average_ticket)}
+                </span>
               </>
-            ) : <span><b>*Insira um CPF, e ganhe pontos!</b></span>}
+            ) : (
+              <span>
+                <b>*Insira um CPF, e ganhe pontos!</b>
+              </span>
+            )}
           </ContentPointsInfo>
         </CpfContent>
       </ContentGeneral>
@@ -200,7 +223,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <RewardModal isVisible={rewardModal} setIsVisible={setRewardModal} />
 
       <ChatForm isVisible={openChat} setIsVisible={setOpenChat} />
-    </Container >
+    </Container>
   );
 };
 
