@@ -2,6 +2,8 @@ import { CustomerVoucherDTO } from "../dtos/customerVoucher";
 export interface SaleDto {
   id: string;
   gv_id?: number;
+  store_id?:number;
+  justify?:string;
   name?: string;
   enabled?: boolean;
   client_cpf?: string;
