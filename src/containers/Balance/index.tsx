@@ -139,6 +139,9 @@ const BalanceContainer: React.FC<IProps> = ({
     if (shouldUseBalance && lowerKey === "b") {
       await getWeightByBalance();
     }
+    if (key === "Enter") {
+      document.getElementById("balanceInput").focus();
+    }
   };
 
   return (
