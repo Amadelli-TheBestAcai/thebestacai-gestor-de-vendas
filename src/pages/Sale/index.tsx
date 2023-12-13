@@ -110,8 +110,8 @@ const Sale: React.FC<IProps> = () => {
           label=""
           name="textArea"
           rules={[{ required: true, message: "Campo obrigatório" },
-          { min: 15, message: "A justificativa deve ter no minimo 15 caractesres" },
-          { max: 255, message: "A justificativa deve ter no máximo 255 caractesres" }]}
+          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
+          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
         >
           <Textarea
             id="nfceDeleteJustifyInput"
@@ -158,7 +158,7 @@ const Sale: React.FC<IProps> = () => {
               duration: 5,
             });
           }
-
+          formCancelJustify.resetFields()
           return notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
@@ -261,8 +261,8 @@ const Sale: React.FC<IProps> = () => {
           label=""
           name="textArea"
           rules={[{ required: true, message: "Campo obrigatório" },
-          { min: 15, message: "A justificativa deve ter no minimo 15 caractesres" },
-          { max: 255, message: "A justificativa deve ter no máximo 255 caractesres" }]}
+          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
+          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
         >
           <Textarea
             id="nfceJustifyInput"
@@ -291,6 +291,7 @@ const Sale: React.FC<IProps> = () => {
           });
           return;
         }
+        formCancelJustify.resetFields()
         notification.success({
           message: "Nota fiscal cancelada com sucesso",
           duration: 5,
