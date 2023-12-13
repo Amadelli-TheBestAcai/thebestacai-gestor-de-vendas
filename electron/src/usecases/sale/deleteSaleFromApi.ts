@@ -23,31 +23,34 @@ class DeleteSaleFromApi implements IUseCaseFactory {
     )
   ) { }
 
-  async execute({ id, cash_history_id, ref, justify }: Request): Promise<void> {
-    const is_online = await checkInternet();
-    if (!is_online) {
-      return;
+  async execute({ id, cash_history_id, ref, justify }: Request): Promise<any> {
+    try {
+      const is_online = await checkInternet();
+      if (!is_online) {
+        return;
+      }
+
+      const currentCash = await this.storeCashRepository.getOne();
+
+      if (!currentCash || !currentCash.is_opened) {
+        return;
+      }
+
+      const { store_id, code } = currentCash;
+      if (!store_id || !code) {
+        return;
+      }
+      await midasApi.delete(`/sales/${id}?store_id=${store_id}&justify=${justify}`)
+
+      const saleToDelete = await this.integratedSaleRepository.getOne({
+        cash_history_id,
+        ref
+      })
+      await this.integratedSaleRepository.update(saleToDelete?.id, { ...saleToDelete, deleted_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss") })
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.response.data.message)
     }
-
-    const currentCash = await this.storeCashRepository.getOne();
-
-    if (!currentCash || !currentCash.is_opened) {
-      return;
-    }
-
-    const { store_id, code } = currentCash;
-    if (!store_id || !code) {
-      return;
-    }
-
-    await midasApi.delete(`/sales/${id}?justify=${justify}`);
-  
-    const saleToDelete = await this.integratedSaleRepository.getOne({
-      cash_history_id,
-      ref
-    })
-    console.log(saleToDelete);
-    await this.integratedSaleRepository.update(saleToDelete?.id, { ...saleToDelete, deleted_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss") })
   }
 }
 

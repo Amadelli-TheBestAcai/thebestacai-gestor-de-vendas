@@ -135,12 +135,14 @@ const Sale: React.FC<IProps> = () => {
               justify: justify
             }
           }
-          
-          
-          const success = await window.Main.sale.deleteSaleFromApi(params);
-          if (!success) {
+          const {
+            has_internal_error: errorOnDeleteSale,
+            error_message,
+          }
+         = await window.Main.sale.deleteSaleFromApi(params);
+          if (errorOnDeleteSale) {
             return notification.error({
-              message: "Oops! Falha ao remover venda.",
+              message: error_message || "Oops! Falha ao remover venda.",
               duration: 5,
             });
           }

@@ -99,14 +99,7 @@ export const saleFactory = {
     id: number;
     cash_history: number;
     ref: string;
-  }) => {
-    try {
-      await useCaseFactory.execute<void>(deleteSaleFromApi, params);
-      return true;
-    } catch {
-      return false;
-    }
-  },
+  }) => await useCaseFactory.execute<void>(deleteSaleFromApi, params),
   emitNfce: async (
     nfe: NfeDTO,
     saleIdToUpdate?: number | string,
