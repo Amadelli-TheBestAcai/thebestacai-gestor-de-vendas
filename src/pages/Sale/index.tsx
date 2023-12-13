@@ -283,7 +283,7 @@ const Sale: React.FC<IProps> = () => {
         const { error_message, has_internal_error: errorOnCancelNfce } =
           await window.Main.sale.cancelNfce(sale.id, justify || "");
         if (errorOnCancelNfce) {
-          notification.warning({
+          notification.error({
             message: error_message,
             duration: 5,
           });
