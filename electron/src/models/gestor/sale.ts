@@ -8,6 +8,8 @@ export interface SaleDto {
   client_phone?: string;
   client_email?: string;
   user_id?: number;
+  store_id?:number;
+  justify?:string;
   abstract_sale?: boolean;
   quantity: number;
   change_amount: number;
