@@ -9,8 +9,8 @@ import moment from "moment";
 interface Request {
   id: number,
   cash_history_id: number,
-  gv_id: number,
-  justify:string,
+  ref: string,
+  justify: string
 }
 
 class DeleteSaleFromApi implements IUseCaseFactory {
@@ -23,30 +23,39 @@ class DeleteSaleFromApi implements IUseCaseFactory {
     )
   ) { }
 
-  async execute({ id, cash_history_id, gv_id, justify }: Request): Promise<void> {
-    const is_online = await checkInternet();
-    if (!is_online) {
-      return;
+  async execute({ id, cash_history_id, ref, justify }: Request): Promise<any> {
+    try {
+      const is_online = await checkInternet();
+      if (!is_online) {
+        return;
+      }
+
+      const currentCash = await this.storeCashRepository.getOne();
+
+      if (!currentCash || !currentCash.is_opened) {
+        return;
+      }
+
+      const { store_id, code } = currentCash;
+      if (!store_id || !code) {
+        return;
+      }
+
+      const endpoint = justify
+        ? `/sales/${id}?store_id=${store_id}&justify=${justify}`
+        : `/sales/${id}`;
+
+      await midasApi.delete(endpoint)
+
+      const saleToDelete = await this.integratedSaleRepository.getOne({
+        cash_history_id,
+        ref
+      })
+      await this.integratedSaleRepository.update(saleToDelete?.id, { ...saleToDelete, deleted_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss") })
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.response.data.message)
     }
-
-    const currentCash = await this.storeCashRepository.getOne();
-
-    if (!currentCash || !currentCash.is_opened) {
-      return;
-    }
-
-    const { store_id, code } = currentCash;
-    if (!store_id || !code) {
-      return;
-    }
-
-    await midasApi.delete(`/sales/${id}`);
-    const saleToDelete = await this.integratedSaleRepository.getOne({
-      cash_history_id,
-      gv_id,
-      justify,
-    })
-    await this.integratedSaleRepository.update(saleToDelete?.id, { ...saleToDelete, deleted_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss") })
   }
 }
 
