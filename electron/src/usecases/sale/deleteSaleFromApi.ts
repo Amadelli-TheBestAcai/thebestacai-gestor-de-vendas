@@ -40,7 +40,12 @@ class DeleteSaleFromApi implements IUseCaseFactory {
       if (!store_id || !code) {
         return;
       }
-      await midasApi.delete(`/sales/${id}?store_id=${store_id}&justify=${justify}`)
+
+      const endpoint = justify
+        ? `/sales/${id}?store_id=${store_id}&justify=${justify}`
+        : `/sales/${id}`;
+
+      await midasApi.delete(endpoint)
 
       const saleToDelete = await this.integratedSaleRepository.getOne({
         cash_history_id,
