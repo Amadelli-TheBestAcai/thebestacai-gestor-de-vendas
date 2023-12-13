@@ -42,14 +42,17 @@ import {
   NfceLabel,
   PdfIcon,
   CancelIcon,
+  Form
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
+import { v4 } from "uuid";
 
 type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = () => {
+  const [formCancelJustify] = Form.useForm()
   const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
   const [nfceCancelJustify, setNfceCancelJustify] = useState("");
@@ -82,9 +85,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-            (total, _payment) => total + _payment.amount,
-            0
-          ),
+              (total, _payment) => total + _payment.amount,
+              0
+            ),
       }));
 
       if (_sales.length) {
@@ -99,62 +102,69 @@ const Sale: React.FC<IProps> = () => {
     }
   }, [shouldSearch]);
 
-
-  const onDelete = async (sale) => {
+  const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
-    const renderTextarea = hasNfce && (
-      <Textarea
-        id="nfceDeleteJustifyInput"
-        placeholder="Justificativa - 15 a 255 caracteres"
-        minLength={15}
-        maxLength={255}
-        style={{ width: "100%" }}
-        onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
-      />
+    const renderTextArea = hasNfce && (
+      <Form form={formCancelJustify}>
+        <Form.Item
+          label=""
+          name="textArea"
+          rules={[{ required: true, message: "Campo obrigatório" },
+          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
+          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
+        >
+          <Textarea
+            id="nfceDeleteJustifyInput"
+            placeholder="Justificativa - 15 a 255 caracteres"
+            minLength={15}
+            maxLength={255}
+            style={{ width: "100%" }}
+            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+          />
+        </Form.Item>
+      </Form>
     );
-  
+
     Modal.confirm({
-      title: "Tem certeza que gostaria de remover esta venda?",
-      content: renderTextarea,
+      title: "Tem certeza que gostaria de remover esta venda",
+      content: renderTextArea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
-      onOk: async () => {
+      async onOk() {
+        await formCancelJustify.validateFields()
         try {
           setIsLoading(true);
-  
           if (hasNfce) {
-
             //@ts-ignore
             const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
             if (!justify || justify.length < 15 || justify.length > 255) {
               throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
             }
-  
-            const { has_internal_error } = await window.Main.sale.cancelNfce(sale.id, justify);
-  
-            if (has_internal_error) {
-              throw new Error("NFC-e autorizada há mais de 30 minutos");
+            params = {
+              ...params,
+              justify: justify
             }
           }
-  
-          const success = await window.Main.sale.deleteSaleFromApi(sale.id);
-  
-          if (!success) {
-            throw new Error("Oops! Falha ao remover venda.");
+          const {
+            has_internal_error: errorOnDeleteSale,
+            error_message,
           }
-  
-          notification.success({
+            = await window.Main.sale.deleteSaleFromApi(params);
+          if (errorOnDeleteSale) {
+            return notification.error({
+              message: error_message || "Oops! Falha ao remover venda.",
+              duration: 5,
+            });
+          }
+          formCancelJustify.resetFields()
+          return notification.success({
             message: "Venda removida com sucesso!",
             duration: 5,
           });
         } catch (error) {
-          notification.error({
-            //@ts-ignore
-            message: error.message || "Erro ao tentar remover a venda. Por favor, tente novamente.",
-            duration: 5,
-          });
+          console.log(error);
         } finally {
           setIsLoading(false);
           setShouldSearch(true);
@@ -162,7 +172,6 @@ const Sale: React.FC<IProps> = () => {
       },
     });
   };
-  
 
   const findSale = ({ target: { value } }) => {
     const filteredSale = sales.filter((_sale) =>
@@ -231,8 +240,8 @@ const Sale: React.FC<IProps> = () => {
           duration: 5,
         });
       }
-      return notification.success({
-        message: response?.mensagem_sefaz,
+      notification.success({
+        message: response,
         duration: 5,
       });
     } catch (error) {
@@ -246,40 +255,43 @@ const Sale: React.FC<IProps> = () => {
   };
 
   const cancelNfce = async (sale: SaleFromApi) => {
+    const renderTextArea = (
+      <Form form={formCancelJustify}>
+        <Form.Item
+          label=""
+          name="textArea"
+          rules={[{ required: true, message: "Campo obrigatório" },
+          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
+          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
+        >
+          <Textarea
+            id="nfceJustifyInput"
+            placeholder="Justificativa - 15 a 255 caracteres"
+            minLength={15}
+            maxLength={255}
+            style={{ width: "100%" }}
+            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+          />
+        </Form.Item>
+      </Form>
+    );
     Modal.confirm({
       title: "Deseja prosseguir e cancelar esta nota fiscal?",
-      content: (
-        <Textarea
-          id="nfceJustifyInput"
-          placeholder="Justificativa - 15 a 255 caracteres"
-          minLength={15}
-          maxLength={255}
-          style={{ width: "100%" }}
-          onChange={({ target: { value } }) =>
-            setNfceCancelJustify(value || "")
-          }
-        />
-      ),
+      content: renderTextArea,
       async onOk() {
+        await formCancelJustify.validateFields()
         //@ts-ignore
         const justify = document.getElementById("nfceJustifyInput")?.value;
-
-        if (justify.length < 15 || justify.length > 255) {
-          notification.warning({
-            message: "Justificativa deve ter entre 15 e 255 caracteres",
-            duration: 5,
-          });
-          return;
-        }
         const { error_message, has_internal_error: errorOnCancelNfce } =
           await window.Main.sale.cancelNfce(sale.id, justify || "");
         if (errorOnCancelNfce) {
-          notification.warning({
+          notification.error({
             message: error_message,
             duration: 5,
           });
           return;
         }
+        formCancelJustify.resetFields()
         notification.success({
           message: "Nota fiscal cancelada com sucesso",
           duration: 5,
@@ -387,7 +399,7 @@ const Sale: React.FC<IProps> = () => {
     }
 
     if (_settings.should_use_printer === false) {
-      return notification.warning({
+      return  notification.warning({
         message: "Habilite a impressora na tela de configurações.",
         duration: 5,
       });
@@ -523,7 +535,7 @@ const Sale: React.FC<IProps> = () => {
                                           id: selectedSale.id,
                                           cash_history_id:
                                             selectedSale.cash_history_id,
-                                          gv_id: selectedSale.gv_id,
+                                          ref: selectedSale.ref,
                                         });
                                       }}
                                     />
@@ -581,7 +593,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                      +_item.storeProduct.price_unit
+                                        +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>

@@ -116,7 +116,7 @@ class EmitNfce implements IUseCaseFactory {
         });
       } catch {
         throw new Error(
-          `Nfce emita mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${saleResponse.nfce_focus_id}`
+          `Nfce emitida mas houve falha ao vincular na venda, solicite suporte informando a chave gerada: ${saleResponse.nfce_focus_id}`
         );
       }
     }

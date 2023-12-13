@@ -18,19 +18,20 @@ class CancelNfce implements IUseCaseFactory {
   ) { }
 
   async execute({ sale_id, justify }: Request): Promise<void> {
-    const store = await this.storeCashRepository.getOne();
+    try {
+      const store = await this.storeCashRepository.getOne();
 
-    const payload = {
-      sale_id,
-      justify,
-      store_id: store?.company.id
+      const payload = {
+        sale_id,
+        justify,
+        store_id: store?.company.id
+      }
+      await midasApi.post("/nfce/cancel", payload);
+
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.response.data.message)
     }
-
-    const {
-      data
-    } = await midasApi.post("/nfce/cancel", payload);
-
-    console.log(data)
   }
 }
 
