@@ -15,6 +15,7 @@ import {
   Col as ColAnt,
   Collapse as CollapseAnt,
   Modal,
+  Form as FormAnt,
   Button,
 } from "antd";
 
@@ -355,3 +356,9 @@ export const NfceLabel = styled.h4<ITabColor>`
     }
   }}
 `;
+
+export const Form = styled(FormAnt)`
+  .ant-form-item-control-input {
+    padding: 0;
+  }
+`

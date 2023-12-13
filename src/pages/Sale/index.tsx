@@ -42,6 +42,7 @@ import {
   NfceLabel,
   PdfIcon,
   CancelIcon,
+  Form
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -51,6 +52,7 @@ import { v4 } from "uuid";
 type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = () => {
+  const [formCancelJustify] = Form.useForm()
   const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
   const [nfceCancelJustify, setNfceCancelJustify] = useState("");
@@ -103,14 +105,24 @@ const Sale: React.FC<IProps> = () => {
   const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
     const renderTextarea = hasNfce && (
-      <Textarea
-        id="nfceDeleteJustifyInput"
-        placeholder="Justificativa - 15 a 255 caracteres"
-        minLength={15}
-        maxLength={255}
-        style={{ width: "100%" }}
-        onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
-      />
+      <Form form={formCancelJustify}>
+        <Form.Item
+          label=""
+          name="textArea"
+          rules={[{ required: true, message: "Campo obrigatório" },
+          { min: 15, message: "A justificativa deve ter no minimo 15 caractesres" },
+          { max: 255, message: "A justificativa deve ter no máximo 255 caractesres" }]}
+        >
+          <Textarea
+            id="nfceDeleteJustifyInput"
+            placeholder="Justificativa - 15 a 255 caracteres"
+            minLength={15}
+            maxLength={255}
+            style={{ width: "100%" }}
+            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+          />
+        </Form.Item>
+      </Form>
     );
 
     Modal.confirm({
@@ -121,9 +133,9 @@ const Sale: React.FC<IProps> = () => {
       cancelText: "Não",
       centered: true,
       async onOk() {
+        await formCancelJustify.validateFields()
         try {
           setIsLoading(true);
-
           if (hasNfce) {
             //@ts-ignore
             const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
@@ -139,7 +151,7 @@ const Sale: React.FC<IProps> = () => {
             has_internal_error: errorOnDeleteSale,
             error_message,
           }
-         = await window.Main.sale.deleteSaleFromApi(params);
+            = await window.Main.sale.deleteSaleFromApi(params);
           if (errorOnDeleteSale) {
             return notification.error({
               message: error_message || "Oops! Falha ao remover venda.",
