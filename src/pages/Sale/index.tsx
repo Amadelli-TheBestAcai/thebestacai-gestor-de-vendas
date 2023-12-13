@@ -104,7 +104,7 @@ const Sale: React.FC<IProps> = () => {
 
   const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
-    const renderTextarea = hasNfce && (
+    const renderTextArea = hasNfce && (
       <Form form={formCancelJustify}>
         <Form.Item
           label=""
@@ -127,7 +127,7 @@ const Sale: React.FC<IProps> = () => {
 
     Modal.confirm({
       title: "Tem certeza que gostaria de remover esta venda",
-      content: renderTextarea,
+      content: renderTextArea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
@@ -255,31 +255,33 @@ const Sale: React.FC<IProps> = () => {
   };
 
   const cancelNfce = async (sale: SaleFromApi) => {
+    const renderTextArea = (
+      <Form form={formCancelJustify}>
+        <Form.Item
+          label=""
+          name="textArea"
+          rules={[{ required: true, message: "Campo obrigatório" },
+          { min: 15, message: "A justificativa deve ter no minimo 15 caractesres" },
+          { max: 255, message: "A justificativa deve ter no máximo 255 caractesres" }]}
+        >
+          <Textarea
+            id="nfceJustifyInput"
+            placeholder="Justificativa - 15 a 255 caracteres"
+            minLength={15}
+            maxLength={255}
+            style={{ width: "100%" }}
+            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+          />
+        </Form.Item>
+      </Form>
+    );
     Modal.confirm({
       title: "Deseja prosseguir e cancelar esta nota fiscal?",
-      content: (
-        <Textarea
-          id="nfceJustifyInput"
-          placeholder="Justificativa - 15 a 255 caracteres"
-          minLength={15}
-          maxLength={255}
-          style={{ width: "100%" }}
-          onChange={({ target: { value } }) =>
-            setNfceCancelJustify(value || "")
-          }
-        />
-      ),
+      content: renderTextArea,
       async onOk() {
+        await formCancelJustify.validateFields()
         //@ts-ignore
         const justify = document.getElementById("nfceJustifyInput")?.value;
-
-        if (justify.length < 15 || justify.length > 255) {
-          notification.warning({
-            message: "Justificativa deve ter entre 15 e 255 caracteres",
-            duration: 5,
-          });
-          return;
-        }
         const { error_message, has_internal_error: errorOnCancelNfce } =
           await window.Main.sale.cancelNfce(sale.id, justify || "");
         if (errorOnCancelNfce) {
