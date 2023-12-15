@@ -98,16 +98,8 @@ export const saleFactory = {
   deleteSaleFromApi: async (params: {
     id: number;
     cash_history: number;
-    gv_id: number;
-    justify?: string;
-  }) => {
-    try {
-      await useCaseFactory.execute<void>(deleteSaleFromApi, params);
-      return true;
-    } catch {
-      return false;
-    }
-  },
+    ref: string;
+  }) => await useCaseFactory.execute<void>(deleteSaleFromApi, params),
   emitNfce: async (
     nfe: NfeDTO,
     saleIdToUpdate?: number | string,
