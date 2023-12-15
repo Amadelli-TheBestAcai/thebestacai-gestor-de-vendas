@@ -130,14 +130,18 @@ const BalanceContainer: React.FC<IProps> = ({
     if (shouldUseBalance && key === "Enter") {
       handleEnterToSubmit();
     }
-    if (lowerKey === "f1") {
+    if (lowerKey === "f1" || key === "f1") {
       onRegisterSale();
     }
     if (lowerKey === "r") {
       openDiscoundModal();
     }
+
     if (shouldUseBalance && lowerKey === "b") {
       await getWeightByBalance();
+    }
+    if (key === "Enter") {
+      document.getElementById("balanceInput").focus();
     }
   };
 
@@ -160,15 +164,14 @@ const BalanceContainer: React.FC<IProps> = ({
                 <InputBox>
                   <span className="spanBalance">R$</span>
                   <input
+                    tabIndex={0}
                     className="inputBalance"
                     id="balanceInput"
                     value={
                       balanceAmount?.toFixed(2).replace(".", ",") || "0,00"
                     }
                     autoFocus={true}
-                    onKeyPress={async (event) =>
-                      await handlerEventKey(event.key)
-                    }
+                    onKeyDown={(value) => handlerEventKey(value.key)}
                     readOnly
                   />
                 </InputBox>
