@@ -126,7 +126,7 @@ const Sale: React.FC<IProps> = () => {
     );
 
     Modal.confirm({
-      title: "Tem certeza que gostaria de remover esta venda",
+      title: "Esta venda está registrada com uma NFCe autorizada. Para removê-la, primeiro exclua a NFCe.",
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
