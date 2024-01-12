@@ -42,7 +42,8 @@ import {
   NfceLabel,
   PdfIcon,
   CancelIcon,
-  Form
+  Form,
+  PrinterNFCeIcon
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -278,7 +279,7 @@ const Sale: React.FC<IProps> = () => {
     Modal.confirm({
       title: "Deseja prosseguir e cancelar esta nota fiscal?",
       content: renderTextArea,
-      okText: "CANCELAR",   
+      okText: "CANCELAR",
       cancelText: "Fechar",
       okButtonProps: {
         style: {
@@ -444,9 +445,9 @@ const Sale: React.FC<IProps> = () => {
       authorized: (
         <>
           <Col sm={8}>
-            <Tooltip title="Imprimir Danfe" placement="bottom">
-              <PrinterIcon
-                style={{ width: "30%" }}
+            <Tooltip title="Imprimir nota fiscal (DANFE)" placement="bottom">
+              <PrinterNFCeIcon
+                style={{ width: "35%" }}
                 onClick={() => printDanfe(selectedSale)}
               />
             </Tooltip>
@@ -454,15 +455,15 @@ const Sale: React.FC<IProps> = () => {
           <Col sm={8}>
             <Tooltip title="Cancelar NFCe" placement="bottom">
               <CancelIcon
-                style={{ width: "30%" }}
+                style={{ width: "34%" }}
                 onClick={() => cancelNfce(selectedSale)}
               />
             </Tooltip>
           </Col>
           <Col sm={8}>
-            <Tooltip title="Baixar PDF" placement="bottom">
+            <Tooltip title="Baixar PDF da nota fiscal" placement="bottom">
               <PdfIcon
-                style={{ width: "30%" }}
+                style={{ width: "32%" }}
                 onClick={() => getNfceDanfe(selectedSale)}
               />
             </Tooltip>
@@ -540,10 +541,29 @@ const Sale: React.FC<IProps> = () => {
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
                             >
+                              {hasPermission("sales.emit_nfce") &&
+                                !selectedSale.nfce_focus_id &&
+                                selectedSale.type === 0 && (
+                                  <Tooltip title="NFc-e" placement="bottom">
+                                    <NfceIcon
+                                      onClick={() => setNfceModal(true)}
+                                    />
+                                  </Tooltip>
+                                )}
+                              <Tooltip
+                                title="Imprimir comprovante de venda"
+                                placement="bottom"
+                              >
+                                <PrinterIcon
+                                  onClick={() => printReceipt(selectedSale)}
+                                  style={{ width: "9%" }}
+                                />
+                              </Tooltip>
                               {hasPermission("sales.remove_sale") &&
                                 !selectedSale.deleted_at && (
-                                  <Tooltip title="Remover" placement="bottom">
+                                  <Tooltip title="Remover venda" placement="bottom">
                                     <RemoveIcon
+                                      style={{ width: "8%" }}
                                       onClick={() => {
                                         onDelete({
                                           id: selectedSale.id,
@@ -555,23 +575,7 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-                              {hasPermission("sales.emit_nfce") &&
-                                !selectedSale.nfce_focus_id &&
-                                selectedSale.type === 0 && (
-                                  <Tooltip title="NFc-e" placement="bottom">
-                                    <NfceIcon
-                                      onClick={() => setNfceModal(true)}
-                                    />
-                                  </Tooltip>
-                                )}
-                              <Tooltip
-                                title="Imprimir Cupom fiscal"
-                                placement="bottom"
-                              >
-                                <PrinterIcon
-                                  onClick={() => printReceipt(selectedSale)}
-                                />
-                              </Tooltip>
+
                             </Col>
                           </>
                         }
