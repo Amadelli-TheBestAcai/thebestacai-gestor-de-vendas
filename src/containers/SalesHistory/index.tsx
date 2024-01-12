@@ -28,6 +28,8 @@ const SalesHistory: React.FC<IProps> = ({
 }) => {
   const [listView, setListView] = useState<boolean>(true);
 
+  const sortedSales = [...(filteredSales || sales)].sort((a, b) => moment(b.created_at).diff(a.created_at))
+
   return (
     <Container>
       <header>
@@ -54,7 +56,7 @@ const SalesHistory: React.FC<IProps> = ({
                 <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
                 <Col sm={5}>{sale.quantity}</Col>
                 <Col sm={4}>
-                  {moment(sale.created_at).format("DD/MM/YYYY HH:mm:ss")}
+                  {moment(sale.created_at).add(3, 'hours').format("DD/MM/YYYY HH:mm:ss")}
                 </Col>
                 <Col sm={5}>{SalesTypes[sale.type]}</Col>
               </CardSale>
@@ -62,11 +64,11 @@ const SalesHistory: React.FC<IProps> = ({
           </>
         ) : (
           <>
-            {(filteredSales || sales).map((sale, index) => (
+            {sortedSales.map((sale, index) => (
               <CardSale
                 key={index}
-                isSelected={sales[index] == selectedSale ? true : false}
-                isAbstract={sales[index].abstract_sale}
+                isSelected={sale === selectedSale}
+                isAbstract={sale.abstract_sale}
                 onClick={() => setSelectedSale(sale)}
               >
                 <Row>
