@@ -16,6 +16,8 @@ export {
   ChartBar,
 } from "@styled-icons/fa-solid";
 
+export { Printer as PrinterNFCe } from '@styled-icons/typicons/'
+
 export {
   Offer,
   CheckboxChecked,
