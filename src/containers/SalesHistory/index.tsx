@@ -29,7 +29,10 @@ const SalesHistory: React.FC<IProps> = ({
   const [listView, setListView] = useState<boolean>(true);
 
   const sortedSales = [...(filteredSales || sales)].sort((a, b) => moment(b.created_at).diff(a.created_at))
-
+  const handleSaleClick = (sale) => {
+    console.log("Informações da Venda:", sale);
+    setSelectedSale(sale);
+  };
   return (
     <Container>
       <header>
@@ -48,17 +51,22 @@ const SalesHistory: React.FC<IProps> = ({
                 style={{ flexDirection: "row" }}
                 isSelected={sales[index] == selectedSale ? true : false}
                 isAbstract={sales[index].abstract_sale}
-                onClick={() => setSelectedSale(sale)}
+                onClick={() => handleSaleClick(sale)}
               >
-                <Col sm={5}>
+                <Col sm={2}>
                   <span>{index + 1}</span>
                 </Col>
-                <Col sm={5}>R$ {currencyFormater(sale.total_sold)}</Col>
-                <Col sm={5}>{sale.quantity}</Col>
-                <Col sm={4}>
+                <Col sm={4}>R$ {currencyFormater(sale.total_sold)}</Col>
+                <Col sm={4}>{sale.quantity}</Col>
+                <Col sm={3}>
                   {moment(sale.created_at).add(3, 'hours').format("DD/MM/YYYY HH:mm:ss")}
                 </Col>
-                <Col sm={5}>{SalesTypes[sale.type]}</Col>
+                <Col sm={3}>{SalesTypes[sale.type]}</Col>
+                {sale?.nfce_id ?
+                  <Col sm={4}>{sale?.nfce.status_sefaz === "100" ? <span style={{ color: 'green' }}>NFCe autorizada</span> : <span style={{ color: 'red' }}>Nfce não autorizada</span>}</Col>
+                  :
+                  <Col sm={4}>{"Sem nota fiscal emitida"}</Col>
+                }
               </CardSale>
             ))}
           </>
