@@ -26,15 +26,15 @@ const SalesHistory: React.FC<IProps> = ({
   setSelectedSale,
   filteredSales,
 }) => {
-  const [listView, setListView] = useState<boolean>(false);
+  const [listView, setListView] = useState<boolean>(true);
 
   return (
     <Container>
       <header>
         <h3>Histórico de vendas</h3>
         <ActionTypeList>
-          <GridIcon onClick={() => setListView(false)} listView={listView} />
           <ListIcon onClick={() => setListView(true)} listView={listView} />
+          <GridIcon onClick={() => setListView(false)} listView={listView} />
         </ActionTypeList>
       </header>
       <ListContainer listView={listView}>
