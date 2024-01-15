@@ -30,7 +30,6 @@ const SalesHistory: React.FC<IProps> = ({
 
   const sortedSales = [...(filteredSales || sales)].sort((a, b) => moment(b.created_at).diff(a.created_at))
   const handleSaleClick = (sale) => {
-    console.log("Informações da Venda:", sale);
     setSelectedSale(sale);
   };
   return (
