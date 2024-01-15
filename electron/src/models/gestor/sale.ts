@@ -111,4 +111,7 @@ export interface SaleDto {
   }[];
   customerVoucher?: CustomerVoucherDTO;
   ref?: string;
+
+  cpf_used_club?: boolean;
+  cpf_used_nfce?: boolean;
 }
