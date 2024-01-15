@@ -125,17 +125,10 @@ const Sale: React.FC<IProps> = () => {
         </Form.Item>
       </Form>
     );
-
-    const salesNfce = sales
-      .filter((item) => item.nfce !== null && item.nfce !== undefined)
-      .map((item) => item.nfce.mensagem_sefaz === '100');
-
-    const isNfceAutorizada = salesNfce.some((status) => status);
-
+    
     Modal.confirm({
-      title: isNfceAutorizada
-        ? "Esta venda está registrada com uma NFCe autorizada. Tem certeza que deseja remove-la?"
-        : "Esta venda está registrada com uma NFCe não autorizada. Tem certeza que deseja remove-la?",
+      title: hasNfce ? `Foi emitida a NFCe dessa venda. Tem certeza que deseja remove-la?` : `Tem certeza que deseja remover essa venda?`,
+
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
