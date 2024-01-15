@@ -126,8 +126,16 @@ const Sale: React.FC<IProps> = () => {
       </Form>
     );
 
+    const salesNfce = sales
+      .filter((item) => item.nfce !== null && item.nfce !== undefined)
+      .map((item) => item.nfce.mensagem_sefaz === '100');
+
+    const isNfceAutorizada = salesNfce.some((status) => status);
+
     Modal.confirm({
-      title: "Esta venda está registrada com uma NFCe autorizada. Para removê-la, primeiro exclua a NFCe.",
+      title: isNfceAutorizada
+        ? "Esta venda está registrada com uma NFCe autorizada. Tem certeza que deseja remove-la?"
+        : "Esta venda está registrada com uma NFCe não autorizada. Tem certeza que deseja remove-la?",
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
@@ -161,7 +169,7 @@ const Sale: React.FC<IProps> = () => {
           }
           formCancelJustify.resetFields()
           return notification.success({
-            message: "Venda removida com sucesso!",
+            message: "Venda excluída com sucesso! NFC-e cancelada com sucesso!",
             duration: 5,
           });
         } catch (error) {
