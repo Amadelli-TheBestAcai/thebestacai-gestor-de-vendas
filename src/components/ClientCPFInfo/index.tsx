@@ -17,8 +17,9 @@ import {
   ContentReward,
   InfoClientReward,
   TitleReward,
+  ContentCheck
 } from "./styles";
-import { message, notification } from "antd";
+import { message, notification, Checkbox } from "antd";
 import { CampaignDto } from "../../models/dtos/campaign";
 
 interface IProps {
@@ -34,6 +35,8 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     cpf: "",
     phone: "",
     email: "",
+    cpf_used_club: false,
+    cpf_used_nfce: false
   });
 
   useEffect(() => {
@@ -42,6 +45,8 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         cpf: sale.client_cpf || "",
         phone: sale.client_phone || "",
         email: sale.client_email || "",
+        cpf_used_club: sale.cpf_used_club ? sale.cpf_used_club : false,
+        cpf_used_nfce: sale.cpf_used_nfce ? sale.cpf_used_nfce : false
       });
     }
   }, [shouldOpenClientInfo]);
@@ -70,8 +75,14 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_cpf: info.cpf.replace(/\D/g, ""),
         client_phone: info.phone?.replace(/\D/g, ""),
         client_email: info.email,
+        cpf_used_club: sale.cpf_used_club,
+        cpf_used_nfce: sale.cpf_used_nfce
       }
     );
+
+    console.log(updatedSale, 'updatedSale')
+    console.log(info)
+
     setSale(updatedSale);
     setLoading(false);
     setShouldOpenClientInfo(false);
@@ -109,6 +120,8 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
           cpf: value.replace(/\D/g, ""),
           email: response?.email,
           phone: response?.cell_number,
+          cpf_used_club: sale.cpf_used_club,
+          cpf_used_nfce: sale.cpf_used_nfce
         });
 
         setLoading(false);
@@ -171,25 +184,36 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
           value={info.cpf}
           onChange={(event) => onChange("cpf", event)}
         />
+        <ContentCheck>
+          <div>
+            <Checkbox
+              disabled={loading}
+              checked={info.cpf_used_club}
+              onChange={() =>
+                setInfo((oldValues) => ({
+                  ...oldValues,
+                  cpf_used_club: !info?.cpf_used_club,
+                }))
+              }
+            />
+            <span>The best club [B]</span>
+          </div>
+
+          <div>
+            <Checkbox
+              disabled={loading}
+              checked={info.cpf_used_nfce}
+              onChange={() =>
+                setInfo((oldValues) => ({
+                  ...oldValues,
+                  cpf_used_nfce: !info?.cpf_used_nfce,
+                }))
+              }
+            />
+            <span>Habilitar CPF na nota fiscal [Q]</span>
+          </div>
+        </ContentCheck>
       </InfoWrapper>
-      {/* <InfoWrapper>
-        <Info>Telefone:</Info>
-        <MaskInput
-          mask={"(99) 99999-9999"}
-          maskChar={"_"}
-          onKeyPress={onPressEnter}
-          value={info.phone}
-          onChange={(event) => onChange("phone", event)}
-        />
-      </InfoWrapper>
-      <InfoWrapper>
-        <Info>Email:</Info>
-        <MaskInput
-          onKeyPress={onPressEnter}
-          value={info.email}
-          onChange={(event) => onChange("email", event)}
-        />
-      </InfoWrapper> */}
       <CampaignInfoWrapper>
         {campaign && (
           <ContentReward>
