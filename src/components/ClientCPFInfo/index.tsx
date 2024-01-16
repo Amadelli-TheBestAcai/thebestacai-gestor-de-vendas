@@ -75,8 +75,8 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_cpf: info.cpf.replace(/\D/g, ""),
         client_phone: info.phone?.replace(/\D/g, ""),
         client_email: info.email,
-        cpf_used_club: sale.cpf_used_club,
-        cpf_used_nfce: sale.cpf_used_nfce
+        cpf_used_club: info.cpf_used_club,
+        cpf_used_nfce: info.cpf_used_nfce
       }
     );
 
@@ -102,32 +102,35 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
   ) => {
     const value = event.target.value;
     setInfo((oldValues) => ({ ...oldValues, [key]: value }));
-
+  
     if (key === "cpf") {
       if (value.replace(/\D/g, "").length === 11) {
         setLoading(true);
         const { has_internal_error, response, error_message } =
           await window.Main.user.getCustomerByCpf(value.replace(/\D/g, ""));
-
+  
         if (has_internal_error) {
+          setLoading(false);
           return notification.error({
             message: error_message || "Erro ao obter voucher",
             duration: 5,
           });
         }
-
-        setInfo({
+  
+        setInfo((oldValues) => ({
+          ...oldValues,
           cpf: value.replace(/\D/g, ""),
           email: response?.email,
           phone: response?.cell_number,
-          cpf_used_club: sale.cpf_used_club,
-          cpf_used_nfce: sale.cpf_used_nfce
-        });
-
+          cpf_used_club: oldValues.cpf_used_club,  
+          cpf_used_nfce: oldValues.cpf_used_nfce,  
+        }));
+  
         setLoading(false);
       }
     }
   };
+  
 
   const onQuit = async () => {
     const { response: updatedSale } = await window.Main.sale.updateSale(
@@ -137,6 +140,8 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_cpf: null,
         client_phone: null,
         client_email: null,
+        cpf_used_club: null,
+        cpf_used_nfce: null,
       }
     );
     setSale(updatedSale);
@@ -184,35 +189,36 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
           value={info.cpf}
           onChange={(event) => onChange("cpf", event)}
         />
-        <ContentCheck>
-          <div>
-            <Checkbox
-              disabled={loading}
-              checked={info.cpf_used_club}
-              onChange={() =>
-                setInfo((oldValues) => ({
-                  ...oldValues,
-                  cpf_used_club: !info?.cpf_used_club,
-                }))
-              }
-            />
-            <span>The best club [B]</span>
-          </div>
+       <ContentCheck>
+  <div>
+    <Checkbox
+      disabled={loading}
+      checked={info.cpf_used_club}
+      onChange={() =>
+        setInfo((oldValues) => ({
+          ...oldValues,
+          cpf_used_club: !oldValues.cpf_used_club, 
+        }))
+      }
+    />
+    <span>The best club [B]</span>
+  </div>
 
-          <div>
-            <Checkbox
-              disabled={loading}
-              checked={info.cpf_used_nfce}
-              onChange={() =>
-                setInfo((oldValues) => ({
-                  ...oldValues,
-                  cpf_used_nfce: !info?.cpf_used_nfce,
-                }))
-              }
-            />
-            <span>Habilitar CPF na nota fiscal [Q]</span>
-          </div>
-        </ContentCheck>
+  <div>
+    <Checkbox
+      disabled={loading}
+      checked={info.cpf_used_nfce}
+      onChange={() =>
+        setInfo((oldValues) => ({
+          ...oldValues,
+          cpf_used_nfce: !oldValues.cpf_used_nfce, 
+        }))
+      }
+    />
+    <span>Habilitar CPF na nota fiscal [Q]</span>
+  </div>
+</ContentCheck>
+
       </InfoWrapper>
       <CampaignInfoWrapper>
         {campaign && (
