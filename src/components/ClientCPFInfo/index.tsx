@@ -86,9 +86,6 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       }
     );
 
-    console.log(updatedSale, 'updatedSale')
-    console.log(info)
-
     setSale(updatedSale);
     setLoading(false);
     setShouldOpenClientInfo(false);
