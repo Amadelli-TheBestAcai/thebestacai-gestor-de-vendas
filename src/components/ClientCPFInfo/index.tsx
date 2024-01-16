@@ -31,6 +31,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
   const { sale, setSale, isSavingSale } = useSale();
   const [loading, setLoading] = useState(false);
   const { shouldOpenClientInfo, setShouldOpenClientInfo } = useSale();
+  const [pressedKey, setPressedKey] = useState<string | null>(null);
   const [info, setInfo] = useState({
     cpf: "",
     phone: "",
@@ -50,6 +51,11 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       });
     }
   }, [shouldOpenClientInfo]);
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const key = event.key.toLowerCase();
+    setPressedKey(key);
+  };
 
   const validateCPF = () => {
     const cpfValue = info.cpf.replace(/\D/g, "");
@@ -122,8 +128,8 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
           cpf: value.replace(/\D/g, ""),
           email: response?.email,
           phone: response?.cell_number,
-          cpf_used_club: oldValues.cpf_used_club,  
-          cpf_used_nfce: oldValues.cpf_used_nfce,  
+          cpf_used_club: pressedKey === "b" ? !oldValues.cpf_used_club : oldValues.cpf_used_club,
+          cpf_used_nfce: pressedKey === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
         }));
   
         setLoading(false);
@@ -188,36 +194,37 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
           autoFocus
           value={info.cpf}
           onChange={(event) => onChange("cpf", event)}
+          onKeyDown={onKeyDown}
         />
-       <ContentCheck>
-  <div>
-    <Checkbox
-      disabled={loading}
-      checked={info.cpf_used_club}
-      onChange={() =>
-        setInfo((oldValues) => ({
-          ...oldValues,
-          cpf_used_club: !oldValues.cpf_used_club, 
-        }))
-      }
-    />
-    <span>The best club [B]</span>
-  </div>
+        <ContentCheck>
+          <div>
+            <Checkbox
+              disabled={loading}
+              checked={info.cpf_used_club}
+              onChange={() =>
+                setInfo((oldValues) => ({
+                  ...oldValues,
+                  cpf_used_club: !oldValues.cpf_used_club,
+                }))
+              }
+            />
+            <span>The best club [B]</span>
+          </div>
 
-  <div>
-    <Checkbox
-      disabled={loading}
-      checked={info.cpf_used_nfce}
-      onChange={() =>
-        setInfo((oldValues) => ({
-          ...oldValues,
-          cpf_used_nfce: !oldValues.cpf_used_nfce, 
-        }))
-      }
-    />
-    <span>Habilitar CPF na nota fiscal [Q]</span>
-  </div>
-</ContentCheck>
+          <div>
+            <Checkbox
+              disabled={loading}
+              checked={info.cpf_used_nfce}
+              onChange={() =>
+                setInfo((oldValues) => ({
+                  ...oldValues,
+                  cpf_used_nfce: !oldValues.cpf_used_nfce,
+                }))
+              }
+            />
+            <span>Habilitar CPF na nota fiscal [Q]</span>
+          </div>
+        </ContentCheck>
 
       </InfoWrapper>
       <CampaignInfoWrapper>
