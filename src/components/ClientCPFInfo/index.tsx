@@ -36,7 +36,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     cpf: "",
     phone: "",
     email: "",
-    cpf_used_club: false,
+    cpf_used_club: true,
     cpf_used_nfce: false
   });
 
@@ -105,7 +105,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
   ) => {
     const value = event.target.value;
     setInfo((oldValues) => ({ ...oldValues, [key]: value }));
-  
+    
     if (key === "cpf") {
       if (value.replace(/\D/g, "").length === 11) {
         setLoading(true);
@@ -125,7 +125,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
           cpf: value.replace(/\D/g, ""),
           email: response?.email,
           phone: response?.cell_number,
-          cpf_used_club: pressedKey === "b" ? !oldValues.cpf_used_club : oldValues.cpf_used_club,
+          cpf_used_club: true, 
           cpf_used_nfce: pressedKey === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
         }));
   
@@ -196,6 +196,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         <ContentCheck>
           <div>
             <Checkbox
+              defaultChecked={true}
               disabled={loading}
               checked={info.cpf_used_club}
               onChange={() =>
@@ -205,7 +206,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
                 }))
               }
             />
-            <span>The best club [B]</span>
+            <span>The Best Club [B]</span>
           </div>
 
           <div>
@@ -219,7 +220,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
                 }))
               }
             />
-            <span>Habilitar CPF na nota fiscal [Q]</span>
+            <span>Habilitar CPF na Nota Fiscal [Q]</span>
           </div>
         </ContentCheck>
 
