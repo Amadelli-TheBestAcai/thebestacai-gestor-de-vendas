@@ -36,7 +36,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     cpf: "",
     phone: "",
     email: "",
-    cpf_used_club: true,
+    cpf_used_club: false,
     cpf_used_nfce: false
   });
 
@@ -52,9 +52,20 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     }
   }, [shouldOpenClientInfo]);
 
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const key = event.key.toLowerCase();
     setPressedKey(key);
+  
+    if (key === "b" || key === "q") {
+      event.preventDefault(); 
+  
+      setInfo((oldValues) => ({
+        ...oldValues,
+        cpf_used_club: key === "b" ? !oldValues.cpf_used_club : oldValues.cpf_used_club,
+        cpf_used_nfce: key === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
+      }));
+    }
   };
 
   const validateCPF = () => {
@@ -196,7 +207,6 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         <ContentCheck>
           <div>
             <Checkbox
-              defaultChecked={true}
               disabled={loading}
               checked={info.cpf_used_club}
               onChange={() =>
