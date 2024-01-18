@@ -71,6 +71,16 @@ export const ButtonCancel = styled.button`
   }
 `;
 
+export const ContentCheck = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+
+  span {
+    margin-right: .3rem;
+  }
+`;
+
 export const ContentReward = styled.div`
   display: flex;
   width: 100%;

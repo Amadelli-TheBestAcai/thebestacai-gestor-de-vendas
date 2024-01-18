@@ -38,4 +38,7 @@ export type SaleDto = {
   payments: PaymentDto[];
   customerVoucher?: CustomerVoucherDto;
   ref?: string;
+
+  cpf_used_club?: boolean;
+  cpf_used_nfce?: boolean;
 };
