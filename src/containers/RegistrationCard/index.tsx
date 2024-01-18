@@ -19,6 +19,8 @@ import {
   RestoreIcon,
   RemoveIcon,
   SwitchIcon,
+  Form,
+  Textarea
 } from "./styles";
 interface IProps {
   modalState: boolean;
@@ -30,6 +32,8 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
   const [stepSales, setStepSales] = useState<SaleDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState<string>();
+  const [formDeleteCommand] = Form.useForm()
+  const [deleteCommand, setDeleteCommand] = useState("");
 
   useEffect(() => {
     async function init() {
@@ -107,9 +111,31 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
     });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, reason:string, items:any[]) => {
+    const command = stepSales
+    const renderTextArea = command && (
+      <Form form={formDeleteCommand}>
+        <Form.Item
+          label=""
+          name="textArea"
+          rules={[{ required: true, message: "Campo obrigatório" },
+          { min: 10, message: "A justificativa deve ter no minimo 10 caracteres" },
+          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
+        >
+          <Textarea
+            id="nfceDeleteJustifyInput"
+            placeholder="Justificativa - 10 a 255 caracteres"
+            minLength={10}
+            maxLength={255}
+            style={{ width: "100%" }}
+            onChange={({ target: { value } }) => setDeleteCommand(value || "")}
+          />
+        </Form.Item>
+      </Form>
+    );
     Modal.confirm({
-      content: "Tem certeza que gostaria de prosseguir?",
+      title: "Tem certeza que gostaria de prosseguir?",
+      content:renderTextArea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
@@ -131,8 +157,35 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
           });
         }
         await updateOpenedStepSale();
+       
+        
+        await Promise.all(
+          items.map(async item => {
+            const {
+              has_internal_error: errorItemsOutCart,
+              error_message:errorMessage,
+            } =
+            await window.Main.itemOutCart.create(
+              `Comanda: ${formDeleteCommand.getFieldValue('textArea')}`,
+              item.product.id,
+              item.total
+            );
+            
+            if (errorItemsOutCart) {
+              return notification.error({
+                message: errorMessage || "Erro ao cadastrar um item excluido",
+                duration: 5,
+              });
+            }
+            
+          })
+        ) 
+        formDeleteCommand.resetFields()       
         setLoading(false);
       },
+      onCancel() {
+        formDeleteCommand.resetFields()
+      }
     });
   };
 
@@ -259,7 +312,7 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
                       <Tooltip title={"Remover a comanda"} placement="bottom">
                         <RemoveIcon
                           onClick={async () =>
-                            await handleDelete(_stepSale.id.toString())
+                            await handleDelete(_stepSale.id.toString(), 'reason', _stepSale.items)
                           }
                         />
                       </Tooltip>
