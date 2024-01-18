@@ -125,25 +125,23 @@ const Sale: React.FC<IProps> = () => {
         </Form.Item>
       </Form>
     );
+
     const creationTime = moment(hasNfce?.created_at);
     const currentTime = moment();
     const timeDifference = currentTime.diff(creationTime, 'minutes');
 
     Modal.confirm({
       title: hasNfce ?
-        (hasNfce?.mensagem_sefaz === '100' ?
-          (timeDifference > 30 ?
-            `A nota fiscal foi emitida há mais de 30 minutos, 
-              o que impossibilita o cancelamento da NFCe. 
-              No entanto, é possível excluir a venda associada à nota. 
-              Você tem certeza de que deseja prosseguir com a remoção?` :
-            `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
-            Deseja prosseguir com esta ação?`
-          ) :
-          'Não foi emitida a nota fiscal da venda. Gostaria de remove-la mesmo assim?'
-        ) :
-        `Tem certeza que deseja remover essa venda?`,
-
+        (timeDifference > 30) ?
+          `A nota fiscal foi emitida há mais de 30 minutos, 
+          o que impossibilita o cancelamento da NFCe. 
+          No entanto, é possível excluir a venda associada à nota. 
+          Você tem certeza de que deseja prosseguir com a remoção?`
+          :
+          `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
+          Deseja prosseguir com esta ação?`
+        :
+        'Não foi emitida a nota fiscal da venda. Gostaria de removê-la mesmo assim?',
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
