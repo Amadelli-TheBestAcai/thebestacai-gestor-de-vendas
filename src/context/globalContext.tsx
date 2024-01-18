@@ -228,12 +228,15 @@ export function GlobalProvider({ children }) {
 
     setSavingSale(true);
 
-    if (currentSale.items.length && settings.should_emit_nfce_per_sale) {
+    if (currentSale.items.length && settings.should_emit_nfce_per_sale
+      || currentSale.items.length && currentSale.cpf_used_nfce
+    ) {
       const total = currentSale.items.reduce(
         (total, item) => +item.total + total,
         0
       );
       const nfePayload = {
+        cpf: currentSale?.cpf_used_nfce ? currentSale?.client_cpf : null,
         discount: +currentSale.discount,
         change_amount: +currentSale.change_amount,
         total: total,

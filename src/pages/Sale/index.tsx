@@ -42,7 +42,8 @@ import {
   NfceLabel,
   PdfIcon,
   CancelIcon,
-  Form
+  Form,
+  PrinterNFCeIcon
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -85,9 +86,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-              (total, _payment) => total + _payment.amount,
-              0
-            ),
+            (total, _payment) => total + _payment.amount,
+            0
+          ),
       }));
 
       if (_sales.length) {
@@ -124,9 +125,25 @@ const Sale: React.FC<IProps> = () => {
         </Form.Item>
       </Form>
     );
+    const creationTime = moment(hasNfce?.created_at);
+    const currentTime = moment();
+    const timeDifference = currentTime.diff(creationTime, 'minutes');
 
     Modal.confirm({
-      title: "Tem certeza que gostaria de remover esta venda",
+      title: hasNfce ?
+        (hasNfce?.mensagem_sefaz === '100' ?
+          (timeDifference > 30 ?
+            `A nota fiscal foi emitida há mais de 30 minutos, 
+              o que impossibilita o cancelamento da NFCe. 
+              No entanto, é possível excluir a venda associada à nota. 
+              Você tem certeza de que deseja prosseguir com a remoção?` :
+            `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
+            Deseja prosseguir com esta ação?`
+          ) :
+          'Não foi emitida a nota fiscal da venda. Gostaria de remove-la mesmo assim?'
+        ) :
+        `Tem certeza que deseja remover essa venda?`,
+
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
@@ -160,7 +177,7 @@ const Sale: React.FC<IProps> = () => {
           }
           formCancelJustify.resetFields()
           return notification.success({
-            message: "Venda removida com sucesso!",
+            message: "Venda excluída com sucesso! NFC-e cancelada com sucesso!",
             duration: 5,
           });
         } catch (error) {
@@ -278,6 +295,20 @@ const Sale: React.FC<IProps> = () => {
     Modal.confirm({
       title: "Deseja prosseguir e cancelar esta nota fiscal?",
       content: renderTextArea,
+      okText: "CANCELAR",
+      cancelText: "Fechar",
+      okButtonProps: {
+        style: {
+          background: "red",
+          color: "white",
+        },
+      },
+      cancelButtonProps: {
+        style: {
+          background: "transparent",
+          color: "black",
+        },
+      },
       async onOk() {
         await formCancelJustify.validateFields()
         //@ts-ignore
@@ -399,7 +430,7 @@ const Sale: React.FC<IProps> = () => {
     }
 
     if (_settings.should_use_printer === false) {
-      return  notification.warning({
+      return notification.warning({
         message: "Habilite a impressora na tela de configurações.",
         duration: 5,
       });
@@ -430,9 +461,9 @@ const Sale: React.FC<IProps> = () => {
       authorized: (
         <>
           <Col sm={8}>
-            <Tooltip title="Imprimir Danfe" placement="bottom">
-              <PrinterIcon
-                style={{ width: "30%" }}
+            <Tooltip title="Imprimir nota fiscal (DANFE)" placement="bottom">
+              <PrinterNFCeIcon
+                style={{ width: "35%" }}
                 onClick={() => printDanfe(selectedSale)}
               />
             </Tooltip>
@@ -440,15 +471,15 @@ const Sale: React.FC<IProps> = () => {
           <Col sm={8}>
             <Tooltip title="Cancelar NFCe" placement="bottom">
               <CancelIcon
-                style={{ width: "30%" }}
+                style={{ width: "34%" }}
                 onClick={() => cancelNfce(selectedSale)}
               />
             </Tooltip>
           </Col>
           <Col sm={8}>
-            <Tooltip title="Baixar PDF" placement="bottom">
+            <Tooltip title="Baixar PDF da nota fiscal" placement="bottom">
               <PdfIcon
-                style={{ width: "30%" }}
+                style={{ width: "32%" }}
                 onClick={() => getNfceDanfe(selectedSale)}
               />
             </Tooltip>
@@ -526,10 +557,29 @@ const Sale: React.FC<IProps> = () => {
                               sm={4}
                               style={{ justifyContent: "space-evenly" }}
                             >
+                              {hasPermission("sales.emit_nfce") &&
+                                !selectedSale.nfce_focus_id &&
+                                selectedSale.type === 0 && (
+                                  <Tooltip title="NFc-e" placement="bottom">
+                                    <NfceIcon
+                                      onClick={() => setNfceModal(true)}
+                                    />
+                                  </Tooltip>
+                                )}
+                              <Tooltip
+                                title="Imprimir comprovante de venda"
+                                placement="bottom"
+                              >
+                                <PrinterIcon
+                                  onClick={() => printReceipt(selectedSale)}
+                                  style={{ width: "9%" }}
+                                />
+                              </Tooltip>
                               {hasPermission("sales.remove_sale") &&
                                 !selectedSale.deleted_at && (
-                                  <Tooltip title="Remover" placement="bottom">
+                                  <Tooltip title="Remover venda" placement="bottom">
                                     <RemoveIcon
+                                      style={{ width: "8%" }}
                                       onClick={() => {
                                         onDelete({
                                           id: selectedSale.id,
@@ -541,23 +591,7 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-                              {hasPermission("sales.emit_nfce") &&
-                                !selectedSale.nfce_focus_id &&
-                                selectedSale.type === 0 && (
-                                  <Tooltip title="NFc-e" placement="bottom">
-                                    <NfceIcon
-                                      onClick={() => setNfceModal(true)}
-                                    />
-                                  </Tooltip>
-                                )}
-                              <Tooltip
-                                title="Imprimir Cupom fiscal"
-                                placement="bottom"
-                              >
-                                <PrinterIcon
-                                  onClick={() => printReceipt(selectedSale)}
-                                />
-                              </Tooltip>
+
                             </Col>
                           </>
                         }
@@ -593,7 +627,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                        +_item.storeProduct.price_unit
+                                      +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>
