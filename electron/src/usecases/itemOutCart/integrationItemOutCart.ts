@@ -40,7 +40,6 @@ class IntegrationItemOutCart implements IUseCaseFactory {
     }
 
     const items = await this.notIntegratedItemOutCartRepository.getAll();
-    console.log(items);
     if (items.length) {
       await Promise.all(
         items.map(async (item) => {
