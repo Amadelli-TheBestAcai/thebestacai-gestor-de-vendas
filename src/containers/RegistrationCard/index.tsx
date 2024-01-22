@@ -155,6 +155,7 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
         loading: loading,
       },
       async onOk() {
+        await formDeleteCommand.validateFields()
         setLoading(true);
         const {
           response: _stepSales,
