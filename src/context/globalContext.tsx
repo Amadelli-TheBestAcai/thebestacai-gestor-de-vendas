@@ -11,6 +11,7 @@ import { UserDto } from "../models/dtos/user";
 import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
 import { CampaignDto } from "../models/dtos/campaign";
+import { CashHandlerDTO } from "../../electron/src/models/dtos";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -66,6 +67,7 @@ export function GlobalProvider({ children }) {
   const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
   const [openedStepSale, setOpenedStepSale] = useState(0);
+  const [cashHandler, setCashHandler] = useState<CashHandlerDTO | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -340,12 +342,17 @@ export function GlobalProvider({ children }) {
         });
     }
 
+    const { response: cashHandlers } = await window.Main.handler.getLocalCashHandlers();
+
+    const cashHandlerObjects = cashHandlers.filter(handler => handler.cashHandler.type === 'saida').reduce((acc, handler) => acc + handler.cashHandler.amount, 0)
+
     const { response: _balance } =
       await window.Main.storeCash.getStoreCashBalance();
 
     const paymentMoneyType = sale?.payments?.map((payment) => payment).find((moneyItem) => moneyItem.type === 0)
+    const totalStore = _balance?.store?.money - cashHandlerObjects;
 
-    if (paymentMoneyType && _balance?.store?.money > 500) {
+    if (paymentMoneyType && totalStore > 500) {
       notification.warning({
         message:
           "ATENÇÃO: O saldo em dinheiro no caixa está elevado. Considere fazer uma sangria",
