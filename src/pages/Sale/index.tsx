@@ -130,8 +130,6 @@ const Sale: React.FC<IProps> = () => {
     const currentTime = moment();
     const timeDifference = currentTime.diff(creationTime, 'minutes');
 
-    console.log(hasNfce)
-
     Modal.confirm({
       title: hasNfce ?
         (hasNfce.status_sefaz !== '100') ? 'Ocorreu um erro ao tentar emitir a nota fiscal. Deletar a venda mesmo assim?' :
@@ -145,7 +143,6 @@ const Sale: React.FC<IProps> = () => {
           Deseja prosseguir com esta ação?`
         :
         'Não foi emitida a nota fiscal da venda. Gostaria de removê-la mesmo assim?',
-
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
