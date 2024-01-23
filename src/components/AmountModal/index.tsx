@@ -51,6 +51,25 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
       }
       setLoaindg(false);
     }
+    if (!visible) {
+      setAmount({
+        twoHundred: null,
+        oneHundred: null,
+        fifty: null,
+        twenty: null,
+        ten: null,
+        five: null,
+        two: null,
+        one: null,
+        fiftyCents: null,
+        twentyFiveCents: null,
+        tenCents: null,
+        fiveCents: null,
+        oneCents: null,
+        fullAmount: null,
+      });
+    }
+
     if (visible) {
       init();
     }
