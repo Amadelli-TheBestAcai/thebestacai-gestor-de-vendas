@@ -6,6 +6,7 @@ export type SaleDto = {
   id: string;
   user_id?: number;
   enabled?: boolean;
+  customer_reward_id?: number;
   name?: string;
   client_cpf?: string;
   client_phone?: string;

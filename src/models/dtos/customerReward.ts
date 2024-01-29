@@ -4,11 +4,11 @@ export interface CustomerReward {
   customer_name: string;
   customer_id: number;
   customer_campaign_id: number;
-  campaign_reward_id: number; 
-  created_at: string; 
-  taked_at: string | null; 
-  hash_code: string; 
-  updated_at: string; 
+  campaign_reward_id: number;
+  created_at: string;
+  taked_at: string | null;
+  hash_code: string;
+  updated_at: string;
   max_points?: number;
   total_accumulated_points?: number;
 }
@@ -16,6 +16,7 @@ export interface CustomerReward {
 export interface Reward {
   id: number;
   campaign_id: number;
+  additional_value?: number;
   customer_reward_id: number;
   description: string;
   url_image: string;
@@ -25,6 +26,6 @@ export interface Reward {
   updated_at: string;
   deleted_at: string;
   product_id: number;
-  expirated_at: string; 
-  observation: string | null; 
+  expirated_at: string;
+  observation: string | null;
 }

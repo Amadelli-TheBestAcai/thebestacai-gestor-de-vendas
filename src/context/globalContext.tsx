@@ -145,8 +145,11 @@ export function GlobalProvider({ children }) {
         duration: 5,
       });
     }
-    const { response: updatedSale, has_internal_error: errorOnAddItem } =
-      await window.Main.sale.addItem(product, quantity, price);
+    const {
+      response: updatedSale,
+      has_internal_error: errorOnAddItem,
+      error_message,
+    } = await window.Main.sale.addItem(product, quantity, price);
     if (errorOnAddItem) {
       return notification.error({
         message: "Erro ao adicionar um item",
@@ -211,9 +214,9 @@ export function GlobalProvider({ children }) {
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-      ((currentSale.discount || 0) +
-        (currentSale.customer_nps_reward_discount || 0)) +
-      0.5
+        ((currentSale.discount || 0) +
+          (currentSale.customer_nps_reward_discount || 0)) +
+        0.5
     ) {
       return notification.warning({
         message: "Pagamento inválido!",
@@ -230,8 +233,9 @@ export function GlobalProvider({ children }) {
 
     setSavingSale(true);
 
-    if (currentSale.items.length && settings.should_emit_nfce_per_sale
-      || currentSale.items.length && currentSale.cpf_used_nfce
+    if (
+      (currentSale.items.length && settings.should_emit_nfce_per_sale) ||
+      (currentSale.items.length && currentSale.cpf_used_nfce)
     ) {
       const total = currentSale.items.reduce(
         (total, item) => +item.total + total,
@@ -312,7 +316,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -333,23 +337,28 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-          message: error_message,
-          duration: 5,
-        })
+            message: error_message,
+            duration: 5,
+          })
         : notification.error({
-          message: "Erro ao finalizar venda",
-          duration: 5,
-        });
+            message: "Erro ao finalizar venda",
+            duration: 5,
+          });
     }
 
-    const { response: cashHandlers } = await window.Main.handler.getLocalCashHandlers();
+    const { response: cashHandlers } =
+      await window.Main.handler.getLocalCashHandlers();
 
-    const cashHandlerObjects = cashHandlers.filter(handler => handler.cashHandler.type === 'saida').reduce((acc, handler) => acc + handler.cashHandler.amount, 0)
+    const cashHandlerObjects = cashHandlers
+      .filter((handler) => handler.cashHandler.type === "saida")
+      .reduce((acc, handler) => acc + handler.cashHandler.amount, 0);
 
     const { response: _balance } =
       await window.Main.storeCash.getStoreCashBalance();
 
-    const paymentMoneyType = sale?.payments?.map((payment) => payment).find((moneyItem) => moneyItem.type === 0)
+    const paymentMoneyType = sale?.payments
+      ?.map((payment) => payment)
+      .find((moneyItem) => moneyItem.type === 0);
     const totalStore = _balance?.store?.money - cashHandlerObjects;
 
     if (paymentMoneyType && totalStore > 500) {

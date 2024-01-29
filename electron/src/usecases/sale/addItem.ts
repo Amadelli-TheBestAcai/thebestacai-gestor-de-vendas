@@ -49,6 +49,7 @@ class AddItem implements IUseCaseFactory {
         product,
         storeProduct,
         total: price ? price : +(productToAdd.price_unit || 0) * quantity,
+        customer_reward_id: productToAdd.customer_reward_id,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }

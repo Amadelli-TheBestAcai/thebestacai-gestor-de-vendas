@@ -4,12 +4,13 @@ export interface SaleDto {
   gv_id?: number;
   name?: string;
   enabled?: boolean;
+  customer_reward_id?: number;
   client_cpf?: string;
   client_phone?: string;
   client_email?: string;
   user_id?: number;
-  store_id?:number;
-  justify?:string;
+  store_id?: number;
+  justify?: string;
   abstract_sale?: boolean;
   quantity: number;
   change_amount: number;
@@ -34,7 +35,7 @@ export interface SaleDto {
   customer_nps_reward_discount?: number;
   cpf_used_club?: boolean;
   cpf_used_nfce?: boolean;
-  
+
   nfce?: {
     qrcode_url: string;
   };
@@ -42,6 +43,7 @@ export interface SaleDto {
     id: string;
     store_product_id: number;
     total: number;
+    customer_reward_id?: number;
     product: {
       id: number;
       name: string;

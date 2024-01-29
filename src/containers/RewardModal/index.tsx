@@ -43,9 +43,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward>();
 
-  const { store } = useStore();
-  const { user } = useUser();
-  const { storeCash } = useSale();
+  const { sale, storeCash, onAddItem, setSale } = useSale();
 
   const getCampaignReward = async () => {
     try {
@@ -124,36 +122,50 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const useReward = async () => {
     setLoading(true);
     try {
-      const payload = {
-        store_id: store.company_id,
-        user_name: user.name,
-        user_id: user.id,
-        company_name: store.company.company_name,
-      };
-
-      const {
-        has_internal_error: createCustomerError,
-        error_message: error_message_create_customer_reward,
-      } = await window.Main.sale.redeemReward(customerReward.id, payload);
-
-      if (createCustomerError) {
+      const { response: products } = await window.Main.product.getProducts(
+        true
+      );
+      const product = products.find(
+        (_product) => _product.product_id === rewards.product_id
+      );
+      if (!product) {
         notification.error({
-          message: error_message_create_customer_reward,
+          message:
+            "O produto da recompensa não esta cadastrado em sua loja. Realize o cadastro pelo Dashboard",
           duration: 5,
         });
         setLoading(false);
         return;
       }
 
-      const { has_internal_error: rewardError, error_message } =
-        await window.Main.sale.integrateRewardWithSale(rewards.product_id);
+      const {
+        response: updatedSaleWithReward,
+        has_internal_error: errorOnAddItem,
+        error_message,
+      } = await window.Main.sale.addItem(
+        { ...product, customer_reward_id: customerReward.id },
+        1,
+        rewards.additional_value ? +rewards.additional_value : 0
+      );
 
-      if (rewardError) {
-        notification.warning({
-          message: error_message,
+      if (errorOnAddItem) {
+        notification.error({
+          message: "Falha ao resgatar o produto",
           duration: 5,
         });
+        console.log(error_message);
+        return;
       }
+
+      const { response: _updatedSale } = await window.Main.sale.updateSale(
+        sale.id,
+        {
+          ...updatedSaleWithReward,
+          customer_reward_id: customerReward.id,
+        }
+      );
+
+      setSale(_updatedSale);
 
       notification.success({
         message: "Recompensa resgatada com sucesso",
