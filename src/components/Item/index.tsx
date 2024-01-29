@@ -214,7 +214,8 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
           <Column span={4}></Column>
           <Column span={4}>
-            R$ -{(+productVoucher.price_sell).toFixed(2)}
+            R$ {productVoucher.additional_value ? "+" : "-"}
+            {(+productVoucher.price_sell).toFixed(2)}
           </Column>
           <Column span={2}></Column>
         </Container>
