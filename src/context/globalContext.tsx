@@ -11,6 +11,7 @@ import { UserDto } from "../models/dtos/user";
 import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
 import { CampaignDto } from "../models/dtos/campaign";
+import { CashHandlerDTO } from "../../electron/src/models/dtos";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -66,6 +67,7 @@ export function GlobalProvider({ children }) {
   const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
   const [openedStepSale, setOpenedStepSale] = useState(0);
+  const [cashHandler, setCashHandler] = useState<CashHandlerDTO | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -143,8 +145,11 @@ export function GlobalProvider({ children }) {
         duration: 5,
       });
     }
-    const { response: updatedSale, has_internal_error: errorOnAddItem } =
-      await window.Main.sale.addItem(product, quantity, price);
+    const {
+      response: updatedSale,
+      has_internal_error: errorOnAddItem,
+      error_message,
+    } = await window.Main.sale.addItem(product, quantity, price);
     if (errorOnAddItem) {
       return notification.error({
         message: "Erro ao adicionar um item",
@@ -228,8 +233,9 @@ export function GlobalProvider({ children }) {
 
     setSavingSale(true);
 
-    if (currentSale.items.length && settings.should_emit_nfce_per_sale
-      || currentSale.items.length && currentSale.cpf_used_nfce
+    if (
+      (currentSale.items.length && settings.should_emit_nfce_per_sale) ||
+      (currentSale.items.length && currentSale.cpf_used_nfce)
     ) {
       const total = currentSale.items.reduce(
         (total, item) => +item.total + total,
@@ -338,6 +344,29 @@ export function GlobalProvider({ children }) {
             message: "Erro ao finalizar venda",
             duration: 5,
           });
+    }
+
+    const { response: cashHandlers } =
+      await window.Main.handler.getLocalCashHandlers();
+
+    const cashHandlerObjects = cashHandlers
+      .filter((handler) => handler.cashHandler.type === "saida")
+      .reduce((acc, handler) => acc + handler.cashHandler.amount, 0);
+
+    const { response: _balance } =
+      await window.Main.storeCash.getStoreCashBalance();
+
+    const paymentMoneyType = sale?.payments
+      ?.map((payment) => payment)
+      .find((moneyItem) => moneyItem.type === 0);
+    const totalStore = _balance?.store?.money - cashHandlerObjects;
+
+    if (paymentMoneyType && totalStore > 500) {
+      notification.warning({
+        message:
+          "ATENÇÃO: O saldo em dinheiro no caixa está elevado. Considere fazer uma sangria",
+        duration: 5,
+      });
     }
 
     const { response: _newSale, has_internal_error: errorOnBuildNewSale } =

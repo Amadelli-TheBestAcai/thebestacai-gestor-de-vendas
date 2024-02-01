@@ -115,11 +115,13 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
             R$ {item.total?.toFixed(2).replace(".", ",")}
           </Column>
           <Column span={2}>
-            <Tooltip title="Remover" placement="bottom">
-              <Button onClick={() => setModalState(true)}>
-                <DeleteIcon />
-              </Button>
-            </Tooltip>
+            {!item.customer_reward_id && (
+              <Tooltip title="Remover" placement="bottom">
+                <Button onClick={() => setModalState(true)}>
+                  <DeleteIcon />
+                </Button>
+              </Tooltip>
+            )}
           </Column>
 
           <Modal
@@ -214,7 +216,8 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
           <Column span={4}></Column>
           <Column span={4}>
-            R$ -{(+productVoucher.price_sell).toFixed(2)}
+            R$ {productVoucher.additional_value ? "+" : "-"}
+            {(+productVoucher.price_sell).toFixed(2)}
           </Column>
           <Column span={2}></Column>
         </Container>

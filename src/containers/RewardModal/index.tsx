@@ -43,9 +43,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward>();
 
-  const { store } = useStore();
-  const { user } = useUser();
-  const { storeCash } = useSale();
+  const { sale, storeCash, onAddItem, setSale } = useSale();
 
   const getCampaignReward = async () => {
     try {
@@ -121,39 +119,73 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
     setCustomerReward(null);
   };
 
-  const useReward = async () => {
+  const cancelReward = async () => {
     setLoading(true);
     try {
       const payload = {
-        store_id: store.company_id,
-        user_name: user.name,
-        user_id: user.id,
-        company_name: store.company.company_name,
+        ...sale,
+        customer_reward_id: null,
+        items: sale.items.filter((item) => !item.customer_reward_id),
       };
+      const { response: _updatedSale } = await window.Main.sale.updateSale(
+        sale.id,
+        payload
+      );
 
-      const {
-        has_internal_error: createCustomerError,
-        error_message: error_message_create_customer_reward,
-      } = await window.Main.sale.redeemReward(customerReward.id, payload);
-
-      if (createCustomerError) {
+      setSale(_updatedSale);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const useReward = async () => {
+    setLoading(true);
+    try {
+      const { response: products } = await window.Main.product.getProducts(
+        true
+      );
+      const product = products.find(
+        (_product) => _product.product_id === rewards.product_id
+      );
+      if (!product) {
         notification.error({
-          message: error_message_create_customer_reward,
+          message:
+            "O produto da recompensa não esta cadastrado em sua loja. Realize o cadastro pelo Dashboard",
           duration: 5,
         });
         setLoading(false);
         return;
       }
 
-      const { has_internal_error: rewardError, error_message } =
-        await window.Main.sale.integrateRewardWithSale(rewards.product_id);
+      const {
+        response: updatedSaleWithReward,
+        has_internal_error: errorOnAddItem,
+        error_message,
+      } = await window.Main.sale.addItem(
+        { ...product, customer_reward_id: customerReward.id },
+        1,
+        rewards.additional_value ? +rewards.additional_value : 0
+      );
 
-      if (rewardError) {
-        notification.warning({
-          message: error_message,
+      if (errorOnAddItem) {
+        notification.error({
+          message: "Falha ao resgatar o produto",
           duration: 5,
         });
+        console.log(error_message);
+        return;
       }
+
+      const { response: _updatedSale } = await window.Main.sale.updateSale(
+        sale.id,
+        {
+          ...updatedSaleWithReward,
+          customer_reward_id: customerReward.id,
+        }
+      );
+
+      setSale(_updatedSale);
 
       notification.success({
         message: "Recompensa resgatada com sucesso",
@@ -207,94 +239,114 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
           <Spinner />
         ) : (
           <GlobalContainer>
-            <RewardSearch>
-              <Row>
-                <Col md={10}>
-                  <InputSearchReward
-                    placeholder="Digite o hashcode"
-                    type="text"
-                    maxLength={8}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const userInput = event.target.value
-                        .slice(0, 8)
-                        .toUpperCase();
-                      setUserHash(userInput);
-                    }}
-                    value={userHash}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        getCampaignReward();
-                      }
-                    }}
-                  />
-                </Col>
+            {sale.customer_reward_id ? (
+              <>
+                Recompensa pendente no carrinho, para resgatar outra, finalize a
+                venda atual ou então cancele a utilização da recompensa clicando
+                no botão abaixo *Ao cancelar a utilização da recompensa, a mesma
+                continuará disponível para retirar futuramente.
+                <ButtonSave
+                  style={{ margin: "auto" }}
+                  onClick={cancelReward}
+                  disabled={loading}
+                >
+                  Cancelar recompensa
+                </ButtonSave>
+              </>
+            ) : (
+              <>
+                <RewardSearch>
+                  <Row>
+                    <Col md={10}>
+                      <InputSearchReward
+                        placeholder="Digite o hashcode"
+                        type="text"
+                        maxLength={8}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          const userInput = event.target.value
+                            .slice(0, 8)
+                            .toUpperCase();
+                          setUserHash(userInput);
+                        }}
+                        value={userHash}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            getCampaignReward();
+                          }
+                        }}
+                      />
+                    </Col>
 
-                <Col md={4}>
-                  <ButtonSearch
-                    onClick={getCampaignReward}
-                    disabled={loading || !userHash}
-                  >
-                    {loading ? "..." : "Buscar"}
-                  </ButtonSearch>
-                </Col>
-              </Row>
-            </RewardSearch>
+                    <Col md={4}>
+                      <ButtonSearch
+                        onClick={getCampaignReward}
+                        disabled={loading || !userHash}
+                      >
+                        {loading ? "..." : "Buscar"}
+                      </ButtonSearch>
+                    </Col>
+                  </Row>
+                </RewardSearch>
 
-            {customerReward && (
-              <Container>
-                <InfoClient>
-                  <p>{customerReward.customer_name}</p>
-                </InfoClient>
-                <PointsCustomerContainer>
-                  <DataClient>
-                    <ContentGeneral>
-                      <Value>
-                        <div>
-                          <span>Pontos disponíveis</span>
-                          <CustomerPoints available>
-                            {customerReward.points_customer}
-                            <span>pts</span>
-                          </CustomerPoints>
-                        </div>
-                        {/* <div>
+                {customerReward && (
+                  <Container>
+                    <InfoClient>
+                      <p>{customerReward.customer_name}</p>
+                    </InfoClient>
+                    <PointsCustomerContainer>
+                      <DataClient>
+                        <ContentGeneral>
+                          <Value>
+                            <div>
+                              <span>Pontos disponíveis</span>
+                              <CustomerPoints available>
+                                {customerReward.points_customer}
+                                <span>pts</span>
+                              </CustomerPoints>
+                            </div>
+                            {/* <div>
                             <span>Total de pontos acumulados da campanha</span>
                             <CustomerPoints available={false}>{customerReward.total_accumulated_points}<span>pts</span></CustomerPoints>
                           </div> */}
-                      </Value>
+                          </Value>
 
-                      <ProgressBar>
-                        <ProgressBarActived
-                          actived={`${
-                            customerReward?.points_customer
-                              ? customerReward?.points_customer
-                              : 0
-                          }%`}
-                        />
-                      </ProgressBar>
+                          <ProgressBar>
+                            <ProgressBarActived
+                              actived={`${
+                                customerReward?.points_customer
+                                  ? customerReward?.points_customer
+                                  : 0
+                              }%`}
+                            />
+                          </ProgressBar>
 
-                      <span className="max-points">
-                        Máx. {customerReward.max_points} pts
-                      </span>
-                    </ContentGeneral>
-                  </DataClient>
-                </PointsCustomerContainer>
+                          <span className="max-points">
+                            Máx. {customerReward.max_points} pts
+                          </span>
+                        </ContentGeneral>
+                      </DataClient>
+                    </PointsCustomerContainer>
 
-                <ContentReward>
-                  {rewards ? (
-                    <>
-                      <Container>
-                        <ContentReward>
-                          <TitleReward>{rewards.description}</TitleReward>
+                    <ContentReward>
+                      {rewards ? (
+                        <>
+                          <Container>
+                            <ContentReward>
+                              <TitleReward>{rewards.description}</TitleReward>
 
-                          <ImgReward src={rewards.url_image} />
-                        </ContentReward>
-                      </Container>
-                    </>
-                  ) : (
-                    <p>Não há recompensa disponível</p>
-                  )}
-                </ContentReward>
-              </Container>
+                              <ImgReward src={rewards.url_image} />
+                            </ContentReward>
+                          </Container>
+                        </>
+                      ) : (
+                        <p>Não há recompensa disponível</p>
+                      )}
+                    </ContentReward>
+                  </Container>
+                )}
+              </>
             )}
           </GlobalContainer>
         )

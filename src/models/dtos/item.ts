@@ -2,6 +2,7 @@ export type ItemDto = {
   id: string;
   store_product_id: number;
   total: number;
+  customer_reward_id?: number;
   product: {
     id: number;
     name: string;

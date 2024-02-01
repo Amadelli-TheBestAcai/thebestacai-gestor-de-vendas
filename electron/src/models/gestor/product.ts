@@ -1,6 +1,7 @@
 export interface ProductDto {
   id: number;
   product_id?: number;
+  customer_reward_id?: number;
   product: {
     id: number;
     name: string;

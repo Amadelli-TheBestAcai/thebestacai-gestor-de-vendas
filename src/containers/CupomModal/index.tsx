@@ -176,6 +176,13 @@ const CupomModal: React.FC<ICupomProps> = ({
         } else {
           response.voucher.products[index].in_sale = false;
         }
+
+        if (response.voucher.products[index].additional_value) {
+          response.voucher.products[index].price_sell =
+            response.voucher.products[index].additional_value;
+          totalOfCupomProducs -=
+            +response.voucher.products[index].additional_value;
+        }
       });
 
       totalOfSelfServiceDiscount = Math.abs(totalOfSelfServiceDiscount);
