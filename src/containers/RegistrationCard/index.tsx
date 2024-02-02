@@ -155,7 +155,7 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
         loading: loading,
       },
       async onOk() {
-        await formDeleteCommand.validateFields()
+        await formDeleteCommand.validateFields();
         setLoading(true);
         const {
           response: _stepSales,
@@ -305,13 +305,15 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
                         }
                         placement="bottom"
                       >
-                        
-                          <SwitchIcon
-                          disabled={!_stepSale.enabled ? !hasPermission("command.delete_command") : false}
-                            checked={!_stepSale.enabled}
-                            onChange={async () => await handleEnable(_stepSale)}
-                          />
-                  
+                        <SwitchIcon
+                          disabled={
+                            !_stepSale.enabled
+                              ? !hasPermission("command.enabled")
+                              : false
+                          }
+                          checked={!_stepSale.enabled}
+                          onChange={async () => await handleEnable(_stepSale)}
+                        />
                       </Tooltip>
                     </Col>
                     <Col sm={3} style={{ justifyContent: "space-evenly" }}>
