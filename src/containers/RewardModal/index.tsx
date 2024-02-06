@@ -43,7 +43,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
   const [customerReward, setCustomerReward] = useState<CustomerReward>();
   const [rewards, setRewards] = useState<Reward>();
 
-  const { sale, storeCash, onAddItem, setSale } = useSale();
+  const { sale, storeCash, setSale } = useSale();
 
   const getCampaignReward = async () => {
     try {
@@ -145,7 +145,7 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
       const { response: products } = await window.Main.product.getProducts(
         true
       );
-      const product = products.find(
+      let product = products.find(
         (_product) => _product.product_id === rewards.product_id
       );
       if (!product) {
@@ -157,6 +157,8 @@ const RewardModal: React.FC<IProps> = ({ isVisible, setIsVisible }) => {
         setLoading(false);
         return;
       }
+
+      product.price_unit = "0";
 
       const {
         response: updatedSaleWithReward,
