@@ -30,7 +30,9 @@ class AddItem implements IUseCaseFactory {
     }
 
     const itemIndex = sale.items.findIndex(
-      (_item) => _item.product?.id === productToAdd.product?.id
+      (_item) =>
+        !_item.customer_reward_id &&
+        _item.product?.id === productToAdd.product?.id
     );
 
     if (itemIndex >= 0 && sale.items[itemIndex].product?.category.id !== 1) {

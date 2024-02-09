@@ -7,7 +7,6 @@ import {
   addPayment,
   getSaleFromApi,
   deleteSaleFromApi,
-  getSaleFromApp,
   getAllIntegratedSales,
   updateSale,
   getAllStepSales,
@@ -85,8 +84,6 @@ export const saleFactory = {
     await useCaseFactory.execute<void>(finishSale, { payload, fromDelivery }),
   integrateAllSalesFromType: async (type: number) =>
     await useCaseFactory.execute<void>(integrateAllSalesFromType, { type }),
-  getSaleFromApp: async () =>
-    await useCaseFactory.execute<AppSaleDTO[]>(getSaleFromApp),
   getSaleFromApi: async (withClosedCash = false) =>
     await useCaseFactory.execute<SaleFromApiDTO[]>(getSaleFromApi, {
       withClosedCash,

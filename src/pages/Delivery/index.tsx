@@ -68,16 +68,6 @@ const Delivery: React.FC<ComponentProps> = () => {
     async function init() {
       const inConnected = await window.Main.hasInternet();
 
-      const { response: _sale, has_internal_error: errorOnGetSaleFromApp } =
-        await window.Main.sale.getSaleFromApp();
-      if (errorOnGetSaleFromApp) {
-        notification.error({
-          message: "Erro ao obter vendas do APP",
-          duration: 5,
-        });
-        return;
-      }
-
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
         await window.Main.sale.buildNewSale();
       if (errorOnBuildNewSale) {
@@ -96,24 +86,8 @@ const Delivery: React.FC<ComponentProps> = () => {
         });
       }
 
-      const salesResult: IntegrateAppSalesDTO = {
-        sales_in_delivery: _sale?.length,
-        total: _sale?.reduce((total, sale) => total + +sale.valor_pedido, 0),
-        money: _sale
-          ?.filter((sale) => +sale.tipo_pagamento === PaymentType.DINHEIRO)
-          .reduce((total, sale) => total + +sale.valor_pedido, 0),
-        credit_card: _sale
-          ?.filter((sale) => +sale.tipo_pagamento === PaymentType.CREDITO)
-          .reduce((total, sale) => total + +sale.valor_pedido, 0),
-        debit_card: _sale
-          ?.filter((sale) => +sale.tipo_pagamento === PaymentType.DEBITO)
-          .reduce((total, sale) => total + +sale.valor_pedido, 0),
-        salesIds: _sale?.map((sale) => sale.id),
-      };
-
       setSale(_newSale);
       setDeliveries(_deliveries);
-      setAppSalesResult(salesResult);
       setHasConnection(inConnected);
       setLoading(false);
     }
