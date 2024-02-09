@@ -18,7 +18,7 @@ class GetCustomerByCpf implements IUseCaseFactory {
   async execute({ cpf }: Request) {
     const hasInternet = await checkInternet();
 
-    if (hasInternet) {
+    if (hasInternet && cpf.length === 11) {
       const {
         data: { content },
       } = await thorApi.get(`/customer/find_user/${cpf}`);

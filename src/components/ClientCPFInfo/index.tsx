@@ -17,7 +17,7 @@ import {
   ContentReward,
   InfoClientReward,
   TitleReward,
-  ContentCheck
+  ContentCheck,
 } from "./styles";
 import { message, notification, Checkbox } from "antd";
 import { CampaignDto } from "../../models/dtos/campaign";
@@ -37,7 +37,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     phone: "",
     email: "",
     cpf_used_club: false,
-    cpf_used_nfce: false
+    cpf_used_nfce: false,
   });
 
   useEffect(() => {
@@ -47,23 +47,24 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         phone: sale.client_phone || "",
         email: sale.client_email || "",
         cpf_used_club: sale.cpf_used_club ? sale.cpf_used_club : false,
-        cpf_used_nfce: sale.cpf_used_nfce ? sale.cpf_used_nfce : false
+        cpf_used_nfce: sale.cpf_used_nfce ? sale.cpf_used_nfce : false,
       });
     }
   }, [shouldOpenClientInfo]);
 
-
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const key = event.key.toLowerCase();
     setPressedKey(key);
-  
+
     if (key === "b" || key === "q") {
-      event.preventDefault(); 
-  
+      event.preventDefault();
+
       setInfo((oldValues) => ({
         ...oldValues,
-        cpf_used_club: key === "b" ? !oldValues.cpf_used_club : oldValues.cpf_used_club,
-        cpf_used_nfce: key === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
+        cpf_used_club:
+          key === "b" ? !oldValues.cpf_used_club : oldValues.cpf_used_club,
+        cpf_used_nfce:
+          key === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
       }));
     }
   };
@@ -85,6 +86,26 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       return;
     }
 
+    const { has_internal_error, response, error_message } =
+      await window.Main.user.getCustomerByCpf(info.cpf);
+
+    if (has_internal_error) {
+      setLoading(false);
+      return notification.error({
+        message: error_message || "Erro ao obter voucher",
+        duration: 5,
+      });
+    }
+
+    setInfo((oldValues) => ({
+      ...oldValues,
+      email: response?.email,
+      phone: response?.cell_number,
+      cpf_used_club: true,
+      cpf_used_nfce:
+        pressedKey === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
+    }));
+
     const { response: updatedSale } = await window.Main.sale.updateSale(
       sale.id,
       {
@@ -93,7 +114,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_phone: info.phone?.replace(/\D/g, ""),
         client_email: info.email,
         cpf_used_club: info.cpf_used_club,
-        cpf_used_nfce: info.cpf_used_nfce
+        cpf_used_nfce: info.cpf_used_nfce,
       }
     );
 
@@ -116,35 +137,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
   ) => {
     const value = event.target.value;
     setInfo((oldValues) => ({ ...oldValues, [key]: value }));
-    
-    if (key === "cpf") {
-      if (value.replace(/\D/g, "").length === 11) {
-        setLoading(true);
-        const { has_internal_error, response, error_message } =
-          await window.Main.user.getCustomerByCpf(value.replace(/\D/g, ""));
-  
-        if (has_internal_error) {
-          setLoading(false);
-          return notification.error({
-            message: error_message || "Erro ao obter voucher",
-            duration: 5,
-          });
-        }
-  
-        setInfo((oldValues) => ({
-          ...oldValues,
-          cpf: value.replace(/\D/g, ""),
-          email: response?.email,
-          phone: response?.cell_number,
-          cpf_used_club: true, 
-          cpf_used_nfce: pressedKey === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
-        }));
-  
-        setLoading(false);
-      }
-    }
   };
-  
 
   const onQuit = async () => {
     const { response: updatedSale } = await window.Main.sale.updateSale(
@@ -233,7 +226,6 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
             <span>Habilitar CPF na Nota Fiscal [Q]</span>
           </div>
         </ContentCheck>
-
       </InfoWrapper>
       <CampaignInfoWrapper>
         {campaign && (
