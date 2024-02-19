@@ -26,7 +26,7 @@ class CancelNfce implements IUseCaseFactory {
         justify,
         store_id: store?.company.id
       }
-      await midasApi.post("/nfce/cancel", payload);
+      await midasApi.post("/sales/nfce/cancel", payload);
 
     } catch (error: any) {
       console.log(error);

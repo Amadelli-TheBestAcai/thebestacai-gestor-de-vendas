@@ -334,7 +334,7 @@ const Sale: React.FC<IProps> = () => {
   const printDanfe = async (sale: SaleFromApi) => {
     const { data } = await axios({
       method: "GET",
-      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.id}/danfe`,
+      url: `${window.Main.env.API_SALES_HANDLER}/sales/nfce/${sale.id}/danfe`,
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
@@ -397,7 +397,7 @@ const Sale: React.FC<IProps> = () => {
   const getNfceDanfe = async (sale: SaleFromApi) => {
     const { data } = await axios({
       method: "GET",
-      url: `${window.Main.env.API_SALES_HANDLER}/nfce/${sale.id}/danfe`,
+      url: `${window.Main.env.API_SALES_HANDLER}/sales/nfce/${sale.id}/danfe`,
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
