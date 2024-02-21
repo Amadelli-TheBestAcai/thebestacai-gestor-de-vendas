@@ -261,8 +261,9 @@ const Nfce: React.FC = () => {
         return;
       }
 
-      notification.success({
-        message: response,
+      const successOnSefaz = response?.status_sefaz === "100";
+      notification[successOnSefaz ? "success" : "warning"]({
+        message: response?.mensagem_sefaz,
         duration: 5,
       });
 
