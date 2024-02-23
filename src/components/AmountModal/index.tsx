@@ -69,7 +69,6 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
         fullAmount: null,
       });
     }
-
     if (visible) {
       init();
     }
