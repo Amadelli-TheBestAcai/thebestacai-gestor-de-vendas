@@ -30,7 +30,9 @@ class AddItem implements IUseCaseFactory {
     }
 
     const itemIndex = sale.items.findIndex(
-      (_item) => _item.product?.id === productToAdd.product?.id
+      (_item) =>
+        !_item.customer_reward_id &&
+        _item.product?.id === productToAdd.product?.id
     );
 
     if (itemIndex >= 0 && sale.items[itemIndex].product?.category.id !== 1) {
@@ -49,6 +51,7 @@ class AddItem implements IUseCaseFactory {
         product,
         storeProduct,
         total: price ? price : +(productToAdd.price_unit || 0) * quantity,
+        customer_reward_id: productToAdd.customer_reward_id,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }

@@ -6,7 +6,6 @@ export * from "./integrateAllSalesFromType";
 export * from "./addPayment";
 export * from "./getSaleFromApi";
 export * from "./deleteSaleFromApi";
-export * from "./getSaleFromApp";
 export * from "./getAllIntegratedSales";
 export * from "./updateSale";
 export * from "./getAllStepSales";

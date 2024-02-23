@@ -30,6 +30,7 @@ type Product = {
   id?: number;
   voucher_id?: number;
   product_name: string;
+  additional_value?: string;
   product_id?: number;
   category_id?: number;
   price_sell: string;

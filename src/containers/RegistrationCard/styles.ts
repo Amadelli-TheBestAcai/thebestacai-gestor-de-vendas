@@ -8,8 +8,10 @@ import {
   Row as RowAnt,
   Col as ColAnt,
   Switch as SwitchAnt,
+  Form as FormAnt,
 } from "antd";
 
+const { TextArea } = InputAnt;
 export const Container = styled(ModalAnt)`
   display: flex;
   flex-direction: column;
@@ -167,5 +169,30 @@ export const RemoveIcon = styled(Trash)`
 
   :hover {
     filter: saturate(0.3);
+  }
+`;
+
+export const Form = styled(FormAnt)`
+  .ant-form-item-control-input {
+    padding: 0;
+  }
+`
+
+export const Textarea = styled(TextArea)`
+  height: 3.7rem;
+  width: 20%;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.4rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+    font-size: 0.7rem;
   }
 `;

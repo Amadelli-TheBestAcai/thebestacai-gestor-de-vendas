@@ -3,11 +3,12 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { checkInternet } from "../../providers/internetConnection";
 import midasApi from "../../providers/midasApi";
-import { SaleDto, StoreCashDto } from "../../models/gestor";
+import { SaleDto, StoreCashDto, StoreDto } from "../../models/gestor";
 import { salesFormaterToIntegrate } from "../../helpers/salesFormaterToIntegrate";
 import { openOnlineStoreCash } from "../storeCash";
 import { useCaseFactory } from "../useCaseFactory";
-
+import { redeemReward } from "./redeemReward";
+import { getUser } from "../user/getUser";
 class OnlineIntegration implements IUseCaseFactory {
   constructor(
     private storeCashRepository = new BaseRepository<StoreCashDto>(
@@ -19,7 +20,10 @@ class OnlineIntegration implements IUseCaseFactory {
     private integrateSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Integrated_Sale
     ),
-    private openOnlineStoreCashUseCase = openOnlineStoreCash
+    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
+    private openOnlineStoreCashUseCase = openOnlineStoreCash,
+    private redeemRewardUseCase = redeemReward,
+    private getUserUseCase = getUser
   ) {}
 
   async execute(): Promise<void> {
@@ -29,6 +33,7 @@ class OnlineIntegration implements IUseCaseFactory {
     }
 
     let storeCash = (await this.storeCashRepository.getOne()) as StoreCashDto;
+    let store = (await this.storeRepository.getOne()) as StoreDto;
 
     const isOpeningOfflineStoreCash =
       storeCash?.is_opened && !storeCash?.is_online;
@@ -50,10 +55,24 @@ class OnlineIntegration implements IUseCaseFactory {
 
     try {
       const sales: SaleDto[] = await this.notIntegratedSaleRepository.getAll();
+
       if (sales.length) {
         await Promise.all(
           sales.map(async (salePayload) => {
             try {
+              if (salePayload.customer_reward_id) {
+                const user = await this.getUserUseCase.execute();
+                const redeemPayload = {
+                  store_id: store.company_id,
+                  user_name: user?.name as string,
+                  user_id: user?.id as number,
+                  company_name: store.company.company_name,
+                };
+                await this.redeemRewardUseCase.execute({
+                  id: salePayload.customer_reward_id,
+                  payload: redeemPayload,
+                });
+              }
               let payload = salesFormaterToIntegrate(salePayload, storeCash);
               payload = payload.map((sale) => ({
                 ...sale,
