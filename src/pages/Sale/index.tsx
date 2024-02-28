@@ -605,7 +605,7 @@ const Sale: React.FC<IProps> = () => {
                             {selectedSale.payments.map((_payment, index) => (
                               <Row key={index}>
                                 <Col sm={12}>{PaymentType[_payment.type]}</Col>
-                                <Col sm={12}>R$ (_payment.amount)</Col>
+                                <Col sm={12}>R$ {_payment.amount}</Col>
                               </Row>
                             ))}
                           </Panel>
