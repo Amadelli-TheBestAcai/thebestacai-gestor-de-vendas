@@ -78,7 +78,7 @@ const BalanceContainer: React.FC<IProps> = ({
     if (!balanceAmount) {
       return 0;
     }
-    return +(+balanceAmount / +(selfService?.price_unit || 0)).toFixed(2);
+    return +(+balanceAmount / +(selfService?.price_unit || 0)).toFixed(4);
   };
 
   const handleEnterToSubmit = () => {
