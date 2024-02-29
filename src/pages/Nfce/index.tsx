@@ -205,6 +205,16 @@ const Nfce: React.FC = () => {
         duration: 5,
       });
     }
+    const validationCpfOrCnpj = payload.cpf &&
+      (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
+        payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
+
+    if (!validationCpfOrCnpj) {
+      return notification.warning({
+        message: "CPF ou CNPJ invlido",
+        duration: 5,
+      });
+    }
     if (!productsNfe.length) {
       return notification.warning({
         message: "Oops! O carrinho está vazio.",
@@ -514,7 +524,7 @@ const Nfce: React.FC = () => {
                                     <FormItem
                                       label="Bandeira do cartão"
                                       name="bandeira_operadora"
-                                      rules={[{ required: true,  message: "Bandeira do cartão é obrigatória"  }]}
+                                      rules={[{ required: true, message: "Bandeira do cartão é obrigatória" }]}
                                     >
                                       <Select
                                         placeholder="Escolha a opção"

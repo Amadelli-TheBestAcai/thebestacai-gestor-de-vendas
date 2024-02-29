@@ -102,7 +102,16 @@ const NfeForm: React.FC<IProps> = ({
         duration: 5,
       });
     }
+    const validationCpfOrCnpj = payload.cpf &&
+      (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
+        payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
 
+    if (!validationCpfOrCnpj) {
+      return notification.warning({
+        message: "CPF ou CNPJ invlido",
+        duration: 5,
+      });
+    }
     const nfcePayload = {
       ...cleanObject(nfe),
       items: productsNfe.map((productNfe) => ({
@@ -156,6 +165,7 @@ const NfeForm: React.FC<IProps> = ({
       setModalState(false);
       setIsLoading(false);
       setShouldSearch(true);
+      form.resetFields()
     }
   };
 
