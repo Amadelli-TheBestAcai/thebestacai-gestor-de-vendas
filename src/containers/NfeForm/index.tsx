@@ -108,7 +108,7 @@ const NfeForm: React.FC<IProps> = ({
 
     if (!validationCpfOrCnpj) {
       return notification.warning({
-        message: "CPF ou CNPJ invlido",
+        message: "CPF ou CNPJ inválido",
         duration: 5,
       });
     }
