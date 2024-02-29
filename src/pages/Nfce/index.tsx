@@ -197,6 +197,7 @@ const Nfce: React.FC = () => {
   };
 
   const handleEmit = async () => {
+    await form.validateFields();
     let payload = await form.getFieldsValue();
     if (!payload.formaPagamento) {
       return notification.warning({
@@ -491,7 +492,7 @@ const Nfce: React.FC = () => {
                                   <FormItem
                                     label="Forma de Pagamento"
                                     name="formaPagamento"
-                                    rules={[{ required: true }]}
+                                    rules={[{ required: true, message: "Forma de pagamento é obrigatória" }]}
                                   >
                                     <Select
                                       placeholder="Escolha a opção"
@@ -513,7 +514,7 @@ const Nfce: React.FC = () => {
                                     <FormItem
                                       label="Bandeira do cartão"
                                       name="bandeira_operadora"
-                                      rules={[{ required: true }]}
+                                      rules={[{ required: true,  message: "Bandeira do cartão é obrigatória"  }]}
                                     >
                                       <Select
                                         placeholder="Escolha a opção"
