@@ -23,3 +23,15 @@ export const Content = styled.div`
   height: 100%;
   width: 100%;
 `;
+
+export const HomologContent = styled.div`
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 0, 0, 0.5);
+  padding: 10px;
+  color: white;
+  z-index: 1;
+  pointer-events: none;
+`;
