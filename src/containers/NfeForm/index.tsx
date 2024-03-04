@@ -102,7 +102,18 @@ const NfeForm: React.FC<IProps> = ({
         duration: 5,
       });
     }
+    const validationCpfOrCnpj = 
+      (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
+        payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
 
+    if(payload.cpf) {
+      if (!validationCpfOrCnpj) {
+        return notification.warning({
+          message: "CPF ou CNPJ inválido",
+          duration: 5,
+        });
+      }
+    }
     const nfcePayload = {
       ...cleanObject(nfe),
       items: productsNfe.map((productNfe) => ({
@@ -130,22 +141,23 @@ const NfeForm: React.FC<IProps> = ({
         has_internal_error: errorOnEmitNfce,
         error_message,
       } = await window.Main.sale.emitNfce(nfcePayload, sale.id);
-
-      const messageError = JSON.parse(error_message).erros.map(
-        (error) => error.mensagem
-      );
-
       if (errorOnEmitNfce) {
+        if (error_message === "Store token not found.") {
+          notification.error({
+            message: "O token da nota fiscal não está cadastrado na loja.",
+            duration: 5,
+          });
+          return;
+        }
+        console.log(error_message, 'error')
         return notification.error({
-          message:
-            messageError.map((message) => message + ".") ||
-            "Erro ao emitir NFCe",
+          message: error_message || "Erro ao emitir NFCe",
           duration: 5,
         });
       }
-
-      notification.success({
-        message: response,
+      const successOnSefaz = response?.status_sefaz === "100";
+      notification[successOnSefaz ? "success" : "warning"]({
+        message: response?.mensagem_sefaz,
         duration: 5,
       });
     } catch (error) {
@@ -155,6 +167,7 @@ const NfeForm: React.FC<IProps> = ({
       setModalState(false);
       setIsLoading(false);
       setShouldSearch(true);
+      form.resetFields()
     }
   };
 

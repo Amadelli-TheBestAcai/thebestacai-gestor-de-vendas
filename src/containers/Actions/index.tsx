@@ -95,7 +95,9 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       setUsername(response);
     };
 
-    getCustomerName();
+    if (sale.client_cpf) {
+      getCustomerName();
+    }
   }, [sale.client_cpf]);
 
   return (

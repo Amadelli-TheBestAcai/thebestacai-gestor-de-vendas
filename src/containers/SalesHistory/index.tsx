@@ -61,8 +61,8 @@ const SalesHistory: React.FC<IProps> = ({
                   {moment(sale.created_at).add(3, 'hours').format("DD/MM/YYYY HH:mm:ss")}
                 </Col>
                 <Col sm={3}>{SalesTypes[sale.type]}</Col>
-                {sale?.nfce_id ?
-                  <Col sm={4}>{sale?.nfce.status_sefaz === "100" ? <span style={{ color: 'green' }}>NFCe autorizada</span> : <span style={{ color: 'red' }}>Nfce não autorizada</span>}</Col>
+                {sale?.nfce_focus_id ?
+                  <Col sm={4}>{sale?.nfce?.status_sefaz === "100" ? <span style={{ color: 'green' }}>NFCe autorizada</span> : <span style={{ color: 'red' }}>Nfce não autorizada</span>}</Col>
                   :
                   <Col sm={4}>{"Sem nota fiscal emitida"}</Col>
                 }
