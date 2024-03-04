@@ -102,15 +102,17 @@ const NfeForm: React.FC<IProps> = ({
         duration: 5,
       });
     }
-    const validationCpfOrCnpj = payload.cpf &&
+    const validationCpfOrCnpj = 
       (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
         payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
 
-    if (!validationCpfOrCnpj) {
-      return notification.warning({
-        message: "CPF ou CNPJ inválido",
-        duration: 5,
-      });
+    if(payload.cpf) {
+      if (!validationCpfOrCnpj) {
+        return notification.warning({
+          message: "CPF ou CNPJ inválido",
+          duration: 5,
+        });
+      }
     }
     const nfcePayload = {
       ...cleanObject(nfe),
