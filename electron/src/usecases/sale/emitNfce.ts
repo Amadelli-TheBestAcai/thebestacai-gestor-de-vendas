@@ -59,7 +59,7 @@ class EmitNfce implements IUseCaseFactory {
 
     const {
       data: { nfce: data },
-    } = await midasApi.post("/nfce", {
+    } = await midasApi.post("/sales/nfce", {
       ...nfe,
       ref: nfe.ref || saleResponse.ref,
       cash_history_id: storeCash.history_id

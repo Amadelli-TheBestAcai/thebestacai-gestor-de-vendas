@@ -197,12 +197,25 @@ const Nfce: React.FC = () => {
   };
 
   const handleEmit = async () => {
+    await form.validateFields();
     let payload = await form.getFieldsValue();
     if (!payload.formaPagamento) {
       return notification.warning({
         message: "Selecione a forma de pagamento",
         duration: 5,
       });
+    }
+    const validationCpfOrCnpj = 
+      (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
+        payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
+
+    if(payload.cpf) {
+      if (!validationCpfOrCnpj) {
+        return notification.warning({
+          message: "CPF ou CNPJ inválido",
+          duration: 5,
+        });
+      }
     }
     if (!productsNfe.length) {
       return notification.warning({
@@ -261,8 +274,9 @@ const Nfce: React.FC = () => {
         return;
       }
 
-      notification.success({
-        message: response,
+      const successOnSefaz = response?.status_sefaz === "100";
+      notification[successOnSefaz ? "success" : "warning"]({
+        message: response?.mensagem_sefaz,
         duration: 5,
       });
 
@@ -490,7 +504,7 @@ const Nfce: React.FC = () => {
                                   <FormItem
                                     label="Forma de Pagamento"
                                     name="formaPagamento"
-                                    rules={[{ required: true }]}
+                                    rules={[{ required: true, message: "Forma de pagamento é obrigatória" }]}
                                   >
                                     <Select
                                       placeholder="Escolha a opção"
@@ -512,7 +526,7 @@ const Nfce: React.FC = () => {
                                     <FormItem
                                       label="Bandeira do cartão"
                                       name="bandeira_operadora"
-                                      rules={[{ required: true }]}
+                                      rules={[{ required: true, message: "Bandeira do cartão é obrigatória" }]}
                                     >
                                       <Select
                                         placeholder="Escolha a opção"
