@@ -65,7 +65,8 @@ const Login: React.FC<IProps> = ({ history }) => {
         if (errorOnGetVersion) {
           notification.error({
             message: "Falha ao verificar atualizações para o sistema",
-            duration: 5,
+            description: "Por favor, verifique sua conexão com a internet e tente novamente.",
+            duration: 7,
           });
         } else {
           if (response.has_update) {
