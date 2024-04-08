@@ -7,7 +7,7 @@ import { StorageNames } from "../../repository/storageNames";
 
 import { getCurrentStoreCash } from "../storeCash/getCurrentStoreCash";
 import { integrateHandler } from "./integrateHandler";
-import { HandlerDto, StoreCashDto } from "../../models/gestor";
+import { HandlerDto, StoreCashDto, StoreDto } from "../../models/gestor";
 
 interface Request {
   payload: any;
@@ -18,9 +18,10 @@ class InsertHandler implements IUseCaseFactory {
     private handlerRepository = new BaseRepository<HandlerDto>(
       StorageNames.Handler
     ),
+    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private getCurrentStoreCashUseCase = getCurrentStoreCash,
     private integrateHandlerUseCase = integrateHandler
-  ) { }
+  ) {}
 
   async execute({ payload }: Request): Promise<HandlerDto> {
     const { response: currentCash, has_internal_error: errorOnStoreCash } =
@@ -35,6 +36,16 @@ class InsertHandler implements IUseCaseFactory {
       throw new Error("Erro ao obter caixa atual");
     }
 
+    if (!currentCash) {
+      throw new Error("Erro ao obter caixa atual");
+    }
+
+    const store = await this.storeRepository.getOne();
+
+    if (!store) {
+      throw new Error("Nenhuma loja encontrada");
+    }
+
     const newHandler: HandlerDto = {
       id: v4(),
       ...payload,
@@ -45,7 +56,7 @@ class InsertHandler implements IUseCaseFactory {
       id: v4(),
       cash_id: undefined,
       cash_code: undefined,
-      store_id: undefined,
+      store_id: store.id,
       cash_history_id: undefined,
       to_integrate: true,
       reason: !payload.cashHandler.reason
@@ -56,7 +67,6 @@ class InsertHandler implements IUseCaseFactory {
     if (currentCash.is_opened && currentCash.is_online) {
       newHandler.cashHandler.cash_id = currentCash.cash_id;
       newHandler.cashHandler.cash_code = currentCash.code;
-      newHandler.cashHandler.store_id = currentCash.store_id;
       newHandler.cashHandler.cash_history_id = currentCash.history_id;
     }
 

@@ -136,6 +136,18 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value;
+    if (key === "cpf") {
+      const length = value.replace(/\D/g, "").length;
+      let useInClub = false;
+      if (length === 11) {
+        console.log("true");
+        useInClub = true;
+      }
+      setInfo((oldValues) => ({
+        ...oldValues,
+        cpf_used_club: useInClub,
+      }));
+    }
     setInfo((oldValues) => ({ ...oldValues, [key]: value }));
   };
 
@@ -209,7 +221,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
                 }))
               }
             />
-            <span>The Best Club [B]</span>
+            <span>Clube The Best [B]</span>
           </div>
 
           <div>
