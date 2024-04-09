@@ -32,7 +32,7 @@ npm config set python python2.7
 
 **6-**
 
-- [Build Tools for Visual Studio 2017 - Click para download](https://c2rsetup.officeapps.live.com/c2r/downloadVS.aspx?sku=community&channel=Release&source=VSLandingPage&version=VS2022&cid=af6bbbeee0ea48a2a27dca207c291121)
+- [Build Tools for Visual Studio 2017 - Click para download](https://my.visualstudio.com/Downloads?q=visual%20studio%202017&wt.mc_id=o~msft~vscom~older-downloads)
 
 Com o Build Tools deverá instalar as ferramentas:
 
