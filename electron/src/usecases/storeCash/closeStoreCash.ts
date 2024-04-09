@@ -42,6 +42,7 @@ class CloseStoreCash implements IUseCaseFactory {
     code,
   }: Request): Promise<StoreCashDto | undefined> {
     const isConnected = await checkInternet();
+    const currentStore = await this.storeRepository.getOne();
     if (isConnected) {
       let stepSales = (await this.stepSaleRepository.getAll()).filter(
         (sale) => sale.enabled
@@ -60,8 +61,6 @@ class CloseStoreCash implements IUseCaseFactory {
         throw new Error("Falha ao atualizar o histórico do caixa");
       }
 
-      const currentStore = await this.storeRepository.getOne();
-
       await odinApi.put(
         `/store_cashes/${currentStore?.company_id}-${code}/close`,
         { amount_on_close: +amount_on_close?.toString() || 0 }
@@ -78,7 +77,7 @@ class CloseStoreCash implements IUseCaseFactory {
     const {
       data: { history },
     } = await odinApi.get(
-      `/current_cash_history/${storeCash?.store_id}-${storeCash?.code}`
+      `/current_cash_history/${currentStore?.company_id}-${storeCash?.code}`
     );
     const oldCashHistory = await this.oldCashHistoryRepository.getOne();
     if (oldCashHistory) {
