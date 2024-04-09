@@ -14,9 +14,11 @@ class GetCurrentStoreCash implements IUseCaseFactory {
   ) {}
   async execute(): Promise<StoreCashDto | undefined> {
     let storeCash = await this.storeCashRepository.getOne();
+
     const store = await this.storeRepository.getOne();
     if (storeCash && store) {
       storeCash.store_id = store.company_id;
+      await this.storeCashRepository.update(storeCash.id, storeCash);
     }
 
     return storeCash;
