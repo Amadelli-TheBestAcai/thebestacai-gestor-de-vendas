@@ -42,7 +42,7 @@ class OpenStoreCash implements IUseCaseFactory {
       gv_sales: 0,
       code: "OFFLINE",
       amount_on_open,
-      store_id: store?.id,
+      store_id: store?.company_id,
       is_opened: true,
       is_online: false,
     };

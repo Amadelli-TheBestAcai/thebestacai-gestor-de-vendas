@@ -56,7 +56,7 @@ class InsertHandler implements IUseCaseFactory {
       id: v4(),
       cash_id: undefined,
       cash_code: undefined,
-      store_id: store.id,
+      store_id: store.company_id,
       cash_history_id: undefined,
       to_integrate: true,
       reason: !payload.cashHandler.reason
