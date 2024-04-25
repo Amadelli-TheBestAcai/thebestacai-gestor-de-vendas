@@ -57,7 +57,7 @@ class GetCustomerReward implements IUseCaseFactory {
     });
 
     if (!product) {
-      throw new Error("Essa recompensa não foi cadastrada em sua loja!");
+      throw new Error(`A recompensa ${content.customer_reward.campaignReward.description} não foi cadastrada em sua loja!`);
     }
 
     return content;
