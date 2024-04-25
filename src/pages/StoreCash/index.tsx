@@ -217,7 +217,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     setModalJustify(false);
   };
 
-  const openOnlineStoreCash = async (code?: string) => {
+  const openOnlineStoreCash = async () => {
     if (settings.should_open_casher === false) {
       const { response: updatedSettings, has_internal_error: errorOnSettings } =
         await window.Main.settings.update(settings.id, {
@@ -361,7 +361,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                         storeCash?.is_opened &&
                           !storeCash?.is_online &&
                           !hasOpenedOnlineStoreCash
-                          ? (openOnlineStoreCash(storeCash?.code))
+                          ? (openOnlineStoreCash())
                           : setAmountModal(true)
                       }
                       _type={

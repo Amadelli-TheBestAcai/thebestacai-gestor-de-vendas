@@ -41,7 +41,7 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
     setLoading(true);
     async function init() {
       const hasInternet = await window.Main.hasInternet();
-      if (!hasInternet && storeCash.is_opened) {
+      if (!hasInternet && storeCash.is_opened && storeCash.is_online) {
         notification.error({
           message:
             "Para fechamento de caixa é necessário estar conectado a internet",
