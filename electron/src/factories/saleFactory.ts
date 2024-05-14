@@ -38,6 +38,7 @@ import {
   CustomerVoucherDTO,
 } from "../models/dtos";
 import { redeemReward } from "../usecases/sale/redeemReward";
+import { configurationTEF } from "../usecases/sale/configurationTEF";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -155,4 +156,6 @@ export const saleFactory = {
     }),
   getCurrentCampaign: async () =>
     await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
+  configurationTEF: async () =>
+    await useCaseFactory.execute(configurationTEF)
 };

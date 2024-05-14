@@ -121,6 +121,11 @@ const Settings: React.FC<IProps> = ({ history }) => {
     );
   };
 
+  const configurationTEF = async () => {
+    const { response, has_internal_error, error_message } =
+      await window.Main.sale.configurationTEF()
+  }
+
   return (
     <Container>
       <Header>
@@ -316,6 +321,35 @@ const Settings: React.FC<IProps> = ({ history }) => {
               Alterar
             </ButtonSaveStore>
           )}
+        </CardSettings>
+
+        <CardSettings title="Configuração TEF">
+          <SelectsContainer>
+            <ContentButton>
+              <Button
+                hidden={!settings.should_use_tef}
+                onClick={() => {
+                  configurationTEF();
+                }}
+              >
+                Configurar TEF
+              </Button>
+            </ContentButton>
+          </SelectsContainer>
+          <ActionContainer>
+            <Switch
+              checked={settings.should_use_tef}
+              onChange={() =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  should_use_tef: !settings.should_use_tef,
+                }))
+              }
+            />
+            <span>
+              {!settings.should_use_tef ? "DESABILITADO" : "HABILITADO"}
+            </span>
+          </ActionContainer>
         </CardSettings>
       </PageContent>
 
