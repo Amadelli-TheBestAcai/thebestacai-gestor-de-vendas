@@ -27,3 +27,4 @@ export * from "./getCurrentCampaign";
 export * from "./updateStepSale";
 export * from "./removeStepSale";
 export * from "./configurationTEF"
+export * from './transacaoDebito'

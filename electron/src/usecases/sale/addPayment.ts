@@ -7,6 +7,7 @@ import { SaleDto } from "../../models/gestor";
 import { PaymentType } from "../../models/enums/paymentType";
 import { v4 } from "uuid";
 import moment from "moment";
+import { transacaoCartaoDebito } from "./transacaoDebito";
 
 interface Request {
   amount: number;
@@ -17,16 +18,31 @@ interface Request {
 class AddPayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
-    private getCurrentSaleUseCase = getCurrentSale
+    private getCurrentSaleUseCase = getCurrentSale,
+    private transacaoCartaoDebitoUseCase = transacaoCartaoDebito
   ) { }
 
   async execute({ amount, type, flag_card }: Request): Promise<SaleDto> {
+
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
       await useCaseFactory.execute<SaleDto>(this.getCurrentSaleUseCase);
 
     if (errorOnGetCurrentSale) {
       throw new Error("Erro ao integrar venda");
     }
+
+    const { response, has_internal_error: errorOnTransacaoCartaoDebitoUseCase, error_message } =
+      await useCaseFactory.execute<SaleDto>(this.transacaoCartaoDebitoUseCase, amount);
+
+    if(errorOnTransacaoCartaoDebitoUseCase) {
+      throw new Error(error_message || "Erro ao efetuar transação");
+    }
+
+    if (errorOnTransacaoCartaoDebitoUseCase) {
+      throw new Error("Erro ao integrar pagamento ao TEF");
+    }
+
+
     if (!sale) {
       throw new Error("Nenhuma venda encontrada");
     }
