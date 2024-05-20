@@ -11,4 +11,5 @@ export interface SettingsDto {
   balance_port?: string;
   printer?: string;
   created_at?: Date;
+  should_use_tef?: boolean
 }

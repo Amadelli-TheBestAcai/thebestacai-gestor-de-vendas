@@ -89,7 +89,7 @@ const Home: React.FC = () => {
     }
 
     if (flagCard) {
-      const { response: updatedSale, has_internal_error: errorOnAddPayment } =
+      const { response: updatedSale, has_internal_error: errorOnAddPayment, error_message } =
         await window.Main.sale.addPayment(
           currentPayment,
           paymentType,
@@ -97,7 +97,7 @@ const Home: React.FC = () => {
         );
       if (errorOnAddPayment) {
         return notification.error({
-          message: "Erro ao adicionar pagamento",
+          message: error_message || "Erro ao adicionar pagamento",
           duration: 5,
         });
       }
@@ -107,11 +107,11 @@ const Home: React.FC = () => {
       setFlagCard(99);
       setPaymentModal(false);
     } else {
-      const { response: updatedSale, has_internal_error: errorOnAddPayment } =
+      const { response: updatedSale, has_internal_error: errorOnAddPayment, error_message } =
         await window.Main.sale.addPayment(currentPayment, paymentType);
       if (errorOnAddPayment) {
         return notification.error({
-          message: "Erro ao adicionar pagamento",
+          message: error_message || "Erro ao adicionar pagamento",
           duration: 5,
         });
       }
