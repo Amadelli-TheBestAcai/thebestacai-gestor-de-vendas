@@ -28,3 +28,8 @@ export * from "./updateStepSale";
 export * from "./removeStepSale";
 export * from "./configurationTEF"
 export * from './transacaoDebito'
+export * from './transacaoCredito'
+export * from './finalizaTransacao'
+export * from './transacaoVoucher'
+export * from './transacaoQrCode'
+export * from './inicializaDPOS'

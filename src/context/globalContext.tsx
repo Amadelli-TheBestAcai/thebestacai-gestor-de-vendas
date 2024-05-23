@@ -214,15 +214,27 @@ export function GlobalProvider({ children }) {
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-        ((currentSale.discount || 0) +
-          (currentSale.customer_nps_reward_discount || 0)) +
-        0.5
+      ((currentSale.discount || 0) +
+        (currentSale.customer_nps_reward_discount || 0)) +
+      0.5
     ) {
       return notification.warning({
         message: "Pagamento inválido!",
         description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
         duration: 5,
       });
+    }
+
+    if (settings.should_use_tef) {
+      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
+        await window.Main.sale.finalizaTransacao()
+      if (errorOnFinalizaTransacao) {
+        notification.error({
+          message: error_message || "Erro ao finalizar transação TEF",
+          duration: 5,
+        });
+        return;
+      }
     }
 
     currentSale.change_amount = +(
@@ -316,7 +328,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -337,13 +349,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
+          message: error_message,
+          duration: 5,
+        })
         : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+          message: "Erro ao finalizar venda",
+          duration: 5,
+        });
     }
 
     const { response: cashHandlers } =

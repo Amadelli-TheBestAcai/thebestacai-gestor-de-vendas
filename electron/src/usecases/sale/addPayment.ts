@@ -8,6 +8,9 @@ import { PaymentType } from "../../models/enums/paymentType";
 import { v4 } from "uuid";
 import moment from "moment";
 import { transacaoCartaoDebito } from "./transacaoDebito";
+import { transacaoCartaoCredito } from "./transacaoCredito";
+import { transacaoVoucher } from "./transacaoVoucher";
+import { transacaoQrCode } from "./transacaoQrCode";
 
 interface Request {
   amount: number;
@@ -20,7 +23,10 @@ class AddPayment implements IUseCaseFactory {
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private settingsRepository = new BaseRepository<SettingsDto>(StorageNames.Settings),
     private getCurrentSaleUseCase = getCurrentSale,
-    private transacaoCartaoDebitoUseCase = transacaoCartaoDebito
+    private transacaoCartaoDebitoUseCase = transacaoCartaoDebito,
+    private transacaoCartaoCreditoUseCase = transacaoCartaoCredito,
+    private transacaoVoucherUseCase = transacaoVoucher,
+    private transacaoQrCodeUseCase = transacaoQrCode
   ) { }
 
   async execute({ amount, type, flag_card }: Request): Promise<SaleDto> {
@@ -35,14 +41,46 @@ class AddPayment implements IUseCaseFactory {
     const settings = await this.settingsRepository.getOne({})
 
     if (settings?.should_use_tef) {
-      const { response, has_internal_error: errorOnTransacaoCartaoDebitoUseCase, error_message } =
-        await useCaseFactory.execute<SaleDto>(this.transacaoCartaoDebitoUseCase, amount);
 
-      console.log(response, 'response addPayment');
+      switch (type) {
+        case PaymentType.CREDITO:
+          const {  has_internal_error: errorOnTransacaoCartaoCreditoUseCase, error_message } =
+            await useCaseFactory.execute<SaleDto>(this.transacaoCartaoCreditoUseCase, amount);
+      
+          if (errorOnTransacaoCartaoCreditoUseCase) {
+            throw new Error(error_message || "Erro ao tentar realizar  pagamento de credito via TEF");
+          }
+          break;
 
-      if (errorOnTransacaoCartaoDebitoUseCase) {
-        throw new Error(error_message || "Erro ao integrar pagamento via TEF");
+        case PaymentType.DEBITO:
+          const { has_internal_error: errorOnTransacaoCartaoDebitoUseCase, error_message: error_message_cartao_debito } =
+            await useCaseFactory.execute<SaleDto>(this.transacaoCartaoDebitoUseCase, amount);
+
+          if (errorOnTransacaoCartaoDebitoUseCase) {
+
+          }
+          break;
+
+        case PaymentType.TICKET:
+          const { has_internal_error: errorOnTransacaoVoucherUseCase, error_message: error_message_voucher } =
+            await useCaseFactory.execute<any>(this.transacaoVoucherUseCase, amount);
+
+          if (errorOnTransacaoVoucherUseCase) {
+            throw new Error(error_message_voucher || "Erro ao tentar realizar pagamento de voucher via TEF");
+          }
+          break;
+
+        case PaymentType.PIX:
+          const { has_internal_error: errorOnTransacaoQrCodeUseCase, error_message: error_message_qrcode } =
+            await useCaseFactory.execute<any>(this.transacaoQrCodeUseCase, amount);
+
+          if (errorOnTransacaoQrCodeUseCase) {
+            throw new Error(error_message_qrcode || "Erro ao tentar realizar pagamento via QrCode");
+          }
+          break;
+
       }
+
     }
 
     if (!sale) {
