@@ -230,6 +230,7 @@ const Sale: React.FC<IProps> = () => {
         type: payment.type,
         flag_card:
           payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
+        code_nsu: payment.code_nsu ? payment.code_nsu : null
       })),
       ref: selectedSale.ref,
     };
@@ -434,6 +435,27 @@ const Sale: React.FC<IProps> = () => {
         message: "Habilite a impressora na tela de configurações.",
         duration: 5,
       });
+    }
+
+    if (_settings.should_use_tef) {
+      const { response: _printSale, has_internal_error: errorOPrintSale } =
+        await window.Main.common.printCupomTef();
+
+      // if (!_printSale) {
+      //   return notification.warning({
+      //     message: "Não foi possível concluir a impressão da venda.",
+      //     description: "Por favor, verifique a conexão da sua impressora.",
+      //     duration: 5,
+      //   });
+      // }
+
+      if (errorOPrintSale) {
+        return notification.error({
+          message: "Erro ao tentar imprimir",
+          duration: 5,
+        });
+      }
+      return
     }
 
     const { response: _printSale, has_internal_error: errorOPrintSale } =

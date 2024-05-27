@@ -268,6 +268,7 @@ export function GlobalProvider({ children }) {
           amount: +payment.amount.toFixed(2),
           type: +payment.type,
           flag_card: +payment.flag_card,
+          code_nsu: payment.code_nsu ? payment.code_nsu : null
         })),
         ref: currentSale.ref,
       };

@@ -111,6 +111,7 @@ export interface SaleDto {
     formated_type?: string;
     flag_card?: number;
     type: number;
+    code_nsu?: string;
     created_at?: string;
     deleted_at?: string;
   }[];
