@@ -27,7 +27,7 @@ export const PageContent = styled.div`
   background: var(--white);
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
-  padding: 1rem;
+  padding: 1rem 1rem 2rem;
   overflow-y: scroll;
 `;
 

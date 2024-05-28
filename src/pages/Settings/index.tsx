@@ -123,19 +123,19 @@ const Settings: React.FC<IProps> = ({ history }) => {
   };
 
   const configurationTEF = async () => {
-    setLoadingConfigurationTef(true)
+    setLoadingConfigurationTef(true);
     const { response, has_internal_error, error_message } =
-      await window.Main.tefFactory.configurationTEF()
+      await window.Main.tefFactory.configurationTEF();
     if (has_internal_error) {
       notification.error({
         message: "Error ao tentar configurar TEF",
-        duration: 5
-      })
-      setLoadingConfigurationTef(false)
-      return
+        duration: 5,
+      });
+      setLoadingConfigurationTef(false);
+      return;
     }
-    setLoadingConfigurationTef(false)
-  }
+    setLoadingConfigurationTef(false);
+  };
 
   return (
     <Container>
@@ -335,20 +335,22 @@ const Settings: React.FC<IProps> = ({ history }) => {
         </CardSettings>
 
         <CardSettings title="Configuração TEF">
-          <SelectsContainer>
-            <ContentButton>
-              <Button
-                hidden={!settings.should_use_tef}
-                loading={loadingConfigurationTef}
-                onClick={() => {
-                  configurationTEF();
-                }}
-              >
-                Configurar TEF
-              </Button>
-            </ContentButton>
-          </SelectsContainer>
-          <span>{settings.should_use_tef ? `Número PDV: ${storeCash.store_id}` : ''}</span>
+          <ContentButton>
+            <Button
+              hidden={!settings.should_use_tef}
+              loading={loadingConfigurationTef}
+              onClick={() => {
+                configurationTEF();
+              }}
+            >
+              Configurar TEF
+            </Button>
+            <span style={{ marginLeft: "1rem" }}>
+              {settings.should_use_tef
+                ? `Número PDV: ${storeCash.store_id}`
+                : ""}
+            </span>
+          </ContentButton>
           <ActionContainer>
             <Switch
               checked={settings.should_use_tef}
