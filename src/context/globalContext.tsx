@@ -225,17 +225,17 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    if (settings.should_use_tef) {
-      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
-        await window.Main.sale.finalizaTransacao()
-      if (errorOnFinalizaTransacao) {
-        notification.error({
-          message: error_message || "Erro ao finalizar transação TEF",
-          duration: 5,
-        });
-        return;
-      }
-    }
+    // if (settings.should_use_tef) {
+    //   const { has_internal_error: errorOnFinalizaTransacao, error_message } =
+    //     await window.Main.tefFactory.transactionsTef
+    //   if (errorOnFinalizaTransacao) {
+    //     notification.error({
+    //       message: error_message || "Erro ao finalizar transação TEF",
+    //       duration: 5,
+    //     });
+    //     return;
+    //   }
+    // }
 
     currentSale.change_amount = +(
       currentSale.total_paid +

@@ -66,15 +66,24 @@ export const DisabledButtonStyle = css`
 `;
 
 export const Button = styled(ButtonAnt)`
-  width: 110px;
   height: 50px;
-  background: transparent;
-  color: var(--orange-250);
+  padding: 0 1rem;
+  background: var(--orange-250);;
+  color: white;
   border: 1px solid var(--orange-250);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
+  z-index: 10;
+  &&&:hover,
+  &&&:active, 
+  &&&:focus {
+    background: var(--orange-250);;
+    color: white;
+    border: 1px solid var(--orange-250);
+    opacity: 80;
+  }
 
   &.disabled-button {
     ${DisabledButtonStyle}

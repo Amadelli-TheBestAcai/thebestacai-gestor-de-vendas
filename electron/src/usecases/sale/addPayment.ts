@@ -38,7 +38,7 @@ class AddPayment implements IUseCaseFactory {
     let code_nsu
     if (settings?.should_use_tef) {
       const { response, has_internal_error: errorOnGetCurrentSale } =
-        await useCaseFactory.execute<string | null>(this.transactionsTefUseCase);
+        await useCaseFactory.execute<string | null>(this.transactionsTefUseCase, { type, amount });
 
       if (errorOnGetCurrentSale) {
         throw new Error("Erro ao integrar pagamento ao tef");

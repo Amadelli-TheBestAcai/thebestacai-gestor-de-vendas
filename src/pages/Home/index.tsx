@@ -30,11 +30,16 @@ import {
 
 import { PaymentType } from "../../models/enums/paymentType";
 import CupomModal from "../../containers/CupomModal";
+import { useSettings } from "../../hooks/useSettings";
 
 const Home: React.FC = () => {
   const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
     useSale();
+  const { settings } =
+    useSettings();
+
   const [loading, setLoading] = useState(true);
+  const [loadingPayment, setLoadinPayment] = useState(false)
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [flagCard, setFlagCard] = useState<number | null>(99);
@@ -66,6 +71,7 @@ const Home: React.FC = () => {
   }, []);
 
   const addPayment = async () => {
+    setLoadinPayment(true)
     const payment = sale.total_paid + currentPayment;
     if (
       !currentPayment ||
@@ -88,7 +94,7 @@ const Home: React.FC = () => {
       });
     }
 
-    if (flagCard) {
+    if (!settings.should_use_tef && flagCard) {
       const { response: updatedSale, has_internal_error: errorOnAddPayment, error_message } =
         await window.Main.sale.addPayment(
           currentPayment,
@@ -96,6 +102,7 @@ const Home: React.FC = () => {
           flagCard
         );
       if (errorOnAddPayment) {
+        setLoadinPayment(false)
         return notification.error({
           message: error_message || "Erro ao adicionar pagamento",
           duration: 5,
@@ -110,6 +117,7 @@ const Home: React.FC = () => {
       const { response: updatedSale, has_internal_error: errorOnAddPayment, error_message } =
         await window.Main.sale.addPayment(currentPayment, paymentType);
       if (errorOnAddPayment) {
+        setLoadinPayment(false)
         return notification.error({
           message: error_message || "Erro ao adicionar pagamento",
           duration: 5,
@@ -121,6 +129,7 @@ const Home: React.FC = () => {
       setFlagCard(99);
       setPaymentModal(false);
     }
+    setLoadinPayment(false)
   };
 
   const removePayment = async (id: string) => {
@@ -249,6 +258,7 @@ const Home: React.FC = () => {
                             shouldDisableButtons={true}
                             flagCard={flagCard}
                             setFlagCard={setFlagCard}
+                            loadingPayment={loadingPayment}
                           />
                         </PaymentsContent>
                         <CupomModal

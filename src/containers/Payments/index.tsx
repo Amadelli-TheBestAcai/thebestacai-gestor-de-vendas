@@ -34,6 +34,7 @@ import {
 import { FlagCard } from "../../models/enums/flagCard";
 import { Form } from "antd";
 import { useSale } from "../../hooks/useSale";
+import { useSettings } from "../../hooks/useSettings";
 
 interface IProps {
   sale: SaleDto;
@@ -49,6 +50,7 @@ interface IProps {
   shouldViewValues?: boolean;
   shouldDisableButtons?: boolean;
   usingDelivery?: boolean;
+  loadingPayment?: boolean
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -65,8 +67,10 @@ const PaymentsContainer: React.FC<IProps> = ({
   usingDelivery,
   setFlagCard,
   flagCard,
+  loadingPayment
 }) => {
-const { onRemoveDiscount } = useSale();
+  const { onRemoveDiscount } = useSale();
+  const { settings } = useSettings();
 
   const onModalCancel = (): void => {
     setModalState(false);
@@ -215,7 +219,10 @@ const { onRemoveDiscount } = useSale();
         footer={
           <Footer>
             <ButtonCancel onClick={onModalCancel}>Cancelar</ButtonCancel>
-            <ButtonSave onClick={addPayment}>Salvar Alteração</ButtonSave>
+            <ButtonSave loading={loadingPayment} onClick={addPayment}>{
+              settings?.should_use_tef
+                && modalTitle !== "Dinheiro" ? 'Solicitar Pagamento TEF'
+                : 'Salvar Alteração'}</ButtonSave>
           </Footer>
         }
       >
@@ -227,13 +234,13 @@ const { onRemoveDiscount } = useSale();
           defaultValue={
             modalTitle !== "Dinheiro"
               ? sale?.total_sold -
-                sale?.total_paid -
-                sale?.discount -
-                (sale?.customer_nps_reward_discount || 0)
+              sale?.total_paid -
+              sale?.discount -
+              (sale?.customer_nps_reward_discount || 0)
               : 0
           }
         />
-        {(modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
+        {(!settings?.should_use_tef) && (modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
           <>
             Bandeira:
             <Form.Item>

@@ -85,7 +85,7 @@ ipcMain.on("check_for_update", function () {
 app.whenReady().then(async () => {
   createWindow();
   inicializeControllers();
-  const serverTefProcess = inicializeServerTef();
+  // const serverTefProcess = inicializeServerTef();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -96,7 +96,7 @@ app.whenReady().then(async () => {
   app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
       app.quit();
-      serverTefProcess.kill()
+      // serverTefProcess.kill()
     }
   });
 });

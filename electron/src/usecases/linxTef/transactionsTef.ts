@@ -29,7 +29,7 @@ class TransactionsTef implements IUseCaseFactory {
         }
 
         const { data: { code_nsu } } = await tefApi.post(endpoint, { amount });
-        return code_nsu;
+        return code_nsu
     }
 }
 

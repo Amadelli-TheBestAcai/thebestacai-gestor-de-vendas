@@ -4,6 +4,7 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale } from "./getCurrentSale";
 import { SaleDto } from "../../models/gestor";
+import { removeTransaction } from "../linxTef/removeTransation";
 
 interface Request {
   id: string;
@@ -12,7 +13,8 @@ interface Request {
 class DeletePayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
-    private getCurrentSaleUseCase = getCurrentSale
+    private getCurrentSaleUseCase = getCurrentSale,
+    private removeTransationUseCase = removeTransaction
   ) { }
 
   async execute({ id }: Request): Promise<SaleDto> {
@@ -40,6 +42,10 @@ class DeletePayment implements IUseCaseFactory {
     await this.saleRepository.update(sale.id, sale);
     return sale;
   }
+
+  // async checkPaymentNsuCode(sale) {
+  //   const code_nsu = sale?.payments.filter(payment => payment === )
+  // }
 }
 
 export const deletePayment = new DeletePayment();

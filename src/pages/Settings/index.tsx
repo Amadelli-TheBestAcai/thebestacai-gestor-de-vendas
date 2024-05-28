@@ -31,6 +31,7 @@ type IProps = RouteComponentProps;
 
 const Settings: React.FC<IProps> = ({ history }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingConfigurationTef, setLoadingConfigurationTef] = useState(false);
   const { settings, setSettings } = useSettings();
   const { setStore } = useStore();
   const { storeCash } = useSale();
@@ -122,8 +123,18 @@ const Settings: React.FC<IProps> = ({ history }) => {
   };
 
   const configurationTEF = async () => {
+    setLoadingConfigurationTef(true)
     const { response, has_internal_error, error_message } =
-      await window.Main.sale.configurationTEF()
+      await window.Main.tefFactory.configurationTEF()
+    if (has_internal_error) {
+      notification.error({
+        message: "Error ao tentar configurar TEF",
+        duration: 5
+      })
+      setLoadingConfigurationTef(false)
+      return
+    }
+    setLoadingConfigurationTef(false)
   }
 
   return (
@@ -328,6 +339,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
             <ContentButton>
               <Button
                 hidden={!settings.should_use_tef}
+                loading={loadingConfigurationTef}
                 onClick={() => {
                   configurationTEF();
                 }}
@@ -336,6 +348,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
               </Button>
             </ContentButton>
           </SelectsContainer>
+          <span>{settings.should_use_tef ? `Número PDV: ${storeCash.store_id}` : ''}</span>
           <ActionContainer>
             <Switch
               checked={settings.should_use_tef}
