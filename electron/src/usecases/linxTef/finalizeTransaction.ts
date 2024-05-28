@@ -1,11 +1,11 @@
 import tefApi from "../../providers/tefApi";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 
-class FinalizaTransacao implements IUseCaseFactory {
+class FinalizeTransaction implements IUseCaseFactory {
     async execute(): Promise<any> {
         const { data } = await tefApi.post(`/finaliza-transacao`)
         return data
     }
 }
 
-export const finalizaTransacao = new FinalizaTransacao();
+export const finalizeTransaction = new FinalizeTransaction();

@@ -27,11 +27,6 @@ import {
   getCurrentCampaign,
   updateStepSale,
   removeStepSale,
-  finalizaTransacao,
-  configurationTEF,
-  transacaoVoucher,
-  transacaoQrCode,
-  inicializaDPOS
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto, CampaignDto } from "../models/gestor";
@@ -42,7 +37,6 @@ import {
   CustomerVoucherDTO,
 } from "../models/dtos";
 import { redeemReward } from "../usecases/sale/redeemReward";
-import { finalizaDPOS } from "../usecases/sale/FinalizaDPOS";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -160,16 +154,4 @@ export const saleFactory = {
     }),
   getCurrentCampaign: async () =>
     await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
-  configurationTEF: async () =>
-    await useCaseFactory.execute(configurationTEF),
-  finalizaTransacao: async () =>
-    await useCaseFactory.execute(finalizaTransacao),
-  transacaoVoucher: async () =>
-    await useCaseFactory.execute(transacaoVoucher),
-  transacaoQrCode: async () =>
-    await useCaseFactory.execute(transacaoQrCode),
-  inicializaDPOS: async () =>
-    await useCaseFactory.execute(inicializaDPOS),
-  finalizaDPOS: async () =>
-    await useCaseFactory.execute(finalizaDPOS)
 };
