@@ -93,6 +93,7 @@ export const Button = styled(ButtonAnt)`
 export const ContentButton = styled.div`
   display: flex;
   align-items: center;
+  margin-left: 2%;
 `;
 
 export const ButtonSave = styled(ButtonAnt)`
@@ -204,10 +205,7 @@ export const StoreChange = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-
-  .descriptionStore {
-    margin-left: 10px;
-  }
+  
   .storeObservation {
     border-left: 1px solid;
     margin-left: 1rem;

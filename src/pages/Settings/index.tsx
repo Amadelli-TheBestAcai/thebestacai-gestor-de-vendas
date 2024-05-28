@@ -301,16 +301,19 @@ const Settings: React.FC<IProps> = ({ history }) => {
         </CardSettings>
 
         <CardSettings title="Alterar loja">
-          <StoreChange>
-            <span className="descriptionStore">
-              Ao solicitar a alteração de loja, será necessário refazer o login.
-            </span>
-            {storeCash?.is_opened && (
-              <span className="storeObservation">
-                Para alterar a loja é necessário que o caixa esteja fechado
+          <div style={{ padding: "2%" }}>
+            <StoreChange>
+              <span>
+                Ao solicitar a alteração de loja, será necessário refazer o
+                login.
               </span>
-            )}
-          </StoreChange>
+              {storeCash?.is_opened && (
+                <span className="storeObservation">
+                  Para alterar a loja é necessário que o caixa esteja fechado
+                </span>
+              )}
+            </StoreChange>
+          </div>
           {storeCash?.is_opened ? (
             <Tooltip title="Para alterar a loja é necessário que o caixa esteja fechado">
               <ButtonSaveStore
