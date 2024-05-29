@@ -337,7 +337,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
           )}
         </CardSettings>
 
-        <CardSettings title="Configuração TEF">
+        <CardSettings title="Integração de TEF">
           <ContentButton>
             <Button
               hidden={!settings.should_use_tef}

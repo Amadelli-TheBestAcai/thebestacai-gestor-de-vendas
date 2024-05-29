@@ -191,6 +191,7 @@ export function GlobalProvider({ children }) {
     document.getElementById("balanceInput")?.focus();
   };
 
+
   const onRegisterSale = async (): Promise<void> => {
     if (savingSale) {
       return;
@@ -225,17 +226,20 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    // if (settings.should_use_tef) {
-    //   const { has_internal_error: errorOnFinalizaTransacao, error_message } =
-    //     await window.Main.tefFactory.transactionsTef
-    //   if (errorOnFinalizaTransacao) {
-    //     notification.error({
-    //       message: error_message || "Erro ao finalizar transação TEF",
-    //       duration: 5,
-    //     });
-    //     return;
-    //   }
-    // }
+    const checkPaymentWithTEF = currentSale.payments
+      .map(payment => payment.code_nsu)
+
+    if (checkPaymentWithTEF.length > 0) {
+      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
+        await window.Main.tefFactory.finalizeTransaction()
+      if (errorOnFinalizaTransacao) {
+        notification.error({
+          message: error_message || "Erro ao finalizar transação TEF",
+          duration: 5,
+        });
+        return;
+      }
+    }
 
     currentSale.change_amount = +(
       currentSale.total_paid +

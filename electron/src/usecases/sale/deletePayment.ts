@@ -28,6 +28,16 @@ class DeletePayment implements IUseCaseFactory {
       throw new Error("Nenhuma venda encontrada");
     }
 
+    const code_nsu = await this.checkPaymentNsuCode(sale, id)
+
+    if (code_nsu) {
+      const { has_internal_error } =
+        await useCaseFactory.execute<void>(this.removeTransationUseCase, code_nsu);
+      if (has_internal_error) {
+        throw new Error("Error ao tentar remover pagamento via tef");
+      }
+    }
+
     sale.payments = sale.payments.filter((_payment) => _payment.id !== id);
 
     sale.total_paid = +sale.payments
@@ -43,9 +53,15 @@ class DeletePayment implements IUseCaseFactory {
     return sale;
   }
 
-  // async checkPaymentNsuCode(sale) {
-  //   const code_nsu = sale?.payments.filter(payment => payment === )
-  // }
+  async checkPaymentNsuCode(sale: SaleDto, id: string): Promise<string> {
+    let code_nsu: string = ''
+    sale.payments.forEach(payment => {
+      if (payment.id === id && payment.code_nsu) {
+        code_nsu = payment.code_nsu
+      }
+    });
+    return code_nsu;
+  }
 }
 
 export const deletePayment = new DeletePayment();

@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
@@ -38,11 +40,30 @@ class PrintFileContent implements IUseCaseFactory {
         const termalPrinter = Printer.getPrinter(printer);
 
         try {
-            const filePath = 'C:\\Users\\lucas\\Documents\\Amatech\\REDECARD.txt'
+            const folderPath = 'C:\\ClientLinxTEF\\Cupons';
+            const files = fs.readdirSync(folderPath);
+
+            if (files.length === 0) {
+                console.error('Nenhum arquivo encontrado na pasta.');
+                return;
+            }
+
+            // Opcional: Ordenar os arquivos por data de modificação (mais recente primeiro)
+            files.sort((a, b) => {
+                const aStats = fs.statSync(path.join(folderPath, a));
+                const bStats = fs.statSync(path.join(folderPath, b));
+                return bStats.mtime.getTime() - aStats.mtime.getTime();
+            });
+
+            // Selecionar o arquivo mais recente
+            const latestFile = files[0];
+            const filePath = path.join(folderPath, latestFile);
+
+            console.log(`Lendo o arquivo: ${filePath}`);
             const fileContent = await readFileContent(filePath);
 
             this.printerFormater.clear();
-            this.printerFormater.println(fileContent)
+            this.printerFormater.println(fileContent);
 
             const lines = fileContent.split('\n');
 
@@ -62,10 +83,10 @@ class PrintFileContent implements IUseCaseFactory {
                 printer,
                 type: 'RAW',
                 success: function () {
-                    console.log('printed with success');
+                    console.log('Impressão realizada com sucesso');
                 },
                 error: function (err) {
-                    console.log(err);
+                    console.error('Erro na impressão:', err);
                 },
             });
         } catch (error) {

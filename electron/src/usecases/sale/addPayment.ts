@@ -8,6 +8,7 @@ import { PaymentType } from "../../models/enums/paymentType";
 import { v4 } from "uuid";
 import moment from "moment";
 import { transactionsTef } from "../linxTef";
+import { printFileContent } from "../common";
 
 interface Request {
   amount: number;
@@ -21,6 +22,7 @@ class AddPayment implements IUseCaseFactory {
     private settingsRepository = new BaseRepository<SettingsDto>(StorageNames.Settings),
     private getCurrentSaleUseCase = getCurrentSale,
     private transactionsTefUseCase = transactionsTef,
+    private printCupomUseCase = printFileContent
 
   ) { }
 
@@ -43,8 +45,9 @@ class AddPayment implements IUseCaseFactory {
       if (errorOnGetCurrentSale) {
         throw new Error("Erro ao integrar pagamento ao tef");
       }
-
       code_nsu = response
+
+      await useCaseFactory.execute<void>(this.printCupomUseCase);
     }
 
     if (!sale) {

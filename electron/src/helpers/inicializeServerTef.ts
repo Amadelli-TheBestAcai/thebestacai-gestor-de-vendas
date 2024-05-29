@@ -2,9 +2,9 @@ import { spawn } from 'child_process';
 import path from 'path';
 
 export function inicializeServerTef() {
-    const caminhoExecutavel = path.join(process.env.LOCALAPPDATA as string, 'Programs', 'server-dll-tef', 'ServerTEF.exe');
+    const pathExecute = path.join(process.env.LOCALAPPDATA as string, 'Programs', 'server-dll-tef', 'ServerTEF.exe');
     // Cria o processo filho para executar o executável
-    const childProcess = spawn(caminhoExecutavel, [], { windowsHide: true });
+    const childProcess = spawn(pathExecute, [], { windowsHide: true });
 
     // Exibe o PID do processo filho
     console.log(`PID do processo filho: ${childProcess.pid}`);
