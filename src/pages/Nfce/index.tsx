@@ -57,6 +57,7 @@ import {
   DeleteIcon,
   ModalNFCe,
   NFCeButton,
+  ContainerNotSelfService,
 } from './styles';
 import { FlagCard } from '../../models/enums/flagCard';
 import { useStore } from '../../hooks/useStore';
@@ -419,14 +420,26 @@ const Nfce: React.FC = () => {
                                     : 'Sorvete Self-service'}
                                   )
                                 </span>
-                                <InputMonetary
-                                  autoFocus={true}
-                                  id="balanceInput"
-                                  getValue={(value) =>
-                                    setSelfServiceAmount(+value)
-                                  }
-                                  onEnterPress={handleEnterToSubmit}
-                                />
+                                {isProductEnabled(selectedSelfService) ? (
+                                  <InputMonetary
+                                    autoFocus={true}
+                                    id="balanceInput"
+                                    getValue={(value) =>
+                                      setSelfServiceAmount(+value)
+                                    }
+                                    onEnterPress={handleEnterToSubmit}
+                                  />
+                                ) : (
+                                  <Tooltip
+                                    title={
+                                      'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
+                                    }
+                                  >
+                                    <ContainerNotSelfService>
+                                      <input type="text" disabled />
+                                    </ContainerNotSelfService>
+                                  </Tooltip>
+                                )}
                               </div>
                               <WeightContent>
                                 <span>Preço do KG</span>

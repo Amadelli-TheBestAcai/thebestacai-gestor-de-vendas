@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
-import LogoImg from "../../assets/img/logo-login.png";
-import Spinner from "../../components/Spinner";
-import { StoreDto } from "../../models/dtos/store";
-import { useSettings } from "../../hooks/useSettings";
-import { useUser } from "../../hooks/useUser";
-import { useStore } from "../../hooks/useStore";
+import LogoImg from '../../assets/img/logo-login.png';
+import Spinner from '../../components/Spinner';
+import { StoreDto } from '../../models/dtos/store';
+import { useSettings } from '../../hooks/useSettings';
+import { useUser } from '../../hooks/useUser';
+import { useStore } from '../../hooks/useStore';
 
-import { Form, Select, notification, Modal, Row, Progress } from "antd";
+import { Form, Select, notification, Modal, Row, Progress } from 'antd';
 
 import {
   Container,
@@ -27,7 +27,7 @@ import {
   Checkbox,
   ButtonSave,
   TextModalVersion,
-} from "./styles";
+} from './styles';
 
 const Option = Select;
 
@@ -38,16 +38,16 @@ const Login: React.FC<IProps> = ({ history }) => {
   const { setStore: setContextStore, store: storeContext } = useStore();
   const { settings, setSettings } = useSettings();
   const [user, setUser] = useState({
-    username: settings.should_remember_user ? settings.rememberd_user : "",
-    password: "",
+    username: settings.should_remember_user ? settings.rememberd_user : '',
+    password: '',
   });
   const [loading, setLoading] = useState(true);
-  const [version, setVersion] = useState("");
+  const [version, setVersion] = useState('');
   const [step, setStep] = useState<number>(1);
   const [store, setStore] = useState<number | undefined>(undefined);
   const [stores, setStores] = useState<StoreDto[]>([]);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [typeInput, setTypeInput] = useState<string>("password");
+  const [typeInput, setTypeInput] = useState<string>('password');
   const [shouldApplyMandatoryVersion, setShouldApplyMandatoryVersion] =
     useState(false);
   const [percentDownloaded, setPercentDownloaded] = useState<number>(0);
@@ -57,15 +57,16 @@ const Login: React.FC<IProps> = ({ history }) => {
 
   useEffect(() => {
     async function init() {
-      window.Main.send("app_version", async (pkg_version) => {
+      window.Main.send('app_version', async (pkg_version) => {
         setVersion(pkg_version);
         const { response, has_internal_error: errorOnGetVersion } =
           await window.Main.common.checkForUpdates(pkg_version);
 
         if (errorOnGetVersion) {
           notification.error({
-            message: "Falha ao verificar atualizações para o sistema",
-            description: "Por favor, verifique sua conexão com a internet e tente novamente.",
+            message: 'Falha ao verificar atualizações para o sistema',
+            description:
+              'Por favor, verifique sua conexão com a internet e tente novamente.',
             duration: 7,
           });
         } else {
@@ -75,8 +76,8 @@ const Login: React.FC<IProps> = ({ history }) => {
             if (response.is_mandatory) {
               setShouldApplyMandatoryVersion(true);
             }
-            window.Main.message("check_for_update");
-            window.Main.on("download-progress", (percent) => {
+            window.Main.message('check_for_update');
+            window.Main.on('download-progress', (percent) => {
               console.log({ percent: percent.slice(0, 2) });
               setPercentDownloaded(+percent.slice(0, 2));
             });
@@ -85,7 +86,7 @@ const Login: React.FC<IProps> = ({ history }) => {
         form.setFieldsValue({
           username: settings.should_remember_user
             ? settings.rememberd_user
-            : "",
+            : '',
         });
         setLoading(false);
       });
@@ -118,12 +119,12 @@ const Login: React.FC<IProps> = ({ history }) => {
       const { response: updatedSettings, has_internal_error: errorOnSettings } =
         await window.Main.settings.update(settings.id, {
           ...settings,
-          rememberd_user: settings.should_remember_user ? user.username : "",
+          rememberd_user: settings.should_remember_user ? user.username : '',
           should_open_casher: true,
         });
       if (errorOnSettings) {
         notification.error({
-          message: "Erro ao atualizar as configurações",
+          message: 'Erro ao atualizar as configurações',
           duration: 5,
         });
         return;
@@ -133,29 +134,31 @@ const Login: React.FC<IProps> = ({ history }) => {
 
       if (storeContext) {
         setLoading(false);
-        window.Main.message("balance:connect");
+        window.Main.message('balance:connect');
 
         await window.Main.product.getProducts();
         await window.Main.product.getAllPurchaseProducts(false);
 
-        return history.push("/home");
+        return history.push('/home');
       } else {
         const { response: stores, has_internal_error: errorOnStore } =
           await window.Main.store.getFromApi();
         if (errorOnStore) {
           notification.error({
-            message: "Erro ao encontrar loja",
+            message: 'Erro ao encontrar loja',
             duration: 5,
           });
           return;
         }
-        setStores(stores);
+        setStores(
+          stores?.filter((item) => item?.company?.country === 'brasil')
+        );
         setLoading(false);
         setStep(2);
       }
     } else {
       notification.error({
-        message: "Credenciais inválidas",
+        message: 'Credenciais inválidas',
         duration: 5,
       });
       setLoading(false);
@@ -165,7 +168,7 @@ const Login: React.FC<IProps> = ({ history }) => {
   const registerStore = async () => {
     if (!store) {
       notification.warning({
-        message: "Selecione uma loja",
+        message: 'Selecione uma loja',
         duration: 5,
       });
       return;
@@ -178,25 +181,25 @@ const Login: React.FC<IProps> = ({ history }) => {
 
     if (errorOnStore) {
       notification.error({
-        message: "Erro ao registrar a loja",
+        message: 'Erro ao registrar a loja',
         duration: 5,
       });
       return;
     }
 
     setContextStore(_store);
-    window.Main.message("balance:connect");
+    window.Main.message('balance:connect');
     await window.Main.product.getAllPurchaseProducts(false);
     await window.Main.product.getProducts();
-    return history.push("/home");
+    return history.push('/home');
   };
 
   const viewPassword = () => {
     setShowPassword(!showPassword);
     if (showPassword) {
-      setTypeInput("text");
+      setTypeInput('text');
     } else {
-      setTypeInput("password");
+      setTypeInput('password');
     }
   };
 
@@ -208,7 +211,7 @@ const Login: React.FC<IProps> = ({ history }) => {
       });
     if (errorOnSettings) {
       notification.error({
-        message: "Erro ao atualizar as configurações",
+        message: 'Erro ao atualizar as configurações',
         duration: 5,
       });
       return;
@@ -229,11 +232,11 @@ const Login: React.FC<IProps> = ({ history }) => {
 
             <FormContainer>
               <FormContent>
-                <h3>{step === 1 ? "Gestor de Vendas" : "Defina sua loja"}</h3>
+                <h3>{step === 1 ? 'Gestor de Vendas' : 'Defina sua loja'}</h3>
                 <p>
                   {step === 1
-                    ? "Insira seu usuário e senha para conectar"
-                    : "Selecione uma loja para continuar o login"}
+                    ? 'Insira seu usuário e senha para conectar'
+                    : 'Selecione uma loja para continuar o login'}
                 </p>
                 <Form
                   form={form}
@@ -246,7 +249,7 @@ const Login: React.FC<IProps> = ({ history }) => {
                         label="Usuário"
                         name="username"
                         rules={[
-                          { required: true, message: "Campo obrigatório" },
+                          { required: true, message: 'Campo obrigatório' },
                         ]}
                       >
                         <Input
@@ -260,7 +263,7 @@ const Login: React.FC<IProps> = ({ history }) => {
                         label="Senha"
                         name="password"
                         rules={[
-                          { required: true, message: "Campo obrigatório" },
+                          { required: true, message: 'Campo obrigatório' },
                         ]}
                       >
                         <Input
@@ -275,10 +278,10 @@ const Login: React.FC<IProps> = ({ history }) => {
                     <>
                       <Form.Item
                         label="Loja"
-                        style={{ fontSize: "14px" }}
+                        style={{ fontSize: '14px' }}
                         name="store"
                         rules={[
-                          { required: true, message: "Selecione a Loja" },
+                          { required: true, message: 'Selecione a Loja' },
                         ]}
                       >
                         <Select
@@ -331,7 +334,7 @@ const Login: React.FC<IProps> = ({ history }) => {
 
                 <ContactInfo>
                   <p>
-                    Está com problemas para acessar? Entre em contato <br />{" "}
+                    Está com problemas para acessar? Entre em contato <br />{' '}
                     conosco
                     <span> comunicathebestacai@gmail.com</span>.
                   </p>

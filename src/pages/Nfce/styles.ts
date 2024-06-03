@@ -184,6 +184,10 @@ export const WeightContent = styled.div`
   width: 40%;
 `;
 
+export const ContainerNotSelfService = styled.div`
+  height: 100%;
+`;
+
 export const InfoWeight = styled.div`
   ${InputCSS}
   height: 100%;
