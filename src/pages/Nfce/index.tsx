@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { cleanObject } from "../../helpers/cleanObject";
-import { v4 } from "uuid";
+import React, { useState, useEffect } from 'react';
+import { cleanObject } from '../../helpers/cleanObject';
 
-import { Popover, Tooltip, notification } from "antd";
+import { Tooltip, notification, Radio } from 'antd';
 
-import CashNotFound from "../../components/CashNotFound";
-import Spinner from "../../components/Spinner";
-import DisconectedForm from "../../containers/DisconectedForm";
+import CashNotFound from '../../components/CashNotFound';
+import Spinner from '../../components/Spinner';
+import DisconectedForm from '../../containers/DisconectedForm';
 
-import { ProductNfe } from "../../models/dtos/productNfe";
-import { StoreProductDto } from "../../models/dtos/storeProduct";
-import { Nfe } from "../../models/dtos/nfe";
+import { ProductNfe } from '../../models/dtos/productNfe';
+import { StoreProductDto } from '../../models/dtos/storeProduct';
+import { Nfe } from '../../models/dtos/nfe';
 
 import {
   Container,
@@ -37,7 +36,6 @@ import {
   ProductContainer,
   ProductContent,
   AddIcon,
-  InfoIcon,
   ProductListContainer,
   ProductListHeader,
   ProductColumn,
@@ -59,10 +57,9 @@ import {
   DeleteIcon,
   ModalNFCe,
   NFCeButton,
-} from "./styles";
-import { FlagCard } from "../../models/enums/flagCard";
-import { useStore } from "../../hooks/useStore";
-import { SaleDto } from "../../models/dtos/sale";
+} from './styles';
+import { FlagCard } from '../../models/enums/flagCard';
+import { useStore } from '../../hooks/useStore';
 
 const Nfce: React.FC = () => {
   const [cashIsOpen, setCashIsOpen] = useState<boolean>(false);
@@ -79,6 +76,7 @@ const Nfce: React.FC = () => {
   const [paymentType, setPaymentType] = useState<number>(0);
   const [form] = Form.useForm();
   const { store } = useStore();
+  const [selectedSelfService, setSelectedSelfService] = useState<number>(1);
 
   useEffect(() => {
     async function init() {
@@ -87,7 +85,7 @@ const Nfce: React.FC = () => {
         await window.Main.product.getProducts(true);
       if (errorOnProducts) {
         notification.error({
-          message: "Erro ao encontrar todos produtos",
+          message: 'Erro ao encontrar todos produtos',
           duration: 5,
         });
       }
@@ -111,13 +109,16 @@ const Nfce: React.FC = () => {
     }
   }, [shouldSearch]);
 
-  const findSelfService = (products: StoreProductDto[]): StoreProductDto => {
-    return products?.find((product) => product.product.category_id === 1);
+  const findSelfService = (
+    products: StoreProductDto[],
+    productId: number
+  ): StoreProductDto => {
+    return products?.find((product) => product.product_id === productId);
   };
 
   const handleEnterToSubmit = () => {
     if (selfServiceAmount !== 0) {
-      const selfService = findSelfService(products);
+      const selfService = findSelfService(products, selectedSelfService);
 
       const quantity = +(selfServiceAmount / +selfService?.price_unit).toFixed(
         4
@@ -127,7 +128,7 @@ const Nfce: React.FC = () => {
       setSelfServiceAmount(0);
     } else {
       notification.error({
-        message: "Digite um valor",
+        message: 'Digite um valor',
         duration: 5,
       });
     }
@@ -143,11 +144,11 @@ const Nfce: React.FC = () => {
       0
     );
     form.setFieldsValue({
-      valorPagamento: total.toFixed(2).replace(".", ","),
-      totalProdutos: total.toFixed(2).replace(".", ","),
+      valorPagamento: total.toFixed(2).replace('.', ','),
+      totalProdutos: total.toFixed(2).replace('.', ','),
     });
 
-    return total.toFixed(2).replace(".", ",");
+    return total.toFixed(2).replace('.', ',');
   };
 
   const handleSelectProduct = (product: StoreProductDto, quantity?: number) => {
@@ -201,31 +202,31 @@ const Nfce: React.FC = () => {
     let payload = await form.getFieldsValue();
     if (!payload.formaPagamento) {
       return notification.warning({
-        message: "Selecione a forma de pagamento",
+        message: 'Selecione a forma de pagamento',
         duration: 5,
       });
     }
-    const validationCpfOrCnpj = 
-      (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
-        payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
+    const validationCpfOrCnpj =
+      payload.cpf?.replace(/[^0-9]+/g, '')?.length === 11 ||
+      payload.cpf?.replace(/[^0-9]+/g, '')?.length === 14;
 
-    if(payload.cpf) {
+    if (payload.cpf) {
       if (!validationCpfOrCnpj) {
         return notification.warning({
-          message: "CPF ou CNPJ inválido",
+          message: 'CPF ou CNPJ inválido',
           duration: 5,
         });
       }
     }
     if (!productsNfe.length) {
       return notification.warning({
-        message: "Oops! O carrinho está vazio.",
+        message: 'Oops! O carrinho está vazio.',
         description: `Selecione algum item para continuar com a emissão da nota.`,
         duration: 5,
       });
     }
 
-    const totalSold = +payload.totalProdutos.replace(",", ".");
+    const totalSold = +payload.totalProdutos.replace(',', '.');
 
     const nfcePayload = {
       cpf: payload.cpf,
@@ -259,23 +260,23 @@ const Nfce: React.FC = () => {
       } = await window.Main.sale.emitNfce(nfcePayload);
 
       if (errorOnEmitNfce) {
-        if (error_message === "Store token not found.") {
+        if (error_message === 'Store token not found.') {
           notification.error({
-            message: "O token da nota fiscal não está cadastrado na loja.",
+            message: 'O token da nota fiscal não está cadastrado na loja.',
             duration: 5,
           });
           return;
         }
 
         notification.error({
-          message: error_message || "Erro ao emitir NFCe",
+          message: error_message || 'Erro ao emitir NFCe',
           duration: 5,
         });
         return;
       }
 
-      const successOnSefaz = response?.status_sefaz === "100";
-      notification[successOnSefaz ? "success" : "warning"]({
+      const successOnSefaz = response?.status_sefaz === '100';
+      notification[successOnSefaz ? 'success' : 'warning']({
         message: response?.mensagem_sefaz,
         duration: 5,
       });
@@ -319,19 +320,23 @@ const Nfce: React.FC = () => {
   };
 
   const formasPagamento = [
-    { id: 0, value: "Dinheiro" },
-    { id: 1, value: "Cartão de Crédito" },
-    { id: 2, value: "Cartão de Débito" },
-    { id: 3, value: "Ticket" },
-    { id: 5, value: "Boleto" },
-    { id: 6, value: "Pix" },
-    { id: 7, value: "Transferencia" },
+    { id: 0, value: 'Dinheiro' },
+    { id: 1, value: 'Cartão de Crédito' },
+    { id: 2, value: 'Cartão de Débito' },
+    { id: 3, value: 'Ticket' },
+    { id: 5, value: 'Boleto' },
+    { id: 6, value: 'Pix' },
+    { id: 7, value: 'Transferencia' },
   ];
 
   const newNfce = () => {
     cleanObject(nfe);
     setModalState(false);
     setShouldSearch(true);
+  };
+
+  const isProductEnabled = (productId) => {
+    return products.some((product) => product.product_id === productId);
   };
 
   return (
@@ -354,27 +359,86 @@ const Nfce: React.FC = () => {
                       <Content>
                         <LeftContainer>
                           <BalanceContainer>
-                            <PriceContent>
-                              <span>Preço total self-service</span>
-                              <InputMonetary
-                                autoFocus={true}
-                                id="balanceInput"
-                                getValue={(value) =>
-                                  setSelfServiceAmount(+value)
+                            <Radio.Group
+                              onChange={(e) =>
+                                setSelectedSelfService(e.target.value)
+                              }
+                              value={selectedSelfService}
+                            >
+                              <Tooltip
+                                title={
+                                  !isProductEnabled(1)
+                                    ? 'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
+                                    : ''
                                 }
-                                onEnterPress={handleEnterToSubmit}
-                              />
+                              >
+                                <Radio
+                                  value={1}
+                                  disabled={!isProductEnabled(1)}
+                                >
+                                  Self-service
+                                </Radio>
+                              </Tooltip>
+                              <Tooltip
+                                title={
+                                  !isProductEnabled(370)
+                                    ? 'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
+                                    : ''
+                                }
+                              >
+                                <Radio
+                                  value={370}
+                                  disabled={!isProductEnabled(370)}
+                                >
+                                  Açaí Self-service
+                                </Radio>
+                              </Tooltip>
+                              <Tooltip
+                                title={
+                                  !isProductEnabled(371)
+                                    ? 'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
+                                    : ''
+                                }
+                              >
+                                <Radio
+                                  value={371}
+                                  disabled={!isProductEnabled(371)}
+                                >
+                                  Sorvete Self-service
+                                </Radio>
+                              </Tooltip>
+                            </Radio.Group>
+                            <PriceContent>
+                              <div>
+                                <span>
+                                  Preço total (
+                                  {selectedSelfService === 1
+                                    ? 'Self-Service'
+                                    : selectedSelfService === 370
+                                    ? 'Açaí Self-service'
+                                    : 'Sorvete Self-service'}
+                                  )
+                                </span>
+                                <InputMonetary
+                                  autoFocus={true}
+                                  id="balanceInput"
+                                  getValue={(value) =>
+                                    setSelfServiceAmount(+value)
+                                  }
+                                  onEnterPress={handleEnterToSubmit}
+                                />
+                              </div>
+                              <WeightContent>
+                                <span>Preço do KG</span>
+                                <InfoWeight>
+                                  R${' '}
+                                  {findSelfService(
+                                    products,
+                                    selectedSelfService
+                                  )?.price_unit?.replace('.', ',')}
+                                </InfoWeight>
+                              </WeightContent>
                             </PriceContent>
-                            <WeightContent>
-                              <span>Preço do KG</span>
-                              <InfoWeight>
-                                R${" "}
-                                {findSelfService(products)?.price_unit?.replace(
-                                  ".",
-                                  ","
-                                )}
-                              </InfoWeight>
-                            </WeightContent>
                           </BalanceContainer>
 
                           <ItemsContainer>
@@ -402,8 +466,8 @@ const Nfce: React.FC = () => {
                                         </ColumnProduct>
                                         <ColumnProduct span={8}>
                                           {product.price_unit?.replace(
-                                            ".",
-                                            ","
+                                            '.',
+                                            ','
                                           )}
                                         </ColumnProduct>
                                         <ColumnProduct span={5}>
@@ -444,7 +508,9 @@ const Nfce: React.FC = () => {
                                       <span>{product.name}</span>
                                     </ProductColumn>
                                     <ProductColumn span={4}>
-                                      {product.id === 1 ? (
+                                      {product.id === 1 ||
+                                      product.id === 370 ||
+                                      product.id === 371 ? (
                                         <span>{product.quantity}KG</span>
                                       ) : (
                                         <span>{product.quantity}</span>
@@ -454,15 +520,15 @@ const Nfce: React.FC = () => {
                                       <span>
                                         {product.price_sell
                                           .toFixed(2)
-                                          .replace(".", ",")}
+                                          .replace('.', ',')}
                                       </span>
                                     </ProductColumn>
                                     <ProductColumn span={4}>
                                       <span>
-                                        R${" "}
+                                        R${' '}
                                         {(product.price_sell * product.quantity)
                                           .toFixed(2)
-                                          .replace(".", ",")}
+                                          .replace('.', ',')}
                                       </span>
                                     </ProductColumn>
                                     <ProductColumn span={2}>
@@ -504,7 +570,13 @@ const Nfce: React.FC = () => {
                                   <FormItem
                                     label="Forma de Pagamento"
                                     name="formaPagamento"
-                                    rules={[{ required: true, message: "Forma de pagamento é obrigatória" }]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message:
+                                          'Forma de pagamento é obrigatória',
+                                      },
+                                    ]}
                                   >
                                     <Select
                                       placeholder="Escolha a opção"
@@ -526,13 +598,19 @@ const Nfce: React.FC = () => {
                                     <FormItem
                                       label="Bandeira do cartão"
                                       name="bandeira_operadora"
-                                      rules={[{ required: true, message: "Bandeira do cartão é obrigatória" }]}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message:
+                                            'Bandeira do cartão é obrigatória',
+                                        },
+                                      ]}
                                     >
                                       <Select
                                         placeholder="Escolha a opção"
                                         onChange={(value) =>
                                           handleUpdateNfe(
-                                            "bandeira_operadora",
+                                            'bandeira_operadora',
                                             value
                                           )
                                         }
@@ -550,7 +628,7 @@ const Nfce: React.FC = () => {
                                   <FormItem label="Desconto" name="discount">
                                     <InputMonetary
                                       getValue={(value) =>
-                                        handleUpdateNfe("discount", value)
+                                        handleUpdateNfe('discount', value)
                                       }
                                     />
                                   </FormItem>
@@ -563,7 +641,7 @@ const Nfce: React.FC = () => {
                                       className="ant-input"
                                       onChange={({ target: { value } }) =>
                                         handleUpdateNfe(
-                                          "CPFDestinatario",
+                                          'CPFDestinatario',
                                           value
                                         )
                                       }
@@ -576,7 +654,7 @@ const Nfce: React.FC = () => {
                                       placeholder="Email"
                                       className="ant-input"
                                       onChange={({ target: { value } }) =>
-                                        handleUpdateNfe("email", value)
+                                        handleUpdateNfe('email', value)
                                       }
                                     />
                                   </FormItem>
@@ -605,7 +683,7 @@ const Nfce: React.FC = () => {
               </>
             ) : (
               <>
-                {" "}
+                {' '}
                 <DisconectedForm />
               </>
             )}
