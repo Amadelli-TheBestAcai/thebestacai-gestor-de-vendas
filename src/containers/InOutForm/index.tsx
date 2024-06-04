@@ -104,6 +104,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           ],
         };
       }
+
       if (reasontype === 'Pagamento freelance') {
         const category = productsCategory.find(
           (category) => category.id === 12
@@ -213,6 +214,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
   const handleSelect = (value) => {
     setReasonType(value);
+    setValue(null);
   };
 
   const handleClose = (): void => {
@@ -359,16 +361,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
             {reasontype === 'Outros' && (
               <Col sm={24}>
-                <Form.Item
-                  label="Observação"
-                  name="observation"
-                  rules={[
-                    {
-                      required: false,
-                      message: 'Observação é obrigatório',
-                    },
-                  ]}
-                >
+                <Form.Item label="Observação" name="observation">
                   <Input.TextArea
                     placeholder="Digite alguma obsevação"
                     autoSize={{ minRows: 2, maxRows: 1 }}
@@ -503,7 +496,15 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                             onChange={({ target: { value } }) => {
                               const numericValue = parseInt(value, 10);
                               if (numericValue > 0) {
-                                handleShopInfo('quantity', numericValue);
+                                setShopInfo((oldValues) => ({
+                                  ...oldValues,
+                                  quantity: numericValue,
+                                }));
+                              } else {
+                                setShopInfo((oldValues) => ({
+                                  ...oldValues,
+                                  quantity: 0,
+                                }));
                               }
                             }}
                           />
