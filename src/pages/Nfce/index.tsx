@@ -117,6 +117,20 @@ const Nfce: React.FC = () => {
     return products?.find((product) => product.product_id === productId);
   };
 
+  const getProductIdByName = (name: string) => {
+    const product = products.find((product) => product.product.name === name);
+    return product ? product.product_id : null;
+  };
+
+  const selfServiceOptions = [
+    { name: 'Self-service', id: 1 },
+    { name: 'Açaí Self-service', id: getProductIdByName('açaí self service') },
+    {
+      name: 'Sorvete Self-service',
+      id: getProductIdByName('sorvete self service'),
+    },
+  ];
+
   const handleEnterToSubmit = () => {
     if (selfServiceAmount !== 0) {
       const selfService = findSelfService(products, selectedSelfService);
@@ -366,48 +380,23 @@ const Nfce: React.FC = () => {
                               }
                               value={selectedSelfService}
                             >
-                              <Tooltip
-                                title={
-                                  !isProductEnabled(1)
-                                    ? 'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
-                                    : ''
-                                }
-                              >
-                                <Radio
-                                  value={1}
-                                  disabled={!isProductEnabled(1)}
+                              {selfServiceOptions.map((option) => (
+                                <Tooltip
+                                  key={option.id}
+                                  title={
+                                    !isProductEnabled(option.id)
+                                      ? 'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
+                                      : ''
+                                  }
                                 >
-                                  Self-service
-                                </Radio>
-                              </Tooltip>
-                              <Tooltip
-                                title={
-                                  !isProductEnabled(370)
-                                    ? 'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
-                                    : ''
-                                }
-                              >
-                                <Radio
-                                  value={370}
-                                  disabled={!isProductEnabled(370)}
-                                >
-                                  Açaí Self-service
-                                </Radio>
-                              </Tooltip>
-                              <Tooltip
-                                title={
-                                  !isProductEnabled(371)
-                                    ? 'Produto não habilitado. Habilite o produto no Dashboard, na aba de Produtos do Gestor.'
-                                    : ''
-                                }
-                              >
-                                <Radio
-                                  value={371}
-                                  disabled={!isProductEnabled(371)}
-                                >
-                                  Sorvete Self-service
-                                </Radio>
-                              </Tooltip>
+                                  <Radio
+                                    value={option.id}
+                                    disabled={!isProductEnabled(option.id)}
+                                  >
+                                    {option.name}
+                                  </Radio>
+                                </Tooltip>
+                              ))}
                             </Radio.Group>
                             <PriceContent>
                               <div>
