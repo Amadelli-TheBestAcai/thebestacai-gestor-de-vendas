@@ -8,6 +8,7 @@ export interface StoreDto {
   company: {
     id: number;
     cnpj: string;
+    country: string;
     emitente_uf: string;
     emitente_incentivo_fiscal: boolean;
     token_nfce_production_id: number;
