@@ -43,12 +43,9 @@ class PrintFileContent implements IUseCaseFactory {
         const termalPrinter = Printer.getPrinter(printer);
 
         try {
-            const { response: folderPath, has_internal_error, error_message } =
+            const { response: folderPath } =
                 await useCaseFactory.execute<string>(this.getPahCupomUseCase);
-
-            if (has_internal_error) {
-                throw new Error(error_message || 'Erro ao tentar buscar o caminho de impressão do cupons')
-            }
+            console.log(folderPath)
 
             if (!folderPath) {
                 console.error('Caminho da pasta não encontrado.');

@@ -76,7 +76,15 @@ export interface SaleFromApi {
     };
     update_stock: boolean;
   }[];
-  payments: { amount: number; type: number; flag_card?: number, code_nsu?: string }[];
+  payments:
+  {
+    amount: number;
+    type: number;
+    flag_card?: number,
+    code_nsu?: string
+    cnpj_credenciadora?: string;
+    code_autorization?: string;
+  }[];
   change_amount: string;
   cash_id: number;
   cash_history_id: number;

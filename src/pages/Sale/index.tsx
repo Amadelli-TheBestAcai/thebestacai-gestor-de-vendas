@@ -48,7 +48,6 @@ import {
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
-import { v4 } from "uuid";
 
 type IProps = RouteComponentProps;
 
@@ -103,6 +102,8 @@ const Sale: React.FC<IProps> = () => {
     }
   }, [shouldSearch]);
 
+  const hasPaymentWithTef = selectedSale?.payments?.some(payment => payment?.code_nsu)
+
   const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
     const renderTextArea = hasNfce && (
@@ -149,45 +150,67 @@ const Sale: React.FC<IProps> = () => {
       cancelText: "Não",
       centered: true,
       async onOk() {
-        await formCancelJustify.validateFields()
-        try {
-          setIsLoading(true);
-          if (hasNfce) {
-            //@ts-ignore
-            const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
-            if (!justify || justify.length < 15 || justify.length > 255) {
-              throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
-            }
-            params = {
-              ...params,
-              justify: justify
-            }
-          }
-          const {
-            has_internal_error: errorOnDeleteSale,
-            error_message,
-          }
-            = await window.Main.sale.deleteSaleFromApi(params);
-          if (errorOnDeleteSale) {
-            return notification.error({
-              message: error_message || "Oops! Falha ao remover venda.",
-              duration: 5,
-            });
-          }
-          formCancelJustify.resetFields()
-          return notification.success({
-            message: "Venda excluída com sucesso! NFC-e cancelada com sucesso!",
-            duration: 5,
+        if (hasPaymentWithTef) {
+          Modal.confirm({
+            title: `
+            Essa venda contém pagamento autorizado pelo TEF, 
+            será aberto um painel administrativo para cancelar o pagamento TEF, 
+            você tem certeza que deseja cancelar?`,
+            content: renderTextArea,
+            okText: "Sim",
+            okType: "default",
+            cancelText: "Não",
+            centered: true,
+            async onOk() {
+              await cancelPaymentTef()
+              await deleteSale(params, hasNfce)
+            },
           });
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setIsLoading(false);
-          setShouldSearch(true);
+        } else {
+          await deleteSale(params, hasNfce)
         }
       },
     });
   };
+
+  const deleteSale = async (params, hasNfce) => {
+    await formCancelJustify.validateFields()
+    try {
+      setIsLoading(true);
+      if (hasNfce) {
+        //@ts-ignore
+        const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
+        if (!justify || justify.length < 15 || justify.length > 255) {
+          throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
+        }
+        params = {
+          ...params,
+          justify: justify
+        }
+      }
+      const {
+        has_internal_error: errorOnDeleteSale,
+        error_message,
+      }
+        = await window.Main.sale.deleteSaleFromApi(params);
+      if (errorOnDeleteSale) {
+        return notification.error({
+          message: error_message || "Oops! Falha ao remover venda.",
+          duration: 5,
+        });
+      }
+      formCancelJustify.resetFields()
+      return notification.success({
+        message: "Venda excluída com sucesso! NFC-e cancelada com sucesso!",
+        duration: 5,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+      setShouldSearch(true);
+    }
+  }
 
   const findSale = ({ target: { value } }) => {
     const filteredSale = sales.filter((_sale) =>
@@ -437,27 +460,6 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
-    if (_settings.should_use_tef) {
-      const { response: _printSale, has_internal_error: errorOPrintSale } =
-        await window.Main.common.printCupomTef();
-
-      // if (!_printSale) {
-      //   return notification.warning({
-      //     message: "Não foi possível concluir a impressão da venda.",
-      //     description: "Por favor, verifique a conexão da sua impressora.",
-      //     duration: 5,
-      //   });
-      // }
-
-      if (errorOPrintSale) {
-        return notification.error({
-          message: "Erro ao tentar imprimir",
-          duration: 5,
-        });
-      }
-      return
-    }
-
     const { response: _printSale, has_internal_error: errorOPrintSale } =
       await window.Main.common.printSale(sale);
 
@@ -477,6 +479,45 @@ const Sale: React.FC<IProps> = () => {
       });
     }
   };
+
+  const reprintCouponTef = async () => {
+    const { has_internal_error: errorReprintCoupon, error_message } =
+      await window.Main.tefFactory.reprintCoupon()
+
+    if (errorReprintCoupon) {
+      return notification.error({
+        message: error_message || "Operação cancelada",
+        duration: 5
+      });
+    }
+
+    await window.Main.common.printCupomTef()
+  }
+
+  const cancelPaymentTef = async () => {
+    const { response, has_internal_error: errorCancelPaymentTef, error_message } =
+      await window.Main.tefFactory.cancelPaymentTef()
+
+    if (errorCancelPaymentTef) {
+      return notification.error({
+        message: error_message || "Operação cancelada",
+        duration: 5
+      });
+    }
+    await window.Main.common.printCupomTef()
+
+    const { has_internal_error: errorFinalizeTransaction,
+      error_message: error_message_finalize_transaction } =
+      await window.Main.tefFactory.finalizeTransaction([response])
+
+    if (errorFinalizeTransaction) {
+      return notification.error({
+        message: error_message_finalize_transaction || "Erro ao finalizar transação",
+        duration: 5
+      });
+    }
+
+  }
 
   const nfceInfo = (selectedSale: SaleFromApi) => {
     return {
@@ -613,7 +654,15 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-
+                              {hasPaymentWithTef && <Tooltip
+                                title="Reimprimir cupom fiscal TEF"
+                                placement="bottom"
+                              >
+                                <PrinterIcon
+                                  onClick={() => reprintCouponTef()}
+                                  style={{ width: "9%" }}
+                                />
+                              </Tooltip>}
                             </Col>
                           </>
                         }
@@ -622,13 +671,15 @@ const Sale: React.FC<IProps> = () => {
                         <Collapse defaultActiveKey={["2"]}>
                           <Panel header="Pagamentos" key="2">
                             <HeaderCollapse>
-                              <Col sm={12}>TIPO</Col>
-                              <Col sm={12}>VALOR</Col>
+                              <Col sm={8}>TIPO</Col>
+                              <Col sm={8}>CODIGO NSU</Col>
+                              <Col sm={8}>VALOR</Col>
                             </HeaderCollapse>
                             {selectedSale.payments.map((_payment, index) => (
                               <Row key={index}>
-                                <Col sm={12}>{PaymentType[_payment.type]}</Col>
-                                <Col sm={12}>R$ {_payment.amount}</Col>
+                                <Col sm={8}>{PaymentType[_payment.type]}</Col>
+                                <Col sm={8}>{_payment.code_nsu}</Col>
+                                <Col sm={8}>R$ {_payment.amount}</Col>
                               </Row>
                             ))}
                           </Panel>
@@ -715,7 +766,7 @@ const Sale: React.FC<IProps> = () => {
         </Label>
         Para refazer o envio basta selecionar a opção de reenvio.
       </ModalNFCe>
-    </Container>
+    </Container >
   );
 };
 

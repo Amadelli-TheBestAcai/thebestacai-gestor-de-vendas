@@ -102,6 +102,8 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
     setdisabled(false);
   };
 
+  const hasPayment = sale.payments.some(payment => payment)
+
   return (
     <>
       {item && (
@@ -115,7 +117,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
             R$ {item.total?.toFixed(2).replace(".", ",")}
           </Column>
           <Column span={2}>
-            {!item.customer_reward_id && (
+            {!item.customer_reward_id && !hasPayment && (
               <Tooltip title="Remover" placement="bottom">
                 <Button onClick={() => setModalState(true)}>
                   <DeleteIcon />

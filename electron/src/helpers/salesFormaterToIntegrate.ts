@@ -1,3 +1,4 @@
+import { PaymentType } from "../models/enums/paymentType";
 import { SaleDto, StoreCashDto } from "../models/gestor";
 
 export const salesFormaterToIntegrate = (
@@ -26,9 +27,12 @@ export const salesFormaterToIntegrate = (
         amount: +_payment.amount,
         type: +_payment.type,
         flag_card:
-          _payment.type === 1 || _payment.type === 2
+          _payment.type === PaymentType.CREDITO || _payment.type === PaymentType.DEBITO
             ? _payment.flag_card
             : null,
+        code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
+        cnpj_credenciadora: _payment.cnpj_credenciadora ? _payment.cnpj_credenciadora : null,
+        code_autorization: _payment.code_autorization ? _payment.code_autorization : null
       })),
       items: _payload.items.map((_item) => ({
         name: _item.product.name,
@@ -133,6 +137,9 @@ export const salesFormaterToIntegrate = (
           _payment.type === 1 || _payment.type === 2
             ? _payment.flag_card
             : null,
+        code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
+        cnpj_credenciadora: _payment.cnpj_credenciadora ? _payment.cnpj_credenciadora : null,
+        code_autorization: _payment.code_autorization ? _payment.code_autorization : null
       })),
       items: payload.items.map((_item) => ({
         name: _item.product.name,

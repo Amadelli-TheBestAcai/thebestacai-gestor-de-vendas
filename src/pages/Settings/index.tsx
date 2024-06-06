@@ -128,7 +128,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
       await window.Main.tefFactory.configurationTEF();
     if (has_internal_error) {
       notification.error({
-        message: "Error ao tentar configurar TEF",
+        message: error_message || "Error ao tentar configurar TEF",
         duration: 5,
       });
       setLoadingConfigurationTef(false);

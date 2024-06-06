@@ -112,6 +112,8 @@ export interface SaleDto {
     flag_card?: number;
     type: number;
     code_nsu?: string;
+    cnpj_credenciadora?: string;
+    code_autorization?: string;
     created_at?: string;
     deleted_at?: string;
   }[];

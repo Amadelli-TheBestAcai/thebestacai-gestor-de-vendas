@@ -226,21 +226,6 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    const checkPaymentWithTEF = currentSale.payments
-      .map(payment => payment.code_nsu)
-
-    if (checkPaymentWithTEF.length > 0) {
-      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
-        await window.Main.tefFactory.finalizeTransaction()
-      if (errorOnFinalizaTransacao) {
-        notification.error({
-          message: error_message || "Erro ao finalizar transação TEF",
-          duration: 5,
-        });
-        return;
-      }
-    }
-
     currentSale.change_amount = +(
       currentSale.total_paid +
       currentSale.discount -
@@ -248,6 +233,24 @@ export function GlobalProvider({ children }) {
     ).toFixed(2);
 
     setSavingSale(true);
+
+    const codes_nsu = currentSale.payments
+      .map(payment => payment.code_nsu)
+      .filter(code_nsu => code_nsu !== undefined && code_nsu !== null)
+
+    if (codes_nsu.length > 0) {
+      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
+        await window.Main.tefFactory.finalizeTransaction(codes_nsu)
+
+      if (errorOnFinalizaTransacao) {
+        notification.error({
+          message: error_message || "Erro ao finalizar transação TEF",
+          duration: 5,
+        });
+        setSavingSale(false);
+        return;
+      }
+    }
 
     if (
       (currentSale.items.length && settings.should_emit_nfce_per_sale) ||

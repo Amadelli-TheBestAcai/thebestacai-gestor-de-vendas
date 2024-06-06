@@ -25,3 +25,6 @@ yarn-error.log*
 
 env.json
 azure-credentials.json
+
+#file_tef
+PPComp.ini

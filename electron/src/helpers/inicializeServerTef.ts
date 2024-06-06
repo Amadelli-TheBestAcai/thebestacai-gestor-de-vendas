@@ -1,29 +1,49 @@
-import { spawn } from 'child_process';
+import axios from 'axios';
+import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import path from 'path';
 
-export function inicializeServerTef() {
-    const pathExecute = path.join(process.env.LOCALAPPDATA as string, 'Programs', 'server-dll-tef', 'ServerTEF.exe');
+let serverTefProcess: ChildProcessWithoutNullStreams | null = null;
+
+async function isServerTefRunning() {
+    try {
+        const response = await axios.get('http://localhost:7788/healthz');
+        return response.status !== 404;
+    } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+            return false;
+        }
+        return false;
+    }
+}
+
+export async function inicializeServerTef() {
+    if (await isServerTefRunning()) {
+        console.log('ServerTEF já está rodando.');
+        return serverTefProcess;
+    }
+
+    const pathExecute = path.join(
+        process.env.LOCALAPPDATA as string, 'Programs', 'server-dll-tef', 'ServerTEF.exe');
     // Cria o processo filho para executar o executável
-    const childProcess = spawn(pathExecute, [], { windowsHide: true });
+    serverTefProcess = spawn(pathExecute, [], { windowsHide: true });
 
     // Exibe o PID do processo filho
-    console.log(`PID do processo filho: ${childProcess.pid}`);
+    console.log(`PID do processo filho: ${serverTefProcess.pid}`);
 
     // Captura a saída do processo filho e exibe no console
-    childProcess.stdout.on('data', (data) => {
+    serverTefProcess.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
     });
 
-    childProcess.stderr.on('data', (data) => {
+    serverTefProcess.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
     });
 
     // Captura o evento de fechamento do processo filho
-    childProcess.on('close', (code) => {
+    serverTefProcess.on('close', (code) => {
         console.log(`Processo filho terminou com o código ${code}`);
+        serverTefProcess = null; // Resetar a variável quando o processo terminar
     });
 
-    return childProcess
-
+    return serverTefProcess;
 }
-

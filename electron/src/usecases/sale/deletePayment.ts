@@ -31,10 +31,10 @@ class DeletePayment implements IUseCaseFactory {
     const code_nsu = await this.checkPaymentNsuCode(sale, id)
 
     if (code_nsu) {
-      const { has_internal_error } =
+      const { has_internal_error, error_message } =
         await useCaseFactory.execute<void>(this.removeTransationUseCase, code_nsu);
       if (has_internal_error) {
-        throw new Error("Error ao tentar remover pagamento via tef");
+        throw new Error(error_message || "Error ao tentar remover pagamento via tef");
       }
     }
 

@@ -37,30 +37,41 @@ class AddPayment implements IUseCaseFactory {
 
     const settings = await this.settingsRepository.getOne({})
 
-    let code_nsu
-    if (settings?.should_use_tef) {
-      const { response, has_internal_error: errorOnGetCurrentSale } =
-        await useCaseFactory.execute<string | null>(this.transactionsTefUseCase, { type, amount });
+    let code_nsu;
+    let cnpj_credenciadora;
+    let code_autorization;
+
+    if (settings?.should_use_tef && type !== PaymentType.DINHEIRO) {
+      const { response, has_internal_error: errorOnGetCurrentSale, error_message } =
+        await useCaseFactory.execute<any>(this.transactionsTefUseCase, { type, amount });
 
       if (errorOnGetCurrentSale) {
-        throw new Error("Erro ao integrar pagamento ao tef");
+        throw new Error(error_message || "Erro ao integrar pagamento ao tef");
       }
-      code_nsu = response
 
-      await useCaseFactory.execute<void>(this.printCupomUseCase);
+      code_nsu = response?.code_nsu
+      cnpj_credenciadora = response?.cnpj_credenciadora
+      flag_card = parseInt(response?.flag_card, 10);
+      code_autorization = response?.code_autorization
+
+      if (settings.should_use_printer && type !== PaymentType.DINHEIRO) {
+        await useCaseFactory.execute<void>(this.printCupomUseCase);
+      }
     }
 
     if (!sale) {
       throw new Error("Nenhuma venda encontrada");
     }
 
-    if (type === 1 || type === 2) {
+    if (type === PaymentType.CREDITO || type === PaymentType.DEBITO) {
       sale.payments.push({
         id: v4(),
         amount,
         type,
         flag_card,
         code_nsu,
+        cnpj_credenciadora,
+        code_autorization,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
@@ -70,6 +81,8 @@ class AddPayment implements IUseCaseFactory {
         amount,
         type,
         code_nsu,
+        cnpj_credenciadora,
+        code_autorization,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });

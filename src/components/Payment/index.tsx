@@ -3,7 +3,7 @@ import React from "react";
 import { PaymentDto } from "../../models/dtos/payment";
 import { PaymentType } from "../../models/enums/paymentType";
 
-import { Tooltip } from "antd";
+import { Tooltip, Modal, notification } from "antd";
 
 import {
   Container,
@@ -20,6 +20,34 @@ type IProps = {
 };
 
 const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
+  const deletePaymentConfirm = () => {
+    Modal.confirm({
+      title: 'Excluir Pagamento',
+      content: 'Esse pagamento foi autorizado pelo TEF, você tem certeza que deseja desfaze-lo?',
+      okText: "Sim",
+      okType: "default",
+      cancelText: "Não",
+      centered: true,
+      async onOk() {
+        try {
+          {
+            removePayment(payment.id),
+              document.getElementById("balanceInput")?.focus();
+            notification.success({
+              message: `O pagamento TEF de numero ${payment.code_nsu} foi desfeito com sucesso`,
+              duration: 5
+            })
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    });
+
+
+  }
+
+
   return (
     <Container>
       <Content>
@@ -32,8 +60,10 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
             <Tooltip title="Remover" placement="bottom">
               <Button
                 onClick={() => {
-                  removePayment(payment.id),
-                    document.getElementById("balanceInput")?.focus();
+                  payment.code_nsu ? deletePaymentConfirm() :
+
+                    removePayment(payment.id);
+                  document.getElementById("balanceInput")?.focus()
                 }}
               >
                 <DeleteIcon />
@@ -42,7 +72,7 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
           </Column>
         </InfoPayment>
       </Content>
-    </Container>
+    </Container >
   );
 };
 

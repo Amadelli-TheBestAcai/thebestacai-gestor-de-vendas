@@ -31,6 +31,7 @@ import {
 import { PaymentType } from "../../models/enums/paymentType";
 import CupomModal from "../../containers/CupomModal";
 import { useSettings } from "../../hooks/useSettings";
+import { FlagCard } from "../../models/enums/flagCard";
 
 const Home: React.FC = () => {
   const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
@@ -108,6 +109,7 @@ const Home: React.FC = () => {
           duration: 5,
         });
       }
+
       setSale(updatedSale);
 
       setCurrentPayment(0);
@@ -123,8 +125,23 @@ const Home: React.FC = () => {
           duration: 5,
         });
       }
-      setSale(updatedSale);
+      const getFlagCardValue = (id) => {
+        const flag = FlagCard.find(flag => flag.id === id);
+        return flag ? flag.value : null;
+      };
 
+      const lastPayment = updatedSale.payments[updatedSale.payments.length - 1];
+      const lastFlagCardValue = getFlagCardValue(lastPayment.flag_card);
+
+      if (lastFlagCardValue) {
+        notification.info({
+          message: `Bandeira selecionada: ${lastFlagCardValue}`,
+          duration: 5,
+        });
+      }
+
+      setSale(updatedSale);
+      console.log(updatedSale)
       setCurrentPayment(0);
       setFlagCard(99);
       setPaymentModal(false);
@@ -141,7 +158,7 @@ const Home: React.FC = () => {
         duration: 5,
       });
     }
-    setSale(updatedSale);
+    setSale(updatedSale)
   };
 
   const handleOpenPayment = (
@@ -269,6 +286,7 @@ const Home: React.FC = () => {
                           <Register />
                         </RegisterContent>
                       </PaymentsContainer>
+
                     </Content>
                   </RightSide>
                 </GeneralContent>

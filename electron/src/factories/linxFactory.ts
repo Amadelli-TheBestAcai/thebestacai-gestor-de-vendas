@@ -1,6 +1,10 @@
 import { PaymentType } from "../models/enums/paymentType";
-import { configurationTEF, finalizeTransaction, transactionsTef } from "../usecases/linxTef";
+import {
+    configurationTEF,
+    finalizeTransaction, getPathCupom, transactionsTef, cancelPaymentTef
+} from "../usecases/linxTef";
 import { removeTransaction } from "../usecases/linxTef/removeTransation";
+import { reprintCoupon } from "../usecases/linxTef/reprintCoupon";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 
 
@@ -13,6 +17,12 @@ export const tefFactory = {
         await useCaseFactory.execute<void>(configurationTEF),
     removeTransaction: async () =>
         await useCaseFactory.execute<void>(removeTransaction),
-    finalizeTransaction: async () =>
-        await useCaseFactory.execute<void>(finalizeTransaction),
+    finalizeTransaction: async (codes_nsu: string[]) =>
+        await useCaseFactory.execute<void>(finalizeTransaction, { codes_nsu }),
+    getPathCupom: async () =>
+        await useCaseFactory.execute<string>(getPathCupom),
+    reprintCoupon: async () =>
+        await useCaseFactory.execute<void>(reprintCoupon),
+    cancelPaymentTef: async () =>
+        await useCaseFactory.execute<string>(cancelPaymentTef),
 };
