@@ -104,6 +104,7 @@ const Sale: React.FC<IProps> = () => {
   }, [shouldSearch]);
 
   const hasPaymentWithTef = selectedSale?.payments?.some(payment => payment?.code_nsu)
+  const numberPayments = selectedSale?.payments?.length
 
   const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
@@ -154,17 +155,20 @@ const Sale: React.FC<IProps> = () => {
         if (hasPaymentWithTef) {
           Modal.confirm({
             title: `
-            Essa venda contém pagamento autorizado pelo TEF, 
-            será aberto um painel administrativo para cancelar o pagamento TEF, 
-            você tem certeza que deseja cancelar?`,
+            Esta venda contém ${numberPayments} pagamento(s) autorizado(s) pelo TEF. 
+            Um painel administrativo será aberto para cancelar o(s) pagamento(s) TEF.
+            Para isso, o cliente deve estar com o cartão utilizado na compra em mãos, 
+            pois ele será necessário para concluir o cancelamento.
+            Você tem certeza de que deseja cancelar?
+            `,
             content: renderTextArea,
             okText: "Sim",
             okType: "default",
             cancelText: "Não",
             centered: true,
             async onOk() {
-              await cancelPaymentTef()
-              await deleteSale(params, hasNfce)
+                await cancelPaymentTef()
+                await deleteSale(params, hasNfce)
             },
           });
         } else {
