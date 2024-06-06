@@ -43,7 +43,8 @@ import {
   PdfIcon,
   CancelIcon,
   Form,
-  PrinterNFCeIcon
+  PrinterNFCeIcon,
+  PrinterTefIcon
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -658,7 +659,7 @@ const Sale: React.FC<IProps> = () => {
                                 title="Reimprimir cupom fiscal TEF"
                                 placement="bottom"
                               >
-                                <PrinterIcon
+                                <PrinterTefIcon
                                   onClick={() => reprintCouponTef()}
                                   style={{ width: "9%" }}
                                 />
