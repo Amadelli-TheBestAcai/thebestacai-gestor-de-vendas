@@ -2,6 +2,7 @@ import React from "react";
 
 import { PaymentDto } from "../../models/dtos/payment";
 import { PaymentType } from "../../models/enums/paymentType";
+import { FlagCard } from "../../models/enums/flagCard";
 
 import { Tooltip, Modal, notification } from "antd";
 
@@ -22,8 +23,9 @@ type IProps = {
 const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
   const deletePaymentConfirm = () => {
     Modal.confirm({
-      title: 'Excluir Pagamento',
-      content: 'Esse pagamento foi autorizado pelo TEF, você tem certeza que deseja desfaze-lo?',
+      title: "Excluir Pagamento",
+      content:
+        "Esse pagamento foi autorizado pelo TEF, você tem certeza que deseja desfaze-lo?",
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
@@ -35,35 +37,37 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
               document.getElementById("balanceInput")?.focus();
             notification.success({
               message: `O pagamento TEF de numero ${payment.code_nsu} foi desfeito com sucesso`,
-              duration: 5
-            })
+              duration: 5,
+            });
           }
         } catch (error) {
           console.log(error);
         }
       },
     });
-
-
-  }
-
+  };
 
   return (
     <Container>
       <Content>
         <InfoPayment key={payment.id}>
-          <Column sm={8}>{PaymentType[payment.type]}</Column>
-          <Column sm={8}>
+          <Column sm={6}>{PaymentType[payment.type]}</Column>
+          <Column sm={6}>
+            {payment.flag_card
+              ? FlagCard.find((flag) => flag.id === payment.flag_card)?.value
+              : ""}
+          </Column>
+          <Column sm={6}>
             R$ {payment.amount?.toFixed(2).replace(".", ",")}
           </Column>
-          <Column sm={8}>
+          <Column sm={6}>
             <Tooltip title="Remover" placement="bottom">
               <Button
                 onClick={() => {
-                  payment.code_nsu ? deletePaymentConfirm() :
-
-                    removePayment(payment.id);
-                  document.getElementById("balanceInput")?.focus()
+                  payment.code_nsu
+                    ? deletePaymentConfirm()
+                    : removePayment(payment.id);
+                  document.getElementById("balanceInput")?.focus();
                 }}
               >
                 <DeleteIcon />
@@ -72,7 +76,7 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
           </Column>
         </InfoPayment>
       </Content>
-    </Container >
+    </Container>
   );
 };
 

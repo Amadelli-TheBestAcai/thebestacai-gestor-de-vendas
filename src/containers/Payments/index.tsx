@@ -148,9 +148,10 @@ const PaymentsContainer: React.FC<IProps> = ({
 
       <PaymentsInfoContainer>
         <Header>
-          <Column sm={8}>Forma de Pagamento</Column>
-          <Column sm={8}>Valor</Column>
-          <Column sm={8}>Ação</Column>
+          <Column sm={6}>Forma de Pagamento</Column>
+          <Column sm={6}>Bandeira</Column>
+          <Column sm={6}>Valor</Column>
+          <Column sm={6}>Ação</Column>
         </Header>
         {sale?.payments?.map((payment) => (
           <Payment
