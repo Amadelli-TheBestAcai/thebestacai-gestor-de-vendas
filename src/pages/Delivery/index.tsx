@@ -522,7 +522,6 @@ const Delivery: React.FC<ComponentProps> = () => {
                       <h2>Delivery</h2>
                     </Header>
                     <Tabs
-                      defaultActiveKey="1"
                       centered
                       onChange={(type) => setDeliveryType(+type)}
                     >
