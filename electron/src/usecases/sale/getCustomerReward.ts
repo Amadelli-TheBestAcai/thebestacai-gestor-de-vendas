@@ -46,6 +46,10 @@ class GetCustomerReward implements IUseCaseFactory {
         observation: string;
       };
     };
+    product_info: {
+      id: number;
+      name: string;
+    };
   }> {
     const {
       data: { content },
@@ -57,9 +61,11 @@ class GetCustomerReward implements IUseCaseFactory {
       product_id: content.customer_reward.campaignReward.product_id,
     });
 
+    const productName = content.product_info?.name || 'O produto';
+
     if (!product) {
       throw new Error(
-        `${content.customer_reward.campaignReward.product_name} não está habilitado no Produtos do Gestor. Após habilitar o item, reinicie o Gestor e tente resgatar a recompensa novamente.`
+        `"${productName}" não está habilitado no Produtos do Gestor. Após habilitar o item, reinicie o Gestor e tente resgatar a recompensa novamente.`
       );
     }
 
