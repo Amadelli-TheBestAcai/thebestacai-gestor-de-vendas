@@ -639,6 +639,7 @@ const Nfce: React.FC = () => {
                                 <Col span={6}>
                                   <FormItem label="CPF / CNPJ" name="cpf">
                                     <Input
+                                      maxLength={14}
                                       placeholder="CPF/CNPJ"
                                       className="ant-input"
                                       onChange={({ target: { value } }) =>
