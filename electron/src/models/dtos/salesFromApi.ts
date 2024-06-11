@@ -77,7 +77,15 @@ export interface SaleFromApiDTO {
     };
     update_stock: boolean;
   }[];
-  payments: { amount: number; type: number; flag_card?: number }[];
+  payments: {
+    amount: number;
+    flag_card?: number;
+    type: number;
+    code_nsu?: string;
+    cnpj_credenciadora?: string;
+    numero_autorizacao?: string;
+    tef_status_payment?: number;
+  }[];
   change_amount: string;
   cash_id: number;
   cash_history_id: number;

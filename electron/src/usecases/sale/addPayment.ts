@@ -9,6 +9,7 @@ import { v4 } from "uuid";
 import moment from "moment";
 import { transactionsTef } from "../linxTef";
 import { printFileContent } from "../common";
+import { TefPaymentType } from "../../models/enums/tefPaymentType";
 
 interface Request {
   amount: number;
@@ -40,6 +41,7 @@ class AddPayment implements IUseCaseFactory {
     let code_nsu;
     let cnpj_credenciadora;
     let numero_autorizacao;
+    let tef_status_payment;
 
     if (settings?.should_use_tef && type !== PaymentType.DINHEIRO) {
       const { response, has_internal_error: errorOnGetCurrentSale, error_message } =
@@ -53,6 +55,7 @@ class AddPayment implements IUseCaseFactory {
       cnpj_credenciadora = response?.cnpj_credenciadora
       flag_card = parseInt(response?.flag_card, 10);
       numero_autorizacao = response?.code_autorization
+      tef_status_payment = TefPaymentType.APROVADA
 
       if (settings.should_use_printer && type !== PaymentType.DINHEIRO) {
         await useCaseFactory.execute<void>(this.printCupomUseCase);
@@ -72,6 +75,7 @@ class AddPayment implements IUseCaseFactory {
         code_nsu,
         cnpj_credenciadora,
         numero_autorizacao,
+        tef_status_payment,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
@@ -83,6 +87,7 @@ class AddPayment implements IUseCaseFactory {
         code_nsu,
         cnpj_credenciadora,
         numero_autorizacao,
+        tef_status_payment,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });

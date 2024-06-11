@@ -27,6 +27,7 @@ import {
   getCurrentCampaign,
   updateStepSale,
   removeStepSale,
+  updateStatusPaymentTef,
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto, CampaignDto } from "../models/gestor";
@@ -154,4 +155,6 @@ export const saleFactory = {
     }),
   getCurrentCampaign: async () =>
     await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
+  updateStatusPaymentTef: async () =>
+    await useCaseFactory.execute<CampaignDto>(updateStatusPaymentTef),
 };
