@@ -39,7 +39,7 @@ class AddPayment implements IUseCaseFactory {
 
     let code_nsu;
     let cnpj_credenciadora;
-    let code_autorization;
+    let numero_autorizacao;
 
     if (settings?.should_use_tef && type !== PaymentType.DINHEIRO) {
       const { response, has_internal_error: errorOnGetCurrentSale, error_message } =
@@ -52,7 +52,7 @@ class AddPayment implements IUseCaseFactory {
       code_nsu = response?.code_nsu
       cnpj_credenciadora = response?.cnpj_credenciadora
       flag_card = parseInt(response?.flag_card, 10);
-      code_autorization = response?.code_autorization
+      numero_autorizacao = response?.code_autorization
 
       if (settings.should_use_printer && type !== PaymentType.DINHEIRO) {
         await useCaseFactory.execute<void>(this.printCupomUseCase);
@@ -71,7 +71,7 @@ class AddPayment implements IUseCaseFactory {
         flag_card,
         code_nsu,
         cnpj_credenciadora,
-        code_autorization,
+        numero_autorizacao,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
@@ -82,7 +82,7 @@ class AddPayment implements IUseCaseFactory {
         type,
         code_nsu,
         cnpj_credenciadora,
-        code_autorization,
+        numero_autorizacao,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });

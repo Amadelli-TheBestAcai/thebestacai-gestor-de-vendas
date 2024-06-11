@@ -83,7 +83,7 @@ export interface SaleFromApi {
     flag_card?: number,
     code_nsu?: string
     cnpj_credenciadora?: string;
-    code_autorization?: string;
+    numero_autorizacao?: string;
   }[];
   change_amount: string;
   cash_id: number;

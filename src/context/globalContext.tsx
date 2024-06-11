@@ -275,7 +275,14 @@ export function GlobalProvider({ children }) {
           amount: +payment.amount.toFixed(2),
           type: +payment.type,
           flag_card: +payment.flag_card,
-          code_nsu: payment.code_nsu ? payment.code_nsu : null
+          code_nsu: payment.code_nsu ? payment.code_nsu
+            : null,
+          cnpj_credenciadora: payment.code_nsu
+            ? payment.cnpj_credenciadora
+            : null,
+          numero_autorizacao: payment.code_nsu
+            ? payment.numero_autorizacao
+            : null,
         })),
         ref: currentSale.ref,
       };

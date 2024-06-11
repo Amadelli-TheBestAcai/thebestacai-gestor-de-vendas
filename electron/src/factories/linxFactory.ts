@@ -20,7 +20,7 @@ export const tefFactory = {
     configurationTEF: async () =>
         await useCaseFactory.execute<void>(configurationTEF),
     removeTransaction: async () =>
-        await useCaseFactory.execute<void>(removeTransaction),
+        await useCaseFactory.execute<string>(removeTransaction),
     finalizeTransaction: async (codes_nsu: string[]) =>
         await useCaseFactory.execute<void>(finalizeTransaction, { codes_nsu }),
     getPathCupom: async () =>

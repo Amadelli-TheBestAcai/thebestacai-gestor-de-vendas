@@ -102,7 +102,7 @@ const NfeForm: React.FC<IProps> = ({
         duration: 5,
       });
     }
-    const validationCpfOrCnpj = 
+    const validationCpfOrCnpj =
       (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
         payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
 
@@ -128,6 +128,14 @@ const NfeForm: React.FC<IProps> = ({
           paymentNfe.type === 1 || paymentNfe.type === 2
             ? paymentNfe.flag_card
             : null,
+        code_nsu: paymentNfe.code_nsu ? paymentNfe.code_nsu
+          : null,
+        cnpj_credenciadora: paymentNfe.code_nsu
+          ? paymentNfe.cnpj_credenciadora
+          : null,
+        numero_autorizacao: paymentNfe.code_nsu
+          ? paymentNfe.numero_autorizacao
+          : null,
       })),
       ref: sale.ref
     };

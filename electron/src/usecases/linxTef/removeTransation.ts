@@ -8,7 +8,7 @@ class RemoveTransaction implements IUseCaseFactory {
     constructor(
         private findPinPadUseCase = findPinPad,
     ) { }
-    async execute(code_nsu: string): Promise<void> {
+    async execute(code_nsu: string): Promise<string> {
         const isConnect = await verifyConnectionTEF()
         if (!isConnect) {
             throw new Error("O servidor da TEF não está rodando. Verifique se o executável ServerTEF.exe foi instalado")
@@ -24,7 +24,8 @@ class RemoveTransaction implements IUseCaseFactory {
             throw new Error("Não foi encontrado as informações do PIN PAD, verifique se ele está conectado ao computador")
         }
 
-        await tefApi.post(`/desfaz-dpos`, { pNumeroControle: code_nsu })
+        const { data: { data } } = await tefApi.post(`/desfaz-dpos`, { pNumeroControle: code_nsu })
+        return data
     }
 }
 

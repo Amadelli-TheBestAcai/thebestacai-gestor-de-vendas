@@ -3,6 +3,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { currencyFormater } from "../../helpers/currencyFormater";
 import { v4 } from "uuid";
 import moment from "moment";
+import { PaymentDto } from "../../models/dtos/payment";
 
 import Payments from "../../containers/Payments";
 import DisconectedForm from "../../containers/DisconectedForm";
@@ -148,8 +149,8 @@ const Delivery: React.FC<ComponentProps> = () => {
     }
   };
 
-  const removePayment = async (id: string) => {
-    const payments = sale.payments.filter((_payment) => _payment.id !== id);
+  const removePayment = async (payment: PaymentDto) => {
+    const payments = sale.payments.filter((_payment) => _payment.id !== payment.id);
     setSale((oldValues) => ({
       ...oldValues,
       payments,

@@ -32,7 +32,7 @@ export const salesFormaterToIntegrate = (
             : null,
         code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
         cnpj_credenciadora: _payment.cnpj_credenciadora ? _payment.cnpj_credenciadora : null,
-        code_autorization: _payment.code_autorization ? _payment.code_autorization : null
+        numero_autorizacao: _payment.numero_autorizacao ? _payment.numero_autorizacao : null
       })),
       items: _payload.items.map((_item) => ({
         name: _item.product.name,
@@ -139,7 +139,7 @@ export const salesFormaterToIntegrate = (
             : null,
         code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
         cnpj_credenciadora: _payment.cnpj_credenciadora ? _payment.cnpj_credenciadora : null,
-        code_autorization: _payment.code_autorization ? _payment.code_autorization : null
+        numero_autorizacao: _payment.numero_autorizacao ? _payment.numero_autorizacao : null
       })),
       items: payload.items.map((_item) => ({
         name: _item.product.name,

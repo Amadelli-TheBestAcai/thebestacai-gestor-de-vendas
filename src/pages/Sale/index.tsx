@@ -103,8 +103,7 @@ const Sale: React.FC<IProps> = () => {
     }
   }, [shouldSearch]);
 
-  const hasPaymentWithTef = selectedSale?.payments?.some(payment => payment?.code_nsu)
-  const numberPayments = selectedSale?.payments?.length
+  const hasPaymentWithTef = selectedSale?.payments?.filter(payment => payment?.code_nsu)
 
   const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
@@ -152,25 +151,36 @@ const Sale: React.FC<IProps> = () => {
       cancelText: "Não",
       centered: true,
       async onOk() {
-        if (hasPaymentWithTef) {
+        if (hasPaymentWithTef.length) {
           Modal.confirm({
             title: `
-            Esta venda contém ${numberPayments} pagamento(s) autorizado(s) pelo TEF. 
-            Um painel administrativo será aberto para cancelar o(s) pagamento(s) TEF.
-            Para isso, o cliente deve estar com o cartão utilizado na compra em mãos, 
-            pois ele será necessário para concluir o cancelamento.
-            Você tem certeza de que deseja cancelar?
-            `,
-            content: renderTextArea,
+              Esta venda contém ${hasPaymentWithTef.length} pagamento(s) autorizado(s) pelo TEF.`,
+            content: `Um painel administrativo será aberto para cancelar o(s) pagamento(s) TEF.
+              Para isso, o cliente deve estar com o cartão utilizado na compra em mãos, 
+              pois ele será necessário para concluir o cancelamento.
+              Você tem certeza de que deseja cancelar o pagamento?`,
             okText: "Sim",
             okType: "default",
             cancelText: "Não",
             centered: true,
             async onOk() {
-                await cancelPaymentTef()
-                await deleteSale(params, hasNfce)
+              await Promise.all(
+                hasPaymentWithTef.map(async payment => {
+                  await cancelPaymentTef();
+                  // const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
+                  //   await window.Main.sale.deletePayment(payment.id);
+                  // if (errorOnDeletePayment) {
+                  //   return notification.error({
+                  //     message: "Erro ao remover pagamento",
+                  //     duration: 5,
+                  //   });
+                  // }
+                  // setSelectedSale(updatedSale)
+                })
+              );
+              await deleteSale(params, hasNfce)
             },
-          });
+          })
         } else {
           await deleteSale(params, hasNfce)
         }
@@ -258,7 +268,14 @@ const Sale: React.FC<IProps> = () => {
         type: payment.type,
         flag_card:
           payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
-        code_nsu: payment.code_nsu ? payment.code_nsu : null
+        code_nsu: payment.code_nsu ? payment.code_nsu
+          : null,
+        cnpj_credenciadora: payment.code_nsu
+          ? payment.cnpj_credenciadora
+          : null,
+        numero_autorizacao: payment.code_nsu
+          ? payment.numero_autorizacao
+          : null,
       })),
       ref: selectedSale.ref,
     };

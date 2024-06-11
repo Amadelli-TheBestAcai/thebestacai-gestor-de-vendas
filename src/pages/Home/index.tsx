@@ -11,8 +11,10 @@ import Register from "../../components/Register";
 import CashNotFound from "../../components/CashNotFound";
 import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
+import { PaymentDto } from "../../models/dtos/payment";
 
-import { notification } from "antd";
+import { notification, Modal } from "antd";
+import { FlagCard } from "../../models/enums/flagCard";
 import {
   Container,
   LeftSide,
@@ -31,7 +33,6 @@ import {
 import { PaymentType } from "../../models/enums/paymentType";
 import CupomModal from "../../containers/CupomModal";
 import { useSettings } from "../../hooks/useSettings";
-import { FlagCard } from "../../models/enums/flagCard";
 
 const Home: React.FC = () => {
   const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
@@ -54,12 +55,34 @@ const Home: React.FC = () => {
 
       const { response: _sale, has_internal_error: errorOnSale } =
         await window.Main.sale.getCurrentSale();
+
       if (errorOnSale) {
         notification.error({
           message: "Erro ao obter venda atual",
           duration: 5,
         });
         return;
+      }
+      const isPaymentTef = _sale.payments.filter(payment => payment.code_nsu)
+
+      if (isPaymentTef.length) {
+        console.log('aqui')
+        isPaymentTef.forEach((payment, index) => {
+          Modal.confirm({
+            title: `Você possui ${index + 1} pagamento(s) pendente(s)`,
+            content: <><p>O pagamento de valor: R$ {payment.amount.toFixed(2)}</p>
+            <p>Bandeira: {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}</p>
+            <p>Codigo NSU: {payment.code_nsu}</p>
+            <p>Está pendente, você gostaria de desfaze-lo?</p></>,
+            okText: "Desfazer Pagamento",
+            okType: "default",
+            cancelText: "Manter Pagamento",
+            centered: true,
+            async onOk() {
+              await removePayment(payment)
+            },
+          });
+        })
       }
 
       const { response: _storeCash } = await window.Main.storeCash.getCurrent();
@@ -166,15 +189,27 @@ const Home: React.FC = () => {
     setLoadinPayment(false);
   };
 
-  const removePayment = async (id: string) => {
+  const removePayment = async (payment: PaymentDto) => {
+    console.log(payment)
     const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
-      await window.Main.sale.deletePayment(id);
-    if (errorOnDeletePayment) {
+    await window.Main.sale.deletePayment(payment.id);
+  if (errorOnDeletePayment) {
+    return notification.error({
+      message: "Erro ao remover pagamento",
+      duration: 5,
+    });
+  }
+
+    const { has_internal_error: errorOnFinalizeTransaction, error_message } =
+    await window.Main.tefFactory.finalizeTransaction([payment.code_nsu])
+    if (errorOnFinalizeTransaction) {
       return notification.error({
-        message: "Erro ao remover pagamento",
-        duration: 5,
-      });
+      message: error_message || "Erro ao finalizar transação",
+      duration: 5,
+    });
     }
+  
+   
     setSale(updatedSale);
   };
 

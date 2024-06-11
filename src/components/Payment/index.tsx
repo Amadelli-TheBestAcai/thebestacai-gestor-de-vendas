@@ -17,7 +17,7 @@ import {
 
 type IProps = {
   payment: PaymentDto;
-  removePayment: (id: string) => Promise<void>;
+  removePayment: (payment: PaymentDto) => Promise<void>;
 };
 
 const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
@@ -33,10 +33,10 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
       async onOk() {
         try {
           {
-            removePayment(payment.id),
+            removePayment(payment),
               document.getElementById("balanceInput")?.focus();
             notification.success({
-              message: `O pagamento TEF de numero ${payment.code_nsu} foi desfeito com sucesso`,
+              message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
               duration: 5,
             });
           }
@@ -66,7 +66,7 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
                 onClick={() => {
                   payment.code_nsu
                     ? deletePaymentConfirm()
-                    : removePayment(payment.id);
+                    : removePayment(payment);
                   document.getElementById("balanceInput")?.focus();
                 }}
               >

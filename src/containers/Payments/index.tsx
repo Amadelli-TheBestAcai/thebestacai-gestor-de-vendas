@@ -35,10 +35,11 @@ import { FlagCard } from "../../models/enums/flagCard";
 import { Form } from "antd";
 import { useSale } from "../../hooks/useSale";
 import { useSettings } from "../../hooks/useSettings";
+import { PaymentDto } from "../../models/dtos/payment";
 
 interface IProps {
   sale: SaleDto;
-  removePayment: (id: string) => Promise<void>;
+  removePayment: (payment: PaymentDto) => Promise<void>;
   addPayment: () => Promise<void>;
   handleOpenPayment: (type: number, title: string, flag_card?: number) => void;
   setCurrentPayment: Dispatch<SetStateAction<number>>;
