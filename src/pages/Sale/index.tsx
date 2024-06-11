@@ -44,16 +44,18 @@ import {
   CancelIcon,
   Form,
   PrinterNFCeIcon,
-  PrinterTefIcon
+  PrinterTefIcon,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
+import { FlagCard } from "../../models/enums/flagCard";
+import { TefPaymentType } from "../../models/enums/tefPaymentType";
 
 type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = () => {
-  const [formCancelJustify] = Form.useForm()
+  const [formCancelJustify] = Form.useForm();
   const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
   const [nfceCancelJustify, setNfceCancelJustify] = useState("");
@@ -86,9 +88,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-            (total, _payment) => total + _payment.amount,
-            0
-          ),
+              (total, _payment) => total + _payment.amount,
+              0
+            ),
       }));
 
       if (_sales.length) {
@@ -103,7 +105,9 @@ const Sale: React.FC<IProps> = () => {
     }
   }, [shouldSearch]);
 
-  const hasPaymentWithTef = selectedSale?.payments?.filter(payment => payment?.code_nsu)
+  const hasPaymentWithTef = selectedSale?.payments?.filter(
+    (payment) => payment?.code_nsu
+  );
 
   const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
@@ -112,9 +116,17 @@ const Sale: React.FC<IProps> = () => {
         <Form.Item
           label=""
           name="textArea"
-          rules={[{ required: true, message: "Campo obrigatório" },
-          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
-          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
+          rules={[
+            { required: true, message: "Campo obrigatório" },
+            {
+              min: 15,
+              message: "A justificativa deve ter no minimo 15 caracteres",
+            },
+            {
+              max: 255,
+              message: "A justificativa deve ter no máximo 255 caracteres",
+            },
+          ]}
         >
           <Textarea
             id="nfceDeleteJustifyInput"
@@ -122,7 +134,9 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+            onChange={({ target: { value } }) =>
+              setNfceCancelJustify(value || "")
+            }
           />
         </Form.Item>
       </Form>
@@ -130,91 +144,55 @@ const Sale: React.FC<IProps> = () => {
 
     const creationTime = moment(hasNfce?.created_at);
     const currentTime = moment();
-    const timeDifference = currentTime.diff(creationTime, 'minutes');
+    const timeDifference = currentTime.diff(creationTime, "minutes");
 
     Modal.confirm({
-      title: hasNfce ?
-        (hasNfce.status_sefaz !== '100') ? 'Ocorreu um erro ao tentar emitir a nota fiscal. Deletar a venda mesmo assim?' :
-          (timeDifference > 30) ?
-            `A nota fiscal foi emitida há mais de 30 minutos, 
+      title: hasNfce
+        ? hasNfce.status_sefaz !== "100"
+          ? "Ocorreu um erro ao tentar emitir a nota fiscal. Deletar a venda mesmo assim?"
+          : timeDifference > 30
+          ? `A nota fiscal foi emitida há mais de 30 minutos, 
           o que impossibilita o cancelamento da NFCe. 
           No entanto, é possível excluir a venda associada à nota. 
           Você tem certeza de que deseja prosseguir com a remoção?`
-            :
-            `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
+          : `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
           Deseja prosseguir com esta ação?`
-        :
-        'Não foi emitida a nota fiscal da venda. Gostaria de removê-la mesmo assim?',
+        : "Não foi emitida a nota fiscal da venda. Gostaria de removê-la mesmo assim?",
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
       async onOk() {
-        if (hasPaymentWithTef.length) {
-          Modal.confirm({
-            title: `
-              Esta venda contém ${hasPaymentWithTef.length} pagamento(s) autorizado(s) pelo TEF.`,
-            content: `Um painel administrativo será aberto para cancelar o(s) pagamento(s) TEF.
-              Para isso, o cliente deve estar com o cartão utilizado na compra em mãos, 
-              pois ele será necessário para concluir o cancelamento.
-              Você tem certeza de que deseja cancelar o pagamento?`,
-            okText: "Sim",
-            okType: "default",
-            cancelText: "Não",
-            centered: true,
-            async onOk() {
-              await Promise.all(
-                hasPaymentWithTef.map(async payment => {
-                  await cancelPaymentTef();
-                  // const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
-                  //   await window.Main.sale.deletePayment(payment.id);
-                  // if (errorOnDeletePayment) {
-                  //   return notification.error({
-                  //     message: "Erro ao remover pagamento",
-                  //     duration: 5,
-                  //   });
-                  // }
-                  // setSelectedSale(updatedSale)
-                })
-              );
-              await deleteSale(params, hasNfce)
-            },
-          })
-        } else {
-          await deleteSale(params, hasNfce)
-        }
+        await deleteSale(params, hasNfce);
       },
     });
   };
 
   const deleteSale = async (params, hasNfce) => {
-    await formCancelJustify.validateFields()
+    await formCancelJustify.validateFields();
     try {
       setIsLoading(true);
       if (hasNfce) {
         //@ts-ignore
-        const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
+        const justify = document.getElementById("nfceDeleteJustifyInput").value;
         if (!justify || justify.length < 15 || justify.length > 255) {
           throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
         }
         params = {
           ...params,
-          justify: justify
-        }
+          justify: justify,
+        };
       }
-      const {
-        has_internal_error: errorOnDeleteSale,
-        error_message,
-      }
-        = await window.Main.sale.deleteSaleFromApi(params);
+      const { has_internal_error: errorOnDeleteSale, error_message } =
+        await window.Main.sale.deleteSaleFromApi(params);
       if (errorOnDeleteSale) {
         return notification.error({
           message: error_message || "Oops! Falha ao remover venda.",
           duration: 5,
         });
       }
-      formCancelJustify.resetFields()
+      formCancelJustify.resetFields();
       return notification.success({
         message: "Venda excluída com sucesso! NFC-e cancelada com sucesso!",
         duration: 5,
@@ -225,7 +203,7 @@ const Sale: React.FC<IProps> = () => {
       setIsLoading(false);
       setShouldSearch(true);
     }
-  }
+  };
 
   const findSale = ({ target: { value } }) => {
     const filteredSale = sales.filter((_sale) =>
@@ -268,8 +246,7 @@ const Sale: React.FC<IProps> = () => {
         type: payment.type,
         flag_card:
           payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
-        code_nsu: payment.code_nsu ? payment.code_nsu
-          : null,
+        code_nsu: payment.code_nsu ? payment.code_nsu : null,
         cnpj_credenciadora: payment.code_nsu
           ? payment.cnpj_credenciadora
           : null,
@@ -323,9 +300,17 @@ const Sale: React.FC<IProps> = () => {
         <Form.Item
           label=""
           name="textArea"
-          rules={[{ required: true, message: "Campo obrigatório" },
-          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
-          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
+          rules={[
+            { required: true, message: "Campo obrigatório" },
+            {
+              min: 15,
+              message: "A justificativa deve ter no minimo 15 caracteres",
+            },
+            {
+              max: 255,
+              message: "A justificativa deve ter no máximo 255 caracteres",
+            },
+          ]}
         >
           <Textarea
             id="nfceJustifyInput"
@@ -333,7 +318,9 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+            onChange={({ target: { value } }) =>
+              setNfceCancelJustify(value || "")
+            }
           />
         </Form.Item>
       </Form>
@@ -356,7 +343,7 @@ const Sale: React.FC<IProps> = () => {
         },
       },
       async onOk() {
-        await formCancelJustify.validateFields()
+        await formCancelJustify.validateFields();
         //@ts-ignore
         const justify = document.getElementById("nfceJustifyInput")?.value;
         const { error_message, has_internal_error: errorOnCancelNfce } =
@@ -368,7 +355,7 @@ const Sale: React.FC<IProps> = () => {
           });
           return;
         }
-        formCancelJustify.resetFields()
+        formCancelJustify.resetFields();
         notification.success({
           message: "Nota fiscal cancelada com sucesso",
           duration: 5,
@@ -504,42 +491,48 @@ const Sale: React.FC<IProps> = () => {
 
   const reprintCouponTef = async () => {
     const { has_internal_error: errorReprintCoupon, error_message } =
-      await window.Main.tefFactory.reprintCoupon()
+      await window.Main.tefFactory.reprintCoupon();
 
     if (errorReprintCoupon) {
       return notification.error({
         message: error_message || "Operação cancelada",
-        duration: 5
+        duration: 5,
       });
     }
 
-    await window.Main.common.printCupomTef()
-  }
+    await window.Main.common.printCupomTef();
+  };
 
   const cancelPaymentTef = async () => {
-    const { response, has_internal_error: errorCancelPaymentTef, error_message } =
-      await window.Main.tefFactory.cancelPaymentTef()
+    const {
+      response,
+      has_internal_error: errorCancelPaymentTef,
+      error_message,
+    } = await window.Main.tefFactory.cancelPaymentTef();
 
     if (errorCancelPaymentTef) {
       return notification.error({
         message: error_message || "Operação cancelada",
-        duration: 5
+        duration: 5,
       });
     }
-    await window.Main.common.printCupomTef()
+    await window.Main.common.printCupomTef();
 
-    const { has_internal_error: errorFinalizeTransaction,
-      error_message: error_message_finalize_transaction } =
-      await window.Main.tefFactory.finalizeTransaction([response])
+    const {
+      has_internal_error: errorFinalizeTransaction,
+      error_message: error_message_finalize_transaction,
+    } = await window.Main.tefFactory.finalizeTransaction([response]);
 
     if (errorFinalizeTransaction) {
       return notification.error({
-        message: error_message_finalize_transaction || "Erro ao finalizar transação",
-        duration: 5
+        message:
+          error_message_finalize_transaction || "Erro ao finalizar transação",
+        duration: 5,
       });
     }
 
-  }
+    setShouldSearch(true);
+  };
 
   const nfceInfo = (selectedSale: SaleFromApi) => {
     return {
@@ -662,29 +655,49 @@ const Sale: React.FC<IProps> = () => {
                               </Tooltip>
                               {hasPermission("sales.remove_sale") &&
                                 !selectedSale.deleted_at && (
-                                  <Tooltip title="Remover venda" placement="bottom">
+                                  <Tooltip
+                                    title="Remover venda"
+                                    placement="bottom"
+                                  >
                                     <RemoveIcon
                                       style={{ width: "8%" }}
                                       onClick={() => {
-                                        onDelete({
-                                          id: selectedSale.id,
-                                          cash_history_id:
-                                            selectedSale.cash_history_id,
-                                          ref: selectedSale.ref,
-                                        });
+                                        const hsaTefPayment =
+                                          selectedSale.payments.some(
+                                            (payment) =>
+                                              payment?.tef_status_payment !==
+                                                1 && payment?.code_nsu
+                                          );
+                                        {
+                                          hsaTefPayment
+                                            ? notification.warning({
+                                                message:
+                                                  "Esta venda contém pagamento(s) autorizado(s) pelo TEF.",
+                                                description: `Para continuar com a exclusão é necessário realizar o cancelamento através do botão "Cancelar" localizado em "Ações" na tabela de pagamento`,
+                                                duration: 10,
+                                              })
+                                            : onDelete({
+                                                id: selectedSale.id,
+                                                cash_history_id:
+                                                  selectedSale.cash_history_id,
+                                                ref: selectedSale.ref,
+                                              });
+                                        }
                                       }}
                                     />
                                   </Tooltip>
                                 )}
-                              {hasPaymentWithTef && <Tooltip
-                                title="Reimprimir cupom fiscal TEF"
-                                placement="bottom"
-                              >
-                                <PrinterTefIcon
-                                  onClick={() => reprintCouponTef()}
-                                  style={{ width: "9%" }}
-                                />
-                              </Tooltip>}
+                              {hasPaymentWithTef && (
+                                <Tooltip
+                                  title="Reimprimir cupom fiscal TEF"
+                                  placement="bottom"
+                                >
+                                  <PrinterTefIcon
+                                    onClick={() => reprintCouponTef()}
+                                    style={{ width: "9%" }}
+                                  />
+                                </Tooltip>
+                              )}
                             </Col>
                           </>
                         }
@@ -693,15 +706,43 @@ const Sale: React.FC<IProps> = () => {
                         <Collapse defaultActiveKey={["2"]}>
                           <Panel header="Pagamentos" key="2">
                             <HeaderCollapse>
-                              <Col sm={8}>TIPO</Col>
-                              <Col sm={8}>CODIGO NSU</Col>
-                              <Col sm={8}>VALOR</Col>
+                              <Col sm={5}>CODIGO NSU</Col>
+                              <Col sm={5}>TIPO</Col>
+                              <Col sm={5}>BANDEIRA</Col>
+                              <Col sm={3}>VALOR</Col>
+                              <Col sm={3}>STATUS</Col>
+                              <Col sm={2}>AÇÕES</Col>
                             </HeaderCollapse>
                             {selectedSale.payments.map((_payment, index) => (
                               <Row key={index}>
-                                <Col sm={8}>{PaymentType[_payment.type]}</Col>
-                                <Col sm={8}>{_payment.code_nsu}</Col>
-                                <Col sm={8}>R$ {_payment.amount}</Col>
+                                <Col sm={5}>{_payment.code_nsu}</Col>
+                                <Col sm={5}>{PaymentType[_payment.type]}</Col>
+                                <Col sm={5}>
+                                  {_payment.flag_card
+                                    ? FlagCard.find(
+                                        (flag) => flag.id === _payment.flag_card
+                                      )?.value
+                                    : ""}
+                                </Col>
+                                <Col sm={3}>{_payment.amount}</Col>
+                                <Col sm={3}>
+                                  {TefPaymentType[_payment?.tef_status_payment]}
+                                </Col>
+                                <Col sm={3}>
+                                  {_payment.code_nsu &&
+                                    _payment.tef_status_payment !== 1 && (
+                                      <CancelIcon
+                                        style={{
+                                          width: "1rem",
+                                          height: "1rem",
+                                          fill: "red",
+                                        }}
+                                        onClick={() => {
+                                          cancelPaymentTef();
+                                        }}
+                                      />
+                                    )}
+                                </Col>
                               </Row>
                             ))}
                           </Panel>
@@ -722,7 +763,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                      +_item.storeProduct.price_unit
+                                        +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>
@@ -788,7 +829,7 @@ const Sale: React.FC<IProps> = () => {
         </Label>
         Para refazer o envio basta selecionar a opção de reenvio.
       </ModalNFCe>
-    </Container >
+    </Container>
   );
 };
 
