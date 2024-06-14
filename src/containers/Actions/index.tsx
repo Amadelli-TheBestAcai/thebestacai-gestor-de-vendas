@@ -46,6 +46,8 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
     campaign,
     setCampaign,
     setShouldOpenClientInfo,
+    storeCash,
+    setStoreCash,
   } = useSale();
   const [cupomModalState, setCupomModalState] = useState(false);
   const { store } = useStore();
@@ -100,6 +102,18 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
     }
   }, [sale.client_cpf]);
 
+  const modalReward = async () => {
+    if (!storeCash.is_online) {
+      const { response: _storeCash } = await window.Main.storeCash.getCurrent();
+
+      if (_storeCash && _storeCash.is_online) {
+        setStoreCash(_storeCash);
+      }
+    }
+
+    setRewardModal(true);
+  };
+
   return (
     <Container>
       <ContentGeneral>
@@ -143,7 +157,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               )}
             </ButtonCommands>
 
-            <Button onClick={() => setRewardModal(true)}>
+            <Button onClick={() => modalReward()}>
               <TrophyIcon />
               Recompensas
             </Button>
