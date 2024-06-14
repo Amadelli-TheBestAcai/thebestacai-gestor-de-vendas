@@ -69,15 +69,21 @@ const Home: React.FC = () => {
         console.log('aqui')
         isPaymentTef.forEach((payment, index) => {
           Modal.confirm({
-            title: `Você possui ${index + 1} pagamento(s) pendente(s)`,
+            title: `Você possui ${index + 1} pagamento(s) TEF pendente(s)`,
             content: <><p>O pagamento de valor: R$ {payment.amount.toFixed(2)}</p>
-            <p>Bandeira: {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}</p>
-            <p>Codigo NSU: {payment.code_nsu}</p>
-            <p>Está pendente, você gostaria de desfaze-lo?</p></>,
+              <p>Bandeira: {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}</p>
+              <p>Codigo NSU: {payment.code_nsu}</p>
+              <p>Está pendente, você gostaria de desfaze-lo?</p></>,
             okText: "Desfazer Pagamento",
             okType: "default",
             cancelText: "Manter Pagamento",
             centered: true,
+            okButtonProps: {
+              style: {
+                background: "red",
+                color: "white",
+              },
+            },
             async onOk() {
               await removePayment(payment)
             },
@@ -190,26 +196,26 @@ const Home: React.FC = () => {
   };
 
   const removePayment = async (payment: PaymentDto) => {
-    console.log(payment)
     const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
-    await window.Main.sale.deletePayment(payment.id);
-  if (errorOnDeletePayment) {
-    return notification.error({
-      message: "Erro ao remover pagamento",
-      duration: 5,
-    });
-  }
-
-    const { has_internal_error: errorOnFinalizeTransaction, error_message } =
-    await window.Main.tefFactory.finalizeTransaction([payment.code_nsu])
-    if (errorOnFinalizeTransaction) {
+      await window.Main.sale.deletePayment(payment.id);
+    if (errorOnDeletePayment) {
       return notification.error({
-      message: error_message || "Erro ao finalizar transação",
-      duration: 5,
-    });
+        message: "Erro ao remover pagamento",
+        duration: 5,
+      });
     }
-  
-   
+    const isPaymentTef = updatedSale?.payments?.some(payment => payment?.code_nsu)
+
+    if (!isPaymentTef) {
+      const { has_internal_error: errorOnFinalizeTransaction, error_message } =
+        await window.Main.tefFactory.finalizeTransaction([])
+      if (errorOnFinalizeTransaction) {
+        return notification.error({
+          message: error_message || "Erro ao finalizar transação",
+          duration: 5,
+        });
+      }
+    }
     setSale(updatedSale);
   };
 
