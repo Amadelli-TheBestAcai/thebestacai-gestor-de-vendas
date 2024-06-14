@@ -63,32 +63,41 @@ const Home: React.FC = () => {
         });
         return;
       }
-      const isPaymentTef = _sale.payments.filter(payment => payment.code_nsu)
+      const isPaymentTef = _sale.payments.filter((payment) => payment.code_nsu);
 
       if (isPaymentTef.length) {
-        console.log('aqui')
         isPaymentTef.forEach((payment, index) => {
           Modal.confirm({
             title: `Você possui ${index + 1} pagamento(s) TEF pendente(s)`,
-            content: <><p>O pagamento de valor: R$ {payment.amount.toFixed(2)}</p>
-              <p>Bandeira: {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}</p>
-              <p>Codigo NSU: {payment.code_nsu}</p>
-              <p>Está pendente, você gostaria de desfaze-lo?</p></>,
-            okText: "Desfazer Pagamento",
+            content: (
+              <>
+                <p>O pagamento de valor: R$ {payment.amount.toFixed(2)}</p>
+                <p>
+                  Bandeira:{" "}
+                  {
+                    FlagCard.find((flag) => flag.id === payment.flag_card)
+                      ?.value
+                  }
+                </p>
+                <p>Codigo NSU: {payment.code_nsu}</p>
+                <p>Está pendente, você gostaria de desfaze-lo?</p>
+              </>
+            ),
+            okText: "Manter Pagamento",
             okType: "default",
-            cancelText: "Manter Pagamento",
+            cancelText: "Desfazer Pagamento",
             centered: true,
             okButtonProps: {
               style: {
-                background: "red",
+                background: "green",
                 color: "white",
               },
             },
-            async onOk() {
-              await removePayment(payment)
+            async onCancel() {
+              await removePayment(payment);
             },
           });
-        })
+        });
       }
 
       const { response: _storeCash } = await window.Main.storeCash.getCurrent();
@@ -204,11 +213,13 @@ const Home: React.FC = () => {
         duration: 5,
       });
     }
-    const isPaymentTef = updatedSale?.payments?.some(payment => payment?.code_nsu)
+    const isPaymentTef = updatedSale?.payments?.some(
+      (payment) => payment?.code_nsu
+    );
 
     if (!isPaymentTef) {
       const { has_internal_error: errorOnFinalizeTransaction, error_message } =
-        await window.Main.tefFactory.finalizeTransaction([])
+        await window.Main.tefFactory.finalizeTransaction([]);
       if (errorOnFinalizeTransaction) {
         return notification.error({
           message: error_message || "Erro ao finalizar transação",
