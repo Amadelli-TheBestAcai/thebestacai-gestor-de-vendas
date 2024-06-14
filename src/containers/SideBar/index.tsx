@@ -35,7 +35,11 @@ const SideBar: React.FC<IProps> = ({ history }) => {
   const { hasPermission } = useUser();
 
   const handleClick = (id: number, route: string): void => {
-    if (!storeCash.is_online && (route === "/handler" || route === "/sale")) {
+    if (
+      storeCash &&
+      !storeCash?.is_online &&
+      (route === "/handler" || route === "/sale")
+    ) {
       notification.info({
         message: "Caixa offline",
         description: `O caixa deve estar online para acessar a tela de ${
