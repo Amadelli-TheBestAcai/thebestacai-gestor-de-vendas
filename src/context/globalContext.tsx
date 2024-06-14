@@ -393,7 +393,7 @@ export function GlobalProvider({ children }) {
 
     const { response: _storeCash } = await window.Main.storeCash.getCurrent();
 
-    if (_storeCash && _storeCash.is_online) {
+    if (_storeCash && _storeCash?.is_online) {
       setStoreCash(_storeCash);
     }
 

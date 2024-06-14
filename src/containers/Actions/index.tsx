@@ -106,7 +106,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
     if (storeCash && !storeCash?.is_online) {
       const { response: _storeCash } = await window.Main.storeCash.getCurrent();
 
-      if (_storeCash && _storeCash.is_online) {
+      if (_storeCash && _storeCash?.is_online) {
         setStoreCash(_storeCash);
       }
     }
