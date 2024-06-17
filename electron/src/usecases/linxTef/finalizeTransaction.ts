@@ -12,11 +12,11 @@ class FinalizeTransaction implements IUseCaseFactory {
     async execute(codes_nsu: string[]): Promise<void> {
         const isConnectInternet = await checkInternet();
         if (!isConnectInternet) {
-            throw new Error('Você está sem conexão com a internet. Verifique sua conexão e tente novamente')
+            throw new Error("Sem conexão com a internet. Verifique sua conexão para usar o serviço TEF e tente novamente.")
         }
         const isConnect = await verifyConnectionTEF()
         if (!isConnect) {
-            throw new Error("O servidor da TEF não está rodando. Verifique se o executável ServerTEF.exe foi instalado")
+            throw new Error("O servidor da TEF não está rodando. Verifique se o executável ServerTEF.exe foi instalado corretamente")
         }
 
         const { response, has_internal_error } =
