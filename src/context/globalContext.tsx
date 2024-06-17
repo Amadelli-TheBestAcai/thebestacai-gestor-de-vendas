@@ -239,6 +239,16 @@ export function GlobalProvider({ children }) {
       .filter(code_nsu => code_nsu !== undefined && code_nsu !== null)
 
     if (codes_nsu.length > 0) {
+      const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
+        await window.Main.common.printCupomTef()
+
+      if (errorOnPrintCupomTef) {
+        notification.error({
+          message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+          duration: 5,
+        });
+      }
+
       const { has_internal_error: errorOnFinalizaTransacao, error_message } =
         await window.Main.tefFactory.finalizeTransaction(codes_nsu)
 

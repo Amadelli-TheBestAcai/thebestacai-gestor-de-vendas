@@ -1,4 +1,4 @@
 export enum TefPaymentType {
-    APROVADA = 0,
-    CANCELADA = 1
+    APROVADO = 0,
+    CANCELADO = 1
 }

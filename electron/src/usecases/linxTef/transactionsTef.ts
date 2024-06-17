@@ -1,4 +1,5 @@
 import { PaymentType } from "../../models/enums/paymentType";
+import { checkInternet } from "../../providers/internetConnection";
 import tefApi from "../../providers/tefApi";
 import { verifyConnectionTEF } from "../../providers/verifyConnectionTEF";
 import { useCaseFactory } from "../useCaseFactory";
@@ -16,6 +17,11 @@ class TransactionsTef implements IUseCaseFactory {
     ) { }
 
     async execute({ type, amount }: Request): Promise<any> {
+        const isConnectInternet = await checkInternet();
+        if (!isConnectInternet) {
+            throw new Error('Você está sem conexão com a internet. Verifique sua conexão e tente novamente')
+        }
+
         const isConnect = await verifyConnectionTEF()
         if (!isConnect) {
             throw new Error("O servidor da TEF não está rodando. Verifique se o executável ServerTEF.exe foi instalado")
@@ -27,7 +33,7 @@ class TransactionsTef implements IUseCaseFactory {
         if (has_internal_error) {
             throw new Error('Erro ao tentar identificar PIN PAD')
         }
-    
+
         if (!response) {
             console.log('object');
             throw new Error("Não foi encontrado as informações do PIN PAD, verifique se ele está conectado ao computador")

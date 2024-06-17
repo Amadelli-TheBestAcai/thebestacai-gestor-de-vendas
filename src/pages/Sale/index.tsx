@@ -61,6 +61,7 @@ const Sale: React.FC<IProps> = () => {
   const [nfceCancelJustify, setNfceCancelJustify] = useState("");
   const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingCancel, setLoadingCancel] = useState(false)
   const [sales, setSales] = useState<SaleFromApi[]>([]);
   const [filteredSale, setFiltered] = useState<SaleFromApi[] | undefined>(
     undefined
@@ -88,9 +89,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-              (total, _payment) => total + _payment.amount,
-              0
-            ),
+            (total, _payment) => total + _payment.amount,
+            0
+          ),
       }));
 
       if (_sales.length) {
@@ -151,11 +152,11 @@ const Sale: React.FC<IProps> = () => {
         ? hasNfce.status_sefaz !== "100"
           ? "Ocorreu um erro ao tentar emitir a nota fiscal. Deletar a venda mesmo assim?"
           : timeDifference > 30
-          ? `A nota fiscal foi emitida há mais de 30 minutos, 
+            ? `A nota fiscal foi emitida há mais de 30 minutos, 
           o que impossibilita o cancelamento da NFCe. 
           No entanto, é possível excluir a venda associada à nota. 
           Você tem certeza de que deseja prosseguir com a remoção?`
-          : `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
+            : `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
           Deseja prosseguir com esta ação?`
         : "Não foi emitida a nota fiscal da venda. Gostaria de removê-la mesmo assim?",
       content: renderTextArea,
@@ -201,7 +202,7 @@ const Sale: React.FC<IProps> = () => {
       console.log(error);
     } finally {
       setIsLoading(false);
-      setShouldSearch(true);
+      setShouldSearch(true)
     }
   };
 
@@ -500,10 +501,19 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
-    await window.Main.common.printCupomTef();
+    const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
+      await window.Main.common.printCupomTef()
+
+    if (errorOnPrintCupomTef) {
+      return notification.error({
+        message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+        duration: 5,
+      });
+    }
   };
 
-  const cancelPaymentTef = async () => {
+  const cancelPaymentTef = async (code_nsu: string) => {
+    setLoadingCancel(true)
     const {
       response,
       has_internal_error: errorCancelPaymentTef,
@@ -511,12 +521,24 @@ const Sale: React.FC<IProps> = () => {
     } = await window.Main.tefFactory.cancelPaymentTef();
 
     if (errorCancelPaymentTef) {
+      setLoadingCancel(false)
       return notification.error({
         message: error_message || "Operação cancelada",
         duration: 5,
       });
     }
-    await window.Main.common.printCupomTef();
+
+    const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
+      await window.Main.common.printCupomTef()
+
+    if (errorOnPrintCupomTef) {
+      notification.error({
+        message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+        duration: 5,
+      });
+    }
+
+    setIsLoading(true)
 
     const {
       has_internal_error: errorFinalizeTransaction,
@@ -524,6 +546,8 @@ const Sale: React.FC<IProps> = () => {
     } = await window.Main.tefFactory.finalizeTransaction([response]);
 
     if (errorFinalizeTransaction) {
+      setLoadingCancel(false)
+      setIsLoading(false)
       return notification.error({
         message:
           error_message_finalize_transaction || "Erro ao finalizar transação",
@@ -531,7 +555,22 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
-    setShouldSearch(true);
+    const {
+      has_internal_error: errorUpdateStatusPaymentTef,
+      error_message: error_message_updateStatusPaymentTef,
+    } = await window.Main.sale.updateStatusPaymentTef(selectedSale.id, code_nsu)
+
+    if (errorUpdateStatusPaymentTef) {
+      setLoadingCancel(false)
+      setIsLoading(false)
+      return notification.error({
+        message:
+          error_message_updateStatusPaymentTef || "Erro ao atualizar status do pagamento TEF",
+        duration: 5,
+      })
+    };
+    setLoadingCancel(false)
+    setShouldSearch(true)
   };
 
   const nfceInfo = (selectedSale: SaleFromApi) => {
@@ -666,22 +705,22 @@ const Sale: React.FC<IProps> = () => {
                                           selectedSale.payments.some(
                                             (payment) =>
                                               payment?.tef_status_payment !==
-                                                1 && payment?.code_nsu
+                                              1 && payment?.code_nsu
                                           );
                                         {
                                           hsaTefPayment
                                             ? notification.warning({
-                                                message:
-                                                  "Esta venda contém pagamento(s) autorizado(s) pelo TEF.",
-                                                description: `Para continuar com a exclusão é necessário realizar o cancelamento através do botão "Cancelar" localizado em "Ações" na tabela de pagamento`,
-                                                duration: 10,
-                                              })
+                                              message:
+                                                "Esta venda contém pagamento(s) autorizado(s) pelo TEF.",
+                                              description: `Para continuar com a exclusão é necessário realizar o cancelamento através do botão "Cancelar" localizado em "Ações" na tabela de pagamento`,
+                                              duration: 10,
+                                            })
                                             : onDelete({
-                                                id: selectedSale.id,
-                                                cash_history_id:
-                                                  selectedSale.cash_history_id,
-                                                ref: selectedSale.ref,
-                                              });
+                                              id: selectedSale.id,
+                                              cash_history_id:
+                                                selectedSale.cash_history_id,
+                                              ref: selectedSale.ref,
+                                            });
                                         }
                                       }}
                                     />
@@ -711,7 +750,7 @@ const Sale: React.FC<IProps> = () => {
                               <Col sm={5}>BANDEIRA</Col>
                               <Col sm={3}>VALOR</Col>
                               <Col sm={3}>STATUS</Col>
-                              <Col sm={2}>AÇÕES</Col>
+                              <Col sm={3}>AÇÕES</Col>
                             </HeaderCollapse>
                             {selectedSale.payments.map((_payment, index) => (
                               <Row key={index}>
@@ -720,13 +759,17 @@ const Sale: React.FC<IProps> = () => {
                                 <Col sm={5}>
                                   {_payment.flag_card
                                     ? FlagCard.find(
-                                        (flag) => flag.id === _payment.flag_card
-                                      )?.value
+                                      (flag) => flag.id === _payment.flag_card
+                                    )?.value
                                     : ""}
                                 </Col>
-                                <Col sm={3}>{_payment.amount}</Col>
+                                <Col sm={3}>{_payment?.amount}</Col>
                                 <Col sm={3}>
-                                  {TefPaymentType[_payment?.tef_status_payment]}
+                                  {
+                                    _payment?.tef_status_payment === TefPaymentType.APROVADO ?
+                                      <span style={{ color: 'green' }}>{TefPaymentType[_payment?.tef_status_payment]}</span>
+                                      : <span style={{ color: 'red' }}>{TefPaymentType[_payment?.tef_status_payment]}</span>
+                                  }
                                 </Col>
                                 <Col sm={3}>
                                   {_payment.code_nsu &&
@@ -738,7 +781,8 @@ const Sale: React.FC<IProps> = () => {
                                           fill: "red",
                                         }}
                                         onClick={() => {
-                                          cancelPaymentTef();
+                                          !loadingCancel &&
+                                          cancelPaymentTef(_payment.code_nsu)
                                         }}
                                       />
                                     )}

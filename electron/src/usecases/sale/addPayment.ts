@@ -55,11 +55,7 @@ class AddPayment implements IUseCaseFactory {
       cnpj_credenciadora = response?.cnpj_credenciadora
       flag_card = parseInt(response?.flag_card, 10);
       numero_autorizacao = response?.code_autorization
-      tef_status_payment = TefPaymentType.APROVADA
-
-      if (settings.should_use_printer && type !== PaymentType.DINHEIRO) {
-        await useCaseFactory.execute<void>(this.printCupomUseCase);
-      }
+      tef_status_payment = TefPaymentType.APROVADO
     }
 
     if (!sale) {

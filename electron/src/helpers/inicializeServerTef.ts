@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import path from 'path';
+import fs from 'fs';
 
 let serverTefProcess: ChildProcessWithoutNullStreams | null = null;
 
@@ -17,14 +18,22 @@ async function isServerTefRunning() {
 }
 
 export async function inicializeServerTef() {
+    const pathExecute = path.join(
+        process.env.LOCALAPPDATA as string, 'Programs', 'server-dll-tef', 'ServerTEF.exe');
+
+    // Verifica se o executável existe
+    if (!fs.existsSync(pathExecute)) {
+        console.error(`Executável TEF não encontrado: ${pathExecute}`);
+        return null;
+    }
+
     if (await isServerTefRunning()) {
         console.log('ServerTEF já está rodando.');
         return serverTefProcess;
     }
 
-    const pathExecute = path.join(
-        process.env.LOCALAPPDATA as string, 'Programs', 'server-dll-tef', 'ServerTEF.exe');
     // Cria o processo filho para executar o executável
+    console.log(`Iniciando o executável: ${pathExecute}`);
     serverTefProcess = spawn(pathExecute, [], { windowsHide: true });
 
     // Exibe o PID do processo filho

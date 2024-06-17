@@ -77,6 +77,7 @@ export interface SaleFromApi {
     update_stock: boolean;
   }[];
   payments: {
+    id?: number;
     amount: number;
     type: number;
     flag_card?: number;

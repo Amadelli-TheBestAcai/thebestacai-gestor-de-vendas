@@ -45,7 +45,7 @@ class PrintFileContent implements IUseCaseFactory {
         try {
             const { response: folderPath } =
                 await useCaseFactory.execute<string>(this.getPahCupomUseCase);
-            console.log(folderPath)
+            console.log(folderPath);
 
             if (!folderPath) {
                 console.error('Caminho da pasta não encontrado.');
@@ -54,14 +54,24 @@ class PrintFileContent implements IUseCaseFactory {
 
             let files = fs.readdirSync(folderPath);
 
-            // files = files.filter(file => path.extname(file).toLowerCase() === '.txt');
+            // Excluir arquivos que começam com "ULTIMO" (ignora maiúsculas e minúsculas)
+            files.forEach(file => {
+                if (file.toLowerCase().startsWith('ultimo')) {
+                    const filePath = path.join(folderPath, file);
+                    fs.unlinkSync(filePath);
+                    console.log(`Arquivo excluído: ${filePath}`);
+                }
+            });
+
+            // Filtrar arquivos após exclusão
+            files = fs.readdirSync(folderPath);
 
             if (files.length === 0) {
                 console.error('Nenhum arquivo encontrado na pasta.');
                 return;
             }
 
-            // Opcional: Ordenar os arquivos por data de modificação (mais recente primeiro)
+            // Ordenar os arquivos por data de modificação (mais recente primeiro)
             files.sort((a, b) => {
                 const aStats = fs.statSync(path.join(folderPath, a));
                 const bStats = fs.statSync(path.join(folderPath, b));

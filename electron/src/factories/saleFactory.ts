@@ -155,6 +155,6 @@ export const saleFactory = {
     }),
   getCurrentCampaign: async () =>
     await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
-  updateStatusPaymentTef: async () =>
-    await useCaseFactory.execute<CampaignDto>(updateStatusPaymentTef),
+  updateStatusPaymentTef: async (payment_id: number, code_nsu: string) =>
+    await useCaseFactory.execute<CampaignDto>(updateStatusPaymentTef, { payment_id, code_nsu }),
 };
