@@ -43,7 +43,7 @@ const RemoveTefModal: React.FC = () => {
       setSale(updatedSale);
     }
 
-    setLoading(false);
+    setLoading(false)
     setVisibleRemoveTefModal(false);
   };
 
