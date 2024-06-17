@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 
+import Actions from "../../containers/Actions";
 import Products from "../../containers/Products";
 import Balance from "../../containers/Balance";
 import Items from "../../containers/Items";
 import Payments from "../../containers/Payments";
-import Actions from "../../containers/Actions";
 
 import Spinner from "../../components/Spinner";
 import Register from "../../components/Register";
 import CashNotFound from "../../components/CashNotFound";
+import RemoveTefModal from "../../components/RemoveTefModal";
 import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
 import { PaymentDto } from "../../models/dtos/payment";
@@ -366,6 +367,8 @@ const Home: React.FC = () => {
           </>
         )}
       </>
+      <RemoveTefModal
+      />
     </Container>
   );
 };

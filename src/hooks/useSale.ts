@@ -34,6 +34,14 @@ export function useSale() {
     GlobalContext,
     (globalContext) => globalContext.savingSale
   );
+  const visibleRemoveTefModal = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.visibleRemoveTefModal
+  );
+  const setVisibleRemoveTefModal = useContextSelector(
+    GlobalContext,
+    (globalContext) => globalContext.setVisibleRemoveTefModal
+  );
   const onRegisterSale = useContextSelector(
     GlobalContext,
     (globalContext) => globalContext.onRegisterSale
@@ -107,5 +115,7 @@ export function useSale() {
     setCampaign,
     openedStepSale,
     setOpenedStepSale,
+    visibleRemoveTefModal,
+    setVisibleRemoveTefModal
   };
 }

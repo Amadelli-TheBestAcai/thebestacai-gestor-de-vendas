@@ -731,16 +731,18 @@ const Sale: React.FC<IProps> = () => {
                                 <Col sm={3}>
                                   {_payment.code_nsu &&
                                     _payment.tef_status_payment !== 1 && (
-                                      <CancelIcon
-                                        style={{
-                                          width: "1rem",
-                                          height: "1rem",
-                                          fill: "red",
-                                        }}
-                                        onClick={() => {
-                                          cancelPaymentTef();
-                                        }}
-                                      />
+                                      <Tooltip title={"Remover pagamento Tef"}>
+                                        <CancelIcon
+                                          style={{
+                                            width: "1rem",
+                                            height: "1rem",
+                                            fill: "red",
+                                          }}
+                                          onClick={() => {
+                                            cancelPaymentTef();
+                                          }}
+                                        />
+                                      </Tooltip>
                                     )}
                                 </Col>
                               </Row>
