@@ -39,6 +39,8 @@ type GlobalContextType = {
   };
   shouldOpenClientInfo: boolean;
   setShouldOpenClientInfo: Dispatch<SetStateAction<boolean>>;
+  visibleRemoveTefModal: boolean;
+  setVisibleRemoveTefModal: Dispatch<SetStateAction<boolean>>;
   cupomModalState: boolean;
   setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
@@ -62,6 +64,7 @@ export function GlobalProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [cupomModalState, setCupomModalState] = useState(false);
   const [discountModalState, setDiscountModalState] = useState(false);
+  const [visibleRemoveTefModal, setVisibleRemoveTefModal] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
   const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
@@ -191,11 +194,12 @@ export function GlobalProvider({ children }) {
     document.getElementById("balanceInput")?.focus();
   };
 
-
   const onRegisterSale = async (): Promise<void> => {
     if (savingSale) {
       return;
     }
+
+    const hasInternet = await window.Main.hasInternet();
 
     const { response: currentSale } = await window.Main.sale.getCurrentSale();
 
@@ -215,9 +219,9 @@ export function GlobalProvider({ children }) {
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-      ((currentSale.discount || 0) +
-        (currentSale.customer_nps_reward_discount || 0)) +
-      0.5
+        ((currentSale.discount || 0) +
+          (currentSale.customer_nps_reward_discount || 0)) +
+        0.5
     ) {
       return notification.warning({
         message: "Pagamento inválido!",
@@ -235,8 +239,8 @@ export function GlobalProvider({ children }) {
     setSavingSale(true);
 
     const codes_nsu = currentSale.payments
-      .map(payment => payment.code_nsu)
-      .filter(code_nsu => code_nsu !== undefined && code_nsu !== null)
+      .map((payment) => payment.code_nsu)
+      .filter((code_nsu) => code_nsu !== undefined && code_nsu !== null);
 
     if (codes_nsu.length > 0) {
       const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
@@ -249,8 +253,15 @@ export function GlobalProvider({ children }) {
         });
       }
 
+
+      if (!hasInternet) {
+        setSavingSale(false);
+        setVisibleRemoveTefModal(true);
+        return;
+      }
+      
       const { has_internal_error: errorOnFinalizaTransacao, error_message } =
-        await window.Main.tefFactory.finalizeTransaction(codes_nsu)
+        await window.Main.tefFactory.finalizeTransaction(codes_nsu);
 
       if (errorOnFinalizaTransacao) {
         notification.error({
@@ -285,8 +296,7 @@ export function GlobalProvider({ children }) {
           amount: +payment.amount.toFixed(2),
           type: +payment.type,
           flag_card: +payment.flag_card,
-          code_nsu: payment.code_nsu ? payment.code_nsu
-            : null,
+          code_nsu: payment.code_nsu ? payment.code_nsu : null,
           cnpj_credenciadora: payment.code_nsu
             ? payment.cnpj_credenciadora
             : null,
@@ -353,7 +363,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -374,13 +384,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-          message: error_message,
-          duration: 5,
-        })
+            message: error_message,
+            duration: 5,
+          })
         : notification.error({
-          message: "Erro ao finalizar venda",
-          duration: 5,
-        });
+            message: "Erro ao finalizar venda",
+            duration: 5,
+          });
     }
 
     const { response: cashHandlers } =
@@ -537,6 +547,8 @@ export function GlobalProvider({ children }) {
         setStoreCash,
         loading,
         savingSale,
+        visibleRemoveTefModal,
+        setVisibleRemoveTefModal,
         discountModalState,
         discountModalHandler,
         onAddDiscount,

@@ -774,17 +774,19 @@ const Sale: React.FC<IProps> = () => {
                                 <Col sm={3}>
                                   {_payment.code_nsu &&
                                     _payment.tef_status_payment !== 1 && (
-                                      <CancelIcon
-                                        style={{
-                                          width: "1rem",
-                                          height: "1rem",
-                                          fill: "red",
-                                        }}
-                                        onClick={() => {
-                                          !loadingCancel &&
-                                          cancelPaymentTef(_payment.code_nsu)
-                                        }}
-                                      />
+                                      <Tooltip title={"Remover pagamento Tef"}>
+                                        <CancelIcon
+                                          style={{
+                                            width: "1rem",
+                                            height: "1rem",
+                                            fill: "red",
+                                          }}
+                                          onClick={() => {
+                                            !loadingCancel &&
+                                              cancelPaymentTef(_payment.code_nsu)
+                                          }}
+                                        />
+                                      </Tooltip>
                                     )}
                                 </Col>
                               </Row>
@@ -807,7 +809,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                        +_item.storeProduct.price_unit
+                                      +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>
