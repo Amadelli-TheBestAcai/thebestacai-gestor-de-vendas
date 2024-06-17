@@ -4,6 +4,7 @@ import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
 import axios from "axios";
 import { inicializeServerTef } from "./src/helpers/inicializeServerTef";
+import { finalizeServerTef } from "./src/helpers/finalizeServerTef";
 
 let win: Electron.BrowserWindow | null;
 
@@ -93,12 +94,10 @@ app.whenReady().then(async () => {
     }
   });
 
-  app.on("window-all-closed", () => {
+  app.on("window-all-closed", async () => {
     if (process.platform !== "darwin") {
+      await finalizeServerTef()
       app.quit();
-      if (serverTefProcess) {
-        serverTefProcess.kill();
-      }
     }
   });
 });
