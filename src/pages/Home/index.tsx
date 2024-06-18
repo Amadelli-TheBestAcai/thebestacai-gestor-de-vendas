@@ -206,33 +206,76 @@ const Home: React.FC = () => {
   };
 
   const removePayment = async (payment: PaymentDto) => {
-    setLoadingPayment(true);
-    const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
-      await window.Main.sale.deletePayment(payment.id);
-    if (errorOnDeletePayment) {
-      setLoadingPayment(false);
-      return notification.error({
-        message: "Erro ao remover pagamento",
-        duration: 5,
-      });
-    }
-    const isPaymentTef = updatedSale?.payments?.some(
-      (payment) => payment?.code_nsu
-    );
-
-    if (!isPaymentTef) {
-      const { has_internal_error: errorOnFinalizeTransaction, error_message } =
-        await window.Main.tefFactory.finalizeTransaction([]);
-      if (errorOnFinalizeTransaction) {
+    const _removePayment = async () => {
+      setLoadingPayment(true);
+      const {
+        response: updatedSale,
+        has_internal_error: errorOnDeletePayment,
+      } = await window.Main.sale.deletePayment(payment.id);
+      if (errorOnDeletePayment) {
         setLoadingPayment(false);
         return notification.error({
-          message: error_message || "Erro ao finalizar transação",
+          message: "Erro ao remover pagamento",
           duration: 5,
         });
       }
+      const isPaymentTef = updatedSale?.payments?.some(
+        (payment) => payment?.code_nsu
+      );
+
+      if (!isPaymentTef) {
+        const {
+          has_internal_error: errorOnFinalizeTransaction,
+          error_message,
+        } = await window.Main.tefFactory.finalizeTransaction([]);
+        if (errorOnFinalizeTransaction) {
+          setLoadingPayment(false);
+          return notification.error({
+            message: error_message || "Erro ao finalizar transação",
+            duration: 5,
+          });
+        }
+      }
+      setSale(updatedSale);
+      setLoadingPayment(false);
+    };
+
+    const isConnected = await window.Main.hasInternet();
+
+    if (!isConnected && payment?.code_nsu) {
+      Modal.confirm({
+        title: ` Durante remoção do pagamento, foi constatada a falta de conexão com
+          a internet.`,
+        content: (
+          <>
+            <p>
+              Após a remoção dos pagamento de valor: R${" "}
+              {payment.amount.toFixed(2)}
+            </p>
+            <p>
+              Bandeira:{" "}
+              {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}
+            </p>
+            <p>Código NSU: {payment.code_nsu}</p>
+            <p>você deve entrar no CPOSWEB e remover o pagamento cancelado.</p>
+          </>
+        ),
+        okText: "Remover pagamento",
+        okType: "default",
+        centered: true,
+        okButtonProps: {
+          style: {
+            background: "green",
+            color: "white",
+          },
+        },
+        async onOk() {
+          await _removePayment();
+        },
+      });
+    } else {
+      await _removePayment();
     }
-    setSale(updatedSale);
-    setLoadingPayment(false);
   };
 
   const handleOpenPayment = (

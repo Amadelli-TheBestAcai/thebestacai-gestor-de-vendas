@@ -724,7 +724,7 @@ const Sale: React.FC<IProps> = () => {
                                             ? notification.warning({
                                                 message:
                                                   "Esta venda contém pagamento(s) autorizado(s) pelo TEF.",
-                                                description: `Para continuar com a exclusão é necessário realizar o cancelamento através do botão "Cancelar" localizado em "Ações" na tabela de pagamento`,
+                                                description: `Para continuar com a exclusão é necessário realizar o cancelamento através do botão "Remover Pagamento" localizado em "Ações" na tabela de pagamento`,
                                                 duration: 10,
                                               })
                                             : onDelete({
