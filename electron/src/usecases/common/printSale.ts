@@ -162,9 +162,8 @@ class PrintSale implements IUseCaseFactory {
       this.printerFormater.newLine();
     }
 
-    this.printerFormater.table(["QRCode Avaliação NPS"]);
     this.printerFormater.println(
-      `Utilize este QRCode para ser direcionado para nos avaliar :)`
+      `Data da venda: ${moment(sale.created_at).parseZone().format('DD/MM/YYYY-HH:mm:ss')}`
     );
     this.printerFormater.alignCenter();
     this.printerFormater.cut();
