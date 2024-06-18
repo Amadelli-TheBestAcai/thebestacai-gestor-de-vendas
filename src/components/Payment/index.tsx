@@ -39,7 +39,7 @@ const Payment: React.FC<IProps> = ({
           <p>Código NSU: {payment?.code_nsu}</p>
           <p>Tipo: {PaymentType[payment.type]}</p>
           <p>
-            Bandeira: 
+            Bandeira:
             {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}
           </p>
           <p>Valor: {payment.amount?.toFixed(2).replace(".", ",")}</p>
@@ -54,12 +54,52 @@ const Payment: React.FC<IProps> = ({
         setLoadingPayment(true);
         try {
           {
-            await removePayment(payment),
-              document.getElementById("balanceInput")?.focus();
-            notification.success({
-              message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
-              duration: 5,
-            });
+            const isConnected = await window.Main.hasInternet();
+
+            if (!isConnected) {
+              Modal.confirm({
+                title: ` Durante remoção do pagamento, foi constatada a falta de conexão com
+                  a internet.`,
+                content: (
+                  <>
+                    <p>Após a remoção do pagamento</p>{" "}
+                    <p>Código NSU: {payment?.code_nsu}</p>
+                    <p>Tipo: {PaymentType[payment.type]}</p>
+                    <p>
+                      Bandeira:
+                      {
+                        FlagCard.find((flag) => flag.id === payment.flag_card)
+                          ?.value
+                      }
+                    </p>
+                    <p>Valor: {payment.amount?.toFixed(2).replace(".", ",")}</p>
+                    <p>
+                      você deve entrar no CPOSWEB e remover o pagamento
+                      cancelado.
+                    </p>
+                  </>
+                ),
+                okText: "Remover pagamento",
+                okType: "default",
+                centered: true,
+                okButtonProps: {
+                  style: {
+                    background: "green",
+                    color: "white",
+                  },
+                },
+                async onOk() {
+                  await removePayment(payment);
+                },
+              });
+            } else {
+              await removePayment(payment),
+                document.getElementById("balanceInput")?.focus();
+              notification.success({
+                message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
+                duration: 5,
+              });
+            }
           }
         } catch (error) {
           console.log(error);
