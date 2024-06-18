@@ -24,8 +24,23 @@ const Payment: React.FC<IProps> = ({ payment, removePayment }) => {
   const deletePaymentConfirm = () => {
     Modal.confirm({
       title: "Excluir Pagamento",
-      content:
-        "Esse pagamento foi autorizado pelo TEF, você tem certeza que deseja desfaze-lo?",
+      content: (
+        <>
+          <p>Esta venda possui pagamentos autorizados via TEF</p>,
+          <p>Código NSU:{payment?.code_nsu}</p>
+          <p>Tipo:{PaymentType[payment.type]}</p>
+          <p>
+            Bandeira:
+            {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}
+          </p>
+          <p>Valor:{payment.amount?.toFixed(2).replace(".", ",")}</p>
+          <p>
+            {" "}
+            <b>Ao excluí-la você deve entrar no CPOSWEB</b> e verificar os
+            pagamentos a serem cancelados.
+          </p>
+        </>
+      ),
       okText: "Sim",
       okType: "default",
       cancelText: "Não",

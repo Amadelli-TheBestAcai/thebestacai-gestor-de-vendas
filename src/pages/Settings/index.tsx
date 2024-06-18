@@ -26,6 +26,7 @@ import {
 import { useSettings } from "../../hooks/useSettings";
 import { useStore } from "../../hooks/useStore";
 import { useSale } from "../../hooks/useSale";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
@@ -35,6 +36,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
   const { settings, setSettings } = useSettings();
   const { setStore } = useStore();
   const { storeCash } = useSale();
+  const { hasPermission } = useUser();
   const [inputPortCOM, setInputPortCOM] = useState<string>();
 
   const handleSave = () => {
@@ -337,38 +339,40 @@ const Settings: React.FC<IProps> = ({ history }) => {
           )}
         </CardSettings>
 
-        <CardSettings title="Integração de TEF">
-          <ContentButton>
-            <Button
-              hidden={!settings.should_use_tef}
-              loading={loadingConfigurationTef}
-              onClick={() => {
-                configurationTEF();
-              }}
-            >
-              Configurar TEF
-            </Button>
-            <span style={{ marginLeft: "1rem" }}>
-              {settings.should_use_tef
-                ? `Número PDV: ${storeCash.store_id}`
-                : ""}
-            </span>
-          </ContentButton>
-          <ActionContainer>
-            <Switch
-              checked={settings.should_use_tef}
-              onChange={() =>
-                setSettings((oldValues) => ({
-                  ...oldValues,
-                  should_use_tef: !settings.should_use_tef,
-                }))
-              }
-            />
-            <span>
-              {!settings.should_use_tef ? "DESABILITADO" : "HABILITADO"}
-            </span>
-          </ActionContainer>
-        </CardSettings>
+        {hasPermission("config.activeTef") && (
+          <CardSettings title="Integração de TEF">
+            <ContentButton>
+              <Button
+                hidden={!settings.should_use_tef}
+                loading={loadingConfigurationTef}
+                onClick={() => {
+                  configurationTEF();
+                }}
+              >
+                Configurar TEF
+              </Button>
+              <span style={{ marginLeft: "1rem" }}>
+                {settings.should_use_tef
+                  ? `Número PDV: ${storeCash.store_id}`
+                  : ""}
+              </span>
+            </ContentButton>
+            <ActionContainer>
+              <Switch
+                checked={settings.should_use_tef}
+                onChange={() =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    should_use_tef: !settings.should_use_tef,
+                  }))
+                }
+              />
+              <span>
+                {!settings.should_use_tef ? "DESABILITADO" : "HABILITADO"}
+              </span>
+            </ActionContainer>
+          </CardSettings>
+        )}
       </PageContent>
 
       <Footer>

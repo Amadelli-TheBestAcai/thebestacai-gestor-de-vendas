@@ -75,7 +75,7 @@ const RemoveTefModal: React.FC = () => {
           <HeaderCol sm={5}>TIPO</HeaderCol>
           <HeaderCol sm={5}>BANDEIRA</HeaderCol>
           <HeaderCol sm={4}>VALOR</HeaderCol>
-          <HeaderCol sm={4}>STATUS</HeaderCol>
+          <HeaderCol sm={4}>STATUS TEF</HeaderCol>
         </HeaderRow>
         {paymentsTef?.map((_payment, index) => (
           <Row key={index}>
