@@ -250,17 +250,17 @@ export function GlobalProvider({ children }) {
         return;
       }
 
-      // if (settings?.should_use_tef) {
-      //   const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
-      //     await window.Main.common.printCouponTef()
+      if (settings?.should_print_sale) {
+        const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
+          await window.Main.common.printCouponTef()
 
-      //   if (errorOnPrintCupomTef) {
-      //     notification.error({
-      //       message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
-      //       duration: 5,
-      //     });
-      //   }
-      // }
+        if (errorOnPrintCupomTef) {
+          notification.error({
+            message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+            duration: 5,
+          });
+        }
+      }
 
       const { has_internal_error: errorOnFinalizaTransacao, error_message } =
         await window.Main.tefFactory.finalizeTransaction(codes_nsu);
