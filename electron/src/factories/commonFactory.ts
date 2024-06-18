@@ -20,6 +20,6 @@ export const commonFactory = {
     await useCaseFactory.execute<void>(printHandler, { handler }),
   printDanfe: async (payload) =>
     await useCaseFactory.execute<void>(printDanfe, { payload }),
-  printCupomTef: async () =>
+  printCouponTef: async () =>
     await useCaseFactory.execute<any>(printFileContent),
 };

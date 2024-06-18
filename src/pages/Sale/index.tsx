@@ -502,7 +502,7 @@ const Sale: React.FC<IProps> = () => {
     }
 
     const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
-      await window.Main.common.printCupomTef()
+      await window.Main.common.printCouponTef()
 
     if (errorOnPrintCupomTef) {
       return notification.error({
@@ -529,7 +529,7 @@ const Sale: React.FC<IProps> = () => {
     }
 
     const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
-      await window.Main.common.printCupomTef()
+      await window.Main.common.printCouponTef()
 
     if (errorOnPrintCupomTef) {
       notification.error({

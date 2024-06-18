@@ -8,7 +8,6 @@ import { PaymentType } from "../../models/enums/paymentType";
 import { v4 } from "uuid";
 import moment from "moment";
 import { transactionsTef } from "../linxTef";
-import { printFileContent } from "../common";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
 
 interface Request {
@@ -23,7 +22,6 @@ class AddPayment implements IUseCaseFactory {
     private settingsRepository = new BaseRepository<SettingsDto>(StorageNames.Settings),
     private getCurrentSaleUseCase = getCurrentSale,
     private transactionsTefUseCase = transactionsTef,
-    private printCupomUseCase = printFileContent
 
   ) { }
 

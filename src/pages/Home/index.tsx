@@ -80,7 +80,7 @@ const Home: React.FC = () => {
                       ?.value
                   }
                 </p>
-                <p>Codigo NSU: {payment.code_nsu}</p>
+                <p>Código NSU: {payment.code_nsu}</p>
                 <p>Está pendente, você gostaria de desfaze-lo?</p>
               </>
             ),

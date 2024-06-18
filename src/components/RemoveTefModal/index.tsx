@@ -34,6 +34,7 @@ const RemoveTefModal: React.FC = () => {
       } = await window.Main.sale.deletePayment(_payment.id);
 
       if (errorOnDeletePayment) {
+        setLoading(false)
         notification.error({
           message: "Erro ao remover pagamento",
           duration: 5,
