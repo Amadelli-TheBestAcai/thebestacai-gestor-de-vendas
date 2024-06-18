@@ -54,7 +54,7 @@ const Payment: React.FC<IProps> = ({
         setLoadingPayment(true);
         try {
           {
-            removePayment(payment),
+            await removePayment(payment),
               document.getElementById("balanceInput")?.focus();
             notification.success({
               message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
