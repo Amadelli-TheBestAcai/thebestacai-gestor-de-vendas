@@ -72,7 +72,7 @@ const RemoveTefModal: React.FC = () => {
         </p>
         <HeaderRow>
           <HeaderCol sm={5}>CODIGO NSU</HeaderCol>
-          <HeaderCol sm={5}>TIPO</HeaderCol>
+          <HeaderCol sm={5}>FORMA DE PAGAMENTO</HeaderCol>
           <HeaderCol sm={5}>BANDEIRA</HeaderCol>
           <HeaderCol sm={4}>VALOR</HeaderCol>
           <HeaderCol sm={4}>STATUS TEF</HeaderCol>

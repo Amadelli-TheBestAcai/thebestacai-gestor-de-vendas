@@ -37,7 +37,7 @@ const Payment: React.FC<IProps> = ({
         <>
           <p>Este pagamento foi autorizado via TEF</p>
           <p>Código NSU: {payment?.code_nsu}</p>
-          <p>Tipo: {PaymentType[payment.type]}</p>
+          <p>Forma de pagamento: {PaymentType[payment.type]}</p>
           <p>
             Bandeira:
             {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}
@@ -64,7 +64,7 @@ const Payment: React.FC<IProps> = ({
                   <>
                     <p>Após a remoção do pagamento</p>{" "}
                     <p>Código NSU: {payment?.code_nsu}</p>
-                    <p>Tipo: {PaymentType[payment.type]}</p>
+                    <p>Forma de pagamento: {PaymentType[payment.type]}</p>
                     <p>
                       Bandeira:
                       {
@@ -74,8 +74,8 @@ const Payment: React.FC<IProps> = ({
                     </p>
                     <p>Valor: {payment.amount?.toFixed(2).replace(".", ",")}</p>
                     <p>
-                      você deve entrar no CPOSWEB e remover o pagamento
-                      cancelado.
+                      Você deve entrar no CPOSWEB e cancelar o pagamento
+                      removido.
                     </p>
                   </>
                 ),
