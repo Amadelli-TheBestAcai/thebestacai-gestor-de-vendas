@@ -470,14 +470,14 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
-    const { response: _printSale, has_internal_error: errorOPrintSale } =
+    const { response: _printSale, has_internal_error: errorOPrintSale, error_message } =
       await window.Main.common.printSale(sale);
-
+    
     // @ts-ignore
-    if (!_printSale) {
+    if (errorOPrintSale) {
       return notification.warning({
         message: "Não foi possível concluir a impressão da venda.",
-        description: "Por favor, verifique a conexão da sua impressora.",
+        description: error_message || "Por favor, verifique a conexão da sua impressora.",
         duration: 5,
       });
     }
