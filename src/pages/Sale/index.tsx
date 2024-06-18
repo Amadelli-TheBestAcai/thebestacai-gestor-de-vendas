@@ -470,14 +470,18 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
-    const { response: _printSale, has_internal_error: errorOPrintSale, error_message } =
-      await window.Main.common.printSale(sale);
-    
+    const {
+      response: _printSale,
+      has_internal_error: errorOPrintSale,
+      error_message,
+    } = await window.Main.common.printSale(sale);
+
     // @ts-ignore
     if (errorOPrintSale) {
       return notification.warning({
         message: "Não foi possível concluir a impressão da venda.",
-        description: error_message || "Por favor, verifique a conexão da sua impressora.",
+        description:
+          error_message || "Por favor, verifique a conexão da sua impressora.",
         duration: 5,
       });
     }
@@ -795,7 +799,10 @@ const Sale: React.FC<IProps> = () => {
                                 {hasPermission("sales.deleteTefPayment") && (
                                   <Col sm={3}>
                                     {_payment.code_nsu &&
-                                      _payment.tef_status_payment !== 1 && (
+                                      _payment.tef_status_payment !== 1 &&
+                                      (loadingCancel ? (
+                                        <Spinner />
+                                      ) : (
                                         <Tooltip
                                           title={"Remover pagamento Tef"}
                                         >
@@ -813,7 +820,7 @@ const Sale: React.FC<IProps> = () => {
                                             }}
                                           />
                                         </Tooltip>
-                                      )}
+                                      ))}
                                   </Col>
                                 )}
                               </Row>
