@@ -33,9 +33,6 @@ class DeletePayment implements IUseCaseFactory {
     let isConnectInternet = await checkInternet();
     
     if (code_nsu && isConnectInternet) {
-      if (!isConnectInternet) {
-        throw new Error("Sem conexão com a internet. Verifique sua conexão para usar o serviço TEF e tente novamente.")
-      }
       const { has_internal_error, error_message } =
         await useCaseFactory.execute<void>(this.removeTransationUseCase, code_nsu);
       if (has_internal_error) {

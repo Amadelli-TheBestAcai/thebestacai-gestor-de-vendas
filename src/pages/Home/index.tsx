@@ -223,7 +223,7 @@ const Home: React.FC = () => {
         (payment) => payment?.code_nsu
       );
 
-      if (!isPaymentTef) {
+      if (isPaymentTef) {
         const {
           has_internal_error: errorOnFinalizeTransaction,
           error_message,
@@ -240,8 +240,8 @@ const Home: React.FC = () => {
       setLoadingPayment(false);
     };
 
-    const isConnected = await window.Main.hasInternet();
-
+    let isConnected = await window.Main.hasInternet();
+    isConnected = false
     if (!isConnected && payment?.code_nsu) {
       Modal.confirm({
         title: ` Durante remoção do pagamento, foi constatada a falta de conexão com
@@ -257,7 +257,7 @@ const Home: React.FC = () => {
               {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}
             </p>
             <p>Código NSU: {payment.code_nsu}</p>
-            <p>você deve entrar no CPOSWEB e remover o pagamento cancelado.</p>
+            <p>Você deve entrar no CPOSWEB e cancelar o pagamento removido.</p>
           </>
         ),
         okText: "Remover pagamento",
