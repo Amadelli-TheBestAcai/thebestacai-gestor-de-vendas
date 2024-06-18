@@ -351,11 +351,6 @@ const Settings: React.FC<IProps> = ({ history }) => {
               >
                 Configurar TEF
               </Button>
-              <span style={{ marginLeft: "1rem" }}>
-                {settings.should_use_tef
-                  ? `Número PDV: ${storeCash.store_id}`
-                  : ""}
-              </span>
             </ContentButton>
             <ActionContainer>
               <Switch
