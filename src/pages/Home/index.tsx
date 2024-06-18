@@ -41,7 +41,7 @@ const Home: React.FC = () => {
   const { settings } = useSettings();
 
   const [loading, setLoading] = useState(true);
-  const [loadingPayment, setLoadinPayment] = useState(false);
+  const [loadingPayment, setLoadingPayment] = useState(false);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [flagCard, setFlagCard] = useState<number | null>(99);
@@ -110,11 +110,11 @@ const Home: React.FC = () => {
   }, []);
 
   const addPayment = async () => {
-    setLoadinPayment(true);
+    setLoadingPayment(true);
     const payment = sale.total_paid + currentPayment;
 
     if (currentPayment === 0) {
-      setLoadinPayment(false);
+      setLoadingPayment(false);
       return notification.warning({
         message: "Pagamento inválido!",
         description: `O pagamento não pode ser igual a 0`,
@@ -128,7 +128,7 @@ const Home: React.FC = () => {
       (paymentType !== 0 && payment > sale.total_sold - sale.discount) ||
       sale.total_paid >= sale.total_sold - sale.discount
     ) {
-      setLoadinPayment(false);
+      setLoadingPayment(false);
       return notification.warning({
         message: "Pagamento inválido!",
         description: `Não é possível adicionar um valor de pagamento maior que o valor total da venda.`,
@@ -137,7 +137,7 @@ const Home: React.FC = () => {
     }
 
     if ((paymentType === 1 || paymentType === 2) && !flagCard) {
-      setLoadinPayment(false);
+      setLoadingPayment(false);
       return notification.warning({
         message: "A bandeira do cartão é obrigatória",
         description: `Selecione uma opção para continuar com o pagamento`,
@@ -156,7 +156,7 @@ const Home: React.FC = () => {
         flagCard
       );
       if (errorOnAddPayment) {
-        setLoadinPayment(false);
+        setLoadingPayment(false);
         return notification.error({
           message: error_message || "Erro ao adicionar pagamento",
           duration: 5,
@@ -175,7 +175,7 @@ const Home: React.FC = () => {
         error_message,
       } = await window.Main.sale.addPayment(currentPayment, paymentType);
       if (errorOnAddPayment) {
-        setLoadinPayment(false);
+        setLoadingPayment(false);
         return notification.error({
           message: error_message || "Erro ao adicionar pagamento",
           duration: 5,
@@ -202,13 +202,15 @@ const Home: React.FC = () => {
       setFlagCard(99);
       setPaymentModal(false);
     }
-    setLoadinPayment(false);
+    setLoadingPayment(false);
   };
 
   const removePayment = async (payment: PaymentDto) => {
+    setLoadingPayment(true);
     const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
       await window.Main.sale.deletePayment(payment.id);
     if (errorOnDeletePayment) {
+      setLoadingPayment(false);
       return notification.error({
         message: "Erro ao remover pagamento",
         duration: 5,
@@ -222,6 +224,7 @@ const Home: React.FC = () => {
       const { has_internal_error: errorOnFinalizeTransaction, error_message } =
         await window.Main.tefFactory.finalizeTransaction([]);
       if (errorOnFinalizeTransaction) {
+        setLoadingPayment(false);
         return notification.error({
           message: error_message || "Erro ao finalizar transação",
           duration: 5,
@@ -229,6 +232,7 @@ const Home: React.FC = () => {
       }
     }
     setSale(updatedSale);
+    setLoadingPayment(false);
   };
 
   const handleOpenPayment = (
@@ -347,6 +351,7 @@ const Home: React.FC = () => {
                             flagCard={flagCard}
                             setFlagCard={setFlagCard}
                             loadingPayment={loadingPayment}
+                            setLoadingPayment={setLoadingPayment}
                           />
                         </PaymentsContent>
                         <CupomModal
@@ -367,8 +372,7 @@ const Home: React.FC = () => {
           </>
         )}
       </>
-      <RemoveTefModal
-      />
+      <RemoveTefModal />
     </Container>
   );
 };

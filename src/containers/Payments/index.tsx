@@ -29,7 +29,7 @@ import {
   OnlineIcon,
   Select,
   Option,
-  RemoveIcon
+  RemoveIcon,
 } from "./styles";
 import { FlagCard } from "../../models/enums/flagCard";
 import { Form } from "antd";
@@ -51,7 +51,8 @@ interface IProps {
   shouldViewValues?: boolean;
   shouldDisableButtons?: boolean;
   usingDelivery?: boolean;
-  loadingPayment?: boolean
+  loadingPayment?: boolean;
+  setLoadingPayment?: Dispatch<SetStateAction<boolean>>;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -68,7 +69,8 @@ const PaymentsContainer: React.FC<IProps> = ({
   usingDelivery,
   setFlagCard,
   flagCard,
-  loadingPayment
+  loadingPayment,
+  setLoadingPayment,
 }) => {
   const { onRemoveDiscount } = useSale();
   const { settings } = useSettings();
@@ -159,6 +161,8 @@ const PaymentsContainer: React.FC<IProps> = ({
             key={payment.id}
             payment={payment}
             removePayment={removePayment}
+            loadingPayment={loadingPayment}
+            setLoadingPayment={setLoadingPayment}
           />
         ))}
       </PaymentsInfoContainer>
@@ -192,7 +196,9 @@ const PaymentsContainer: React.FC<IProps> = ({
               {((sale.customer_nps_reward_discount || 0) + sale?.discount)
                 .toFixed(2)
                 .replace(".", ",")}
-              {sale?.discount > 0 && <RemoveIcon onClick={() => onRemoveDiscount(sale.id)}/>}
+              {sale?.discount > 0 && (
+                <RemoveIcon onClick={() => onRemoveDiscount(sale.id)} />
+              )}
             </strong>
           </ValueInfo>
           <ValueInfo>
@@ -221,10 +227,11 @@ const PaymentsContainer: React.FC<IProps> = ({
         footer={
           <Footer>
             <ButtonCancel onClick={onModalCancel}>Cancelar</ButtonCancel>
-            <ButtonSave loading={loadingPayment} onClick={addPayment}>{
-              settings?.should_use_tef
-                && modalTitle !== "Dinheiro" ? 'Solicitar Pagamento TEF'
-                : 'Salvar Alteração'}</ButtonSave>
+            <ButtonSave loading={loadingPayment} onClick={addPayment}>
+              {settings?.should_use_tef && modalTitle !== "Dinheiro"
+                ? "Solicitar Pagamento TEF"
+                : "Salvar Alteração"}
+            </ButtonSave>
           </Footer>
         }
       >
@@ -236,28 +243,29 @@ const PaymentsContainer: React.FC<IProps> = ({
           defaultValue={
             modalTitle !== "Dinheiro"
               ? sale?.total_sold -
-              sale?.total_paid -
-              sale?.discount -
-              (sale?.customer_nps_reward_discount || 0)
+                sale?.total_paid -
+                sale?.discount -
+                (sale?.customer_nps_reward_discount || 0)
               : 0
           }
         />
-        {(!settings?.should_use_tef) && (modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
-          <>
-            Bandeira:
-            <Form.Item>
-              <Select
-                placeholder="Escolha a opção"
-                onChange={(value) => setFlagCard(+value)}
-                defaultValue={"Outros"}
-              >
-                {FlagCard.map((_flagCard) => (
-                  <Option key={_flagCard.id}>{_flagCard.value}</Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </>
-        )}
+        {!settings?.should_use_tef &&
+          (modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
+            <>
+              Bandeira:
+              <Form.Item>
+                <Select
+                  placeholder="Escolha a opção"
+                  onChange={(value) => setFlagCard(+value)}
+                  defaultValue={"Outros"}
+                >
+                  {FlagCard.map((_flagCard) => (
+                    <Option key={_flagCard.id}>{_flagCard.value}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </>
+          )}
       </Modal>
     </Container>
   );
