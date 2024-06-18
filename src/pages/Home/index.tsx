@@ -81,7 +81,7 @@ const Home: React.FC = () => {
                   }
                 </p>
                 <p>Código NSU: {payment.code_nsu}</p>
-                <p>Está pendente, você gostaria de desfaze-lo?</p>
+                <p>Está pendente, você gostaria de desfazê-lo?</p>
               </>
             ),
             okText: "Manter Pagamento",
