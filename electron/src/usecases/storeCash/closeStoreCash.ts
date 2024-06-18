@@ -35,37 +35,40 @@ class CloseStoreCash implements IUseCaseFactory {
       StorageNames.Delivery_Sale
     ),
     private integrateProductWasteUseCase = integrateProductWaste
-  ) {}
+  ) { }
 
   async execute({
     amount_on_close,
     code,
   }: Request): Promise<StoreCashDto | undefined> {
     const isConnected = await checkInternet();
-    const currentStore = await this.storeRepository.getOne();
-    if (isConnected) {
-      let stepSales = (await this.stepSaleRepository.getAll()).filter(
-        (sale) => sale.enabled
-      );
-      if (stepSales.length > 0) {
-        throw new Error("Você ainda possui comandas pendentes");
-      }
-      const deliverySales = await this.deliverySaleRepository.getAll();
-      if (deliverySales.length > 0) {
-        throw new Error("Você ainda possui vendas pendentes no delivery");
-      }
-      const { has_internal_error: errorOnUpdateBalanceHistory } =
-        await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
-
-      if (errorOnUpdateBalanceHistory) {
-        throw new Error("Falha ao atualizar o histórico do caixa");
-      }
-
-      await odinApi.put(
-        `/store_cashes/${currentStore?.company_id}-${code}/close`,
-        { amount_on_close: +amount_on_close?.toString() || 0 }
-      );
+    if (!isConnected) {
+      throw new Error("Para fechar o caixa, é necessário estar conectado à internet. Por favor verifique sua conexão.")
     }
+    const currentStore = await this.storeRepository.getOne();
+
+    let stepSales = (await this.stepSaleRepository.getAll()).filter(
+      (sale) => sale.enabled
+    );
+    if (stepSales.length > 0) {
+      throw new Error("Você ainda possui comandas pendentes");
+    }
+    const deliverySales = await this.deliverySaleRepository.getAll();
+    if (deliverySales.length > 0) {
+      throw new Error("Você ainda possui vendas pendentes no delivery");
+    }
+    const { has_internal_error: errorOnUpdateBalanceHistory } =
+      await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
+
+    if (errorOnUpdateBalanceHistory) {
+      throw new Error("Falha ao atualizar o histórico do caixa");
+    }
+
+    await odinApi.put(
+      `/store_cashes/${currentStore?.company_id}-${code}/close`,
+      { amount_on_close: +amount_on_close?.toString() || 0 }
+    );
+
     const storeCash = await this.storeCashRepository.getOne();
     const updatedStoreCash = await this.storeCashRepository.update(
       storeCash?.id,
