@@ -796,33 +796,34 @@ const Sale: React.FC<IProps> = () => {
                                     </span>
                                   )}
                                 </Col>
-                                {hasPermission("sales.deleteTefPayment") && (
-                                  <Col sm={3}>
-                                    {_payment.code_nsu &&
-                                      _payment.tef_status_payment !== 1 &&
-                                      (loadingCancel ? (
-                                        <Spinner />
-                                      ) : (
-                                        <Tooltip
-                                          title={"Remover pagamento Tef"}
-                                        >
-                                          <CancelIcon
-                                            style={{
-                                              width: "1rem",
-                                              height: "1rem",
-                                              fill: "red",
-                                            }}
-                                            onClick={() => {
-                                              !loadingCancel &&
-                                                cancelPaymentTef(
-                                                  _payment.code_nsu
-                                                );
-                                            }}
-                                          />
-                                        </Tooltip>
-                                      ))}
-                                  </Col>
-                                )}
+                                {hasPermission("sales.deleteTefPayment") &&
+                                  _payment.type !== 6 && (
+                                    <Col sm={3}>
+                                      {_payment.code_nsu &&
+                                        _payment.tef_status_payment !== 1 &&
+                                        (loadingCancel ? (
+                                          <Spinner />
+                                        ) : (
+                                          <Tooltip
+                                            title={"Remover pagamento Tef"}
+                                          >
+                                            <CancelIcon
+                                              style={{
+                                                width: "1rem",
+                                                height: "1rem",
+                                                fill: "red",
+                                              }}
+                                              onClick={() => {
+                                                !loadingCancel &&
+                                                  cancelPaymentTef(
+                                                    _payment.code_nsu
+                                                  );
+                                              }}
+                                            />
+                                          </Tooltip>
+                                        ))}
+                                    </Col>
+                                  )}
                               </Row>
                             ))}
                           </Panel>
