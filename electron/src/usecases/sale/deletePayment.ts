@@ -30,7 +30,7 @@ class DeletePayment implements IUseCaseFactory {
     }
 
     const code_nsu = await this.checkPaymentNsuCode(sale, id)
-    let isConnectInternet = await checkInternet();
+    const isConnectInternet = await checkInternet();
     
     if (code_nsu && isConnectInternet) {
       const { has_internal_error, error_message } =
