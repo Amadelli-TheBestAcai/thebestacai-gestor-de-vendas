@@ -54,6 +54,8 @@ const Home: React.FC = () => {
     async function init() {
       setLoading(true);
 
+      const isConnected = await window.Main.hasInternet();
+
       const { response: _sale, has_internal_error: errorOnSale } =
         await window.Main.sale.getCurrentSale();
 
@@ -95,7 +97,45 @@ const Home: React.FC = () => {
               },
             },
             async onCancel() {
-              await removePayment(payment);
+              if (!isConnected) {
+                Modal.confirm({
+                  title: ` Durante remoção do pagamento, foi constatada a falta de conexão com
+                    a internet.`,
+                  content: (
+                    <>
+                      <p>Após a remoção do pagamento</p>{" "}
+                      <p>Código NSU: {payment?.code_nsu}</p>
+                      <p>Forma de pagamento: {PaymentType[payment.type]}</p>
+                      <p>
+                        Bandeira:
+                        {
+                          FlagCard.find((flag) => flag.id === payment.flag_card)
+                            ?.value
+                        }
+                      </p>
+                      <p>
+                        Valor: {payment.amount?.toFixed(2).replace(".", ",")}
+                      </p>
+                      <p>
+                        Você deve entrar no CPOSWEB e cancelar o pagamento
+                        removido.
+                      </p>
+                    </>
+                  ),
+                  okText: "Remover pagamento",
+                  okType: "default",
+                  centered: true,
+                  okButtonProps: {
+                    style: {
+                      background: "green",
+                      color: "white",
+                    },
+                  },
+                  async onOk() {
+                    await removePayment(payment);
+                  },
+                });
+              }
             },
           });
         });
@@ -220,21 +260,19 @@ const Home: React.FC = () => {
       (payment) => payment?.code_nsu
     );
 
-      if (isPaymentTef) {
-        const {
-          has_internal_error: errorOnFinalizeTransaction,
-          error_message,
-        } = await window.Main.tefFactory.finalizeTransaction([]);
-        if (errorOnFinalizeTransaction) {
-          setLoadingPayment(false);
-          return notification.error({
-            message: error_message || "Erro ao finalizar transação",
-            duration: 5,
-          });
-        }
+    if (isPaymentTef) {
+      const { has_internal_error: errorOnFinalizeTransaction, error_message } =
+        await window.Main.tefFactory.finalizeTransaction([]);
+      if (errorOnFinalizeTransaction) {
+        setLoadingPayment(false);
+        return notification.error({
+          message: error_message || "Erro ao finalizar transação",
+          duration: 5,
+        });
       }
-      setSale(updatedSale);
-      setLoadingPayment(false);
+    }
+    setSale(updatedSale);
+    setLoadingPayment(false);
   };
 
   const handleOpenPayment = (
