@@ -39,13 +39,28 @@ const Payment: React.FC<IProps> = ({
       content: (
         <>
           <p>Este pagamento foi autorizado via TEF</p>
-          <p>Código NSU: {payment?.code_nsu}</p>
-          <p>Forma de pagamento: {PaymentType[payment.type]}</p>
-          <p>
-            Bandeira:
-            {FlagCard.find((flag) => flag.id === payment.flag_card)?.value}
-          </p>
-          <p>Valor: {payment.amount?.toFixed(2).replace(".", ",")}</p>
+          <RowPaymentTefHeader>
+                      <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
+                      <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
+                      <ColPaymentTef sm={6}>Valor</ColPaymentTef>
+                      <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
+                    </RowPaymentTefHeader>
+                    <RowPaymentTef>
+                      <ColPaymentTef sm={6}>{payment?.code_nsu}</ColPaymentTef>
+                      <ColPaymentTef sm={6}>
+                        {PaymentType[payment?.type]}
+                      </ColPaymentTef>
+                      <ColPaymentTef sm={6}>
+                        {payment?.amount?.toFixed(2).replace(".", ",")}
+                      </ColPaymentTef>
+                      <ColPaymentTef sm={6}>
+                        {
+                          FlagCard?.find(
+                            (flag) => flag?.id === payment?.flag_card
+                          )?.value
+                        }
+                      </ColPaymentTef>
+                    </RowPaymentTef>
           <p>Tem certeza que deseja excluí-lo?</p>
         </>
       ),
@@ -73,17 +88,17 @@ const Payment: React.FC<IProps> = ({
                       <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
                     </RowPaymentTefHeader>
                     <RowPaymentTef>
-                      <ColPaymentTef sm={6}>{payment.code_nsu}</ColPaymentTef>
+                      <ColPaymentTef sm={6}>{payment?.code_nsu}</ColPaymentTef>
                       <ColPaymentTef sm={6}>
-                        {PaymentType[payment.type]}
+                        {PaymentType[payment?.type]}
                       </ColPaymentTef>
                       <ColPaymentTef sm={6}>
-                        {payment.amount.toFixed(2)}
+                      {payment?.amount?.toFixed(2)?.replace(".", ",")}
                       </ColPaymentTef>
                       <ColPaymentTef sm={6}>
                         {
-                          FlagCard.find(
-                            (flag) => flag.id === payment.flag_card
+                          FlagCard?.find(
+                            (flag) => flag?.id === payment?.flag_card
                           )?.value
                         }
                       </ColPaymentTef>
