@@ -1,6 +1,8 @@
 import styled, { css } from "styled-components";
 import { HotKeys } from "react-hotkeys";
 
+import { Row as RowAnt, Col as ColAnt } from "antd";
+
 export const Container = styled(HotKeys)`
   display: flex;
   flex-direction: column;
@@ -96,3 +98,19 @@ export const RegisterContent = styled.div`
   width: 30%;
   height: 100%;
 `;
+
+export const RowPaymentTefHeader = styled(RowAnt)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: var(--white);
+  background: var(--gray-250);
+`;
+
+export const RowPaymentTef = styled(RowAnt)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;
+
+export const ColPaymentTef = styled(ColAnt)``;

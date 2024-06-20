@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { TrashRestoreAlt } from "../../styles/Icons";
 
-import { Row, Col } from "antd";
+import { Row as RowAnt, Col as ColAnt } from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -18,7 +18,7 @@ export const Content = styled.div`
   height: 70%;
 `;
 
-export const InfoPayment = styled(Row)`
+export const InfoPayment = styled(RowAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,7 +45,7 @@ export const InfoPayment = styled(Row)`
   }
 `;
 
-export const Column = styled(Col)`
+export const Column = styled(ColAnt)`
   text-align: center;
 `;
 
@@ -70,3 +70,19 @@ export const DeleteIcon = styled(TrashRestoreAlt)`
     height: 0.8rem;
   }
 `;
+
+export const RowPaymentTefHeader = styled(RowAnt)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: var(--white);
+  background: var(--gray-250);
+`;
+
+export const RowPaymentTef = styled(RowAnt)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;
+
+export const ColPaymentTef = styled(ColAnt)``;

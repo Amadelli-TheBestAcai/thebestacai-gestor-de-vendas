@@ -29,6 +29,9 @@ import {
   PaymentsContent,
   RegisterContent,
   GeneralContent,
+  RowPaymentTefHeader,
+  RowPaymentTef,
+  ColPaymentTef,
 } from "./styles";
 
 import { PaymentType } from "../../models/enums/paymentType";
@@ -74,16 +77,29 @@ const Home: React.FC = () => {
             title: `Você possui ${index + 1} pagamento(s) TEF pendente(s)`,
             content: (
               <>
-                <p>O pagamento de valor: R$ {payment.amount.toFixed(2)}</p>
-                <p>
-                  Bandeira:{" "}
-                  {
-                    FlagCard.find((flag) => flag.id === payment.flag_card)
-                      ?.value
-                  }
-                </p>
-                <p>Código NSU: {payment.code_nsu}</p>
-                <p>Está pendente, você gostaria de desfazê-lo?</p>
+                <p>O pagamento:</p>
+                <RowPaymentTefHeader>
+                  <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
+                  <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
+                  <ColPaymentTef sm={6}>Valor</ColPaymentTef>
+                  <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
+                </RowPaymentTefHeader>
+                <RowPaymentTef>
+                  <ColPaymentTef sm={6}>{payment.code_nsu}</ColPaymentTef>
+                  <ColPaymentTef sm={6}>
+                    {PaymentType[payment.type]}
+                  </ColPaymentTef>
+                  <ColPaymentTef sm={6}>
+                    {payment.amount.toFixed(2)}
+                  </ColPaymentTef>
+                  <ColPaymentTef sm={6}>
+                    {
+                      FlagCard.find((flag) => flag.id === payment.flag_card)
+                        ?.value
+                    }
+                  </ColPaymentTef>
+                </RowPaymentTef>
+                <p>Está pendente. Você gostaria de desfazê-lo?</p>
               </>
             ),
             okText: "Manter Pagamento",
@@ -96,6 +112,7 @@ const Home: React.FC = () => {
                 color: "white",
               },
             },
+            width: "50%",
             async onCancel() {
               if (!isConnected) {
                 Modal.confirm({
@@ -103,34 +120,46 @@ const Home: React.FC = () => {
                     a internet.`,
                   content: (
                     <>
-                      <p>Após a remoção do pagamento</p>{" "}
-                      <p>Código NSU: {payment?.code_nsu}</p>
-                      <p>Forma de pagamento: {PaymentType[payment.type]}</p>
-                      <p>
-                        Bandeira:
-                        {
-                          FlagCard.find((flag) => flag.id === payment.flag_card)
-                            ?.value
-                        }
-                      </p>
-                      <p>
-                        Valor: {payment.amount?.toFixed(2).replace(".", ",")}
-                      </p>
-                      <p>
-                        Você deve entrar no CPOSWEB e cancelar o pagamento
-                        removido.
+                      <p>Após a remoção do pagamento:</p>{" "}
+                      <RowPaymentTefHeader>
+                        <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
+                        <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
+                        <ColPaymentTef sm={6}>Valor</ColPaymentTef>
+                        <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
+                      </RowPaymentTefHeader>
+                      <RowPaymentTef>
+                        <ColPaymentTef sm={6}>{payment.code_nsu}</ColPaymentTef>
+                        <ColPaymentTef sm={6}>
+                          {PaymentType[payment.type]}
+                        </ColPaymentTef>
+                        <ColPaymentTef sm={6}>
+                          {payment.amount.toFixed(2)}
+                        </ColPaymentTef>
+                        <ColPaymentTef sm={6}>
+                          {
+                            FlagCard.find(
+                              (flag) => flag.id === payment.flag_card
+                            )?.value
+                          }
+                        </ColPaymentTef>
+                      </RowPaymentTef>
+                      <p style={{ color: "var(--red-600)" }}>
+                        Você deve entrar no <b>CPOSWEB</b> e cancelar o
+                        pagamento removido.
                       </p>
                     </>
                   ),
                   okText: "Remover pagamento",
                   okType: "default",
                   centered: true,
+                  cancelText: "Manter Pagamento",
                   okButtonProps: {
                     style: {
-                      background: "green",
+                      background: "var(--red-600)",
                       color: "white",
                     },
                   },
+                  width: "50%",
                   async onOk() {
                     await removePayment(payment);
                   },
