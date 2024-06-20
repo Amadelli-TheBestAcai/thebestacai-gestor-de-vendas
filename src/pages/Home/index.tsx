@@ -135,6 +135,8 @@ const Home: React.FC = () => {
                     await removePayment(payment);
                   },
                 });
+              } else {
+                await removePayment(payment);
               }
             },
           });
