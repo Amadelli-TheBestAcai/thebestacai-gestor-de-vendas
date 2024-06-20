@@ -290,18 +290,6 @@ const Home: React.FC = () => {
     const isPaymentTef = updatedSale?.payments?.some(
       (payment) => payment?.code_nsu
     );
-
-    if (isPaymentTef) {
-      const { has_internal_error: errorOnFinalizeTransaction, error_message } =
-        await window.Main.tefFactory.finalizeTransaction([]);
-      if (errorOnFinalizeTransaction) {
-        setLoadingPayment(false);
-        return notification.error({
-          message: error_message || "Erro ao finalizar transação",
-          duration: 5,
-        });
-      }
-    }
     setSale(updatedSale);
     setLoadingPayment(false);
   };
