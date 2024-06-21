@@ -38,6 +38,7 @@ import {
   CustomerVoucherDTO,
 } from "../models/dtos";
 import { redeemReward } from "../usecases/sale/redeemReward";
+import { PaymentTefCancelType } from "../models/enums/PaymentTefCancelType";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -155,6 +156,6 @@ export const saleFactory = {
     }),
   getCurrentCampaign: async () =>
     await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
-  updateStatusPaymentTef: async (payment_id: number, code_nsu: string) =>
-    await useCaseFactory.execute<CampaignDto>(updateStatusPaymentTef, { payment_id, code_nsu }),
+  updateStatusPaymentTef: async (payment_id: number, code_nsu: string, justify: string, payment_tef_cancel_type: PaymentTefCancelType) =>
+    await useCaseFactory.execute<CampaignDto>(updateStatusPaymentTef, { payment_id, code_nsu, justify, payment_tef_cancel_type }),
 };
