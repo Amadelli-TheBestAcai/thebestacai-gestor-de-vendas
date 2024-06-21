@@ -51,14 +51,18 @@ import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
 import { FlagCard } from "../../models/enums/flagCard";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
+import { PaymentDto } from "../../models/dtos/payment";
+import { PaymentTefCancelType } from "../../models/enums/paymentTefCancelType";
 
 type IProps = RouteComponentProps;
 
+const CANCELADO = PaymentTefCancelType.CANCELADO;
+
 const Sale: React.FC<IProps> = () => {
   const [formCancelJustify] = Form.useForm();
+  const [formRemoveTef] = Form.useForm();
   const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
-  const [nfceCancelJustify, setNfceCancelJustify] = useState("");
   const [selectedSale, setSelectedSale] = useState<SaleFromApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCancel, setLoadingCancel] = useState(false);
@@ -69,7 +73,6 @@ const Sale: React.FC<IProps> = () => {
   const { hasPermission } = useUser();
   const [nfceModal, setNfceModal] = useState(false);
   const [modalState, setModalState] = useState(false);
-  const [emitingNfe, setEmitingNfe] = useState(false);
   const { store } = useStore();
 
   useEffect(() => {
@@ -135,9 +138,6 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) =>
-              setNfceCancelJustify(value || "")
-            }
           />
         </Form.Item>
       </Form>
@@ -259,7 +259,6 @@ const Sale: React.FC<IProps> = () => {
     };
 
     try {
-      setEmitingNfe(true);
       setIsLoading(true);
 
       const {
@@ -288,7 +287,6 @@ const Sale: React.FC<IProps> = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setEmitingNfe(false);
       setModalState(false);
       setIsLoading(false);
       setShouldSearch(true);
@@ -319,9 +317,6 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) =>
-              setNfceCancelJustify(value || "")
-            }
           />
         </Form.Item>
       </Form>
@@ -518,7 +513,66 @@ const Sale: React.FC<IProps> = () => {
     }
   };
 
-  const cancelPaymentTef = async (code_nsu: string) => {
+  const cancelPaymentTefConfirm = async (payment) => {
+    Modal.confirm({
+      title: `Deseja cancelar este pagamento TEF?`,
+      content: (
+        <>
+          <p style={{ margin: "1rem 0" }}>
+            Caso deseje cancelar este pagamente, é necessário que digite uma
+            justificativa.
+          </p>
+          <Form form={formRemoveTef}>
+            <Form.Item
+              label=""
+              name="tefRemoveJustify"
+              rules={[
+                { required: true, message: "Campo obrigatório" },
+                {
+                  min: 15,
+                  message: "A justificativa deve ter no minimo 15 caracteres",
+                },
+                {
+                  max: 255,
+                  message: "A justificativa deve ter no máximo 255 caracteres",
+                },
+              ]}
+            >
+              <Textarea
+                name="tefRemoveJustify"
+                placeholder="Justificativa - 15 a 255 caracteres"
+                minLength={15}
+                maxLength={255}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          </Form>
+          <p>Gostaria de manter o pagamento ou cancela-lo?</p>
+        </>
+      ),
+      okText: "Manter Pagamento",
+      okType: "default",
+      cancelText: "Cancelar Pagamento",
+      centered: true,
+      okButtonProps: {
+        style: {
+          background: "green",
+          color: "white",
+        },
+      },
+      width: "50%",
+      async onCancel() {
+        await formRemoveTef.validateFields();
+        cancelTefPayment(
+          payment,
+          formRemoveTef.getFieldValue("tefRemoveJustify")
+        );
+        await formRemoveTef.resetFields();
+      },
+    });
+  };
+
+  const cancelTefPayment = async (payment: PaymentDto, justify: string) => {
     setLoadingCancel(true);
     const {
       response,
@@ -533,6 +587,14 @@ const Sale: React.FC<IProps> = () => {
         duration: 5,
       });
     }
+
+    await window.Main.tefFactory.insertPaymentTefAudit(
+      payment.type,
+      CANCELADO,
+      selectedSale.id,
+      justify,
+      payment.code_nsu
+    );
 
     const {
       has_internal_error: errorOnPrintCupomTef,
@@ -568,7 +630,9 @@ const Sale: React.FC<IProps> = () => {
       error_message: error_message_updateStatusPaymentTef,
     } = await window.Main.sale.updateStatusPaymentTef(
       selectedSale.id,
-      code_nsu
+      payment.code_nsu,
+      justify,
+      CANCELADO
     );
 
     if (errorUpdateStatusPaymentTef) {
@@ -815,8 +879,8 @@ const Sale: React.FC<IProps> = () => {
                                               }}
                                               onClick={() => {
                                                 !loadingCancel &&
-                                                  cancelPaymentTef(
-                                                    _payment.code_nsu
+                                                  cancelPaymentTefConfirm(
+                                                    _payment
                                                   );
                                               }}
                                             />
