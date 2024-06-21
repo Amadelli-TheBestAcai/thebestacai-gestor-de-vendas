@@ -35,8 +35,7 @@ class TransactionsTef implements IUseCaseFactory {
         }
 
         if (!response) {
-            console.log('object');
-            throw new Error("Não foi encontrado as informações do PIN PAD, verifique se ele está conectado ao computador")
+            throw new Error("Não foi possível encontrar as informações da maquininha (PIN PAD). Verifique se ela está conectada ao computador.")
         }
 
         let endpoint = '';
