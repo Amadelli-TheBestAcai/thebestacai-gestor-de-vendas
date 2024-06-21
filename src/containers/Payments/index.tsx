@@ -39,7 +39,7 @@ import { PaymentDto } from "../../models/dtos/payment";
 
 interface IProps {
   sale: SaleDto;
-  removePayment: (payment: PaymentDto) => Promise<void>;
+  removePayment: (payment: PaymentDto, justify?: string) => Promise<void>;
   addPayment: () => Promise<void>;
   handleOpenPayment: (type: number, title: string, flag_card?: number) => void;
   setCurrentPayment: Dispatch<SetStateAction<number>>;

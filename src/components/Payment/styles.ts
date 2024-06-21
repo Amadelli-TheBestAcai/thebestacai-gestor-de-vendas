@@ -2,7 +2,9 @@ import styled from "styled-components";
 
 import { TrashRestoreAlt } from "../../styles/Icons";
 
-import { Row as RowAnt, Col as ColAnt } from "antd";
+import { Row as RowAnt, Col as ColAnt, Input as InputAnt } from "antd";
+
+const { TextArea } = InputAnt;
 
 export const Container = styled.div`
   display: flex;
@@ -86,3 +88,22 @@ export const RowPaymentTef = styled(RowAnt)`
 `;
 
 export const ColPaymentTef = styled(ColAnt)``;
+
+export const Textarea = styled(TextArea)`
+  height: 3.7rem;
+  width: 20%;
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      height: 3.4rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    height: 3rem;
+    font-size: 0.7rem;
+  }
+`;

@@ -6,7 +6,7 @@ import { FlagCard } from "../../models/enums/flagCard";
 import { PaymentType } from "../../models/enums/paymentType";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
 
-import { notification } from "antd";
+import { notification, Form } from "antd";
 
 import {
   ButtonRemove,
@@ -16,17 +16,22 @@ import {
   HeaderCol,
   Row,
   Col,
+  Textarea,
 } from "./styles";
 
 const RemoveTefModal: React.FC = () => {
+  const [formRemoveTef] = Form.useForm();
   const { sale, setSale, visibleRemoveTefModal, setVisibleRemoveTefModal } =
     useSale();
-    const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
 
   const paymentsTef = sale.payments.filter((_payment) => _payment.code_nsu);
 
   const removePaymentsTef = async () => {
-    setLoading(true)
+    await formRemoveTef.validateFields();
+    setLoading(true);
+    const justify = await formRemoveTef.getFieldValue("tefRemoveJustify");
+    console.log(justify);
     for (const _payment of paymentsTef) {
       const {
         response: updatedSale,
@@ -34,7 +39,7 @@ const RemoveTefModal: React.FC = () => {
       } = await window.Main.sale.deletePayment(_payment.id);
 
       if (errorOnDeletePayment) {
-        setLoading(false)
+        setLoading(false);
         notification.error({
           message: "Erro ao remover pagamento",
           duration: 5,
@@ -44,7 +49,8 @@ const RemoveTefModal: React.FC = () => {
       setSale(updatedSale);
     }
 
-    setLoading(false)
+    setLoading(false);
+    formRemoveTef.resetFields();
     setVisibleRemoveTefModal(false);
   };
 
@@ -90,7 +96,36 @@ const RemoveTefModal: React.FC = () => {
             <Col sm={4}>{TefPaymentType[_payment?.tef_status_payment]}</Col>
           </Row>
         ))}
-        <b>
+        <p style={{ margin: "1rem 0" }}>
+          Caso deseje remover os pagamentos, é necessário que digite uma
+          justificativa.
+        </p>
+        <Form form={formRemoveTef}>
+          <Form.Item
+            label=""
+            name="tefRemoveJustify"
+            rules={[
+              { required: true, message: "Campo obrigatório" },
+              {
+                min: 15,
+                message: "A justificativa deve ter no minimo 15 caracteres",
+              },
+              {
+                max: 255,
+                message: "A justificativa deve ter no máximo 255 caracteres",
+              },
+            ]}
+          >
+            <Textarea
+              name="tefRemoveJustify"
+              placeholder="Justificativa - 15 a 255 caracteres"
+              minLength={15}
+              maxLength={255}
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </Form>
+        <b style={{ margin: "1rem 0" }}>
           Após a remoção dos pagamento TEF você deve entrar no CPOSWEB e
           verificar os pagamentos a serem cancelados.
         </b>

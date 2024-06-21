@@ -14,7 +14,7 @@ import { StoreCashDto } from "../../models/dtos/storeCash";
 import { useSale } from "../../hooks/useSale";
 import { PaymentDto } from "../../models/dtos/payment";
 
-import { notification, Modal } from "antd";
+import { notification, Modal, Form } from "antd";
 import { FlagCard } from "../../models/enums/flagCard";
 import {
   Container,
@@ -32,6 +32,7 @@ import {
   RowPaymentTefHeader,
   RowPaymentTef,
   ColPaymentTef,
+  Textarea,
 } from "./styles";
 
 import { PaymentType } from "../../models/enums/paymentType";
@@ -42,6 +43,7 @@ const Home: React.FC = () => {
   const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
     useSale();
   const { settings } = useSettings();
+  const [formRemoveTef] = Form.useForm();
 
   const [loading, setLoading] = useState(true);
   const [loadingPayment, setLoadingPayment] = useState(false);
@@ -69,7 +71,9 @@ const Home: React.FC = () => {
         });
         return;
       }
-      const isPaymentTef = _sale.payments.filter((payment) => payment.code_nsu);
+      const isPaymentTef = _sale.payments.filter(
+        (payment) => payment.code_nsu
+      );
 
       if (isPaymentTef.length) {
         isPaymentTef.forEach((payment, index) => {
@@ -77,7 +81,7 @@ const Home: React.FC = () => {
             title: `Você possui ${index + 1} pagamento(s) TEF pendente(s)`,
             content: (
               <>
-                <p>O pagamento:</p>
+                <p>O seguinte pagamento está pendente:</p>
                 <RowPaymentTefHeader>
                   <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
                   <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
@@ -90,7 +94,7 @@ const Home: React.FC = () => {
                     {PaymentType[payment?.type]}
                   </ColPaymentTef>
                   <ColPaymentTef sm={6}>
-                  {payment?.amount?.toFixed(2)?.replace(".", ",")}
+                    {payment?.amount?.toFixed(2)?.replace(".", ",")}
                   </ColPaymentTef>
                   <ColPaymentTef sm={6}>
                     {
@@ -99,7 +103,38 @@ const Home: React.FC = () => {
                     }
                   </ColPaymentTef>
                 </RowPaymentTef>
-                <p>Está pendente. Você gostaria de desfazê-lo?</p>
+                <p style={{ margin: "1rem 0" }}>
+                  Caso deseje desfazer este pagamente, é necessário que digite
+                  uma justificativa.
+                </p>
+                <Form form={formRemoveTef}>
+                  <Form.Item
+                    label=""
+                    name="tefRemoveJustify"
+                    rules={[
+                      { required: true, message: "Campo obrigatório" },
+                      {
+                        min: 15,
+                        message:
+                          "A justificativa deve ter no minimo 15 caracteres",
+                      },
+                      {
+                        max: 255,
+                        message:
+                          "A justificativa deve ter no máximo 255 caracteres",
+                      },
+                    ]}
+                  >
+                    <Textarea
+                      name="tefRemoveJustify"
+                      placeholder="Justificativa - 15 a 255 caracteres"
+                      minLength={15}
+                      maxLength={255}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Form>
+                <p>Gostaria de manter o pagamento ou desfazê-lo?</p>
               </>
             ),
             okText: "Manter Pagamento",
@@ -114,13 +149,16 @@ const Home: React.FC = () => {
             },
             width: "50%",
             async onCancel() {
+              await formRemoveTef.validateFields();
               if (!isConnected) {
                 Modal.confirm({
                   title: ` Durante remoção do pagamento, foi constatada a falta de conexão com
                     a internet.`,
                   content: (
                     <>
-                      <p>Após a remoção do pagamento:</p>{" "}
+                      <p>
+                        É importante lembrar que após a remoção do pagamento:
+                      </p>{" "}
                       <RowPaymentTefHeader>
                         <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
                         <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
@@ -128,12 +166,14 @@ const Home: React.FC = () => {
                         <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
                       </RowPaymentTefHeader>
                       <RowPaymentTef>
-                        <ColPaymentTef sm={6}>{payment?.code_nsu}</ColPaymentTef>
+                        <ColPaymentTef sm={6}>
+                          {payment?.code_nsu}
+                        </ColPaymentTef>
                         <ColPaymentTef sm={6}>
                           {PaymentType[payment?.type]}
                         </ColPaymentTef>
                         <ColPaymentTef sm={6}>
-                        {payment?.amount?.toFixed(2)?.replace(".", ",")}
+                          {payment?.amount?.toFixed(2)?.replace(".", ",")}
                         </ColPaymentTef>
                         <ColPaymentTef sm={6}>
                           {
@@ -161,11 +201,19 @@ const Home: React.FC = () => {
                   },
                   width: "50%",
                   async onOk() {
-                    await removePayment(payment);
+                    await removePayment(
+                      payment,
+                      formRemoveTef.getFieldValue("tefRemoveJustify")
+                    );
+                    await formRemoveTef.resetFields();
                   },
                 });
               } else {
-                await removePayment(payment);
+                await removePayment(
+                  payment,
+                  formRemoveTef.getFieldValue("tefRemoveJustify")
+                );
+                await formRemoveTef.resetFields();
               }
             },
           });
@@ -276,7 +324,8 @@ const Home: React.FC = () => {
     setLoadingPayment(false);
   };
 
-  const removePayment = async (payment: PaymentDto) => {
+  const removePayment = async (payment: PaymentDto, justify?: string) => {
+    console.log(justify);
     setLoadingPayment(true);
     const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
       await window.Main.sale.deletePayment(payment.id);
@@ -289,15 +338,19 @@ const Home: React.FC = () => {
     }
     const isConnected = await window.Main.hasInternet();
 
-    const hasTefPaymentInSale  = sale?.payments?.some(
+    const hasTefPaymentInSale = sale?.payments?.some(
       (payment) => payment?.code_nsu
     );
 
-    const hasNoTefPaymentInUpdatedSale  = updatedSale?.payments?.every(
+    const hasNoTefPaymentInUpdatedSale = updatedSale?.payments?.every(
       (payment) => !payment?.code_nsu
     );
 
-    if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale && isConnected) {
+    if (
+      hasTefPaymentInSale &&
+      hasNoTefPaymentInUpdatedSale &&
+      isConnected
+    ) {
       const { has_internal_error: errorOnFinalizeTransaction, error_message } =
         await window.Main.tefFactory.finalizeTransaction([]);
       if (errorOnFinalizeTransaction) {

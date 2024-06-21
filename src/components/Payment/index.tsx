@@ -6,7 +6,7 @@ import { FlagCard } from "../../models/enums/flagCard";
 
 import Spinner from "../Spinner";
 
-import { Tooltip, Modal, notification } from "antd";
+import { Tooltip, Modal, notification, Form } from "antd";
 
 import {
   Container,
@@ -18,11 +18,12 @@ import {
   RowPaymentTefHeader,
   ColPaymentTef,
   RowPaymentTef,
+  Textarea,
 } from "./styles";
 
 type IProps = {
   payment: PaymentDto;
-  removePayment: (payment: PaymentDto) => Promise<void>;
+  removePayment: (payment: PaymentDto, justify?: string) => Promise<void>;
   loadingPayment: boolean;
   setLoadingPayment: Dispatch<SetStateAction<boolean>>;
 };
@@ -33,6 +34,8 @@ const Payment: React.FC<IProps> = ({
   loadingPayment,
   setLoadingPayment,
 }) => {
+  const [formRemoveTef] = Form.useForm();
+
   const deletePaymentConfirm = () => {
     Modal.confirm({
       title: "Excluir Pagamento",
@@ -40,28 +43,52 @@ const Payment: React.FC<IProps> = ({
         <>
           <p>Este pagamento foi autorizado via TEF</p>
           <RowPaymentTefHeader>
-                      <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
-                      <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
-                      <ColPaymentTef sm={6}>Valor</ColPaymentTef>
-                      <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
-                    </RowPaymentTefHeader>
-                    <RowPaymentTef>
-                      <ColPaymentTef sm={6}>{payment?.code_nsu}</ColPaymentTef>
-                      <ColPaymentTef sm={6}>
-                        {PaymentType[payment?.type]}
-                      </ColPaymentTef>
-                      <ColPaymentTef sm={6}>
-                        {payment?.amount?.toFixed(2).replace(".", ",")}
-                      </ColPaymentTef>
-                      <ColPaymentTef sm={6}>
-                        {
-                          FlagCard?.find(
-                            (flag) => flag?.id === payment?.flag_card
-                          )?.value
-                        }
-                      </ColPaymentTef>
-                    </RowPaymentTef>
-          <p>Tem certeza que deseja desfazê-lo?</p>
+            <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
+            <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
+            <ColPaymentTef sm={6}>Valor</ColPaymentTef>
+            <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
+          </RowPaymentTefHeader>
+          <RowPaymentTef>
+            <ColPaymentTef sm={6}>{payment?.code_nsu}</ColPaymentTef>
+            <ColPaymentTef sm={6}>{PaymentType[payment?.type]}</ColPaymentTef>
+            <ColPaymentTef sm={6}>
+              {payment?.amount?.toFixed(2).replace(".", ",")}
+            </ColPaymentTef>
+            <ColPaymentTef sm={6}>
+              {FlagCard?.find((flag) => flag?.id === payment?.flag_card)?.value}
+            </ColPaymentTef>
+          </RowPaymentTef>
+          <p style={{ margin: "1rem 0" }}>
+            Caso deseje excluir este pagamente, é necessário que digite uma
+            justificativa.
+          </p>
+          <Form form={formRemoveTef}>
+            <Form.Item
+              label=""
+              name="tefRemoveJustify"
+              rules={[
+                { required: true, message: "Campo obrigatório" },
+                {
+                  min: 15,
+                  message: "A justificativa deve ter no minimo 15 caracteres",
+                },
+                {
+                  max: 255,
+                  message: "A justificativa deve ter no máximo 255 caracteres",
+                },
+              ]}
+            >
+              <Textarea
+                name="tefRemoveJustify"
+                placeholder="Justificativa - 15 a 255 caracteres"
+                minLength={15}
+                maxLength={255}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          </Form>
+
+          <p>Tem certeza que deseja excluí-lo?</p>
         </>
       ),
       okText: "Sim",
@@ -70,6 +97,7 @@ const Payment: React.FC<IProps> = ({
       centered: true,
       width: "50%",
       async onOk() {
+        await formRemoveTef.validateFields();
         setLoadingPayment(true);
         try {
           {
@@ -94,7 +122,7 @@ const Payment: React.FC<IProps> = ({
                         {PaymentType[payment?.type]}
                       </ColPaymentTef>
                       <ColPaymentTef sm={6}>
-                      {payment?.amount?.toFixed(2)?.replace(".", ",")}
+                        {payment?.amount?.toFixed(2)?.replace(".", ",")}
                       </ColPaymentTef>
                       <ColPaymentTef sm={6}>
                         {
@@ -105,8 +133,8 @@ const Payment: React.FC<IProps> = ({
                       </ColPaymentTef>
                     </RowPaymentTef>
                     <p style={{ color: "var(--red-600)" }}>
-                      Você deve entrar no <b>CPOSWEB</b> e cancelar o
-                      pagamento removido.
+                      Você deve entrar no <b>CPOSWEB</b> e cancelar o pagamento
+                      removido.
                     </p>
                   </>
                 ),
@@ -122,12 +150,20 @@ const Payment: React.FC<IProps> = ({
                 },
                 width: "50%",
                 async onOk() {
-                  await removePayment(payment);
+                  await removePayment(
+                    payment,
+                    formRemoveTef.getFieldValue("tefRemoveJustify")
+                  );
+                  await formRemoveTef.resetFields();
                 },
               });
             } else {
-              await removePayment(payment),
-                document.getElementById("balanceInput")?.focus();
+              await removePayment(
+                payment,
+                formRemoveTef.getFieldValue("tefRemoveJustify")
+              );
+              await formRemoveTef.resetFields();
+              document.getElementById("balanceInput")?.focus();
               notification.success({
                 message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
                 duration: 5,
