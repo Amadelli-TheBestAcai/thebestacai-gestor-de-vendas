@@ -287,6 +287,8 @@ const Home: React.FC = () => {
         duration: 5,
       });
     }
+    const isConnected = await window.Main.hasInternet();
+
     const hasTefPaymentInSale  = sale?.payments?.some(
       (payment) => payment?.code_nsu
     );
@@ -295,7 +297,7 @@ const Home: React.FC = () => {
       (payment) => !payment?.code_nsu
     );
 
-    if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale) {
+    if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale && isConnected) {
       const { has_internal_error: errorOnFinalizeTransaction, error_message } =
         await window.Main.tefFactory.finalizeTransaction([]);
       if (errorOnFinalizeTransaction) {
