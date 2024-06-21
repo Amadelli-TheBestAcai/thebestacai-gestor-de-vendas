@@ -335,6 +335,27 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
             duration: 5,
           });
     }
+
+    const {
+      has_internal_error: errorOnIntegrationPaymentTefAudit,
+      error_message: errorMessageOnIntegrationPaymentTefAudit,
+    } = await window.Main.tefFactory.integrationPaymentTefAudit();
+
+    if (errorOnIntegrationPaymentTefAudit) {
+      errorMessageOnIntegrationPaymentTefAudit
+        ? notification.warning({
+          message: errorMessageOnIntegrationPaymentTefAudit,
+          duration: 5,
+        })
+        : notification.error({
+          message:
+            errorMessageOnIntegrationPaymentTefAudit ||
+            "Erro ao integrar auditoria de pagamentos TEF",
+          duration: 5,
+        });
+    }
+
+
   };
 
   return (
