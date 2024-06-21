@@ -1,11 +1,15 @@
+import { PaymentTefCancelType } from "../models/enums/PaymentTefCancelType";
 import { PaymentType } from "../models/enums/paymentType";
+import { PaymentTefAuditDto } from "../models/gestor/paymentTefAudit";
 import {
     configurationTEF,
     finalizeTransaction,
     getPathCupom,
     transactionsTef,
     cancelPaymentTef,
-    findPinPad
+    findPinPad,
+    insertPaymentTefAudit,
+    integrationPaymentTefAudit
 } from "../usecases/linxTef";
 import { removeTransaction } from "../usecases/linxTef/removeTransation";
 import { reprintCoupon } from "../usecases/linxTef/reprintCoupon";
@@ -31,4 +35,16 @@ export const tefFactory = {
         await useCaseFactory.execute<string>(cancelPaymentTef),
     findPinPad: async () =>
         await useCaseFactory.execute<string>(findPinPad),
+    insertPaymentTefAudit: async (
+        type: PaymentType,
+        payment_tef_cancel_type: PaymentTefCancelType,
+        price_sell: number,
+        sale_id: number,
+        justify: string,
+        code_nsu: string) =>
+        await useCaseFactory.execute<PaymentTefAuditDto>(insertPaymentTefAudit, {
+            type, payment_tef_cancel_type, price_sell, sale_id, justify, code_nsu
+        }),
+    integrationPaymentTefAudit: async () =>
+        await useCaseFactory.execute<void>(integrationPaymentTefAudit),
 };
