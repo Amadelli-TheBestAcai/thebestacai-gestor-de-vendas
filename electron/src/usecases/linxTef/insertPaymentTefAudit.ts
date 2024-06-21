@@ -11,7 +11,6 @@ import { integrationPaymentTefAudit } from "./integrationPaymentTEFAUdit";
 interface Request {
   type: PaymentType;
   payment_tef_cancel_type: PaymentTefCancelType;
-  price_sell: number,
   sale_id: number,
   justify: string,
   code_nsu: string
