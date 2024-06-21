@@ -5,6 +5,7 @@ import { useSale } from "../../hooks/useSale";
 import { FlagCard } from "../../models/enums/flagCard";
 import { PaymentType } from "../../models/enums/paymentType";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
+import { PaymentTefCancelType } from "../../models/enums/paymentTefCancelType";
 
 import { notification, Form } from "antd";
 
@@ -18,6 +19,9 @@ import {
   Col,
   Textarea,
 } from "./styles";
+
+
+const DESFEITO = PaymentTefCancelType.DESFEITO;
 
 const RemoveTefModal: React.FC = () => {
   const [formRemoveTef] = Form.useForm();
@@ -46,6 +50,13 @@ const RemoveTefModal: React.FC = () => {
         });
         return;
       }
+      await window.Main.tefFactory.insertPaymentTefAudit(
+        _payment.type,
+        DESFEITO,
+        +sale.id,
+        justify,
+        _payment.code_nsu
+      );
       setSale(updatedSale);
     }
 

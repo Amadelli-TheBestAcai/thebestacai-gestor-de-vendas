@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from "react";
 
-import Actions from "../../containers/Actions";
-import Products from "../../containers/Products";
-import Balance from "../../containers/Balance";
 import Items from "../../containers/Items";
+import Actions from "../../containers/Actions";
+import Balance from "../../containers/Balance";
+import Products from "../../containers/Products";
 import Payments from "../../containers/Payments";
+import CupomModal from "../../containers/CupomModal";
 
 import Spinner from "../../components/Spinner";
 import Register from "../../components/Register";
 import CashNotFound from "../../components/CashNotFound";
 import RemoveTefModal from "../../components/RemoveTefModal";
-import { StoreCashDto } from "../../models/dtos/storeCash";
+
 import { useSale } from "../../hooks/useSale";
+import { useSettings } from "../../hooks/useSettings";
+
 import { PaymentDto } from "../../models/dtos/payment";
+import { FlagCard } from "../../models/enums/flagCard";
+import { StoreCashDto } from "../../models/dtos/storeCash";
+import { PaymentType } from "../../models/enums/paymentType";
+import { PaymentTefCancelType } from "../../models/enums/paymentTefCancelType";
 
 import { notification, Modal, Form } from "antd";
-import { FlagCard } from "../../models/enums/flagCard";
 import {
   Container,
   LeftSide,
@@ -35,9 +41,7 @@ import {
   Textarea,
 } from "./styles";
 
-import { PaymentType } from "../../models/enums/paymentType";
-import CupomModal from "../../containers/CupomModal";
-import { useSettings } from "../../hooks/useSettings";
+const DESFEITO = PaymentTefCancelType.DESFEITO;
 
 const Home: React.FC = () => {
   const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
@@ -71,9 +75,7 @@ const Home: React.FC = () => {
         });
         return;
       }
-      const isPaymentTef = _sale.payments.filter(
-        (payment) => payment.code_nsu
-      );
+      const isPaymentTef = _sale.payments.filter((payment) => payment.code_nsu);
 
       if (isPaymentTef.length) {
         isPaymentTef.forEach((payment, index) => {
@@ -316,7 +318,6 @@ const Home: React.FC = () => {
       }
 
       setSale(updatedSale);
-      console.log(updatedSale);
       setCurrentPayment(0);
       setFlagCard(99);
       setPaymentModal(false);
@@ -325,7 +326,6 @@ const Home: React.FC = () => {
   };
 
   const removePayment = async (payment: PaymentDto, justify?: string) => {
-    console.log(justify);
     setLoadingPayment(true);
     const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
       await window.Main.sale.deletePayment(payment.id);
@@ -342,15 +342,21 @@ const Home: React.FC = () => {
       (payment) => payment?.code_nsu
     );
 
+    if (justify) {
+      await window.Main.tefFactory.insertPaymentTefAudit(
+        payment.type,
+        DESFEITO,
+        +sale.id,
+        justify,
+        payment.code_nsu
+      );
+    }
+
     const hasNoTefPaymentInUpdatedSale = updatedSale?.payments?.every(
       (payment) => !payment?.code_nsu
     );
 
-    if (
-      hasTefPaymentInSale &&
-      hasNoTefPaymentInUpdatedSale &&
-      isConnected
-    ) {
+    if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale && isConnected) {
       const { has_internal_error: errorOnFinalizeTransaction, error_message } =
         await window.Main.tefFactory.finalizeTransaction([]);
       if (errorOnFinalizeTransaction) {
