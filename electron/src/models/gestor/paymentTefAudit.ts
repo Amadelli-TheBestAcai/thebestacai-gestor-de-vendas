@@ -1,5 +1,5 @@
 export interface PaymentTefAuditDto {
-    id: string,
+    id?: string,
     field: string,
     old_value: string
     new_value: string;
