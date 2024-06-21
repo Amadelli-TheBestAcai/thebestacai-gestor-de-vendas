@@ -250,10 +250,10 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       await window.Main.storeCash.openOnlineStoreCash();
 
     if (has_internal_error) {
-      if (error_message === "O sistema está offline") {
+      if (error_message === "Sem conexão com a internet. Por favor, verifique sua conexão.") {
         return notification.warning({
           message:
-            "Não é possivel abrir um caixa online, pois o sistema está offline",
+            "Não é possivel abrir um caixa online, pois você está sem conexão com a internet. Por favor verifique a conexão e tente novamente",
           duration: 5,
         });
       }
