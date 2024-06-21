@@ -61,13 +61,14 @@ const Payment: React.FC<IProps> = ({
                         }
                       </ColPaymentTef>
                     </RowPaymentTef>
-          <p>Tem certeza que deseja excluí-lo?</p>
+          <p>Tem certeza que deseja desfazê-lo?</p>
         </>
       ),
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
+      width: "50%",
       async onOk() {
         setLoadingPayment(true);
         try {

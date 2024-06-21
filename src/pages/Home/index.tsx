@@ -287,9 +287,25 @@ const Home: React.FC = () => {
         duration: 5,
       });
     }
-    const isPaymentTef = updatedSale?.payments?.some(
+    const hasTefPaymentInSale  = sale?.payments?.some(
       (payment) => payment?.code_nsu
     );
+
+    const hasNoTefPaymentInUpdatedSale  = updatedSale?.payments?.every(
+      (payment) => !payment?.code_nsu
+    );
+
+    if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale) {
+      const { has_internal_error: errorOnFinalizeTransaction, error_message } =
+        await window.Main.tefFactory.finalizeTransaction([]);
+      if (errorOnFinalizeTransaction) {
+        setLoadingPayment(false);
+        return notification.error({
+          message: error_message || "Erro ao finalizar transação",
+          duration: 5,
+        });
+      }
+    }
     setSale(updatedSale);
     setLoadingPayment(false);
   };
