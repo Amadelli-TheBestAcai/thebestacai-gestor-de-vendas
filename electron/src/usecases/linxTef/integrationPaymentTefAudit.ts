@@ -53,7 +53,7 @@ class IntegrationPaymentTefAudit implements IUseCaseFactory {
               code_nsu: item.code_nsu
             });
             await this.paymentTefAuditRepository.create(item);
-            await this.notIntegratedPaymentTefAuditRepository.deleteById(item.id);
+            await this.notIntegratedPaymentTefAuditRepository.deleteById(item.id as string);
           } catch (error) {
             console.log(error);
           }

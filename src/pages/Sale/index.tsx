@@ -587,15 +587,7 @@ const Sale: React.FC<IProps> = () => {
         duration: 5,
       });
     }
-
-    await window.Main.tefFactory.insertPaymentTefAudit(
-      payment.type,
-      CANCELADO,
-      selectedSale.id,
-      justify,
-      payment.code_nsu
-    );
-
+    
     const {
       has_internal_error: errorOnPrintCupomTef,
       error_message: error_message_print_cupom_tef,
