@@ -346,7 +346,7 @@ const Home: React.FC = () => {
       await window.Main.tefFactory.insertPaymentTefAudit(
         payment.type,
         DESFEITO,
-        +sale.id,
+        storeCash.history_id,
         justify,
         payment.code_nsu
       );

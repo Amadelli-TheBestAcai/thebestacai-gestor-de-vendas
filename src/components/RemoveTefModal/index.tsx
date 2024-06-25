@@ -35,7 +35,7 @@ const RemoveTefModal: React.FC = () => {
     await formRemoveTef.validateFields();
     setLoading(true);
     const justify = await formRemoveTef.getFieldValue("tefRemoveJustify");
-    console.log(justify);
+
     for (const _payment of paymentsTef) {
       const {
         response: updatedSale,
@@ -50,10 +50,12 @@ const RemoveTefModal: React.FC = () => {
         });
         return;
       }
+      const { response: _storeCash } = await window.Main.storeCash.getCurrent();
+
       await window.Main.tefFactory.insertPaymentTefAudit(
         _payment.type,
         DESFEITO,
-        +sale.id,
+        _storeCash.history_id,
         justify,
         _payment.code_nsu
       );
