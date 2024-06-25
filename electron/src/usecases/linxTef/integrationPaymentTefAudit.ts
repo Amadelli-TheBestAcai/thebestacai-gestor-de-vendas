@@ -43,11 +43,12 @@ class IntegrationPaymentTefAudit implements IUseCaseFactory {
       await Promise.all(
         paymentsAudit.map(async (item) => {
           try {
+            const veriFyRef = item.ref ? item.ref : storeCash.history_id
             await api.post(`/cash_history_audit/${item.type}`, {
               field: item.field,
               old_value: item.old_value,
               new_value: item.new_value,
-              ref: item.ref,
+              ref: veriFyRef,
               type: item.type,
               justify: item.justify,
               code_nsu: item.code_nsu

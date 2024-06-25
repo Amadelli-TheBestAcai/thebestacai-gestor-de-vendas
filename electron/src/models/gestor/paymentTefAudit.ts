@@ -5,7 +5,7 @@ export interface PaymentTefAuditDto {
     new_value: string;
     user_id?: number;
     user_name?: string;
-    ref: number;
+    ref: number | null;
     type: number;
     justify?: string
     code_nsu?: string

@@ -6,12 +6,13 @@ import { StorageNames } from "../../repository/storageNames";
 import { PaymentTefAuditDto } from "../../models/gestor/paymentTefAudit";
 import { PaymentType } from "../../models/enums/paymentType";
 import { PaymentTefCancelType } from "../../models/enums/PaymentTefCancelType";
-import { integrationPaymentTefAudit } from "./integrationPaymentTEFAUdit";
+import { integrationPaymentTefAudit } from "./integrationPaymentTefAudit";
+import { CashHistoryAuditType } from "../../models/enums/cashHistoryAuditType";
 
 interface Request {
   type: PaymentType;
   payment_tef_cancel_type: PaymentTefCancelType;
-  sale_id: number,
+  ref: number | null,
   justify: string,
   code_nsu: string
 }
@@ -27,14 +28,14 @@ class InsertPaymentTefAudit implements IUseCaseFactory {
     private integrationPaymentTefAuditUseCase = integrationPaymentTefAudit
   ) { }
 
-  async execute({ type, payment_tef_cancel_type, sale_id, justify, code_nsu }: Request): Promise<PaymentTefAuditDto> {
+  async execute({ type, payment_tef_cancel_type, ref, justify, code_nsu }: Request): Promise<PaymentTefAuditDto> {
     const newPaymentAudit: PaymentTefAuditDto = {
       id: v4(),
       field: PaymentType[type],
       old_value: 'Aprovado',
       new_value: payment_tef_cancel_type === PaymentTefCancelType.DESFEITO ? "Desfeito" : "Cancelado",
-      ref: sale_id,
-      type: 4,
+      ref: ref ? ref : null,
+      type: payment_tef_cancel_type === PaymentTefCancelType.DESFEITO ? CashHistoryAuditType.cash_history : CashHistoryAuditType.sale,
       justify,
       code_nsu
     };
