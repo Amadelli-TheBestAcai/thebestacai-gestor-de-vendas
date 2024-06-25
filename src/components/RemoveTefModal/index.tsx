@@ -21,7 +21,7 @@ import {
 } from "./styles";
 
 
-const DESFEITO = PaymentTefCancelType.DESFEITO;
+const CANCELADO = PaymentTefCancelType.CANCELADO;
 
 const RemoveTefModal: React.FC = () => {
   const [formRemoveTef] = Form.useForm();
@@ -54,7 +54,7 @@ const RemoveTefModal: React.FC = () => {
 
       await window.Main.tefFactory.insertPaymentTefAudit(
         _payment.type,
-        DESFEITO,
+        CANCELADO,
         _storeCash.history_id,
         justify,
         _payment.code_nsu
