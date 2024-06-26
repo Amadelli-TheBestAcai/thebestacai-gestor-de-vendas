@@ -59,8 +59,8 @@ class AddPayment implements IUseCaseFactory {
     if (!sale) {
       throw new Error("Nenhuma venda encontrada");
     }
-
-    if (type === PaymentType.CREDITO || type === PaymentType.DEBITO) {
+    
+    if (type === PaymentType.CREDITO || type === PaymentType.DEBITO || type === PaymentType.TICKET) {
       sale.payments.push({
         id: v4(),
         amount,
