@@ -57,7 +57,8 @@ const RemoveTefModal: React.FC = () => {
         CANCELADO,
         _storeCash.history_id,
         justify,
-        _payment.code_nsu
+        _payment.code_nsu,
+        (_payment.amount)?.toFixed(2)?.toString()
       );
       setSale(updatedSale);
     }

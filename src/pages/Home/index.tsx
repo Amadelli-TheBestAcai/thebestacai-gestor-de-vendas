@@ -348,7 +348,8 @@ const Home: React.FC = () => {
         DESFEITO,
         storeCash.history_id,
         justify,
-        payment.code_nsu
+        payment.code_nsu,
+        (payment.amount)?.toFixed(2)?.toString()
       );
     }
 
