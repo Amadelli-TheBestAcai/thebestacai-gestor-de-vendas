@@ -51,7 +51,8 @@ class IntegrationPaymentTefAudit implements IUseCaseFactory {
               ref: veriFyRef,
               type: item.type,
               justify: item.justify,
-              code_nsu: item.code_nsu
+              code_nsu: item.code_nsu,
+              value: item.value
             });
             await this.paymentTefAuditRepository.create(item);
             await this.notIntegratedPaymentTefAuditRepository.deleteById(item.id as string);

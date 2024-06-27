@@ -14,7 +14,8 @@ interface Request {
   payment_tef_cancel_type: PaymentTefCancelType;
   ref: number | null,
   justify: string,
-  code_nsu: string
+  code_nsu: string,
+  value: string
 }
 
 class InsertPaymentTefAudit implements IUseCaseFactory {
@@ -28,7 +29,7 @@ class InsertPaymentTefAudit implements IUseCaseFactory {
     private integrationPaymentTefAuditUseCase = integrationPaymentTefAudit
   ) { }
 
-  async execute({ type, payment_tef_cancel_type, ref, justify, code_nsu }: Request): Promise<PaymentTefAuditDto> {
+  async execute({ type, payment_tef_cancel_type, ref, justify, code_nsu, value }: Request): Promise<PaymentTefAuditDto> {
     const newPaymentAudit: PaymentTefAuditDto = {
       id: v4(),
       field: PaymentType[type],
@@ -37,7 +38,8 @@ class InsertPaymentTefAudit implements IUseCaseFactory {
       ref: ref ? ref : null,
       type: payment_tef_cancel_type === PaymentTefCancelType.DESFEITO ? CashHistoryAuditType.cash_history : CashHistoryAuditType.sale,
       justify,
-      code_nsu
+      code_nsu,
+      value
     };
 
     await this.paymentTefAuditRepository.create(newPaymentAudit);

@@ -8,5 +8,6 @@ export interface PaymentTefAuditDto {
     ref: number | null;
     type: number;
     justify?: string
-    code_nsu?: string
+    code_nsu?: string,
+    value?: string
 }
