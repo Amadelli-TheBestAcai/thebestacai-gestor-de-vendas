@@ -40,9 +40,10 @@ export const tefFactory = {
         payment_tef_cancel_type: PaymentTefCancelType,
         sale_id: number,
         justify: string,
-        code_nsu: string) =>
+        code_nsu: string,
+        value: string) =>
         await useCaseFactory.execute<PaymentTefAuditDto>(insertPaymentTefAudit, {
-            type, payment_tef_cancel_type, sale_id, justify, code_nsu
+            type, payment_tef_cancel_type, sale_id, justify, code_nsu, value
         }),
     integrationPaymentTefAudit: async () =>
         await useCaseFactory.execute<void>(integrationPaymentTefAudit),
