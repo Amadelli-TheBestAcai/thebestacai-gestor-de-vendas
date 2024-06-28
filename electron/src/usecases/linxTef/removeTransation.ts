@@ -1,4 +1,3 @@
-import { checkInternet } from "../../providers/internetConnection";
 import tefApi from "../../providers/tefApi";
 import { verifyConnectionTEF } from "../../providers/verifyConnectionTEF";
 import { useCaseFactory } from "../useCaseFactory";
@@ -10,13 +9,9 @@ class RemoveTransaction implements IUseCaseFactory {
         private findPinPadUseCase = findPinPad,
     ) { }
     async execute(code_nsu: string): Promise<string> {
-        const isConnectInternet = await checkInternet();
-        if (!isConnectInternet) {
-            throw new Error("Sem conexão com a internet. Verifique sua conexão para usar o serviço TEF e tente novamente.")
-        }
 
         const isConnect = await verifyConnectionTEF()
-        if (!isConnect) {
+        if (isConnect) {
             throw new Error("O servidor da TEF não está rodando. Verifique se o executável ServerTEF.exe foi instalado corretamente")
         }
         const { response, has_internal_error } =

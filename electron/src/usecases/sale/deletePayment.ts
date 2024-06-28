@@ -4,8 +4,6 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale } from "./getCurrentSale";
 import { SaleDto } from "../../models/gestor";
-import { removeTransaction } from "../linxTef/removeTransation";
-import { checkInternet } from "../../providers/internetConnection";
 
 interface Request {
   id: string;
@@ -15,7 +13,6 @@ class DeletePayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private getCurrentSaleUseCase = getCurrentSale,
-    private removeTransationUseCase = removeTransaction
   ) { }
 
   async execute({ id }: Request): Promise<SaleDto> {
@@ -27,17 +24,6 @@ class DeletePayment implements IUseCaseFactory {
     }
     if (!sale) {
       throw new Error("Nenhuma venda encontrada");
-    }
-
-    const code_nsu = await this.checkPaymentNsuCode(sale, id)
-    const isConnectInternet = await checkInternet();
-    
-    if (code_nsu && isConnectInternet) {
-      const { has_internal_error, error_message } =
-        await useCaseFactory.execute<void>(this.removeTransationUseCase, code_nsu);
-      if (has_internal_error) {
-        throw new Error(error_message || "Error ao tentar remover pagamento via tef");
-      }
     }
 
     sale.payments = sale.payments.filter((_payment) => _payment.id !== id);
@@ -55,15 +41,6 @@ class DeletePayment implements IUseCaseFactory {
     return sale;
   }
 
-  async checkPaymentNsuCode(sale: SaleDto, id: string): Promise<string> {
-    let code_nsu: string = ''
-    sale.payments.forEach(payment => {
-      if (payment.id === id && payment.code_nsu) {
-        code_nsu = payment.code_nsu
-      }
-    });
-    return code_nsu;
-  }
 }
 
 export const deletePayment = new DeletePayment();
