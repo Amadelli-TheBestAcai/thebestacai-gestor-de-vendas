@@ -53,6 +53,7 @@ interface IProps {
   usingDelivery?: boolean;
   loadingPayment?: boolean;
   setLoadingPayment?: Dispatch<SetStateAction<boolean>>;
+  paymentModalConnect?: boolean;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -71,6 +72,7 @@ const PaymentsContainer: React.FC<IProps> = ({
   flagCard,
   loadingPayment,
   setLoadingPayment,
+  paymentModalConnect,
 }) => {
   const { onRemoveDiscount } = useSale();
   const { settings } = useSettings();
@@ -228,7 +230,9 @@ const PaymentsContainer: React.FC<IProps> = ({
           <Footer>
             <ButtonCancel onClick={onModalCancel}>Cancelar</ButtonCancel>
             <ButtonSave loading={loadingPayment} onClick={addPayment}>
-              {settings?.should_use_tef && modalTitle !== "Dinheiro"
+              {settings?.should_use_tef &&
+              modalTitle !== "Dinheiro" &&
+              paymentModalConnect
                 ? "Solicitar Pagamento TEF"
                 : "Salvar Alteração"}
             </ButtonSave>
@@ -249,7 +253,8 @@ const PaymentsContainer: React.FC<IProps> = ({
               : 0
           }
         />
-        {!settings?.should_use_tef &&
+        {(!settings?.should_use_tef ||
+          !paymentModalConnect) &&
           (modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
             <>
               Bandeira:

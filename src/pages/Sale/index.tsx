@@ -831,7 +831,7 @@ const Sale: React.FC<IProps> = () => {
                                       )?.value
                                     : ""}
                                 </Col>
-                                <Col sm={3}>{_payment?.amount}</Col>
+                                <Col sm={3}>R$ {_payment?.amount}</Col>
                                 <Col sm={3}>
                                   {_payment?.tef_status_payment ===
                                   TefPaymentType.APROVADO ? (

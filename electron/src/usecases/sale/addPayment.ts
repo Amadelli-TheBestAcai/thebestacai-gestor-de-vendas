@@ -9,6 +9,7 @@ import { v4 } from "uuid";
 import moment from "moment";
 import { transactionsTef } from "../linxTef";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
+import { checkInternet } from "../../providers/internetConnection";
 
 interface Request {
   amount: number;
@@ -26,6 +27,7 @@ class AddPayment implements IUseCaseFactory {
   ) { }
 
   async execute({ amount, type, flag_card }: Request): Promise<SaleDto> {
+    const isConnectInternet = await checkInternet();
 
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
       await useCaseFactory.execute<SaleDto>(this.getCurrentSaleUseCase);
@@ -41,7 +43,7 @@ class AddPayment implements IUseCaseFactory {
     let numero_autorizacao;
     let tef_status_payment;
 
-    if (settings?.should_use_tef && type !== PaymentType.DINHEIRO) {
+    if (settings?.should_use_tef && type !== PaymentType.DINHEIRO && isConnectInternet) {
       const { response, has_internal_error: errorOnGetCurrentSale, error_message } =
         await useCaseFactory.execute<any>(this.transactionsTefUseCase, { type, amount });
 

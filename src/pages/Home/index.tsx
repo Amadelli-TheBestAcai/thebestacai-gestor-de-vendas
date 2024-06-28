@@ -56,6 +56,7 @@ const Home: React.FC = () => {
   const [flagCard, setFlagCard] = useState<number | null>(99);
   const [cupomModalState, setCupomModalState] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
+  const [paymentModalConnect, setPaymentModalConnect] = useState(true);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
 
@@ -266,7 +267,23 @@ const Home: React.FC = () => {
       });
     }
 
-    if (!settings.should_use_tef && flagCard) {
+    let isConnected = await window.Main.hasInternet();
+    
+    if (!isConnected && paymentModalConnect && paymentType !== PaymentType.DINHEIRO) {
+      setPaymentModalConnect(false);
+      setLoadingPayment(false);
+      return notification.warning({
+        message: "Você não está conectado à internet.",
+        description:
+          "Devido a isso, não será possível utilizar os serviços da maquininha PIN PAD - TEF. Prossiga com o pagamento utilizando outra maquininha.",
+        duration: 10,
+      });
+    }
+
+    if (
+      (!settings.should_use_tef && flagCard) ||
+      (!isConnected)
+    ) {
       const {
         response: updatedSale,
         has_internal_error: errorOnAddPayment,
@@ -286,6 +303,7 @@ const Home: React.FC = () => {
 
       setSale(updatedSale);
 
+      setPaymentModalConnect(true);
       setCurrentPayment(0);
       setFlagCard(99);
       setPaymentModal(false);
@@ -349,7 +367,7 @@ const Home: React.FC = () => {
         storeCash.history_id,
         justify,
         payment.code_nsu,
-        (payment.amount)?.toFixed(2)?.toString()
+        payment.amount?.toFixed(2)?.toString()
       );
     }
 
@@ -489,6 +507,7 @@ const Home: React.FC = () => {
                             setFlagCard={setFlagCard}
                             loadingPayment={loadingPayment}
                             setLoadingPayment={setLoadingPayment}
+                            paymentModalConnect={paymentModalConnect}
                           />
                         </PaymentsContent>
                         <CupomModal
