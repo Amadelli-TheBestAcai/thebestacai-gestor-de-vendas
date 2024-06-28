@@ -352,7 +352,7 @@ const Home: React.FC = () => {
       await window.Main.tefFactory.insertPaymentTefAudit(
         payment.type,
         DESFEITO,
-        storeCash.history_id,
+        storeCash?.history_id,
         justify,
         payment.code_nsu,
         payment.amount?.toFixed(2)?.toString()
@@ -439,15 +439,17 @@ const Home: React.FC = () => {
         }
         if (has_error_finalize_tef) {
           setLoadingPayment(false);
-          return notification.error({
+          notification.error({
             message: error_finalize_message || "Erro ao finalizar transação",
+            description: "Verique o pagamento na CPOSWEB se foi efetivado",
+            duration: 5,
+          });
+        } else {
+          notification.success({
+            message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
             duration: 5,
           });
         }
-        notification.success({
-          message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
-          duration: 5,
-        });
       }
 
       setSale(_updatedSale);

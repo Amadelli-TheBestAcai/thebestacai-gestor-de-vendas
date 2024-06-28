@@ -70,7 +70,7 @@ const Delivery: React.FC<ComponentProps> = () => {
       const inConnected = await window.Main.hasInternet();
 
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
-        await window.Main.sale.buildNewSale();
+        await window.Main.sale.buildNewSale(false);
       if (errorOnBuildNewSale) {
         return notification.error({
           message: "Erro ao criar uma venda",
@@ -218,7 +218,7 @@ const Delivery: React.FC<ComponentProps> = () => {
         }
 
         const { response: newSale, has_internal_error: errorOnBuildNewSale } =
-          await window.Main.sale.buildNewSale();
+          await window.Main.sale.buildNewSale(false);
         if (errorOnBuildNewSale) {
           notification.error({
             message: "Erro ao criar uma venda",
