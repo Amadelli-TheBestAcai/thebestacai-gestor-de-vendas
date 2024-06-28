@@ -268,8 +268,12 @@ const Home: React.FC = () => {
     }
 
     let isConnected = await window.Main.hasInternet();
-    
-    if (!isConnected && paymentModalConnect && paymentType !== PaymentType.DINHEIRO) {
+
+    if (
+      !isConnected &&
+      paymentModalConnect &&
+      paymentType !== PaymentType.DINHEIRO
+    ) {
       setPaymentModalConnect(false);
       setLoadingPayment(false);
       return notification.warning({
@@ -280,10 +284,7 @@ const Home: React.FC = () => {
       });
     }
 
-    if (
-      (!settings.should_use_tef && flagCard) ||
-      (!isConnected)
-    ) {
+    if ((!settings.should_use_tef && flagCard) || !isConnected) {
       const {
         response: updatedSale,
         has_internal_error: errorOnAddPayment,
@@ -343,55 +344,109 @@ const Home: React.FC = () => {
     setLoadingPayment(false);
   };
 
+  const deletePayment = async (payment: PaymentDto, justify?: string) => {
+    const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
+      await window.Main.sale.deletePayment(payment.id);
+
+    if (justify) {
+      await window.Main.tefFactory.insertPaymentTefAudit(
+        payment.type,
+        DESFEITO,
+        storeCash.history_id,
+        justify,
+        payment.code_nsu,
+        payment.amount?.toFixed(2)?.toString()
+      );
+    }
+    return {
+      updatedSale: updatedSale,
+      has_error_payment: errorOnDeletePayment,
+    };
+  };
+
+  const deletePaymentTEF = async (payment: PaymentDto, justify?: string) => {
+    const { updatedSale, has_error_payment } = await deletePayment(
+      payment,
+      justify
+    );
+
+    const isConnected = await window.Main.hasInternet();
+
+    const hasTefPaymentInSale = sale?.payments?.some(
+      (payment) => payment?.code_nsu
+    );
+
+    const hasNoTefPaymentInUpdatedSale = updatedSale?.payments?.every(
+      (payment) => !payment?.code_nsu
+    );
+
+    if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale && isConnected) {
+      const { has_internal_error: errorOnFinalizeTransaction, error_message } =
+        await window.Main.tefFactory.finalizeTransaction([]);
+
+      return {
+        updatedSale: updatedSale,
+        has_error_payment: has_error_payment,
+        has_error_finalize_tef: errorOnFinalizeTransaction,
+        error_finalize_message: error_message,
+      };
+    }
+
+    return {
+      updatedSale: updatedSale,
+      has_error_payment: has_error_payment,
+      has_error_finalize_tef: false,
+      error_finalize_message: "",
+    };
+  };
+
   const removePayment = async (payment: PaymentDto, justify?: string) => {
-    const deletePayment = async () => {
+    console.log(payment, "remove");
+    const paymentsMetodsRemove = async (tefError: boolean) => {
+      console.log(payment, "delete");
       setLoadingPayment(true);
-      const {
-        response: updatedSale,
-        has_internal_error: errorOnDeletePayment,
-      } = await window.Main.sale.deletePayment(payment.id);
-      if (errorOnDeletePayment) {
-        setLoadingPayment(false);
-        return notification.error({
-          message: "Erro ao remover pagamento",
-          duration: 5,
-        });
-      }
-      const isConnected = await window.Main.hasInternet();
+      let _updatedSale;
 
-      const hasTefPaymentInSale = sale?.payments?.some(
-        (payment) => payment?.code_nsu
-      );
-
-      if (justify) {
-        await window.Main.tefFactory.insertPaymentTefAudit(
-          payment.type,
-          DESFEITO,
-          storeCash.history_id,
-          justify,
-          payment.code_nsu,
-          payment.amount?.toFixed(2)?.toString()
+      if (tefError) {
+        const { updatedSale, has_error_payment } = await deletePayment(
+          payment,
+          justify
         );
-      }
-
-      const hasNoTefPaymentInUpdatedSale = updatedSale?.payments?.every(
-        (payment) => !payment?.code_nsu
-      );
-
-      if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale && isConnected) {
-        const {
-          has_internal_error: errorOnFinalizeTransaction,
-          error_message,
-        } = await window.Main.tefFactory.finalizeTransaction([]);
-        if (errorOnFinalizeTransaction) {
+        _updatedSale = updatedSale;
+        if (has_error_payment) {
           setLoadingPayment(false);
           return notification.error({
-            message: error_message || "Erro ao finalizar transação",
+            message: "Erro ao remover pagamento",
+            duration: 5,
+          });
+        }
+      } else {
+        const {
+          updatedSale,
+          has_error_payment,
+          has_error_finalize_tef,
+          error_finalize_message,
+        } = await deletePaymentTEF(payment, justify);
+
+        _updatedSale = updatedSale;
+
+        if (has_error_payment) {
+          setLoadingPayment(false);
+          return notification.error({
+            message: "Erro ao remover pagamento",
+            duration: 5,
+          });
+        }
+        if (has_error_finalize_tef) {
+          setLoadingPayment(false);
+          return notification.error({
+            message: error_finalize_message || "Erro ao finalizar transação",
             duration: 5,
           });
         }
       }
-      setSale(updatedSale);
+
+      setSale(_updatedSale);
       setLoadingPayment(false);
     };
 
@@ -401,67 +456,66 @@ const Home: React.FC = () => {
         error_message: messageError,
       } = await window.Main.tefFactory.removeTransaction(payment.code_nsu);
       if (errorOnDeletePayment) {
-        if (messageError) {
-          return notification.error({
-            message: messageError,
-            duration: 5,
-          });
-        } else {
-          Modal.confirm({
-            title: `Ocorreu um erro ao remover pagamento TEF`,
-            content: (
-              <>
-                <p>O pagamento:</p>{" "}
-                <RowPaymentTefHeader>
-                  <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
-                  <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
-                  <ColPaymentTef sm={6}>Valor</ColPaymentTef>
-                  <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
-                </RowPaymentTefHeader>
-                <RowPaymentTef>
-                  <ColPaymentTef sm={6}>{payment?.code_nsu}</ColPaymentTef>
-                  <ColPaymentTef sm={6}>
-                    {PaymentType[payment?.type]}
-                  </ColPaymentTef>
-                  <ColPaymentTef sm={6}>
-                    {payment?.amount?.toFixed(2)?.replace(".", ",")}
-                  </ColPaymentTef>
-                  <ColPaymentTef sm={6}>
-                    {
-                      FlagCard?.find((flag) => flag?.id === payment?.flag_card)
-                        ?.value
-                    }
-                  </ColPaymentTef>
-                </RowPaymentTef>
-                <p style={{ color: "var(--red-600)" }}>
-                  Devido a isso ao clicar em "Remover Pagamento" você deve entrar no <b>CPOSWEB</b> e
-                  cancelar o pagamento removido.
-                </p>
-              </>
-            ),
-            okText: "Remover Pagamento",
-            okType: "default",
-            cancelText: "Manter Pagamento",
-            centered: true,
-            okButtonProps: {
-              style: {
-                background: "green",
-                color: "white",
-              },
+        notification.error({
+          message: messageError,
+          duration: 5,
+        });
+        Modal.confirm({
+          title: `Ocorreu um erro ao remover pagamento TEF`,
+          content: (
+            <>
+              <p>O pagamento:</p>{" "}
+              <RowPaymentTefHeader>
+                <ColPaymentTef sm={6}>Código NSU</ColPaymentTef>
+                <ColPaymentTef sm={6}>Forma de pagamento</ColPaymentTef>
+                <ColPaymentTef sm={6}>Valor</ColPaymentTef>
+                <ColPaymentTef sm={6}>Bandeira</ColPaymentTef>
+              </RowPaymentTefHeader>
+              <RowPaymentTef>
+                <ColPaymentTef sm={6}>{payment?.code_nsu}</ColPaymentTef>
+                <ColPaymentTef sm={6}>
+                  {PaymentType[payment?.type]}
+                </ColPaymentTef>
+                <ColPaymentTef sm={6}>
+                  {payment?.amount?.toFixed(2)?.replace(".", ",")}
+                </ColPaymentTef>
+                <ColPaymentTef sm={6}>
+                  {
+                    FlagCard?.find((flag) => flag?.id === payment?.flag_card)
+                      ?.value
+                  }
+                </ColPaymentTef>
+              </RowPaymentTef>
+              <p style={{ color: "var(--red-600)" }}>
+                Devido a isso ao clicar em "Remover Pagamento" você deve entrar
+                no <b>CPOSWEB</b> e cancelar o pagamento removido.
+              </p>
+            </>
+          ),
+          okText: "Remover Pagamento",
+          okType: "default",
+          cancelText: "Manter Pagamento",
+          centered: true,
+          okButtonProps: {
+            style: {
+              background: "green",
+              color: "white",
             },
+          },
 
-            width: "50%",
-            async onOk() {
-              await deletePayment();
-              return;
-            },
-          });
-        }
+          width: "50%",
+          async onOk() {
+            await paymentsMetodsRemove(true);
+            return;
+          },
+        });
       } else {
-        await deletePayment();
+        console.log(payment, "aassasas");
+        await paymentsMetodsRemove(false);
       }
     } else {
-      await deletePayment();
+      console.log(payment, "tamo aqui");
+      await paymentsMetodsRemove(true);
     }
   };
 
