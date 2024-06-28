@@ -151,6 +151,9 @@ const Home: React.FC = () => {
               },
             },
             width: "50%",
+            async onOk() {
+              await formRemoveTef.resetFields();
+            },
             async onCancel() {
               await formRemoveTef.validateFields();
               if (!isConnected) {
@@ -208,6 +211,9 @@ const Home: React.FC = () => {
                       payment,
                       formRemoveTef.getFieldValue("tefRemoveJustify")
                     );
+                    await formRemoveTef.resetFields();
+                  },
+                  async onCancel() {
                     await formRemoveTef.resetFields();
                   },
                 });

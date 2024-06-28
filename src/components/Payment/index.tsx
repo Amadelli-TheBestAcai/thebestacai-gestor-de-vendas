@@ -156,6 +156,9 @@ const Payment: React.FC<IProps> = ({
                   );
                   await formRemoveTef.resetFields();
                 },
+                async onCancel() {
+                  await formRemoveTef.resetFields();
+                },
               });
             } else {
               await removePayment(

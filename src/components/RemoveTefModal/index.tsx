@@ -20,7 +20,6 @@ import {
   Textarea,
 } from "./styles";
 
-
 const CANCELADO = PaymentTefCancelType.CANCELADO;
 
 const RemoveTefModal: React.FC = () => {
@@ -58,13 +57,13 @@ const RemoveTefModal: React.FC = () => {
         _storeCash.history_id,
         justify,
         _payment.code_nsu,
-        (_payment.amount)?.toFixed(2)?.toString()
+        _payment.amount?.toFixed(2)?.toString()
       );
       setSale(updatedSale);
     }
 
     setLoading(false);
-    formRemoveTef.resetFields();
+    await formRemoveTef.resetFields();
     setVisibleRemoveTefModal(false);
   };
 
@@ -75,7 +74,10 @@ const RemoveTefModal: React.FC = () => {
       centered
       width={800}
       closable={false}
-      onCancel={() => setVisibleRemoveTefModal(false)}
+      onCancel={async () => {
+        setVisibleRemoveTefModal(false);
+        await formRemoveTef.resetFields();
+      }}
       footer={
         <Footer>
           <ButtonRemove onClick={removePaymentsTef} loading={loading}>
