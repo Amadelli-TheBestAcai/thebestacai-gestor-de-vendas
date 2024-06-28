@@ -444,6 +444,10 @@ const Home: React.FC = () => {
             duration: 5,
           });
         }
+        notification.success({
+          message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
+          duration: 5,
+        });
       }
 
       setSale(_updatedSale);

@@ -4,14 +4,18 @@ import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { findPinPad } from "./findPinPad";
 
+interface Request {
+    code_nsu: string
+}
+
 class RemoveTransaction implements IUseCaseFactory {
     constructor(
         private findPinPadUseCase = findPinPad,
     ) { }
-    async execute(code_nsu: string): Promise<string> {
+    async execute({code_nsu}: Request): Promise<string> {
 
         const isConnect = await verifyConnectionTEF()
-        if (isConnect) {
+        if (!isConnect) {
             throw new Error("O servidor da TEF não está rodando. Verifique se o executável ServerTEF.exe foi instalado corretamente")
         }
         const { response, has_internal_error } =
