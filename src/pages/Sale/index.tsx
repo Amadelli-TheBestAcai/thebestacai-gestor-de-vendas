@@ -561,6 +561,9 @@ const Sale: React.FC<IProps> = () => {
         },
       },
       width: "50%",
+      async onOk() {
+        await formRemoveTef.resetFields();
+      },
       async onCancel() {
         await formRemoveTef.validateFields();
         cancelTefPayment(

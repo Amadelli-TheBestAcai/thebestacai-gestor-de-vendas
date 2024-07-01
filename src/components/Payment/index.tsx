@@ -163,6 +163,9 @@ const Payment: React.FC<IProps> = ({
                   );
                   await formRemoveTef.resetFields();
                 },
+                async onCancel() {
+                  await formRemoveTef.resetFields();
+                },
               });
             } else {
               await removePayment(
@@ -171,10 +174,6 @@ const Payment: React.FC<IProps> = ({
               );
               await formRemoveTef.resetFields();
               document.getElementById("balanceInput")?.focus();
-              notification.success({
-                message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
-                duration: 5,
-              });
             }
           }
         } catch (error) {
