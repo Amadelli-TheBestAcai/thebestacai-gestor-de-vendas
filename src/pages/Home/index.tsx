@@ -287,16 +287,21 @@ const Home: React.FC = () => {
         paymentType !== PaymentType.PIX
       ) {
         showNotification();
+        return;
       } else if (paymentType === PaymentType.PIX && selectTef === "Sim") {
         showNotification();
+        return;
       }
     }
 
     if (
       (!settings.should_use_tef && flagCard) ||
       !isConnected ||
-      (paymentType === PaymentType.PIX && selectTef === "Sim")
+      (paymentType === PaymentType.PIX && selectTef === "Não")
     ) {
+      const turnOffTefPix =
+        paymentType === PaymentType.PIX && selectTef === "Não" ? true : false;
+
       const {
         response: updatedSale,
         has_internal_error: errorOnAddPayment,
@@ -304,7 +309,8 @@ const Home: React.FC = () => {
       } = await window.Main.sale.addPayment(
         currentPayment,
         paymentType,
-        flagCard
+        flagCard,
+        turnOffTefPix
       );
       if (errorOnAddPayment) {
         setLoadingPayment(false);
