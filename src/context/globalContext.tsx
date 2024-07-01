@@ -391,6 +391,12 @@ export function GlobalProvider({ children }) {
       window.Main.common.printSale(currentSale);
     }
 
+    const { response: _storeCash } = await window.Main.storeCash.getCurrent();
+
+    if (_storeCash && _storeCash?.is_online) {
+      setStoreCash(_storeCash);
+    }
+
     document.getElementById("balanceInput")?.focus();
   };
 
