@@ -140,8 +140,16 @@ const RemoveTefModal: React.FC = () => {
           </Form.Item>
         </Form>
         <b style={{ margin: "1rem 0" }}>
-          Após a remoção dos pagamento TEF você deve entrar no CPOSWEB e
-          verificar os pagamentos a serem cancelados.
+          Após a remoção dos pagamento TEF você deve entrar no D-TEF Web através
+          do{" "}
+          <a
+            href="https://tef.linxsaas.com.br/tefweb/DTefWeb.cgi/login"
+            target="_blank"
+            style={{ color: "blue" }}
+          >
+            LINK
+          </a>{" "}
+          e verificar os pagamentos a serem cancelados.
         </b>
       </>
     </Container>

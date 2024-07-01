@@ -188,8 +188,15 @@ const Home: React.FC = () => {
                         </ColPaymentTef>
                       </RowPaymentTef>
                       <p style={{ color: "var(--red-600)" }}>
-                        Você deve entrar no <b>CPOSWEB</b> e cancelar o
-                        pagamento removido.
+                        Você deve entrar no <b>D-TEF Web</b> através do{" "}
+                        <a
+                          href="https://tef.linxsaas.com.br/tefweb/DTefWeb.cgi/login"
+                          target="_blank"
+                          style={{ color: "blue" }}
+                        >
+                          LINK
+                        </a>{" "}
+                        e cancelar o pagamento removido.
                       </p>
                     </>
                   ),
@@ -453,8 +460,17 @@ const Home: React.FC = () => {
                   </ColPaymentTef>
                 </RowPaymentTef>
                 <p style={{ color: "var(--red-600)" }}>
-                  Devido a isso ao clicar em "Remover Pagamento" você deve entrar no <b>CPOSWEB</b> e
-                  cancelar o pagamento removido.
+                  Devido a isso ao clicar em "Remover Pagamento" você deve
+                  entrar no <b>D-TEF Web</b> através do{" "}
+                  <a
+                    href="https://tef.linxsaas.com.br/tefweb/DTefWeb.cgi/login"
+                    target="_blank"
+                    style={{ color: "blue" }}
+                  >
+                    {" "}
+                    LINK
+                  </a>{" "}
+                  e cancelar o pagamento removido.
                 </p>
               </>
             ),

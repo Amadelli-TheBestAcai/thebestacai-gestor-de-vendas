@@ -133,8 +133,15 @@ const Payment: React.FC<IProps> = ({
                       </ColPaymentTef>
                     </RowPaymentTef>
                     <p style={{ color: "var(--red-600)" }}>
-                      Você deve entrar no <b>CPOSWEB</b> e cancelar o pagamento
-                      removido.
+                      Você deve entrar no <b>D-TEF Web</b> através do{" "}
+                      <a
+                        href="https://tef.linxsaas.com.br/tefweb/DTefWeb.cgi/login"
+                        target="_blank"
+                        style={{ color: "blue" }}
+                      >
+                        LINK
+                      </a>{" "}
+                      e cancelar o pagamento removido.
                     </p>
                   </>
                 ),
