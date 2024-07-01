@@ -69,7 +69,7 @@ const Delivery: React.FC<ComponentProps> = () => {
       const inConnected = await window.Main.hasInternet();
 
       const { response: _newSale, has_internal_error: errorOnBuildNewSale } =
-        await window.Main.sale.buildNewSale();
+        await window.Main.sale.buildNewSale(false);
       if (errorOnBuildNewSale) {
         return notification.error({
           message: "Erro ao criar uma venda",
@@ -217,7 +217,7 @@ const Delivery: React.FC<ComponentProps> = () => {
         }
 
         const { response: newSale, has_internal_error: errorOnBuildNewSale } =
-          await window.Main.sale.buildNewSale();
+          await window.Main.sale.buildNewSale(false);
         if (errorOnBuildNewSale) {
           notification.error({
             message: "Erro ao criar uma venda",
@@ -267,13 +267,15 @@ const Delivery: React.FC<ComponentProps> = () => {
             true
           );
         if (errorOnFinishSAle) {
-          error_message ? notification.warning({
-            message: error_message,
-            duration: 5,
-          }) : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+          error_message
+            ? notification.warning({
+                message: error_message,
+                duration: 5,
+              })
+            : notification.error({
+                message: "Erro ao finalizar venda",
+                duration: 5,
+              });
         }
 
         const {
@@ -360,13 +362,15 @@ const Delivery: React.FC<ComponentProps> = () => {
         const { has_internal_error: errorOnIntegrateAllSales, error_message } =
           await window.Main.sale.integrateAllSalesFromType(type);
         if (errorOnIntegrateAllSales) {
-          error_message ? notification.warning({
-            message: error_message,
-            duration: 5,
-          }) : notification.error({
-            message: error_message || "Erro ao integrar todos os delivery",
-            duration: 5,
-          });
+          error_message
+            ? notification.warning({
+                message: error_message,
+                duration: 5,
+              })
+            : notification.error({
+                message: error_message || "Erro ao integrar todos os delivery",
+                duration: 5,
+              });
         }
 
         const {
@@ -395,7 +399,6 @@ const Delivery: React.FC<ComponentProps> = () => {
             duration: 5,
           });
         }
-
       },
     });
   };
@@ -521,10 +524,7 @@ const Delivery: React.FC<ComponentProps> = () => {
                     <Header>
                       <h2>Delivery</h2>
                     </Header>
-                    <Tabs
-                      centered
-                      onChange={(type) => setDeliveryType(+type)}
-                    >
+                    <Tabs centered onChange={(type) => setDeliveryType(+type)}>
                       {tabPanes.map((_tab) => (
                         <TabPane key={_tab.id} tab={_tab.label}>
                           <Content>
@@ -617,7 +617,7 @@ const Delivery: React.FC<ComponentProps> = () => {
                     </Tabs>
                   </>
                 ) : (
-                  <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas."/>
+                  <CashNotFound description="Nenhum caixa aberto no momento. Abra o caixa para iniciar as vendas." />
                 )}
               </>
             ) : (
