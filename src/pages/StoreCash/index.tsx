@@ -253,7 +253,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
           duration: 5,
         })
         : notification.error({
-          message: "Erro ao finalizar venda",
+          message: "Erro ao abrir caixa",
           duration: 5,
         });
 
