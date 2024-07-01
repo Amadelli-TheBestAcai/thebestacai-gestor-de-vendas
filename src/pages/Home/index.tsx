@@ -295,7 +295,7 @@ const Home: React.FC = () => {
     if (
       (!settings.should_use_tef && flagCard) ||
       !isConnected ||
-      (paymentType === PaymentType.PIX && selectTef === "Não")
+      (paymentType === PaymentType.PIX && selectTef === "Sim")
     ) {
       const {
         response: updatedSale,

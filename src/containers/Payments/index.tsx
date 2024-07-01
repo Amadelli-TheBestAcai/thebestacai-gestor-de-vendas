@@ -82,6 +82,7 @@ const PaymentsContainer: React.FC<IProps> = ({
   const { settings } = useSettings();
 
   const onModalCancel = (): void => {
+    setSelectTef("Sim");
     setModalState(false);
     setFlagCard(99);
   };
@@ -240,6 +241,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             <ButtonSave loading={loadingPayment} onClick={addPayment}>
               {settings?.should_use_tef &&
               modalTitle !== "Dinheiro" &&
+              selectTef !== "Não" &&
               paymentModalConnect
                 ? "Solicitar Pagamento TEF"
                 : "Salvar Alteração"}
@@ -280,7 +282,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             </>
           )}
         {settings?.should_use_tef && modalTitle === "Pix" && (
-          <>
+          <div style={{ marginTop: "0.5rem" }}>
             Habilitar pagamento TEF
             <Form.Item>
               <Select
@@ -292,7 +294,7 @@ const PaymentsContainer: React.FC<IProps> = ({
                 <Option key={"Sim"}>Sim</Option>
               </Select>
             </Form.Item>
-          </>
+          </div>
         )}
       </Modal>
     </Container>
