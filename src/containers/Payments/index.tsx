@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SaleDto } from "../../models/dtos/sale";
@@ -54,6 +54,8 @@ interface IProps {
   loadingPayment?: boolean;
   setLoadingPayment?: Dispatch<SetStateAction<boolean>>;
   paymentModalConnect?: boolean;
+  selectTef?: string;
+  setSelectTef?: Dispatch<SetStateAction<string>>;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -73,6 +75,8 @@ const PaymentsContainer: React.FC<IProps> = ({
   loadingPayment,
   setLoadingPayment,
   paymentModalConnect,
+  selectTef,
+  setSelectTef,
 }) => {
   const { onRemoveDiscount } = useSale();
   const { settings } = useSettings();
@@ -84,6 +88,10 @@ const PaymentsContainer: React.FC<IProps> = ({
 
   const getAmount = (amount: number): void => {
     setCurrentPayment(amount);
+  };
+
+  const setValue = (event) => {
+    setSelectTef(event);
   };
 
   const buttonsPaymentsStyle = [
@@ -271,6 +279,21 @@ const PaymentsContainer: React.FC<IProps> = ({
               </Form.Item>
             </>
           )}
+        {settings?.should_use_tef && modalTitle === "Pix" && (
+          <>
+            Habilitar pagamento TEF
+            <Form.Item>
+              <Select
+                placeholder="Escolha a opção"
+                onChange={setValue}
+                value={selectTef}
+              >
+                <Option key={"Não"}>Não</Option>
+                <Option key={"Sim"}>Sim</Option>
+              </Select>
+            </Form.Item>
+          </>
+        )}
       </Modal>
     </Container>
   );

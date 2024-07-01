@@ -59,6 +59,7 @@ const Home: React.FC = () => {
   const [paymentModalConnect, setPaymentModalConnect] = useState(true);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
+  const [selectTef, setSelectTef] = useState<string>("Sim");
 
   useEffect(() => {
     async function init() {
@@ -268,21 +269,33 @@ const Home: React.FC = () => {
     }
 
     let isConnected = await window.Main.hasInternet();
-    
-    if (!isConnected && paymentModalConnect && paymentType !== PaymentType.DINHEIRO) {
-      setPaymentModalConnect(false);
-      setLoadingPayment(false);
-      return notification.warning({
-        message: "Você não está conectado à internet.",
-        description:
-          "Devido a isso, não será possível utilizar os serviços da maquininha PIN PAD - TEF. Prossiga com o pagamento utilizando outra maquininha.",
-        duration: 10,
-      });
+
+    if (settings.should_use_tef && !isConnected && paymentModalConnect) {
+      const showNotification = () => {
+        setPaymentModalConnect(false);
+        setLoadingPayment(false);
+        notification.warning({
+          message: "Você não está conectado à internet.",
+          description:
+            "Devido a isso, não será possível utilizar os serviços da maquininha PIN PAD - TEF. Prossiga com o pagamento utilizando outra maquininha.",
+          duration: 10,
+        });
+      };
+
+      if (
+        paymentType !== PaymentType.DINHEIRO &&
+        paymentType !== PaymentType.PIX
+      ) {
+        showNotification();
+      } else if (paymentType === PaymentType.PIX && selectTef === "Sim") {
+        showNotification();
+      }
     }
 
     if (
       (!settings.should_use_tef && flagCard) ||
-      (!isConnected)
+      !isConnected ||
+      (paymentType === PaymentType.PIX && selectTef === "Não")
     ) {
       const {
         response: updatedSale,
@@ -583,6 +596,8 @@ const Home: React.FC = () => {
                             loadingPayment={loadingPayment}
                             setLoadingPayment={setLoadingPayment}
                             paymentModalConnect={paymentModalConnect}
+                            selectTef={selectTef}
+                            setSelectTef={setSelectTef}
                           />
                         </PaymentsContent>
                         <CupomModal
