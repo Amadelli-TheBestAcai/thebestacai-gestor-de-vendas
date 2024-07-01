@@ -432,9 +432,7 @@ const Home: React.FC = () => {
   };
 
   const removePayment = async (payment: PaymentDto, justify?: string) => {
-    console.log(payment, "remove");
     const paymentsMetodsRemove = async (tefError: boolean) => {
-      console.log(payment, "delete");
       setLoadingPayment(true);
       let _updatedSale;
 
@@ -472,7 +470,7 @@ const Home: React.FC = () => {
           setLoadingPayment(false);
           notification.error({
             message: error_finalize_message || "Erro ao finalizar transação",
-            description: "Verique o pagamento na CPOSWEB se foi efetivado",
+            description: "Verique o pagamento na D-TEF Web se foi efetivado",
             duration: 5,
           });
         } else {
@@ -556,11 +554,9 @@ const Home: React.FC = () => {
           },
         });
       } else {
-        console.log(payment, "aassasas");
         await paymentsMetodsRemove(false);
       }
     } else {
-      console.log(payment, "tamo aqui");
       await paymentsMetodsRemove(true);
     }
   };
