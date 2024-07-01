@@ -190,6 +190,16 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
             });
             return;
           }
+          if (errorMessageCloseStoreCash === "Caixa já esta fechado") {
+            let storeCashClose = { ...storeCash, is_opened: false };
+            console.log(storeCashClose, "e");
+            setStoreCash(storeCashClose);
+            return notification.success({
+              message: `Caixa fechado com sucesso!`,
+              description: `O caixa foi fechado com sucesso.`,
+              duration: 5,
+            });
+          }
           if (errorOnStoreCash) {
             notification.error({
               message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
