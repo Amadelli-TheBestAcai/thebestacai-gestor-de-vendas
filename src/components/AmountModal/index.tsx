@@ -18,7 +18,7 @@ interface IProp extends RouteComponentProps {
 
 const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   const { storeCash, setStoreCash } = useSale();
-  const [loading, setLoaindg] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState({
     twoHundred: null,
@@ -38,10 +38,10 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   });
 
   useEffect(() => {
-    setLoaindg(true);
+    setLoading(true);
     async function init() {
       const hasInternet = await window.Main.hasInternet();
-      if (!hasInternet && storeCash.is_opened) {
+      if (!hasInternet && storeCash.is_opened && storeCash.is_online) {
         notification.error({
           message:
             "Para fechamento de caixa é necessário estar conectado a internet",
@@ -49,7 +49,7 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
         });
         setVisible(false);
       }
-      setLoaindg(false);
+      setLoading(false);
     }
     if (!visible) {
       setAmount({

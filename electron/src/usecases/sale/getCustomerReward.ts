@@ -1,8 +1,8 @@
-import { IUseCaseFactory } from "../useCaseFactory.interface";
-import thorApi from "../../providers/thorApi";
-import { ProductDto } from "../../models/gestor";
-import { BaseRepository } from "../../repository/baseRepository";
-import { StorageNames } from "../../repository/storageNames";
+import { IUseCaseFactory } from '../useCaseFactory.interface';
+import thorApi from '../../providers/thorApi';
+import { ProductDto } from '../../models/gestor';
+import { BaseRepository } from '../../repository/baseRepository';
+import { StorageNames } from '../../repository/storageNames';
 
 interface Request {
   hash_code: string;
@@ -41,9 +41,14 @@ class GetCustomerReward implements IUseCaseFactory {
         updated_at: string;
         deleted_at: string;
         product_id: number;
+        product_name: string;
         expirated_at: string;
         observation: string;
       };
+    };
+    product_info: {
+      id: number;
+      name: string;
     };
   }> {
     const {
@@ -56,8 +61,12 @@ class GetCustomerReward implements IUseCaseFactory {
       product_id: content.customer_reward.campaignReward.product_id,
     });
 
+    const productName = content.product_info?.name || 'O produto';
+
     if (!product) {
-      throw new Error("Essa recompensa não foi cadastrada em sua loja!");
+      throw new Error(
+        `"${productName}" não está habilitado no Produtos do Gestor. Após habilitar o item, reinicie o Gestor e tente resgatar a recompensa novamente.`
+      );
     }
 
     return content;
