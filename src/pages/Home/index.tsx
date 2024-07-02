@@ -322,7 +322,9 @@ const Home: React.FC = () => {
       } = await window.Main.sale.addPayment(
         currentPayment,
         paymentType,
-        paymentType === PaymentType.TICKET && settings.should_use_tef
+        (paymentType === PaymentType.TICKET && settings.should_use_tef) ||
+          paymentType === PaymentType.CREDITO ||
+          paymentType === PaymentType.DEBITO
           ? flagCard
           : null,
         turnOffTefPix
@@ -524,18 +526,18 @@ const Home: React.FC = () => {
                 </ColPaymentTef>
               </RowPaymentTef>
               <p style={{ color: "var(--red-600)" }}>
-                  Devido a isso ao clicar em "Remover Pagamento" você deve
-                  entrar no <b>D-TEF Web</b> através do{" "}
-                  <a
-                    href="https://tef.linxsaas.com.br/tefweb/DTefWeb.cgi/login"
-                    target="_blank"
-                    style={{ color: "blue" }}
-                  >
-                    {" "}
-                    LINK
-                  </a>{" "}
-                  e cancelar o pagamento removido.
-                </p>
+                Devido a isso ao clicar em "Remover Pagamento" você deve entrar
+                no <b>D-TEF Web</b> através do{" "}
+                <a
+                  href="https://tef.linxsaas.com.br/tefweb/DTefWeb.cgi/login"
+                  target="_blank"
+                  style={{ color: "blue" }}
+                >
+                  {" "}
+                  LINK
+                </a>{" "}
+                e cancelar o pagamento removido.
+              </p>
             </>
           ),
           okText: "Remover Pagamento",
