@@ -246,7 +246,7 @@ const Sale: React.FC<IProps> = () => {
         amount: payment.amount,
         type: payment.type,
         flag_card:
-          payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
+          payment.type === 1 || payment.type === 2 || payment.type === 3 ? payment.flag_card : null,
         code_nsu: payment.code_nsu ? payment.code_nsu : null,
         cnpj_credenciadora: payment.code_nsu
           ? payment.cnpj_credenciadora

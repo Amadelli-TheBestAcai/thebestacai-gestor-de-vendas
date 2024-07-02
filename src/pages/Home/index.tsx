@@ -322,7 +322,9 @@ const Home: React.FC = () => {
       } = await window.Main.sale.addPayment(
         currentPayment,
         paymentType,
-        flagCard,
+        paymentType === PaymentType.TICKET && settings.should_use_tef
+          ? flagCard
+          : null,
         turnOffTefPix
       );
       if (errorOnAddPayment) {

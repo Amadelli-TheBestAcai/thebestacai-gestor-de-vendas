@@ -27,7 +27,7 @@ export const salesFormaterToIntegrate = (
         amount: +_payment.amount,
         type: +_payment.type,
         flag_card:
-          _payment.type === PaymentType.CREDITO || _payment.type === PaymentType.DEBITO
+          _payment.type === PaymentType.CREDITO || _payment.type === PaymentType.DEBITO || _payment.type === PaymentType.TICKET
             ? _payment.flag_card
             : null,
         code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
@@ -135,7 +135,7 @@ export const salesFormaterToIntegrate = (
         amount: +_payment.amount,
         type: +_payment.type,
         flag_card:
-          _payment.type === 1 || _payment.type === 2
+          _payment.type === PaymentType.DEBITO || _payment.type === PaymentType.CREDITO || _payment.type === PaymentType.TICKET
             ? _payment.flag_card
             : null,
         code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
