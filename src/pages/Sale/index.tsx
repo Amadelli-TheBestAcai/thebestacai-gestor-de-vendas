@@ -547,24 +547,24 @@ const Sale: React.FC<IProps> = () => {
               />
             </Form.Item>
           </Form>
-          <p>Gostaria de manter o pagamento ou cancela-lo?</p>
+          <p>Gostaria de cancelar o pagamento ou mante-lo?</p>
         </>
       ),
-      okText: "Manter Pagamento",
+      okText: "Cancelar Pagamento",
       okType: "default",
-      cancelText: "Cancelar Pagamento",
+      cancelText: "Manter Pagamento",
       centered: true,
       okButtonProps: {
         style: {
-          background: "green",
+          background: "var(--red-600)",
           color: "white",
         },
       },
       width: "50%",
-      async onOk() {
+      async onCancel() {
         await formRemoveTef.resetFields();
       },
-      async onCancel() {
+      async onOk() {
         await formRemoveTef.validateFields();
         cancelTefPayment(
           payment,
