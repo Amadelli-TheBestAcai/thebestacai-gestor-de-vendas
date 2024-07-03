@@ -33,7 +33,6 @@ import { SaleDto, ProductDto, CampaignDto } from "../models/gestor";
 
 import {
   SaleFromApiDTO,
-  AppSaleDTO,
   NfeDTO,
   CustomerVoucherDTO,
 } from "../models/dtos";
