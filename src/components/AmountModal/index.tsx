@@ -172,6 +172,9 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
                   duration: 5,
                 });
           }
+
+          let _closedLocalStoreCash;
+
           const {
             response: _storeCash,
             has_internal_error: errorOnStoreCash,
@@ -190,14 +193,38 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
             });
             return;
           }
-          if (errorOnStoreCash) {
+
+          if (errorMessageCloseStoreCash === "Caixa já esta fechado") {
+            const closeCashLocal = true;
+
+            const {
+              response: _storeCashClose,
+              has_internal_error: errorOnStoreCash,
+              error_message: errorMessageCloseStoreCash,
+            } = await window.Main.storeCash.closeStoreCash(
+              storeCash?.code,
+              total,
+              closeCashLocal
+            );
+
+            if (errorOnStoreCash) {
+              notification.error({
+                message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
+                duration: 5,
+              });
+              return;
+            }
+            _closedLocalStoreCash = _storeCashClose;
+          } else if (errorOnStoreCash) {
             notification.error({
               message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
               duration: 5,
             });
             return;
           }
-          setStoreCash(_storeCash);
+
+          setStoreCash(_storeCash || _closedLocalStoreCash);
+
           notification.success({
             message: `Caixa ${
               storeCash?.is_opened ? "fechado" : "aberto"
