@@ -16,6 +16,7 @@ import { integrateProductWaste } from "../productWaste/integrateProductWaste";
 interface Request {
   code: string;
   amount_on_close: number;
+  closeCashLocal?: boolean;
 }
 
 class CloseStoreCash implements IUseCaseFactory {
@@ -37,16 +38,54 @@ class CloseStoreCash implements IUseCaseFactory {
     private integrateProductWasteUseCase = integrateProductWaste
   ) { }
 
+  private async closeCashLocal(company_id: number): Promise<StoreCashDto | undefined> {
+    const storeCash = await this.storeCashRepository.getOne();
+    const updatedStoreCash = await this.storeCashRepository.update(
+      storeCash?.id,
+      {
+        is_opened: false,
+      }
+    );
+
+    const {
+      data: { history },
+    } = await odinApi.get(
+      `/current_cash_history/${company_id}-${storeCash?.code}`
+    );
+    const oldCashHistory = await this.oldCashHistoryRepository.getOne();
+    if (oldCashHistory) {
+      await this.oldCashHistoryRepository.update(oldCashHistory.id, {
+        ...history,
+      });
+    } else {
+      await this.oldCashHistoryRepository.create({ ...history });
+    }
+
+    await useCaseFactory.execute<void>(this.integrateProductWasteUseCase);
+
+    return updatedStoreCash;
+  }
+
   async execute({
     amount_on_close,
     code,
+    closeCashLocal
   }: Request): Promise<StoreCashDto | undefined> {
+    const currentStore = await this.storeRepository.getOne();
+
+    if (!currentStore?.company_id) {
+      throw new Error("Não foi possível obter os dados da loja. Por favor, tente novamente.");
+    }
+
+    if (closeCashLocal) {
+      return this.closeCashLocal(currentStore.company_id);
+    }
+
     const isConnected = await checkInternet();
 
     if (!isConnected) {
-      throw new Error("Para fechar o caixa, é necessário estar conectado à internet. Por favor verifique sua conexão.")
+      throw new Error("Para fechar o caixa, é necessário estar conectado à internet. Por favor verifique sua conexão.");
     }
-    const currentStore = await this.storeRepository.getOne();
 
     let stepSales = (await this.stepSaleRepository.getAll()).filter(
       (sale) => sale.enabled
@@ -66,35 +105,11 @@ class CloseStoreCash implements IUseCaseFactory {
     }
 
     await odinApi.put(
-      `/store_cashes/${currentStore?.company_id}-${code}/close`,
+      `/store_cashes/${currentStore.company_id}-${code}/close`,
       { amount_on_close: +amount_on_close?.toString() || 0 }
     );
 
-    const storeCash = await this.storeCashRepository.getOne();
-    const updatedStoreCash = await this.storeCashRepository.update(
-      storeCash?.id,
-      {
-        is_opened: false,
-      }
-    );
-
-    const {
-      data: { history },
-    } = await odinApi.get(
-      `/current_cash_history/${currentStore?.company_id}-${storeCash?.code}`
-    );
-    const oldCashHistory = await this.oldCashHistoryRepository.getOne();
-    if (oldCashHistory) {
-      await this.oldCashHistoryRepository.update(oldCashHistory.id, {
-        ...history,
-      });
-    } else {
-      await this.oldCashHistoryRepository.create({ ...history });
-    }
-
-    await useCaseFactory.execute<void>(this.integrateProductWasteUseCase);
-
-    return updatedStoreCash;
+    return this.closeCashLocal(currentStore.company_id);
   }
 }
 

@@ -37,10 +37,11 @@ export const storeCashFactory = {
     await useCaseFactory.execute<StoreCashDto>(openStoreCash, {
       amount_on_open,
     }),
-  closeStoreCash: async (code: string, amount_on_close: number) =>
+  closeStoreCash: async (code: string, amount_on_close: number, closeCashLocal?: boolean) =>
     await useCaseFactory.execute<StoreCashDto>(closeStoreCash, {
       code,
       amount_on_close,
+      closeCashLocal
     }),
   getStoreCashBalance: async () =>
     await useCaseFactory.execute<BalanceDto>(getStoreCashBalance),
