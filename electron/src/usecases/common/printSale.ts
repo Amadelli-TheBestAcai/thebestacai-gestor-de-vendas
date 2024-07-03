@@ -5,14 +5,12 @@ import { StoreDto, SettingsDto } from "../../models/gestor";
 import { SaleFromApiDTO } from "../../models/dtos/salesFromApi";
 import { SaleDto } from "../../models/gestor/sale";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
-import env from "../../providers/env.json";
-import moment from "moment";
+import moment from 'moment';
 import {
   printer as ThermalPrinter,
   types as TermalTypes,
 } from "node-thermal-printer";
 import Printer from "printer";
-import axios from "axios";
 
 interface Request {
   sale: SaleFromApiDTO | SaleDto;
@@ -158,9 +156,10 @@ class PrintSale implements IUseCaseFactory {
       this.printerFormater.newLine();
     }
 
-    this.printerFormater.table(["QRCode Avaliação NPS"]);
+    const created_at = moment(sale.created_at).parseZone().format('DD/MM/YYYY-HH:mm:ss');
+
     this.printerFormater.println(
-      `Utilize este QRCode para ser direcionado para nos avaliar :)`
+      `Data: ${created_at}`
     );
     this.printerFormater.alignCenter();
     this.printerFormater.cut();
