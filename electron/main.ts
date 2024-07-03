@@ -39,7 +39,7 @@ function createWindow() {
       type: "question",
       buttons: ["Sim", "Não"],
       title: "Confirmar",
-      message: "Tem certeza que deseja fechar o Gestor de Vendas?",
+      message: "Você tem certeza que deseja fechar o Gestor de Vendas?",
     });
     if (choice === 1) {
       e.preventDefault();
