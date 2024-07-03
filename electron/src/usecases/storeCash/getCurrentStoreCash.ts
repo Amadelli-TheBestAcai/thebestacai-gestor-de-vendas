@@ -8,9 +8,7 @@ class GetCurrentStoreCash implements IUseCaseFactory {
     private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
-    private storeRepository = new BaseRepository<StoreDto>(
-      StorageNames.StoreCash
-    )
+    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store)
   ) {}
   async execute(): Promise<StoreCashDto | undefined> {
     let storeCash = await this.storeCashRepository.getOne();

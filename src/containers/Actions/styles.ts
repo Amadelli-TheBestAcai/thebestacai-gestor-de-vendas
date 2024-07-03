@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
 
 import {
   Offer,
@@ -8,7 +8,7 @@ import {
   TrophyFill,
   Discount,
   IdCard,
-} from "../../styles/Icons";
+} from '../../styles/Icons';
 
 const BasicCSS = css`
   height: 100%;
@@ -173,7 +173,7 @@ export const CpfContent = styled.div<ICpfBackgroundProps>`
   padding: 1rem;
   margin-top: 0.4rem;
   border-radius: 4px;
-  background-color: ${({ haveCpf }) => (!haveCpf ? "#FF8D3A33" : "#00BF0A33")};
+  background-color: ${({ haveCpf }) => (!haveCpf ? '#FF8D3A33' : '#00BF0A33')};
   span {
     font-size: 1rem;
     font-weight: 400;
@@ -209,6 +209,19 @@ export const ButtonCommands = styled.button`
   ${ButtonCSS}
 
   position: relative;
+
+  :disabled {
+    cursor: not-allowed;
+    background-color: var(--grey-70);
+
+    :hover {
+      border-color: var(--grey-70);
+      color: black;
+      svg {
+        color: black;
+      }
+    }
+  }
 
   .badge {
     width: 1.2rem;

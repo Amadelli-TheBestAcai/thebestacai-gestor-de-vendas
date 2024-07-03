@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
 
 import {
   Trash,
@@ -6,9 +6,9 @@ import {
   InfoCircle,
   Search,
   TrashRestoreAlt,
-} from "../../styles/Icons";
+} from '../../styles/Icons';
 
-import MonetaryInput from "../../components/MonetaryInput";
+import MonetaryInput from '../../components/MonetaryInput';
 
 import {
   Form as FormAnt,
@@ -19,7 +19,7 @@ import {
   Button as ButtonAnt,
   Tabs as TabsAnd,
   Modal,
-} from "antd";
+} from 'antd';
 
 export const Container = styled.div`
   display: flex;
@@ -76,13 +76,15 @@ export const LeftContainer = styled.div`
   height: 100%;
   width: 30%;
   margin-right: 1rem;
+  gap: 2rem;
 `;
 
 export const BalanceContainer = styled.div`
   display: flex;
   width: 100%;
+  flex-direction: column;
   height: 15%;
-  margin-bottom: 1rem;
+  gap: 1rem;
 
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
@@ -152,19 +154,43 @@ const BalanceCSS = css`
 `;
 
 export const PriceContent = styled.div`
-  ${BalanceCSS}
-  width: 60%;
-  margin-right: 1rem;
+  display: flex;
+  gap: 2rem;
+  height: 100%;
+  width: 100%;
+
+  span {
+    color: var(--grey-80);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  input {
+    ${InputCSS};
+    height: 100%;
+  }
+
+  /*Responsive 1600px*/
+  @media (max-width: 1600px) {
+    @media (max-height: 900px) {
+      span {
+        font-size: 0.8rem;
+      }
+    }
+  }
 `;
 
 export const WeightContent = styled.div`
-  ${BalanceCSS}
   width: 40%;
+`;
+
+export const ContainerNotSelfService = styled.div`
+  height: 100%;
 `;
 
 export const InfoWeight = styled.div`
   ${InputCSS}
-  height: 80%;
+  height: 100%;
   width: 100%;
   color: var(--grey-80);
 
@@ -308,13 +334,13 @@ export const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 58vh;
+  height: 57vh;
   overflow-y: scroll;
 
   /*Responsive 1600px*/
   @media (max-width: 1600px) {
     @media (max-height: 900px) {
-      height: 55vh;
+      height: 54vh;
     }
   }
 
