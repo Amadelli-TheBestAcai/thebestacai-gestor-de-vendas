@@ -34,19 +34,30 @@ const SideBar: React.FC<IProps> = ({ history }) => {
   const { storeCash } = useSale();
   const { hasPermission } = useUser();
 
-  const handleClick = (id: number, route: string): void => {
+  const handleClick = async (id: number, route: string) => {
+    const isConnected = await window.Main.hasInternet();
     if (
       storeCash &&
-      !storeCash?.is_online &&
+      (!storeCash?.is_online || !isConnected) &&
       (route === "/handler" || route === "/sale")
     ) {
-      notification.info({
-        message: "Caixa offline",
-        description: `O caixa deve estar online para acessar a tela de ${
-          route === "/handler" ? "Movimentações" : "Vendas"
-        }`,
-        duration: 3,
-      });
+      if (!storeCash?.is_online) {
+        notification.info({
+          message: "Caixa offline",
+          description: `O caixa deve estar online para acessar a tela de ${
+            route === "/handler" ? "Movimentações" : "Vendas"
+          }`,
+          duration: 3,
+        });
+      } else if (storeCash?.is_online || !isConnected) {
+        notification.info({
+          message: "Sem acesso a internet",
+          description: `Você está sem conexão com a internet para realizar o acesso a tela de ${
+            route === "/handler" ? "Movimentações" : "Vendas"
+          }`,
+          duration: 3,
+        });
+      }
     } else {
       history.push(route);
     }
