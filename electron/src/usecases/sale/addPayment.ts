@@ -15,7 +15,7 @@ interface Request {
   amount: number;
   type: number;
   flag_card?: number;
-  turnOffTefPix?: boolean
+  turnOffTef?: boolean
 }
 
 class AddPayment implements IUseCaseFactory {
@@ -27,7 +27,7 @@ class AddPayment implements IUseCaseFactory {
 
   ) { }
 
-  async execute({ amount, type, flag_card, turnOffTefPix }: Request): Promise<SaleDto> {
+  async execute({ amount, type, flag_card, turnOffTef }: Request): Promise<SaleDto> {
     const isConnectInternet = await checkInternet();
 
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
@@ -44,7 +44,7 @@ class AddPayment implements IUseCaseFactory {
     let numero_autorizacao;
     let tef_status_payment;
 
-    if (settings?.should_use_tef && type !== PaymentType.DINHEIRO && isConnectInternet && !turnOffTefPix) {
+    if (settings?.should_use_tef && type !== PaymentType.DINHEIRO && isConnectInternet && !turnOffTef) {
       const { response, has_internal_error: errorOnGetCurrentSale, error_message } =
         await useCaseFactory.execute<any>(this.transactionsTefUseCase, { type, amount });
 

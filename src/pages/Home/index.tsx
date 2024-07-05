@@ -313,10 +313,14 @@ const Home: React.FC = () => {
     if (
       (!settings.should_use_tef && flagCard) ||
       !isConnected ||
+      !paymentModalConnect ||
       (paymentType === PaymentType.PIX && selectTef === "Não")
     ) {
-      const turnOffTefPix =
-        paymentType === PaymentType.PIX && selectTef === "Não" ? true : false;
+      const turnOffTef =
+        (paymentType === PaymentType.PIX && selectTef === "Não") ||
+        !paymentModalConnect
+          ? true
+          : false;
 
       const {
         response: updatedSale,
@@ -330,7 +334,7 @@ const Home: React.FC = () => {
           paymentType === PaymentType.DEBITO
           ? flagCard
           : null,
-        turnOffTefPix
+        turnOffTef
       );
       if (errorOnAddPayment) {
         setLoadingPayment(false);
@@ -836,7 +840,9 @@ const Home: React.FC = () => {
         closable={false}
       >
         <Centralizer>
+          <h2>Abrindo caixa online</h2>
           <Spinner />
+          <h3>Aguarde alguns instantes</h3>
         </Centralizer>
       </Modal>
     </Container>
