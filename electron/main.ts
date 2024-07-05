@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain } from "electron";
+import { app, BrowserWindow, screen, ipcMain, dialog } from "electron";
 import { autoUpdater } from "electron-updater";
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
@@ -34,6 +34,18 @@ function createWindow() {
 
   win.on("page-title-updated", function (e) {
     e.preventDefault();
+  });
+
+  win.on("close", (e) => {
+    const choice = dialog.showMessageBoxSync(win as any, {
+      type: "question",
+      buttons: ["Sim", "Não"],
+      title: "Confirmar",
+      message: "Você tem certeza que deseja fechar o Gestor de Vendas?",
+    });
+    if (choice === 1) {
+      e.preventDefault();
+    }
   });
 
   if (app.isPackaged) {

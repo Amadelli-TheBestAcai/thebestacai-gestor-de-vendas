@@ -18,7 +18,7 @@ interface IProp extends RouteComponentProps {
 
 const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   const { storeCash, setStoreCash } = useSale();
-  const [loading, setLoaindg] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState({
     twoHundred: null,
@@ -38,10 +38,10 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   });
 
   useEffect(() => {
-    setLoaindg(true);
+    setLoading(true);
     async function init() {
       const hasInternet = await window.Main.hasInternet();
-      if (!hasInternet && storeCash.is_opened) {
+      if (!hasInternet && storeCash.is_opened && storeCash.is_online) {
         notification.error({
           message:
             "Para fechamento de caixa é necessário estar conectado a internet",
@@ -49,7 +49,7 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
         });
         setVisible(false);
       }
-      setLoaindg(false);
+      setLoading(false);
     }
     if (!visible) {
       setAmount({
@@ -172,6 +172,9 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
                   duration: 5,
                 });
           }
+
+          let _closedLocalStoreCash;
+
           const {
             response: _storeCash,
             has_internal_error: errorOnStoreCash,
@@ -190,14 +193,38 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
             });
             return;
           }
-          if (errorOnStoreCash) {
+
+          if (errorMessageCloseStoreCash === "Caixa já esta fechado") {
+            const closeCashLocal = true;
+
+            const {
+              response: _storeCashClose,
+              has_internal_error: errorOnStoreCash,
+              error_message: errorMessageCloseStoreCash,
+            } = await window.Main.storeCash.closeStoreCash(
+              storeCash?.code,
+              total,
+              closeCashLocal
+            );
+
+            if (errorOnStoreCash) {
+              notification.error({
+                message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
+                duration: 5,
+              });
+              return;
+            }
+            _closedLocalStoreCash = _storeCashClose;
+          } else if (errorOnStoreCash) {
             notification.error({
               message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
               duration: 5,
             });
             return;
           }
-          setStoreCash(_storeCash);
+
+          setStoreCash(_storeCash || _closedLocalStoreCash);
+
           notification.success({
             message: `Caixa ${
               storeCash?.is_opened ? "fechado" : "aberto"

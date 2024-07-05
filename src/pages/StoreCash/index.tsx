@@ -61,14 +61,10 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [amountModal, setAmountModal] = useState<boolean>(false);
   const [balance, setBalance] = useState<BalanceModel>();
   const [loading, setLoading] = useState(true);
-  const [openingOnlineStoreCash, setOpeningOnlineStoreCash] = useState(false);
-
   const [modalJustify, setModalJustify] = useState(false);
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
   const { settings, setSettings } = useSettings();
-  const [hasOpenedOnlineStoreCash, setHasOpenedOnlineStoreCash] =
-    useState(false);
 
   useEffect(() => {
     async function init() {
@@ -219,16 +215,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     setModalJustify(false);
   };
 
-  const openOnlineStoreCash = async (code?: string) => {
-    if (openingOnlineStoreCash && code !== "OFFLINE") {
-      return notification.warning({
-        message: "Aguarde que estamos abrindo um caixa pra você",
-        duration: 5,
-      });
-    }
-
-    setOpeningOnlineStoreCash(true);
-
+  const openOnlineStoreCash = async () => {
     if (settings.should_open_casher === false) {
       const { response: updatedSettings, has_internal_error: errorOnSettings } =
         await window.Main.settings.update(settings.id, {
@@ -260,15 +247,14 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
 
       error_message
         ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
+          message: error_message,
+          duration: 5,
+        })
         : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+          message: "Erro ao abrir caixa",
+          duration: 5,
+        });
 
-      setOpeningOnlineStoreCash(false);
 
       return;
     }
@@ -279,8 +265,6 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       duration: 5,
     });
 
-    setOpeningOnlineStoreCash(false);
-
     const {
       has_internal_error: internalErrorOnOnlineIntegrate,
       error_message: errorMessageOnOnlineTntegrate,
@@ -289,14 +273,14 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     if (internalErrorOnOnlineIntegrate) {
       errorMessageOnOnlineTntegrate
         ? notification.warning({
-            message: errorMessageOnOnlineTntegrate,
-            duration: 5,
-          })
+          message: errorMessageOnOnlineTntegrate,
+          duration: 5,
+        })
         : notification.error({
-            message:
-              errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
-            duration: 5,
-          });
+          message:
+            errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
+          duration: 5,
+        });
     }
 
     const {
@@ -307,14 +291,14 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     if (errorOnIntegrateHandler) {
       errorMessageOnIntegrateHandler
         ? notification.warning({
-            message: errorMessageOnIntegrateHandler,
-            duration: 5,
-          })
+          message: errorMessageOnIntegrateHandler,
+          duration: 5,
+        })
         : notification.error({
-            message:
-              errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
-            duration: 5,
-          });
+          message:
+            errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
+          duration: 5,
+        });
     }
 
     const {
@@ -325,15 +309,15 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     if (errorOnIntegrateItemOutCart) {
       errorMessageOnIntegrateItemOutCart
         ? notification.warning({
-            message: errorMessageOnIntegrateItemOutCart,
-            duration: 5,
-          })
+          message: errorMessageOnIntegrateItemOutCart,
+          duration: 5,
+        })
         : notification.error({
-            message:
-              errorMessageOnIntegrateItemOutCart ||
-              "Erro ao integrar itens fora do carrinho",
-            duration: 5,
-          });
+          message:
+            errorMessageOnIntegrateItemOutCart ||
+            "Erro ao integrar itens fora do carrinho",
+          duration: 5,
+        });
     }
 
     const {
@@ -391,11 +375,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                   <CloseCashContatiner>
                     <OpenCloseButton
                       onClick={() =>
-                        storeCash?.is_opened &&
-                        !storeCash?.is_online &&
-                        !hasOpenedOnlineStoreCash
-                          ? (openOnlineStoreCash(storeCash?.code),
-                            setHasOpenedOnlineStoreCash(true))
+                        storeCash?.is_opened && !storeCash?.is_online
+                          ? openOnlineStoreCash()
                           : setAmountModal(true)
                       }
                       _type={
@@ -407,8 +388,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       {storeCash?.is_opened && storeCash?.is_online
                         ? "Fechar Caixa"
                         : storeCash?.is_opened && !storeCash?.is_online
-                        ? "Abrir caixa online"
-                        : "Abrir Caixa"}
+                          ? "Abrir caixa online"
+                          : "Abrir Caixa"}
                     </OpenCloseButton>
                   </CloseCashContatiner>
                 </StatusWrapper>

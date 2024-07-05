@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-import RegistrationCard from "../RegistrationCard";
-import DiscountForm from "../DiscountForm";
-import InOutForm from "../InOutForm";
+import RegistrationCard from '../RegistrationCard';
+import DiscountForm from '../DiscountForm';
+import InOutForm from '../InOutForm';
 
-import ChatForm from "../ChatForm";
+import ChatForm from '../ChatForm';
 
 import {
   Container,
@@ -27,15 +27,16 @@ import {
   ContentPointsInfo,
   ContentUserInfo,
   ButtonCommands,
-} from "./styles";
+} from './styles';
 
-import { useSale } from "../../hooks/useSale";
-import { useStore } from "../../hooks/useStore";
-import RewardModal from "../RewardModal";
-import CupomModal from "../CupomModal";
-import ClientCPFInfo from "../../components/ClientCPFInfo";
-import { SaleDto } from "../../models/dtos/sale";
-import { monetaryFormat } from "../../helpers/monetaryFormat";
+import { useSale } from '../../hooks/useSale';
+import { useStore } from '../../hooks/useStore';
+import RewardModal from '../RewardModal';
+import CupomModal from '../CupomModal';
+import ClientCPFInfo from '../../components/ClientCPFInfo';
+import { SaleDto } from '../../models/dtos/sale';
+import { monetaryFormat } from '../../helpers/monetaryFormat';
+import { Tooltip } from 'antd';
 
 type ComponentProps = RouteComponentProps;
 
@@ -46,10 +47,12 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
     campaign,
     setCampaign,
     setShouldOpenClientInfo,
+    storeCash,
+    setStoreCash,
   } = useSale();
   const [cupomModalState, setCupomModalState] = useState(false);
   const { store } = useStore();
-  const [cash, setCash] = useState<string | undefined>("");
+  const [cash, setCash] = useState<string | undefined>('');
   const [username, setUsername] = useState<SaleDto>();
   const [commandState, setCommandState] = useState(false);
   const [handlerInState, setHandlerInState] = useState(false);
@@ -61,7 +64,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       const { response: storeCash } = await window.Main.storeCash.getCurrent();
-      setCash(storeCash?.is_opened ? "ABERTO" : "FECHADO");
+      setCash(storeCash?.is_opened ? 'ABERTO' : 'FECHADO');
     }
     init();
   }, [history.location]);
@@ -100,6 +103,18 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
     }
   }, [sale.client_cpf]);
 
+  const modalReward = async () => {
+    if (storeCash && !storeCash?.is_online) {
+      const { response: _storeCash } = await window.Main.storeCash.getCurrent();
+
+      if (_storeCash && _storeCash?.is_online) {
+        setStoreCash(_storeCash);
+      }
+    }
+
+    setRewardModal(true);
+  };
+
   return (
     <Container>
       <ContentGeneral>
@@ -135,15 +150,39 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               <OutputIcon />
               Saída
             </Button>
-            <ButtonCommands onClick={() => setCommandState(true)}>
-              <ListIcon />
-              Comanda{" "}
-              {openedStepSale > 0 && (
-                <span className="badge">{openedStepSale}</span>
-              )}
-            </ButtonCommands>
+            {sale?.customer_reward_id ? (
+              <>
+                <Tooltip
+                  title={
+                    'Não é possível criar comanda com recompensas no carrinho!'
+                  }
+                  destroyTooltipOnHide
+                >
+                  <span>
+                    <ButtonCommands
+                      disabled={sale?.customer_reward_id ? true : false}
+                      onClick={() => setCommandState(true)}
+                    >
+                      <ListIcon />
+                      Comanda{' '}
+                      {openedStepSale > 0 && (
+                        <span className="badge">{openedStepSale}</span>
+                      )}
+                    </ButtonCommands>
+                  </span>
+                </Tooltip>
+              </>
+            ) : (
+              <ButtonCommands onClick={() => setCommandState(true)}>
+                <ListIcon />
+                Comanda{' '}
+                {openedStepSale > 0 && (
+                  <span className="badge">{openedStepSale}</span>
+                )}
+              </ButtonCommands>
+            )}
 
-            <Button onClick={() => setRewardModal(true)}>
+            <Button onClick={() => modalReward()}>
               <TrophyIcon />
               Recompensas
             </Button>
@@ -155,7 +194,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
                 {store?.company?.company_name?.toUpperCase()} <br />
                 <span
                   style={{
-                    color: cash === "ABERTO" ? "green" : "red",
+                    color: cash === 'ABERTO' ? 'green' : 'red',
                   }}
                 >
                   {cash}
@@ -168,10 +207,10 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
         <CpfContent haveCpf={sale.client_cpf}>
           <ContentUserInfo>
             <span>
-              <b>Nome:</b> {sale.client_cpf ? username?.name : "Não informado"}
-            </span>{" "}
+              <b>Nome:</b> {sale.client_cpf ? username?.name : 'Não informado'}
+            </span>{' '}
             <span>
-              <b>CPF:</b> {sale.client_cpf ? sale.client_cpf : "Não informado"}
+              <b>CPF:</b> {sale.client_cpf ? sale.client_cpf : 'Não informado'}
             </span>
           </ContentUserInfo>
 

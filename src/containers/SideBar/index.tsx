@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
+import { useUser } from "../../hooks/useUser";
+import { useSale } from "../../hooks/useSale";
+
 import LogoImg from "../../assets/img/logo-login.png";
 
-import { Modal, Tooltip } from "antd";
+import { Modal, Tooltip, notification } from "antd";
 
 import {
   Container,
@@ -23,16 +26,41 @@ import {
   LogOutIcon,
   TrashIcon,
 } from "./styles";
-import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history }) => {
   const [visible, setVisible] = useState(false);
+  const { storeCash } = useSale();
   const { hasPermission } = useUser();
 
-  const handleClick = (id: number, route: string): void => {
-    history.push(route);
+  const handleClick = async (id: number, route: string) => {
+    const isConnected = await window.Main.hasInternet();
+    if (
+      storeCash &&
+      (!storeCash?.is_online || !isConnected) &&
+      (route === "/handler" || route === "/sale")
+    ) {
+      if (!storeCash?.is_online) {
+        notification.info({
+          message: "Caixa offline",
+          description: `O caixa deve estar online para acessar a tela de ${
+            route === "/handler" ? "Movimentações" : "Vendas"
+          }`,
+          duration: 3,
+        });
+      } else if (storeCash?.is_online || !isConnected) {
+        notification.info({
+          message: "Sem acesso a internet",
+          description: `Você está sem conexão com a internet para realizar o acesso a tela de ${
+            route === "/handler" ? "Movimentações" : "Vendas"
+          }`,
+          duration: 3,
+        });
+      }
+    } else {
+      history.push(route);
+    }
 
     if (id === 10) {
       Modal.confirm({
