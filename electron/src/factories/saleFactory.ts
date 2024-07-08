@@ -53,12 +53,12 @@ export const saleFactory = {
     }),
   decressItem: async (id: string) =>
     await useCaseFactory.execute<SaleDto>(decressItem, { id }),
-  addPayment: async (amount: number, type: number, flag_card?: number, turnOffTefPix?: boolean) =>
+  addPayment: async (amount: number, type: number, flag_card?: number, turnOffTef?: boolean) =>
     await useCaseFactory.execute<SaleDto>(addPayment, {
       amount,
       type,
       flag_card,
-      turnOffTefPix
+      turnOffTef
     }),
   updateSale: async (id: string | number, payload: SaleDto) =>
     await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),

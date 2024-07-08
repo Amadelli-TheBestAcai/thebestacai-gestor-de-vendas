@@ -6,6 +6,7 @@ import Balance from "../../containers/Balance";
 import Products from "../../containers/Products";
 import Payments from "../../containers/Payments";
 import CupomModal from "../../containers/CupomModal";
+import Centralizer from "../../containers/Centralizer";
 
 import Spinner from "../../components/Spinner";
 import Register from "../../components/Register";
@@ -46,11 +47,13 @@ const DESFEITO = PaymentTefCancelType.DESFEITO;
 const Home: React.FC = () => {
   const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
     useSale();
-  const { settings } = useSettings();
+  const { settings, setSettings } = useSettings();
   const [formRemoveTef] = Form.useForm();
 
   const [loading, setLoading] = useState(true);
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const [loadingPaymentModalOpenOnline, setLoadingPaymentModalOpenOnline] =
+    useState(false);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentType, setPaymentType] = useState(0);
   const [flagCard, setFlagCard] = useState<number | null>(99);
@@ -310,10 +313,14 @@ const Home: React.FC = () => {
     if (
       (!settings.should_use_tef && flagCard) ||
       !isConnected ||
+      !paymentModalConnect ||
       (paymentType === PaymentType.PIX && selectTef === "Não")
     ) {
-      const turnOffTefPix =
-        paymentType === PaymentType.PIX && selectTef === "Não" ? true : false;
+      const turnOffTef =
+        (paymentType === PaymentType.PIX && selectTef === "Não") ||
+        !paymentModalConnect
+          ? true
+          : false;
 
       const {
         response: updatedSale,
@@ -327,7 +334,7 @@ const Home: React.FC = () => {
           paymentType === PaymentType.DEBITO
           ? flagCard
           : null,
-        turnOffTefPix
+        turnOffTef
       );
       if (errorOnAddPayment) {
         setLoadingPayment(false);
@@ -565,11 +572,131 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleOpenPayment = (
+  const openOnlineStoreCash = async () => {
+    if (settings.should_open_casher === false) {
+      const { response: updatedSettings, has_internal_error } =
+        await window.Main.settings.update(settings.id, {
+          ...settings,
+          should_open_casher: true,
+        });
+
+      if (has_internal_error) {
+        notification.error({
+          message: "Erro ao atualizar as configurações",
+          duration: 5,
+        });
+        return false;
+      }
+
+      setSettings(updatedSettings);
+    }
+
+    const { has_internal_error, error_message, response } =
+      await window.Main.storeCash.openOnlineStoreCash();
+
+    if (has_internal_error) {
+      if (
+        error_message !==
+        "Sem conexão com a internet. Por favor, verifique sua conexão."
+      ) {
+        error_message
+          ? notification.warning({
+              message: error_message,
+              duration: 5,
+            })
+          : notification.error({
+              message: "Erro ao abrir caixa",
+              duration: 5,
+            });
+      }
+      return false;
+    }
+    setStoreCash(response);
+
+    notification.success({
+      message: "Caixa online aberto com sucesso",
+      duration: 5,
+    });
+
+    const {
+      has_internal_error: internalErrorOnOnlineIntegrate,
+      error_message: errorMessageOnOnlineTntegrate,
+    } = await window.Main.sale.onlineIntegration();
+
+    if (internalErrorOnOnlineIntegrate) {
+      errorMessageOnOnlineTntegrate
+        ? notification.warning({
+            message: errorMessageOnOnlineTntegrate,
+            duration: 5,
+          })
+        : notification.error({
+            message:
+              errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
+            duration: 5,
+          });
+    }
+
+    const {
+      has_internal_error: errorOnIntegrateHandler,
+      error_message: errorMessageOnIntegrateHandler,
+    } = await window.Main.handler.integrateHandler();
+
+    if (errorOnIntegrateHandler) {
+      errorMessageOnIntegrateHandler
+        ? notification.warning({
+            message: errorMessageOnIntegrateHandler,
+            duration: 5,
+          })
+        : notification.error({
+            message:
+              errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
+            duration: 5,
+          });
+    }
+
+    const {
+      has_internal_error: errorOnIntegrateItemOutCart,
+      error_message: errorMessageOnIntegrateItemOutCart,
+    } = await window.Main.itemOutCart.integrationItemOutCart();
+
+    if (errorOnIntegrateItemOutCart) {
+      errorMessageOnIntegrateItemOutCart
+        ? notification.warning({
+            message: errorMessageOnIntegrateItemOutCart,
+            duration: 5,
+          })
+        : notification.error({
+            message:
+              errorMessageOnIntegrateItemOutCart ||
+              "Erro ao integrar itens fora do carrinho",
+            duration: 5,
+          });
+    }
+    return true;
+  };
+
+  const handleOpenPayment = async (
     type: number,
     title: string,
     flagCard = 99
-  ): void => {
+  ) => {
+    if (!storeCash.is_online && settings.should_use_tef) {
+      setLoadingPaymentModalOpenOnline(true);
+      const openStoreCash = await openOnlineStoreCash();
+      if (!openStoreCash) {
+        notification.error({
+          message: "Não foi possível realizar a abertura do caixa online",
+          description:
+            "Devido a isso, não será possível utilizar os serviços da maquininha PIN PAD - TEF. Prossiga com o pagamento utilizando outra maquininha.",
+          duration: 10,
+        });
+        setPaymentModalConnect(false);
+      } else {
+        setPaymentModalConnect(true);
+      }
+    }
+
+    setLoadingPaymentModalOpenOnline(false);
     setPaymentType(type);
     setFlagCard(flagCard);
     setPaymentModal(true);
@@ -706,6 +833,18 @@ const Home: React.FC = () => {
         )}
       </>
       <RemoveTefModal />
+      <Modal
+        visible={loadingPaymentModalOpenOnline}
+        footer={false}
+        title={false}
+        closable={false}
+      >
+        <Centralizer>
+          <h2>Abrindo caixa online</h2>
+          <Spinner />
+          <h3>Aguarde alguns instantes</h3>
+        </Centralizer>
+      </Modal>
     </Container>
   );
 };
