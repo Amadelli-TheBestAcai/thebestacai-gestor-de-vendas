@@ -136,6 +136,12 @@ const NfeForm: React.FC<IProps> = ({
         numero_autorizacao: paymentNfe.code_nsu
           ? paymentNfe.numero_autorizacao
           : null,
+        cnpj_beneficiario: paymentNfe.code_nsu
+          ? paymentNfe.cnpj_beneficiario
+          : null,
+        id_terminal_pagamento: paymentNfe.code_nsu
+          ? paymentNfe.id_terminal_pagamento
+          : null
       })),
       ref: sale.ref
     };

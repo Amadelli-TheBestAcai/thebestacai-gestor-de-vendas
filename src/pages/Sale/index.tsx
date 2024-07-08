@@ -254,6 +254,12 @@ const Sale: React.FC<IProps> = () => {
         numero_autorizacao: payment.code_nsu
           ? payment.numero_autorizacao
           : null,
+        cnpj_beneficiario: payment.code_nsu
+          ? payment.cnpj_beneficiario
+          : null,
+        id_terminal_pagamento: payment.code_nsu
+          ? payment.id_terminal_pagamento
+          : null
       })),
       ref: selectedSale.ref,
     };

@@ -11,6 +11,7 @@ import {
     insertPaymentTefAudit,
     integrationPaymentTefAudit
 } from "../usecases/linxTef";
+import { deleteLogs } from "../usecases/linxTef/deleteLogs";
 import { removeTransaction } from "../usecases/linxTef/removeTransation";
 import { reprintCoupon } from "../usecases/linxTef/reprintCoupon";
 import { useCaseFactory } from "../usecases/useCaseFactory";
@@ -23,8 +24,10 @@ export const tefFactory = {
         }),
     configurationTEF: async () =>
         await useCaseFactory.execute<void>(configurationTEF),
+    deleteLogs: async () =>
+        await useCaseFactory.execute<void>(deleteLogs),
     removeTransaction: async (code_nsu: string) =>
-        await useCaseFactory.execute<string>(removeTransaction, {code_nsu}),
+        await useCaseFactory.execute<string>(removeTransaction, { code_nsu }),
     finalizeTransaction: async (codes_nsu: string[]) =>
         await useCaseFactory.execute<void>(finalizeTransaction, { codes_nsu }),
     getPathCupom: async () =>

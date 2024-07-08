@@ -115,6 +115,8 @@ export interface SaleDto {
     cnpj_credenciadora?: string;
     numero_autorizacao?: string;
     tef_status_payment?: number;
+    cnpj_beneficiario?: string
+    id_terminal_pagamento?: string
     created_at?: string;
     deleted_at?: string;
   }[];

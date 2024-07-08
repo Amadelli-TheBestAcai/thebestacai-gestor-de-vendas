@@ -1,3 +1,4 @@
+import { readIdPinPad } from "../../helpers/readIdPinPad";
 import { PaymentType } from "../../models/enums/paymentType";
 import { checkInternet } from "../../providers/internetConnection";
 import tefApi from "../../providers/tefApi";
@@ -58,6 +59,8 @@ class TransactionsTef implements IUseCaseFactory {
         }
 
         const { data: { data } } = await tefApi.post(endpoint, { amount });
+        const idPinPad = readIdPinPad(response)
+        data.id_terminal_pagamento = idPinPad
         return data
     }
 }

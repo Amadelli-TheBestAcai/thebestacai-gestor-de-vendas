@@ -85,6 +85,8 @@ export interface SaleFromApiDTO {
     cnpj_credenciadora?: string;
     numero_autorizacao?: string;
     tef_status_payment?: number;
+    cnpj_beneficiario?: string,
+    id_terminal_pagamento?: string
   }[];
   change_amount: string;
   cash_id: number;

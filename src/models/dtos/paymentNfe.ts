@@ -6,4 +6,6 @@ export interface PaymentNfe {
   code_nsu?: string
   numero_autorizacao?: string;
   cnpj_credenciadora?: string;
+  cnpj_beneficiario?: string;
+  id_terminal_pagamento?: string;
 }

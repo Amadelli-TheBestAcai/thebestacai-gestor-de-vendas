@@ -3,7 +3,7 @@ import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale } from "./getCurrentSale";
-import { SaleDto, SettingsDto } from "../../models/gestor";
+import { SaleDto, SettingsDto, StoreDto } from "../../models/gestor";
 import { PaymentType } from "../../models/enums/paymentType";
 import { v4 } from "uuid";
 import moment from "moment";
@@ -22,6 +22,7 @@ class AddPayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
     private settingsRepository = new BaseRepository<SettingsDto>(StorageNames.Settings),
+    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private getCurrentSaleUseCase = getCurrentSale,
     private transactionsTefUseCase = transactionsTef,
 
@@ -43,6 +44,8 @@ class AddPayment implements IUseCaseFactory {
     let cnpj_credenciadora;
     let numero_autorizacao;
     let tef_status_payment;
+    let cnpj_beneficiario
+    let id_terminal_pagamento
 
     if (settings?.should_use_tef && type !== PaymentType.DINHEIRO && isConnectInternet && !turnOffTefPix) {
       const { response, has_internal_error: errorOnGetCurrentSale, error_message } =
@@ -51,19 +54,23 @@ class AddPayment implements IUseCaseFactory {
       if (errorOnGetCurrentSale) {
         throw new Error(error_message || "Erro ao integrar pagamento ao tef");
       }
+      const store = await this.storeRepository.getOne({})
 
       code_nsu = response?.code_nsu
       cnpj_credenciadora = response?.cnpj_credenciadora
       flag_card = parseInt(response?.flag_card, 10);
       numero_autorizacao = response?.code_autorization
       tef_status_payment = TefPaymentType.APROVADO
+      cnpj_beneficiario = store?.company?.cnpj
+      id_terminal_pagamento = response?.id_terminal_pagamento
     }
 
     if (!sale) {
       throw new Error("Nenhuma venda encontrada");
     }
-    
-    if (type === PaymentType.CREDITO || type === PaymentType.DEBITO || type === PaymentType.TICKET) {
+
+    if (type === PaymentType.CREDITO || type === PaymentType.DEBITO
+      || type === PaymentType.TICKET || type === PaymentType.PIX) {
       sale.payments.push({
         id: v4(),
         amount,
@@ -73,6 +80,8 @@ class AddPayment implements IUseCaseFactory {
         cnpj_credenciadora,
         numero_autorizacao,
         tef_status_payment,
+        cnpj_beneficiario,
+        id_terminal_pagamento,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
@@ -81,10 +90,6 @@ class AddPayment implements IUseCaseFactory {
         id: v4(),
         amount,
         type,
-        code_nsu,
-        cnpj_credenciadora,
-        numero_autorizacao,
-        tef_status_payment,
         formated_type: PaymentType[type],
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });

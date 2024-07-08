@@ -1,6 +1,6 @@
 {
   "name": "gestor-de-vendas",
-  "version": "13.6.12",
+  "version": "13.7.0",
   "author": "Amabest",
   "homepage": "./",
   "description": "Gestor de Vendas",
@@ -48,7 +48,9 @@
   },
   "scripts": {
     "start": "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts --openssl-legacy-provider build",
+
+"build": "react-scripts --openssl-legacy-provider build",
+
     "test": "react-scripts test",
     "postinstall": "electron-builder install-app-deps",
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
