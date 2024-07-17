@@ -12,7 +12,7 @@ class GetPathCupom implements IUseCaseFactory {
 
         const isConnect = await verifyConnectionTEF()
         if (!isConnect) {
-            throw new Error("O servidor da TEF não está rodando. Verifique se o executável ServerTEF.exe foi instalado corretamente")
+            throw new Error("O servidor TEF não está em execução. Por favor, feche e abra novamente o gestor de vendas ou verifique se o executável ServerTEF.exe está instalado corretamente.")
         }
         const { data: { data: { pathCupom } } } = await tefApi.get(`/obtem-path-cupons`)
         return pathCupom
