@@ -1,3 +1,4 @@
+import { ConfigTefDTO } from "../models/dtos";
 import { PaymentTefCancelType } from "../models/enums/PaymentTefCancelType";
 import { PaymentType } from "../models/enums/paymentType";
 import { PaymentTefAuditDto } from "../models/gestor/paymentTefAudit";
@@ -9,7 +10,8 @@ import {
     cancelPaymentTef,
     findPinPad,
     insertPaymentTefAudit,
-    integrationPaymentTefAudit
+    integrationPaymentTefAudit,
+    getCnpjAccreditor
 } from "../usecases/linxTef";
 import { deleteLogs } from "../usecases/linxTef/deleteLogs";
 import { removeTransaction } from "../usecases/linxTef/removeTransation";
@@ -50,4 +52,6 @@ export const tefFactory = {
         }),
     integrationPaymentTefAudit: async () =>
         await useCaseFactory.execute<void>(integrationPaymentTefAudit),
+    getCnpjAccreditor: async () =>
+        await useCaseFactory.execute<ConfigTefDTO>(getCnpjAccreditor),
 };
