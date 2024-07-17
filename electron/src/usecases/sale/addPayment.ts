@@ -57,7 +57,7 @@ class AddPayment implements IUseCaseFactory {
       const store = await this.storeRepository.getOne({})
 
       code_nsu = response?.code_nsu
-      cnpj_credenciadora = response?.cnpj_credenciadora
+      cnpj_credenciadora = type === PaymentType.PIX ? settings.cnpj_credenciadora : response?.cnpj_credenciadora
       flag_card = parseInt(response?.flag_card, 10);
       numero_autorizacao = response?.code_autorization
       tef_status_payment = TefPaymentType.APROVADO
