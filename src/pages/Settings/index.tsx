@@ -60,7 +60,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
     if(settings.should_use_tef){
       getCnpj();
     }
-  },[settings])
+  },[settings.should_use_tef])
 
   const handleSave = () => {
     Modal.confirm({
