@@ -5,7 +5,7 @@ import { useCaseFactory } from "../usecases/useCaseFactory";
 import { getUser } from "../usecases/user";
 import { UserDto } from "../models/gestor";
 
-const API_CONFIG_TEF = env.API_AUTH;
+const API_CONFIG_TEF = env.API_CONFIG_TEF;
 
 const api = axios.create({
     baseURL: API_CONFIG_TEF,

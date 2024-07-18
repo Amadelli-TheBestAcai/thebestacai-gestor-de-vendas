@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import CardSettings from "../../components/CardSettings";
@@ -38,6 +38,29 @@ const Settings: React.FC<IProps> = ({ history }) => {
   const { storeCash } = useSale();
   const { hasPermission } = useUser();
   const [inputPortCOM, setInputPortCOM] = useState<string>();
+  const [cnpjAccreditorList, setCnpjAccreditorList] = useState<
+    { cnpj_credenciadora: string; nome_credenciadora: string }[]
+  >([]);
+
+
+  useEffect(() => {
+    const getCnpj = async () =>{
+      const { response: _accreditorList, has_internal_error: error } =
+      await window.Main.tefFactory.getCnpjAccreditor();
+    if (error) {
+      notification.error({
+        message: "Não foi possível buscar a lista de CNPJ da credenciadora",
+        duration: 5,
+      });
+      return;
+    }
+    setCnpjAccreditorList(_accreditorList);
+    }
+
+    if(settings.should_use_tef){
+      getCnpj();
+    }
+  },[settings])
 
   const handleSave = () => {
     Modal.confirm({
@@ -366,6 +389,33 @@ const Settings: React.FC<IProps> = ({ history }) => {
                 {!settings.should_use_tef ? "DESABILITADO" : "HABILITADO"}
               </span>
             </ActionContainer>
+          </CardSettings>
+        )}
+        {settings.should_use_tef && (
+          <CardSettings title="CNPJ Credenciadora">
+            <span style={{ padding: "2%" }}>
+              Para realizar uma venda por PIX via TEF, é necessário informar o
+              CNPJ da credenciadora da maquininha PIN PAD.
+            </span>
+            <SelectsContainer>
+              <Select
+                disabled={!settings.should_use_tef}
+                placeholder="Credenciadora"
+                value={settings.cnpj_crendeciadora}
+                onChange={(cnpj) =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    cnpj_crendeciadora: cnpj.toString(),
+                  }))
+                }
+              >
+                {cnpjAccreditorList.map((item: any) => (
+                  <Option key={item.cnpj_crendeciadora}>
+                    {item.nome_credenciadora}
+                  </Option>
+                ))}
+              </Select>
+            </SelectsContainer>
           </CardSettings>
         )}
       </PageContent>

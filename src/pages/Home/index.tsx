@@ -314,9 +314,15 @@ const Home: React.FC = () => {
       (!settings.should_use_tef && flagCard) ||
       !isConnected ||
       !paymentModalConnect ||
-      (paymentType === PaymentType.PIX && selectTef === "Não")
+      (paymentType === PaymentType.PIX && selectTef === "Não") ||
+      (settings.should_use_tef &&
+        selectTef === "Sim" &&
+        !settings.cnpj_crendeciadora)
     ) {
       const turnOffTef =
+        (settings.should_use_tef &&
+          selectTef === "Sim" &&
+          !settings.cnpj_crendeciadora) ||
         (paymentType === PaymentType.PIX && selectTef === "Não") ||
         !paymentModalConnect
           ? true
@@ -695,12 +701,48 @@ const Home: React.FC = () => {
         setPaymentModalConnect(true);
       }
     }
-
-    setLoadingPaymentModalOpenOnline(false);
-    setPaymentType(type);
-    setFlagCard(flagCard);
-    setPaymentModal(true);
-    setPaymentModalTitle(title);
+    if (
+      settings.should_use_tef &&
+      selectTef === "Sim" &&
+      !settings.cnpj_crendeciadora &&
+      type === PaymentType.PIX
+    ) {
+      Modal.confirm({
+        title:
+          "Para realizar uma venda por PIX via TEF, é necessário informar o CNPJ da credenciadora da maquininha PIN PAD na tela de configuração",
+        content:
+          "Ao prosseguir, você concorda em continuar com o pagamento sem a utilização de TEF",
+        okText: "Prosseguir sem TEF",
+        okType: "default",
+        cancelText: "Cancelar",
+        centered: true,
+        onOk() {
+          notification.info({
+            message: "Continuar com o pagamento sem tef",
+            duration: 5,
+          });
+          setLoadingPaymentModalOpenOnline(false);
+          setPaymentType(type);
+          setFlagCard(flagCard);
+          setPaymentModal(true);
+          setPaymentModalTitle(title);
+        },
+        onCancel() {
+          notification.info({
+            message:
+              "Acesse a tela de configurações para selecionar o cnpj da credenciadora",
+            duration: 5,
+          });
+          return;
+        },
+      });
+    } else {
+      setLoadingPaymentModalOpenOnline(false);
+      setPaymentType(type);
+      setFlagCard(flagCard);
+      setPaymentModal(true);
+      setPaymentModalTitle(title);
+    }
   };
 
   const sendFocusToBalance = () => {

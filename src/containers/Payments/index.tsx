@@ -242,7 +242,8 @@ const PaymentsContainer: React.FC<IProps> = ({
               {settings?.should_use_tef &&
               modalTitle !== "Dinheiro" &&
               selectTef !== "Não" &&
-              paymentModalConnect
+              paymentModalConnect && 
+              !(modalTitle === "Pix" && !settings.cnpj_crendeciadora)
                 ? "Solicitar Pagamento TEF"
                 : "Salvar Alteração"}
             </ButtonSave>
@@ -281,21 +282,23 @@ const PaymentsContainer: React.FC<IProps> = ({
               </Form.Item>
             </>
           )}
-        {settings?.should_use_tef && modalTitle === "Pix" && (
-          <div style={{ marginTop: "0.5rem" }}>
-            Habilitar pagamento TEF
-            <Form.Item>
-              <Select
-                placeholder="Escolha a opção"
-                onChange={setValue}
-                value={selectTef}
-              >
-                <Option key={"Não"}>Não</Option>
-                <Option key={"Sim"}>Sim</Option>
-              </Select>
-            </Form.Item>
-          </div>
-        )}
+        {settings?.should_use_tef &&
+          modalTitle === "Pix" &&
+          settings?.cnpj_crendeciadora && (
+            <div style={{ marginTop: "0.5rem" }}>
+              Habilitar pagamento TEF
+              <Form.Item>
+                <Select
+                  placeholder="Escolha a opção"
+                  onChange={setValue}
+                  value={selectTef}
+                >
+                  <Option key={"Não"}>Não</Option>
+                  <Option key={"Sim"}>Sim</Option>
+                </Select>
+              </Form.Item>
+            </div>
+          )}
       </Modal>
     </Container>
   );
