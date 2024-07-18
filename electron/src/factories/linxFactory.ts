@@ -53,5 +53,5 @@ export const tefFactory = {
     integrationPaymentTefAudit: async () =>
         await useCaseFactory.execute<void>(integrationPaymentTefAudit),
     getCnpjAccreditor: async () =>
-        await useCaseFactory.execute<ConfigTefDTO>(getCnpjAccreditor),
+        await useCaseFactory.execute<ConfigTefDTO[]>(getCnpjAccreditor),
 };
