@@ -42,25 +42,24 @@ const Settings: React.FC<IProps> = ({ history }) => {
     { cnpj_credenciadora: string; nome_credenciadora: string }[]
   >([]);
 
-
   useEffect(() => {
-    const getCnpj = async () =>{
+    const getCnpj = async () => {
       const { response: _accreditorList, has_internal_error: error } =
-      await window.Main.tefFactory.getCnpjAccreditor();
-    if (error) {
-      notification.error({
-        message: "Não foi possível buscar a lista de CNPJ da credenciadora",
-        duration: 5,
-      });
-      return;
-    }
-    setCnpjAccreditorList(_accreditorList);
-    }
+        await window.Main.tefFactory.getCnpjAccreditor();
+      if (error) {
+        notification.error({
+          message: "Não foi possível buscar a lista de CNPJ da credenciadora",
+          duration: 5,
+        });
+        return;
+      }
+      setCnpjAccreditorList(_accreditorList);
+    };
 
-    if(settings.should_use_tef){
+    if (settings.should_use_tef) {
       getCnpj();
     }
-  },[settings.should_use_tef])
+  }, [settings.should_use_tef]);
 
   const handleSave = () => {
     Modal.confirm({
@@ -145,21 +144,6 @@ const Settings: React.FC<IProps> = ({ history }) => {
       },
       portCOM
     );
-  };
-
-  const configurationTEF = async () => {
-    setLoadingConfigurationTef(true);
-    const { response, has_internal_error, error_message } =
-      await window.Main.tefFactory.configurationTEF();
-    if (has_internal_error) {
-      notification.error({
-        message: error_message || "Error ao tentar configurar TEF",
-        duration: 5,
-      });
-      setLoadingConfigurationTef(false);
-      return;
-    }
-    setLoadingConfigurationTef(false);
   };
 
   return (
@@ -364,17 +348,10 @@ const Settings: React.FC<IProps> = ({ history }) => {
 
         {hasPermission("config.activeTef") && (
           <CardSettings title="Integração de TEF">
-            <ContentButton>
-              <Button
-                hidden={!settings.should_use_tef}
-                loading={loadingConfigurationTef}
-                onClick={() => {
-                  configurationTEF();
-                }}
-              >
-                Configurar TEF
-              </Button>
-            </ContentButton>
+            <span style={{ padding: "2%" }}>
+              Ao habilitar, a cada pagamento será feito a integração com o TEF.
+            </span>
+
             <ActionContainer>
               <Switch
                 checked={settings.should_use_tef}
@@ -394,8 +371,8 @@ const Settings: React.FC<IProps> = ({ history }) => {
         {settings.should_use_tef && (
           <CardSettings title="CNPJ Credenciadora">
             <span style={{ padding: "2%" }}>
-              Para realizar uma venda por PIX via TEF, é necessário informar o
-              CNPJ da credenciadora da maquininha PIN PAD.
+              Para efetuar uma venda por PIX via TEF, é imprescindível
+              selecionar o CNPJ da credenciadora do PIX.
             </span>
             <SelectsContainer>
               <Select
@@ -415,6 +392,29 @@ const Settings: React.FC<IProps> = ({ history }) => {
                   </Option>
                 ))}
               </Select>
+              <span
+                style={{
+                  width: settings?.cnpj_credenciadora ? "90%" : "0%",
+                  marginLeft: "0.3rem",
+                }}
+              >
+                {settings?.cnpj_credenciadora
+                  ? `
+                ${settings?.cnpj_credenciadora?.slice(
+                  0,
+                  2
+                )}.${settings?.cnpj_credenciadora?.slice(
+                      2,
+                      5
+                    )}.${settings?.cnpj_credenciadora?.slice(
+                      5,
+                      8
+                    )}/${settings?.cnpj_credenciadora?.slice(
+                      8,
+                      12
+                    )}-${settings?.cnpj_credenciadora?.slice(12, 14)}`
+                  : ""}
+              </span>
             </SelectsContainer>
           </CardSettings>
         )}

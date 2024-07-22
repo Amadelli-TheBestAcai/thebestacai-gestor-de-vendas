@@ -709,7 +709,7 @@ const Home: React.FC = () => {
     ) {
       Modal.confirm({
         title:
-          "Para realizar uma venda por PIX via TEF, é necessário informar o CNPJ da credenciadora da maquininha PIN PAD na tela de configuração",
+          "Para realizar uma venda por PIX via TEF, é necessário informar o CNPJ da credenciadora do PIX na tela de configuração",
         content:
           "Ao prosseguir, você concorda em continuar com o pagamento sem a utilização de TEF",
         okText: "Prosseguir sem TEF",

@@ -137,7 +137,7 @@ export const SelectsContainer = styled.div`
   align-items: center;
   padding: 2%;
   justify-content: space-evenly;
-  width: 22%;
+  width: 30%;
   height: 100%;
 `;
 
