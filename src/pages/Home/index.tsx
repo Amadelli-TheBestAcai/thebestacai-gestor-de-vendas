@@ -317,6 +317,7 @@ const Home: React.FC = () => {
       (paymentType === PaymentType.PIX && selectTef === "Não") ||
       (settings.should_use_tef &&
         selectTef === "Sim" &&
+        paymentType === PaymentType.PIX &&
         !settings.cnpj_credenciadora)
     ) {
       const turnOffTef =
