@@ -12,5 +12,5 @@ export interface SettingsDto {
   printer?: string;
   should_use_tef?: boolean
   created_at?: Date;
-  cnpj_crendeciadora?: string;
+  cnpj_credenciadora?: string;
 }

@@ -401,16 +401,16 @@ const Settings: React.FC<IProps> = ({ history }) => {
               <Select
                 disabled={!settings.should_use_tef}
                 placeholder="Credenciadora"
-                value={settings.cnpj_crendeciadora}
-                onChange={(cnpj) =>
+                value={settings.cnpj_credenciadora}
+                onChange={(cnpj) => {
                   setSettings((oldValues) => ({
                     ...oldValues,
-                    cnpj_crendeciadora: cnpj.toString(),
-                  }))
-                }
+                    cnpj_credenciadora: cnpj.toString(),
+                  }));
+                }}
               >
                 {cnpjAccreditorList.map((item: any) => (
-                  <Option key={item.cnpj_crendeciadora}>
+                  <Option key={item.cnpj_credenciadora}>
                     {item.nome_credenciadora}
                   </Option>
                 ))}

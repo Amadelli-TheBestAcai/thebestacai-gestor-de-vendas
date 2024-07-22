@@ -243,7 +243,7 @@ const PaymentsContainer: React.FC<IProps> = ({
               modalTitle !== "Dinheiro" &&
               selectTef !== "Não" &&
               paymentModalConnect && 
-              !(modalTitle === "Pix" && !settings.cnpj_crendeciadora)
+              !(modalTitle === "Pix" && !settings.cnpj_credenciadora)
                 ? "Solicitar Pagamento TEF"
                 : "Salvar Alteração"}
             </ButtonSave>
@@ -284,7 +284,7 @@ const PaymentsContainer: React.FC<IProps> = ({
           )}
         {settings?.should_use_tef &&
           modalTitle === "Pix" &&
-          settings?.cnpj_crendeciadora && (
+          settings?.cnpj_credenciadora && (
             <div style={{ marginTop: "0.5rem" }}>
               Habilitar pagamento TEF
               <Form.Item>

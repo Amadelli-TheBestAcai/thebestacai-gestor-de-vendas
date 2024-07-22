@@ -317,12 +317,12 @@ const Home: React.FC = () => {
       (paymentType === PaymentType.PIX && selectTef === "Não") ||
       (settings.should_use_tef &&
         selectTef === "Sim" &&
-        !settings.cnpj_crendeciadora)
+        !settings.cnpj_credenciadora)
     ) {
       const turnOffTef =
         (settings.should_use_tef &&
           selectTef === "Sim" &&
-          !settings.cnpj_crendeciadora) ||
+          !settings.cnpj_credenciadora) ||
         (paymentType === PaymentType.PIX && selectTef === "Não") ||
         !paymentModalConnect
           ? true
@@ -704,7 +704,7 @@ const Home: React.FC = () => {
     if (
       settings.should_use_tef &&
       selectTef === "Sim" &&
-      !settings.cnpj_crendeciadora &&
+      !settings.cnpj_credenciadora &&
       type === PaymentType.PIX
     ) {
       Modal.confirm({
