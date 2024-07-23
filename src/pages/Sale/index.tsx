@@ -195,7 +195,7 @@ const Sale: React.FC<IProps> = () => {
       }
       formCancelJustify.resetFields();
       return notification.success({
-        message: "Venda Excluída e NFe cancelada com sucesso!",
+        message: "Venda excluída e NFC-e cancelada com sucesso",
         duration: 5,
       });
     } catch (error) {
