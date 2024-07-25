@@ -215,7 +215,6 @@ export function GlobalProvider({ children }) {
     const totalPaid = +currentSale.total_paid.toFixed(2) || 0;
     const manualDiscount = currentSale.discount || 0;
 
-    // Verifica se o valor total vendido é maior que o valor total pago + desconto + 50 centavos
     if (totalSold > totalPaid + manualDiscount + 0.5) {
       return notification.warning({
         message: "Pagamento inválido!",
@@ -224,13 +223,11 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    // Calcula o desconto de tolerância, se aplicável
     const toleranceDiscount =
       totalSold > totalPaid && totalSold - totalPaid <= 0.5
         ? totalSold - totalPaid
         : 0;
 
-    // Calcula o desconto combinado
     const combinedDiscount = manualDiscount + toleranceDiscount;
 
     if (combinedDiscount > totalSold) {
@@ -242,10 +239,8 @@ export function GlobalProvider({ children }) {
       return;
     }
 
-    // Aplica o desconto combinado à venda atual
     currentSale.discount = combinedDiscount;
 
-    // Calcula o troco se o valor pago for maior que o valor vendido
     let changeAmount = +(totalPaid + combinedDiscount - totalSold).toFixed(2);
 
     if (changeAmount < 0) {
@@ -256,7 +251,6 @@ export function GlobalProvider({ children }) {
     currentSale.change_amount = changeAmount;
 
     setSavingSale(true);
-    // Verifica novamente se o valor total vendido é maior que o valor total pago + descontos + 50 centavos
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
