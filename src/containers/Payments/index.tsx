@@ -128,7 +128,7 @@ const PaymentsContainer: React.FC<IProps> = ({
       icon: <PixIcon src={PixLogo} />,
       label: "Pix [P]",
       background: "var(--teal-400)",
-      action: () => handleOpenPayment(PaymentType.PIX, "Pix"),
+      action: () => handleOpenPayment(PaymentType.PIX, "PIX"),
     },
   ];
 
@@ -243,7 +243,7 @@ const PaymentsContainer: React.FC<IProps> = ({
               modalTitle !== "Dinheiro" &&
               selectTef !== "Não" &&
               paymentModalConnect && 
-              !(modalTitle === "Pix" && !settings.cnpj_credenciadora)
+              !(modalTitle === "PIX" && !settings.cnpj_credenciadora)
                 ? "Solicitar Pagamento TEF"
                 : "Salvar Alteração"}
             </ButtonSave>
@@ -283,7 +283,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             </>
           )}
         {settings?.should_use_tef &&
-          modalTitle === "Pix" &&
+          modalTitle === "PIX" &&
           settings?.cnpj_credenciadora && (
             <div style={{ marginTop: "0.5rem" }}>
               Habilitar pagamento TEF
