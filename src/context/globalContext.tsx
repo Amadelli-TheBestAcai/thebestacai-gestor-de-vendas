@@ -215,42 +215,28 @@ export function GlobalProvider({ children }) {
     const totalPaid = +currentSale.total_paid.toFixed(2) || 0;
     const manualDiscount = currentSale.discount || 0;
 
-    if (totalSold > totalPaid + manualDiscount + 0.5) {
-      return notification.warning({
-        message: "Pagamento inválido!",
-        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
-        duration: 5,
-      });
+    let toleranceDiscount = 0;
+    if (
+      totalSold > totalPaid + manualDiscount &&
+      totalSold - totalPaid - manualDiscount <= 0.5
+    ) {
+      toleranceDiscount = totalSold - totalPaid - manualDiscount;
     }
-
-    const toleranceDiscount =
-      totalSold > totalPaid && totalSold - totalPaid <= 0.5
-        ? totalSold - totalPaid
-        : 0;
 
     const combinedDiscount = manualDiscount + toleranceDiscount;
 
-    if (combinedDiscount > totalSold) {
-      notification.warning({
-        message: "Desconto inválido!",
-        description: `O desconto total não pode exceder o valor total da venda.`,
-        duration: 5,
-      });
-      return;
-    }
-
     currentSale.discount = combinedDiscount;
 
-    let changeAmount = +(totalPaid + combinedDiscount - totalSold).toFixed(2);
+    let changeAmount = +(totalPaid - (totalSold - combinedDiscount)).toFixed(2);
 
     if (changeAmount < 0) {
-      currentSale.discount += Math.abs(changeAmount);
       changeAmount = 0;
     }
 
     currentSale.change_amount = changeAmount;
 
     setSavingSale(true);
+
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
