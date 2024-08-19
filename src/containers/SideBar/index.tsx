@@ -25,6 +25,7 @@ import {
   SettingsIcon,
   LogOutIcon,
   TrashIcon,
+  TotemIcon,
 } from "./styles";
 
 type IProps = RouteComponentProps;
@@ -60,6 +61,28 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       }
     } else {
       history.push(route);
+    }
+
+    if (id === 12) {
+      if (!storeCash?.is_online) {
+        return notification.info({
+          message: "Caixa offline",
+          description: `O caixa deve estar ONLINE para entrar no modo Totem`,
+          duration: 3,
+        });
+      }
+      Modal.confirm({
+        title: `Modo Totem`,
+        content: `Tem certeza que gostaria de iniciar o modo Totem`,
+        visible: visible,
+        okText: "Sim",
+        okType: "default",
+        cancelText: "Não",
+        centered: true,
+        async onOk() {
+          history.push("/totem");
+        },
+      });
     }
 
     if (id === 10) {
@@ -152,6 +175,12 @@ const SideBar: React.FC<IProps> = ({ history }) => {
         router: "/settings",
       });
     }
+
+    response.push({
+      id: 12,
+      icon: <TotemIcon />,
+      label: "Totem",
+    });
 
     response.push({
       id: 10,

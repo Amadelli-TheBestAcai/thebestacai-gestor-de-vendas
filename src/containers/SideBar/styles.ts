@@ -11,7 +11,8 @@ import {
   ChartBar,
   Settings,
   LogOut,
-  Trash
+  Trash,
+  Totem,
 } from "../../styles/Icons";
 
 export const Container = styled.div`
@@ -154,5 +155,9 @@ export const LogOutIcon = styled(LogOut)`
   ${IconCSS}
 `;
 export const TrashIcon = styled(Trash)`
+  ${IconCSS}
+`;
+
+export const TotemIcon = styled(Totem)`
   ${IconCSS}
 `;

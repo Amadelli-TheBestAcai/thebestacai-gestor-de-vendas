@@ -13,6 +13,7 @@ import Balance from "../pages/Balance";
 import Nfce from "../pages/Nfce";
 import Settings from "../pages/Settings";
 import Waste from "../pages/Waste";
+import Totem from "../pages/Totem";
 
 import { useConfigs } from "../hooks/useConfigs";
 import Spinner from "../components/Spinner";
@@ -53,6 +54,7 @@ const Routes = () => {
           <RouteWithLayout exact path="/nfce" component={Nfce} />
           <RouteWithLayout exact path="/waste" component={Waste} />
           <RouteWithLayout exact path="/settings" component={Settings} />
+          <Route path="/totem" component={Totem} />
           <Route path="*" component={Login} />
         </Switch>
       )}
