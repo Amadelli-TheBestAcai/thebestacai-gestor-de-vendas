@@ -64,6 +64,13 @@ const SideBar: React.FC<IProps> = ({ history }) => {
     }
 
     if (id === 12) {
+      if (!storeCash?.is_opened) {
+        return notification.info({
+          message: "Caixa fechado",
+          description: `O caixa deve estar ABERTO para entrar no modo Totem`,
+          duration: 3,
+        });
+      }
       if (!storeCash?.is_online) {
         return notification.info({
           message: "Caixa offline",

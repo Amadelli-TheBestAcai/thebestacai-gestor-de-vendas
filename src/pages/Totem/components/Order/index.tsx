@@ -159,7 +159,7 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
   };
 
   return (
-    <Container onClick={() => console.log({ sale, storeProducts })}>
+    <Container>
       <div className="order-resume">
         <span>Sua Sacola</span>
         <span>
