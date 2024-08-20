@@ -117,7 +117,13 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
     setSale(saleToUpdate);
   };
 
+  const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
   const getWeightByBalance = async (): Promise<void> => {
+    await sleep(1500);
+
     const selfService = storeProducts.find(
       (_product) => _product.product.category_id === 1
     );
