@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import moment from "moment";
 import { v4 } from "uuid";
 
@@ -9,6 +9,7 @@ import {
   OrderProduct,
   TrashIcon,
 } from "./styles";
+import { Modal } from "antd";
 
 import { SaleDto } from "../../../../models/dtos/sale";
 import { StoreProductDto } from "../../../../models/dtos/storeProduct";
@@ -21,6 +22,8 @@ interface IProps {
 }
 
 const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
+  const [fetchingBalanceWeight, setFetchingBalanceWeight] = useState(false);
+
   const onAddItem = (
     productToAdd: StoreProductDto,
     quantity: number,
@@ -114,6 +117,47 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
     setSale(saleToUpdate);
   };
 
+  const getWeightByBalance = async (): Promise<void> => {
+    const selfService = storeProducts.find(
+      (_product) => _product.product.category_id === 1
+    );
+
+    if (!selfService) {
+      Modal.info({
+        title: "Self service não encontrado",
+        content:
+          "O produto self-service não vfoi encontrado. Contate o atendente",
+      });
+      return;
+    }
+
+    if (!fetchingBalanceWeight) {
+      setFetchingBalanceWeight(true);
+      window.Main.send("balance:get", ({ weight, error }) => {
+        setFetchingBalanceWeight(false);
+        if (error) {
+          Modal.info({
+            title: "Falha de Leitura",
+            content:
+              "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+          });
+          return;
+        }
+        if (!weight) {
+          Modal.info({
+            title: "Falha de Leitura",
+            content:
+              "Não foi possível ler o peso de seu self-service. Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
+          });
+          return;
+        }
+        const amount = +weight * +selfService?.price_unit;
+
+        onAddItem(selfService, +weight, +amount);
+      });
+    }
+  };
+
   return (
     <Container onClick={() => console.log({ sale, storeProducts })}>
       <div className="order-resume">
@@ -143,7 +187,9 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
       </div>
       <div className="self-service-content">
         <span>Insira um item de cada vez sobre a balança</span>
-        <Button>+ REGISTRAR PESAGEM</Button>
+        <Button onClick={getWeightByBalance} loading={fetchingBalanceWeight}>
+          + REGISTRAR PESAGEM
+        </Button>
       </div>
       <div className="extra-products-content">
         <span>Que tal adicionar uma água ou refrigerante?</span>

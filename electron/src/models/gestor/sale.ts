@@ -3,6 +3,7 @@ export interface SaleDto {
   id: string;
   gv_id?: number;
   name?: string;
+  nps_score?: number;
   enabled?: boolean;
   customer_reward_id?: number;
   client_cpf?: string;

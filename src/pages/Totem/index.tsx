@@ -169,8 +169,16 @@ const Totem: React.FC<IProps> = ({ history }) => {
         ) : (
           <React.Fragment />
         )}
-        {step === 6 ? <Invoice setStep={setStep} /> : <React.Fragment />}
-        {step === 7 ? <Evaluation setStep={setStep} /> : <React.Fragment />}
+        {step === 6 ? (
+          <Invoice setStep={setStep} sale={sale} />
+        ) : (
+          <React.Fragment />
+        )}
+        {step === 7 ? (
+          <Evaluation setStep={setStep} setSale={setSale} sale={sale} />
+        ) : (
+          <React.Fragment />
+        )}
       </Content>
     </Container>
   );

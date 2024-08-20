@@ -106,7 +106,8 @@ export const salesFormaterToIntegrate = (
       ref: _payload.ref,
       created_at: _payload.created_at,
       cpf_used_club: _payload.cpf_used_club,
-      cpf_used_nfce: _payload.cpf_used_nfce
+      cpf_used_nfce: _payload.cpf_used_nfce,
+      nps_score: _payload.nps_score,
     }));
   } else {
     const response = {
@@ -209,7 +210,8 @@ export const salesFormaterToIntegrate = (
       ref: payload.ref,
       created_at: payload.created_at,
       cpf_used_club: payload.cpf_used_club,
-      cpf_used_nfce: payload.cpf_used_nfce
+      cpf_used_nfce: payload.cpf_used_nfce,
+      nps_score: payload.nps_score,
     };
     return [response];
   }
