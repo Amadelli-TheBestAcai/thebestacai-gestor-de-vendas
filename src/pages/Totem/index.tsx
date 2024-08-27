@@ -13,7 +13,7 @@ import { Modal, notification } from "antd";
 
 import { Container, Header, Content } from "./styles";
 
-import logoAmadelli from "../../assets/svg/logoAmadelli.svg";
+import the_best_acai_logo from "../../assets/totem/svg/the_best_acai_logo.svg";
 
 import { SaleDto } from "../../models/dtos/sale";
 import { StoreProductDto } from "../../models/dtos/storeProduct";
@@ -120,11 +120,10 @@ const Totem: React.FC<IProps> = ({ history }) => {
         <Header>
           <div className="logo-content">
             <img
-              src={logoAmadelli}
-              alt="logo_amadelli"
+              src={the_best_acai_logo}
+              alt="the_best_acai_logo"
               onClick={handleIncrement}
             />
-            <span>THE BEST açai</span>
           </div>
         </Header>
       ) : (

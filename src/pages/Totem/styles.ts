@@ -4,7 +4,7 @@ import { Button as ButtonAnt, Input as InputAnt } from "antd";
 
 export const Container = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   width: 100%;
@@ -20,7 +20,7 @@ export const Header = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 20%;
+  height: 17.81rem;
   background-color: black;
 
   .logo-content {
@@ -28,15 +28,7 @@ export const Header = styled.div`
     flex-direction: row;
     justify-content: center;
     align-items: center;
-  }
-
-  img {
-    width: 2.5rem;
-  }
-
-  span {
-    color: white;
-    margin: 0 1rem;
+    width: 34.56rem;
   }
 `;
 

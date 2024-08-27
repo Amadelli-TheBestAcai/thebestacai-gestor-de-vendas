@@ -3,9 +3,11 @@ import { notification } from "antd";
 
 import { SaleDto } from "../../../../models/dtos/sale";
 
-import { Container, Input, Button, PinPadOption } from "./styles";
+import { Container, Input, Button, PinPadOption, ShowPasswordIcon } from "./styles";
 
 import { applyCPFMask } from "../../helpers/applyCPFMask";
+
+import show_password from "../../../../assets/totem/svg/show_password.svg";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -13,6 +15,7 @@ interface IProps {
   sale: SaleDto | null;
 }
 const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
+  const [showCPF, setShowCPF] = useState<boolean>(false);
   const [cpf, setCpf] = useState(sale?.client_cpf || "");
 
   const handleSetCpf = (action: string, value?: number) => {
@@ -122,7 +125,10 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
       <span className="title">Gostaria de se Identificar?</span>
       <div className="user-info">
         <span>INFORME SEU NÚMERO DE CPF</span>
-        <Input value={applyCPFMask(cpf)} disabled />
+        <div className="inputContainer">
+          <Input value={applyCPFMask(cpf, showCPF)} disabled />
+          <Button onClick={() => setShowCPF(!showCPF)}><ShowPasswordIcon src={show_password}/></Button>
+        </div>
       </div>
       <div className="pin-pad">
         {pinPadOptions.map((pinPadOption) => (

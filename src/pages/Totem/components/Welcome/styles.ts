@@ -73,6 +73,7 @@ export const Button = styled(ButtonAnt)`
   background: var(--orange-250);
   color: var(--black);
   border-radius: 0.625rem;
+  font-family: "VisbyCF";
   font-weight: 700;
   font-size: 2.25rem;
   border: none;

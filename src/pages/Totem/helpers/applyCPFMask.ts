@@ -1,4 +1,4 @@
-export const applyCPFMask = (numbers) => {
+export const applyCPFMask = (numbers, showCPF) => {
   const onlyNumbers = numbers?.replace(/\D/g, "");
 
   if (!onlyNumbers || onlyNumbers?.length === 0) {
@@ -17,5 +17,9 @@ export const applyCPFMask = (numbers) => {
     formattedCPF = formattedCPF.slice(0, 11) + "-" + formattedCPF.slice(11);
   }
 
-  return formattedCPF;
+  if (showCPF) {
+    return formattedCPF;
+  }
+  const hiddenString = formattedCPF.replace(/\d/g, "*");
+  return hiddenString;
 };
