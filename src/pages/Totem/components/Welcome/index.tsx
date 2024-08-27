@@ -1,6 +1,12 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { Container, Footer, Button } from "./styles";
+import { Container, Footer, Button, TextHeader } from "./styles";
+
+import totem_welcome_image1 from "../../../../assets/totem/img/totem_welcome_img1.png";
+import totem_welcome_image2 from "../../../../assets/totem/img/totem_welcome_img2.png";
+import totem_welcome_image3 from "../../../../assets/totem/img/totem_welcome_img3.png";
+import totem_welcome_image4 from "../../../../assets/totem/img/totem_welcome_img4.png";
+import totem_welcome_image5 from "../../../../assets/totem/img/totem_welcome_img5.png";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -8,11 +14,43 @@ interface IProps {
 }
 
 const Welcome: React.FC<IProps> = ({ setStep, is_loading }) => {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const images = [
+    {
+      url: totem_welcome_image1,
+    },
+    {
+      url: totem_welcome_image2,
+    },
+    {
+      url: totem_welcome_image3,
+    },
+    {
+      url: totem_welcome_image4,
+    },
+    {
+      url: totem_welcome_image5,
+    },
+  ];
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setCurrentImage((oldImage) => (oldImage + 1) % 5);
+    }, 10000);
+
+    return () => clearInterval(intervalo);
+  }, []);
+
   return (
-    <Container>
+    <Container urlImage={images[currentImage].url}>
+      <TextHeader colorTextImage={currentImage === 2 ? true : false}>
+        <p>Bem-vindo à The Best!</p>
+        <p>Faça seu check-out AQUI</p>
+      </TextHeader>
       <Footer>
         <Button onClick={() => setStep(2)} loading={is_loading}>
-          Iniciar Pedido
+          Iniciar Checkout
         </Button>
       </Footer>
     </Container>

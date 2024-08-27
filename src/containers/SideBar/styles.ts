@@ -64,7 +64,7 @@ export const CardIcon = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 3rem;
+  height: 2rem;
   width: 3.7rem;
   color: var(--orange-250);
   border-radius: 9px;
@@ -75,15 +75,7 @@ export const CardIcon = styled.button`
     background: var(--orange-250);
     color: var(--black-opaco);
   }
-
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      height: 2.4rem;
-      margin-bottom: 1.5rem;
-    }
-  }
-
+  
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     height: 2rem;
