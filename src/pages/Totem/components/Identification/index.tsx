@@ -25,7 +25,7 @@ interface IProps {
   sale: SaleDto | null;
 }
 const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
-  const [showCPF, setShowCPF] = useState<boolean>(false);
+  const [showCPF, setShowCPF] = useState<boolean>(true);
   const [cpf, setCpf] = useState(sale?.client_cpf || "");
 
   const handleSetCpf = (action: string, value?: number) => {
@@ -161,9 +161,10 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
       </div>
       <div className="information-content">
         <span>
-          A inserção do cpf é opcional. Inseri-lo permite a nós verificarmos se
-          você é participante do Clube The Best e você ainda pode inseri-lo no
-          cupom fiscal ao final da compra
+          A inserção do CPF é opcional. Inseri-lo permite a nós verificarmos se
+          você é participante do Clube The Best, onde você pode acumular pontos
+          e troca-los por <b>recompensas</b>! Você ainda pode inseri-lo no cupom fiscal
+          ao final da compra.
         </span>
       </div>
       <div className="cancel-order">
