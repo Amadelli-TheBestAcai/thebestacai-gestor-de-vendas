@@ -3,11 +3,21 @@ import { notification } from "antd";
 
 import { SaleDto } from "../../../../models/dtos/sale";
 
-import { Container, Input, Button, PinPadOption, ShowPasswordIcon } from "./styles";
+import {
+  Container,
+  Input,
+  PinPadOption,
+  ShowPasswordIcon,
+  EraseIcon,
+  ButtonSendCPF,
+  ButtonDontSendCPF,
+  ButtonCancel,
+} from "./styles";
 
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import show_password from "../../../../assets/totem/svg/show_password.svg";
+import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -80,7 +90,7 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
     },
     {
       id: 10,
-      value: "clean",
+      value: "Limpar",
       action: () => handleSetCpf("clear-all"),
     },
     {
@@ -90,7 +100,7 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
     },
     {
       id: 12,
-      value: "< x",
+      value: <EraseIcon src={pinpad_erase} />,
       action: () => handleSetCpf("clear-last"),
     },
   ];
@@ -127,19 +137,27 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
         <span>INFORME SEU NÚMERO DE CPF</span>
         <div className="inputContainer">
           <Input value={applyCPFMask(cpf, showCPF)} disabled />
-          <Button onClick={() => setShowCPF(!showCPF)}><ShowPasswordIcon src={show_password}/></Button>
+          <button onClick={() => setShowCPF(!showCPF)}>
+            <ShowPasswordIcon src={show_password} />
+          </button>
         </div>
       </div>
       <div className="pin-pad">
         {pinPadOptions.map((pinPadOption) => (
-          <PinPadOption key={pinPadOption.id} onClick={pinPadOption.action}>
+          <PinPadOption
+            key={pinPadOption.id}
+            onClick={pinPadOption.action}
+            letters={pinPadOption.id === 10}
+          >
             {pinPadOption.value}
           </PinPadOption>
         ))}
       </div>
       <div className="actions">
-        <Button onClick={() => onFinish(true)}>Confirmar</Button>
-        <Button onClick={() => onFinish(false)}>Não desejo Informar</Button>
+        <ButtonSendCPF onClick={() => onFinish(true)}>Confirmar</ButtonSendCPF>
+        <ButtonDontSendCPF onClick={() => onFinish(false)}>
+          Não desejo Informar
+        </ButtonDontSendCPF>
       </div>
       <div className="information-content">
         <span>
@@ -149,7 +167,7 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
         </span>
       </div>
       <div className="cancel-order">
-        <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
+        <ButtonCancel onClick={() => setStep(1)}>Cancelar Pedido</ButtonCancel>
       </div>
     </Container>
   );

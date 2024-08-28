@@ -39,7 +39,7 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
             <span>CPF/CNPJ NA NOTA?</span>
           </div>
           <div className="info-footer">
-            <span>{applyCPFMask(sale.client_cpf)}</span>
+            <span>{applyCPFMask(sale.client_cpf, false)}</span>
             <span
               style={{ textDecoration: "underline", cursor: "pointer" }}
               onClick={() => setStep(2)}

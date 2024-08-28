@@ -37,7 +37,7 @@ const Welcome: React.FC<IProps> = ({ setStep, is_loading }) => {
   useEffect(() => {
     const intervalo = setInterval(() => {
       setCurrentImage((oldImage) => (oldImage + 1) % 5);
-    }, 10000);
+    }, 8000);
 
     return () => clearInterval(intervalo);
   }, []);

@@ -1,6 +1,5 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Button as ButtonAnt, Input as InputAnt } from "antd";
-
 
 export const Container = styled.div`
   display: flex;
@@ -68,8 +67,10 @@ export const Container = styled.div`
 
   .pin-pad {
     display: flex;
+    justify-content: space-between;
     flex-wrap: wrap;
-    width: 12rem;
+    width: 20.3rem;
+    height: 27.5rem;
   }
 
   .actions {
@@ -77,33 +78,59 @@ export const Container = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    height: 14.125rem;
+    width: 100%;
+  }
+
+  .information-content {
+    width: 59.37rem;
+    font-family: "VisbyCF";
+    font-weight: 600;
+    font-size: 1.75rem;
+    text-align: center;
   }
 `;
 
-export const PinPadOption = styled.div`
+interface IPinpad {
+  letters: boolean;
+}
+
+export const PinPadOption = styled.div<IPinpad>`
   display: flex;
   justify-content: center;
   align-items: center;
   border: solid 1px;
-  border-radius: 5px;
-  height: 3rem;
-  width: 3rem;
-  margin: 0.25rem;
-
+  border-radius: 0.37rem;
+  height: 5.93rem;
+  width: 5.93rem;
+  font-family: "Atkinson Hyperlegible";
+  font-weight: 700;
+  font-size: 1.5rem;
   cursor: pointer;
+
+  ${({ letters }) => {
+    if (letters) {
+      return css`
+        font-weight: 400;
+      `;
+    }
+  }}
 `;
 
 export const Input = styled(InputAnt)``;
 
-export const Button = styled(ButtonAnt)`
-  width: fit-content;
-  height: 50px;
-  background: var(--orange-250);
-  color: var(--brown-500);
-  border-radius: 5px;
-  font-weight: 500;
+const ButtonCSS = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 59.37rem;
+  height: 7.68rem;
+  padding: 2.5rem;
+  border-radius: 0.625rem;
+  font-family: "VisbyCF";
+  font-weight: 600;
+  font-size: 2.25rem;
   border: none;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 
   :active,
   :hover,
@@ -114,9 +141,40 @@ export const Button = styled(ButtonAnt)`
   }
 `;
 
+export const ButtonSendCPF = styled(ButtonAnt)`
+  ${ButtonCSS}
+  background: var(--orange-250);
+  color: var(--black);
+  margin-bottom: 0.5rem;
+  box-shadow: #00000040 1.95px 1.95px 2.6px;
+`;
+
+export const ButtonDontSendCPF = styled(ButtonAnt)`
+  ${ButtonCSS}
+  background: var(--white);
+  color: var(--black);
+  box-shadow: none;
+`;
+
+export const ButtonCancel = styled(ButtonAnt)`
+  ${ButtonCSS}
+  width: 27.81rem;
+  background: var(--white);
+  color: var(--black);
+  border: 1px solid var(--black);
+`;
+
 export const ShowPasswordIcon = styled.img`
   width: 1.875rem;
   height: 1.2rem;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0.625rem;
+`;
+
+export const EraseIcon = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
   background-size: cover;
   background-position: center;
 `;

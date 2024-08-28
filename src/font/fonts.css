@@ -114,3 +114,17 @@
   font-family: "Heavitas";
   src: url("../assets/fonts/Heavitas.ttf") format("opentype");
 }
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../assets/fonts/AtkinsonHyperlegible-Regular.ttf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../assets/fonts/AtkinsonHyperlegible-Bold.ttf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
