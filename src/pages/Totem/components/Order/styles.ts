@@ -1,115 +1,133 @@
 import styled, { css } from "styled-components";
-import { Button as ButtonAnt, Input as InputAnt } from "antd";
+import {
+  Button as ButtonAnt,
+  Input as InputAnt,
+  Row as RowAnt,
+  Col as ColAnt,
+} from "antd";
 import { Trash } from "../../../../styles/Icons";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 100%;
+`;
 
-  .order-resume .self-service-content,
-  .order-list-content,
-  .self-service-content,
-  .extra-products-content,
-  .footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-  }
+export const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 62.5rem;
+  max-height: 4.87rem;
+  height: 10%;
+  font-size: 2.5rem;
 
-  .order-resume {
+  .bag-content {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    width: 50%;
-    height: 5%;
+    width: 16.5rem;
+    font-weight: 600;
+  }
+  .price-content {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 800;
+  }
+`;
+
+export const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 62.5rem;
+  min-height: 57.37rem;
+  height: 100%;
+  padding: 3rem 0;
+
+  .self-service-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-size: 4rem;
+    font-weight: 600;
+    text-align: center;
   }
 
   .order-list-content {
-    width: 50%;
-    max-height: 35%;
-    overflow: auto;
-  }
-
-  .self-service-content {
-    height: 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-height: 30rem;
   }
 
   .extra-products-content {
-    height: 30%;
+    width: 100%;
+    max-height: 30rem;
+    .extra-product-title {
+      font-size: 2.5rem;
+      text-align: start;
+      margin: 0.3rem 0;
+    }
     .extra-products-list {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100%;
-      width: 50%;
       flex-wrap: wrap;
+      overflow: hidden;
     }
-  }
-
-  .footer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    height: 15%;
   }
 `;
 
-export const Input = styled(InputAnt)``;
-
-export const Button = styled(ButtonAnt)`
-  width: fit-content;
-  height: 50px;
-  background: var(--orange-250);
-  color: var(--brown-500);
-  border-radius: 5px;
-  font-weight: 500;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-
-  :active,
-  :hover,
-  :focus {
-    background: var(--orange-250);
-    color: var(--brown-500);
-    border: none;
-  }
-
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      width: 105px;
-      height: 40px;
-    }
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 100px;
-    height: 35px;
-    font-size: 0.8rem;
-  }
-`;
-
-export const OrderProduct = styled.div`
+export const Footer = styled.div`
   display: flex;
+  flex-direction: row;
+  width: 62.5rem;
+  padding: 2.5rem;
+`;
+
+export const OrderProductList = styled(RowAnt)`
   width: 100%;
-  height: 3rem;
+  overflow-y: scroll;
+`;
+
+export const OrderProduct = styled(ColAnt)`
+  display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  height: 10rem;
+  margin: 0.5rem 0;
+  background: var(--orange-190);
+  border-radius: 0.625rem;
 
-  margin: 5px 0;
-
+  .order-item-content {
+    display: flex;
+    flex-direction: row;
+  }
+  .order-item-image {
+    width: 7.5rem;
+    height: 7.5rem;
+    background-size: cover;
+    background-position: center;
+  }
   .order-item-info {
     display: flex;
+    justify-content: center;
     flex-direction: column;
-  }
+    font-weight: 600;
 
+    .order-item-name {
+      font-size: 2rem;
+    }
+    .order-item-price {
+      font-size: 1.5rem;
+    }
+  }
   .order-item-actions {
     display: flex;
     justify-content: center;
@@ -127,48 +145,138 @@ export const OrderProduct = styled.div`
   }
 `;
 
-export const ExtraProduct = styled.div`
+export const ExtraProductList = styled(RowAnt)`
+  width: 100%;
+  max-height: 30rem;
+  padding: 2.5rem 0 0 0;
+  overflow-y: scroll;
+`;
+
+export const ExtraProduct = styled(ColAnt)`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  width: 25%;
+  height: 15.81rem;
+`;
+
+export const ExtraProductCard = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: solid 1px;
-  border-radius: 5px;
-  height: 5rem;
-  width: 5rem;
-  margin: 0.25rem;
+  border: solid 1px var(--black);
+  border-radius: 0.625rem;
+  height: 100%;
+  width: 100%;
   cursor: pointer;
 
-  span {
-    font-size: 0.7rem;
+  .product-name {
+    font-size: 1.5rem;
+    font-weight: 600;
     text-align: center;
   }
 
-  .product_price {
-    color: #008000a6;
-    font-weight: bold;
-    font-size: 0.8rem;
+  .product-price {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .product-img-add {
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateX(-50%);
+    background-color: var(--orange-250);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid white;
+  }
+`;
+
+export const Input = styled(InputAnt)``;
+
+export const ButtonRegister = styled(ButtonAnt)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 7.68rem;
+  background: var(--orange-250);
+  color: var(--black);
+  border-radius: 0.625rem;
+  font-weight: 600;
+  font-size: 2.25rem;
+  border: none;
+  box-shadow: #00000040 1.95px 1.95px 2.6px;
+  margin: 1.5rem 0;
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--orange-250);
+    color: var(--black);
+    border: none;
+  }
+`;
+
+const ButtonCSS = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27.8rem;
+  height: 7.68rem;
+  border-radius: 0.625rem;
+  font-weight: 600;
+  font-size: 2.25rem;
+  color: var(--black);
+`;
+
+export const ButtonCancel = styled(ButtonAnt)`
+  ${ButtonCSS}
+  background: var(--white);
+  border: 3px solid var(--black);
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--white);
+    border: 3px solid var(--black);
+  }
+`;
+
+export const Button = styled(ButtonAnt)`
+  ${ButtonCSS}
+  border: none;
+  background: var(--orange-250);
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--orange-250);
+    border: none;
   }
 `;
 
 const IconCSS = css`
-  height: 1.8rem;
-  width: 1.8rem;
+  height: 3rem;
+  width: 3rem;
   cursor: pointer;
-
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      height: 1.5rem;
-      width: 1.5rem;
-    }
-  }
-
-  @media (max-width: 1366px) {
-    height: 1.2rem;
-    width: 1.2rem;
-  }
 `;
+
 export const TrashIcon = styled(Trash)`
   ${IconCSS}
   color: #ff00009c;
+`;
+
+export const Icon = styled.img`
+  ${IconCSS}
+  background-size: cover;
+  background-position: center;
 `;

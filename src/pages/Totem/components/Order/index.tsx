@@ -2,17 +2,32 @@ import React, { useState, Dispatch, SetStateAction } from "react";
 import moment from "moment";
 import { v4 } from "uuid";
 
-import {
-  Container,
-  Button,
-  ExtraProduct,
-  OrderProduct,
-  TrashIcon,
-} from "./styles";
 import { Modal } from "antd";
 
 import { SaleDto } from "../../../../models/dtos/sale";
 import { StoreProductDto } from "../../../../models/dtos/storeProduct";
+
+import bag from "../../../../assets/totem/svg/bag.svg";
+import arrow_down from "../../../../assets/totem/svg/arrow_down.svg";
+import bottle from "../../../../assets/totem/svg/bottle.svg";
+import plus from "../../../../assets/totem/svg/plus.svg";
+
+import {
+  Container,
+  Button,
+  ExtraProductList,
+  ExtraProductCard,
+  OrderProduct,
+  TrashIcon,
+  Icon,
+  Header,
+  Body,
+  Footer,
+  ButtonRegister,
+  ExtraProduct,
+  ButtonCancel,
+  OrderProductList,
+} from "./styles";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -166,65 +181,95 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
 
   return (
     <Container>
-      <div className="order-resume">
-        <span>Sua Sacola</span>
-        <span>
-          <strong>
-            R$ {(sale?.total_sold || 0).toFixed(2).replace(".", ",")}
-          </strong>
-        </span>
-      </div>
-      <div className="order-list-content">
-        {sale.items.map((item) => (
-          <OrderProduct key={item.id}>
-            <div className="order-item-image">IMG</div>
-            <div className="order-item-info">
-              <span>{item.product.name}</span>
-              <span>R$ {item.total?.toFixed(2).replace(".", ",")}</span>
-            </div>
-            <div className="order-item-actions">
-              <div className="order-item-quantity">{item.quantity}</div>
-              <span>
-                <TrashIcon onClick={() => onRemoveItem(item.id)} />
-              </span>
-            </div>
-          </OrderProduct>
-        ))}
-      </div>
-      <div className="self-service-content">
-        <span>Insira um item de cada vez sobre a balança</span>
-        <Button onClick={getWeightByBalance} loading={fetchingBalanceWeight}>
-          + REGISTRAR PESAGEM
-        </Button>
-      </div>
-      <div className="extra-products-content">
-        <span>Que tal adicionar uma água ou refrigerante?</span>
-        <div className="extra-products-list">
-          {storeProducts
-            .filter((storeProduct) => storeProduct.product.category_id === 2)
-            .map((storeProduct) => (
-              <ExtraProduct
-                key={storeProduct.id}
-                onClick={() =>
-                  onAddItem(storeProduct, 1, +storeProduct.price_unit)
-                }
-              >
-                <span>{storeProduct.product.name}</span>
-                <span className="product_price">
-                  {storeProduct.price_unit?.replace(".", ",")}R$
-                </span>
-              </ExtraProduct>
-            ))}
+      <Header>
+        <div className="bag-content">
+          <Icon src={bag} />
+          <span>Sua Sacola</span>
         </div>
-      </div>
-      <div className="footer">
-        <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
+        <div className="price-content">
+          <span>R$ {(sale?.total_sold || 0).toFixed(2).replace(".", ",")}</span>
+          <Icon src={arrow_down} />
+        </div>
+      </Header>
+      <Body>
+        <div className="order-list-content">
+          <OrderProductList>
+            {sale.items.map((item) => (
+              <OrderProduct key={item.id} sm={24}>
+                <div className="order-item-content">
+                  <img src={bottle} className="order-item-image" />
+                  <div className="order-item-info">
+                    <span className="order-item-name">{item.product.name}</span>
+                    <span className="order-item-price">
+                      R$ {item.total?.toFixed(2).replace(".", ",")}
+                    </span>
+                  </div>
+                </div>
+                <div className="order-item-actions">
+                  <div className="order-item-quantity">{item.quantity}</div>
+                  <span>
+                    <TrashIcon onClick={() => onRemoveItem(item.id)} />
+                  </span>
+                </div>
+              </OrderProduct>
+            ))}
+          </OrderProductList>
+        </div>
+        <div className="self-service-content">
+          {sale.items.length === 0 && (
+            <span>Insira um item de cada vez sobre a balança</span>
+          )}
+          <ButtonRegister
+            onClick={getWeightByBalance}
+            loading={fetchingBalanceWeight}
+          >
+            <Icon src={plus} /> REGISTRAR PESAGEM
+          </ButtonRegister>
+        </div>
+        <div className="extra-products-content">
+          <span className="extra-product-title">
+            <Icon src={bottle} /> Que tal adicionar uma água ou refrigerante?
+          </span>
+          <ExtraProductList gutter={[6, 40]}>
+            {storeProducts
+              .filter((storeProduct) => storeProduct.product.category_id === 2)
+              .map((storeProduct) => (
+                <ExtraProduct sm={6} key={storeProduct.id}>
+                  <ExtraProductCard
+                    key={storeProduct.id}
+                    onClick={() =>
+                      onAddItem(storeProduct, 1, +storeProduct.price_unit)
+                    }
+                  >
+                    <img className="product-img-add" src={plus} />
+                    <img src={bottle} />
+
+                    <span className="product-name">
+                      {storeProduct.product.name}
+                    </span>
+                    <span className="product-price">
+                      R$
+                      {storeProduct.price_unit?.replace(".", ",")} /{" "}
+                      {storeProduct?.unity_taxable || ""}
+                    </span>
+                  </ExtraProductCard>
+                </ExtraProduct>
+              ))}
+          </ExtraProductList>
+        </div>
+      </Body>
+      <Footer
+        style={{
+          justifyContent: sale.items.length ? "space-between" : "center",
+        }}
+      >
+        <ButtonCancel onClick={() => setStep(1)}>Cancelar Pedido</ButtonCancel>
         {sale.items.length ? (
           <Button onClick={() => setStep(4)}>Concluir Pedido</Button>
         ) : (
           <></>
         )}
-      </div>
+      </Footer>
     </Container>
   );
 };

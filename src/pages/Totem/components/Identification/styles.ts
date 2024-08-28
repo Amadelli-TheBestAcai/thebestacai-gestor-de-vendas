@@ -11,7 +11,6 @@ export const Container = styled.div`
   color: var(--black);
 
   .title {
-    font-family: "VisbyCF";
     font-weight: 600;
     font-size: 4rem;
     color: var(--black);
@@ -22,7 +21,6 @@ export const Container = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    font-family: "VisbyCF";
     height: 8.125rem;
     width: 37.5rem;
     font-weight: 600;
@@ -84,7 +82,6 @@ export const Container = styled.div`
 
   .information-content {
     width: 59.37rem;
-    font-family: "VisbyCF";
     font-weight: 600;
     font-size: 1.75rem;
     text-align: center;
@@ -103,7 +100,7 @@ export const PinPadOption = styled.div<IPinpad>`
   border-radius: 0.37rem;
   height: 5.93rem;
   width: 5.93rem;
-  font-family: "Atkinson Hyperlegible";
+  font-family: "Atkinson Hyperlegible" !important;
   font-weight: 700;
   font-size: 1.5rem;
   cursor: pointer;
@@ -127,7 +124,6 @@ const ButtonCSS = css`
   height: 7.68rem;
   padding: 2.5rem;
   border-radius: 0.625rem;
-  font-family: "VisbyCF";
   font-weight: 600;
   font-size: 2.25rem;
   border: none;

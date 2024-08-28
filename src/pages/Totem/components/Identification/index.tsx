@@ -3,6 +3,11 @@ import { notification } from "antd";
 
 import { SaleDto } from "../../../../models/dtos/sale";
 
+import { applyCPFMask } from "../../helpers/applyCPFMask";
+
+import show_password from "../../../../assets/totem/svg/show_password.svg";
+import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
+
 import {
   Container,
   Input,
@@ -13,11 +18,6 @@ import {
   ButtonDontSendCPF,
   ButtonCancel,
 } from "./styles";
-
-import { applyCPFMask } from "../../helpers/applyCPFMask";
-
-import show_password from "../../../../assets/totem/svg/show_password.svg";
-import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;

@@ -27,7 +27,8 @@ export const GlobalStyle = createGlobalStyle`
    --warning: #f8f2d1;
    --success: #f6ffed;
    --error: #fff2f0;
-
+   
+   --orange-190: #FFCF8B;
    --orange-200: #FFB956;
    --orange-250: #FF9D0A;
    --orange-450: #f0ad4e;
