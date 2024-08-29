@@ -11,6 +11,8 @@ import bag from "../../../../assets/totem/svg/bag.svg";
 import arrow_down from "../../../../assets/totem/svg/arrow_down.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
 import plus from "../../../../assets/totem/svg/plus.svg";
+import minus from "../../../../assets/totem/svg/minus.svg";
+import trash from "../../../../assets/totem/svg/trash.svg";
 
 import {
   Container,
@@ -18,15 +20,15 @@ import {
   ExtraProductList,
   ExtraProductCard,
   OrderProduct,
-  TrashIcon,
   Icon,
   Header,
   Body,
   Footer,
   ButtonRegister,
   ExtraProduct,
-  ButtonCancel,
+  ButtonFinalize,
   OrderProductList,
+  AddSubItem,
 } from "./styles";
 
 interface IProps {
@@ -93,12 +95,24 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
     setSale(saleToUpdate);
   };
 
-  const onRemoveItem = (id: string) => {
+  const onAddRemoveItem = (
+    id: string,
+    operation: string,
+    removeAll?: boolean
+  ) => {
     const saleToUpdate = { ...sale };
 
     const itemIndex = saleToUpdate.items.findIndex((_item) => _item.id === id);
-
-    const newQuantity = +saleToUpdate.items[itemIndex]?.quantity - 1;
+    let newQuantity;
+    if (operation === "add") {
+      newQuantity = +saleToUpdate.items[itemIndex]?.quantity + 1;
+    } else {
+      if (!removeAll) {
+        newQuantity = +saleToUpdate.items[itemIndex]?.quantity - 1;
+      } else {
+        newQuantity = 0;
+      }
+    }
 
     if (
       saleToUpdate.items[itemIndex]?.product.category.id === 1 ||
@@ -147,35 +161,37 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
       Modal.info({
         title: "Self service não encontrado",
         content:
-          "O produto self-service não vfoi encontrado. Contate o atendente",
+          "O produto self-service não foi encontrado. Contate o atendente",
       });
       return;
     }
 
     if (!fetchingBalanceWeight) {
       setFetchingBalanceWeight(true);
-      window.Main.send("balance:get", ({ weight, error }) => {
-        setFetchingBalanceWeight(false);
-        if (error) {
-          Modal.info({
-            title: "Falha de Leitura",
-            content:
-              "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
-          });
-          return;
-        }
-        if (!weight) {
-          Modal.info({
-            title: "Falha de Leitura",
-            content:
-              "Não foi possível ler o peso de seu self-service. Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
-          });
-          return;
-        }
-        const amount = +weight * +selfService?.price_unit;
+      // window.Main.send("balance:get", ({ weight, error }) => {
+      setFetchingBalanceWeight(false);
+      // if (error) {
+      //   Modal.info({
+      //     title: "Falha de Leitura",
+      //     content:
+      //       "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+      //   });
+      //   return;
+      // }
+      // if (!weight) {
+      //   Modal.info({
+      //     title: "Falha de Leitura",
+      //     content:
+      //       "Não foi possível ler o peso de seu self-service. Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
+      //   });
+      //   return;
+      // }
+      // const amount = +weight * +selfService?.price_unit;
+      // onAddItem(selfService, +weight, +amount);
+      const amount = +0.5 * +selfService?.price_unit;
 
-        onAddItem(selfService, +weight, +amount);
-      });
+      onAddItem(selfService, +0.5, +amount);
+      // });
     }
   };
 
@@ -191,7 +207,7 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
           <Icon src={arrow_down} />
         </div>
       </Header>
-      <Body>
+      <Body style={{ paddingTop: sale.items.length ? "0" : "3rem" }}>
         <div className="order-list-content">
           <OrderProductList>
             {sale.items.map((item) => (
@@ -205,26 +221,55 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
                     </span>
                   </div>
                 </div>
+
                 <div className="order-item-actions">
-                  <div className="order-item-quantity">{item.quantity}</div>
                   <span>
-                    <TrashIcon onClick={() => onRemoveItem(item.id)} />
+                    <img
+                      src={trash}
+                      onClick={() => onAddRemoveItem(item.id, "sub", true)}
+                    />
                   </span>
+                  {item.product.category.id !== 1 && (
+                    <AddSubItem>
+                      <img
+                        src={plus}
+                        className="product-img-add"
+                        onClick={() => onAddRemoveItem(item.id, "add")}
+                      />
+                      {item.quantity}
+                      <img
+                        src={minus}
+                        className="product-img-sub"
+                        onClick={() => onAddRemoveItem(item.id, "sub")}
+                      />
+                    </AddSubItem>
+                  )}
                 </div>
               </OrderProduct>
             ))}
           </OrderProductList>
         </div>
         <div className="self-service-content">
-          {sale.items.length === 0 && (
+          {!sale.items.length && (
             <span>Insira um item de cada vez sobre a balança</span>
           )}
-          <ButtonRegister
-            onClick={getWeightByBalance}
-            loading={fetchingBalanceWeight}
-          >
-            <Icon src={plus} /> REGISTRAR PESAGEM
-          </ButtonRegister>
+          {sale.items.length &&
+          sale.items.some((item) => item.product.category.id === 1) ? (
+            <Button
+              style={{ width: "100%", margin: "0.5rem 0" }}
+              onClick={getWeightByBalance}
+              loading={fetchingBalanceWeight}
+            >
+              <Icon src={plus} /> Fazer Nova Pesagem
+            </Button>
+          ) : (
+            <ButtonRegister
+              onClick={getWeightByBalance}
+              loading={fetchingBalanceWeight}
+            >
+              <Icon src={plus} /> Registrar Pesagem
+            </ButtonRegister>
+          )}
         </div>
         <div className="extra-products-content">
           <span className="extra-product-title">
@@ -263,9 +308,11 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
           justifyContent: sale.items.length ? "space-between" : "center",
         }}
       >
-        <ButtonCancel onClick={() => setStep(1)}>Cancelar Pedido</ButtonCancel>
+        <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
         {sale.items.length ? (
-          <Button onClick={() => setStep(4)}>Concluir Pedido</Button>
+          <ButtonFinalize onClick={() => setStep(4)}>
+            Concluir Pedido
+          </ButtonFinalize>
         ) : (
           <></>
         )}

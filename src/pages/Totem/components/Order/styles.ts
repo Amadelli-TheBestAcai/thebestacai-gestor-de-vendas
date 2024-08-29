@@ -5,7 +5,6 @@ import {
   Row as RowAnt,
   Col as ColAnt,
 } from "antd";
-import { Trash } from "../../../../styles/Icons";
 
 export const Container = styled.div`
   display: flex;
@@ -14,6 +13,7 @@ export const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
+  padding: 1.25rem 2.5rem 0;
 `;
 
 export const Header = styled.div`
@@ -55,6 +55,7 @@ export const Body = styled.div`
     font-size: 4rem;
     font-weight: 600;
     text-align: center;
+    margin-bottom: 2.5rem;
   }
 
   .order-list-content {
@@ -62,12 +63,12 @@ export const Body = styled.div`
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-height: 30rem;
+    max-height: 35rem;
   }
 
   .extra-products-content {
     width: 100%;
-    max-height: 30rem;
+    max-height: 33rem;
     .extra-product-title {
       font-size: 2.5rem;
       text-align: start;
@@ -102,6 +103,7 @@ export const OrderProduct = styled(ColAnt)`
   width: 100%;
   height: 10rem;
   margin: 0.5rem 0;
+  padding: 1.25rem 2.5rem;
   background: var(--orange-190);
   border-radius: 0.625rem;
 
@@ -112,6 +114,7 @@ export const OrderProduct = styled(ColAnt)`
   .order-item-image {
     width: 7.5rem;
     height: 7.5rem;
+    margin-right: 0.18rem;
     background-size: cover;
     background-position: center;
   }
@@ -130,24 +133,48 @@ export const OrderProduct = styled(ColAnt)`
   }
   .order-item-actions {
     display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    width: 16rem;
+  }
+`;
+
+export const AddSubItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 10.56rem;
+  height: 3.125rem;
+  font-weight: 700;
+  font-size: 2rem;
+
+  .product-img-add {
+    display: flex;
     justify-content: center;
     align-items: center;
+    background-color: var(--orange-250);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    cursor: pointer;
+  }
 
-    .order-item-quantity {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: solid 1px;
-      border-radius: 5px;
-      height: 3rem;
-      width: 3rem;
-    }
+  .product-img-sub {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--white);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    cursor: pointer;
   }
 `;
 
 export const ExtraProductList = styled(RowAnt)`
   width: 100%;
-  max-height: 30rem;
+  max-height: 33rem;
   padding: 2.5rem 0 0 0;
   overflow-y: scroll;
 `;
@@ -238,7 +265,7 @@ const ButtonCSS = css`
   color: var(--black);
 `;
 
-export const ButtonCancel = styled(ButtonAnt)`
+export const Button = styled(ButtonAnt)`
   ${ButtonCSS}
   background: var(--white);
   border: 3px solid var(--black);
@@ -247,11 +274,12 @@ export const ButtonCancel = styled(ButtonAnt)`
   :hover,
   :focus {
     background: var(--white);
+    color: var(--black);
     border: 3px solid var(--black);
   }
 `;
 
-export const Button = styled(ButtonAnt)`
+export const ButtonFinalize = styled(ButtonAnt)`
   ${ButtonCSS}
   border: none;
   background: var(--orange-250);
@@ -260,6 +288,7 @@ export const Button = styled(ButtonAnt)`
   :hover,
   :focus {
     background: var(--orange-250);
+    color: var(--black);
     border: none;
   }
 `;
@@ -268,11 +297,6 @@ const IconCSS = css`
   height: 3rem;
   width: 3rem;
   cursor: pointer;
-`;
-
-export const TrashIcon = styled(Trash)`
-  ${IconCSS}
-  color: #ff00009c;
 `;
 
 export const Icon = styled.img`

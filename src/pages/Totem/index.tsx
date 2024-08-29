@@ -129,7 +129,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
       ) : (
         <></>
       )}
-      <Content customHeight={step === 1 ? "100%" : "80%"}>
+      <Content customHeight={step === 1 ? "100%" : "90%"}>
         {step === 1 ? (
           <Welcome
             setStep={setStep}
