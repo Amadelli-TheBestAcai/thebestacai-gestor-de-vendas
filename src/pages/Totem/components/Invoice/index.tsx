@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 import { SaleDto } from "../../../../models/dtos/sale";
 
@@ -7,12 +7,14 @@ import mail from "../../../../assets/totem/svg/mail.svg";
 import cancel_circle from "../../../../assets/totem/svg/cancel_circle.svg";
 
 import { Body, Container, Header, Icon, Option } from "./styles";
+import VirtualPinpad from "../VirtualPinpad";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   sale: SaleDto | null;
 }
 const Invoice: React.FC<IProps> = ({ setStep, sale }) => {
+  const [email, setEmail] = useState<string>("");
   return (
     <Container>
       <Header>
@@ -45,6 +47,10 @@ const Invoice: React.FC<IProps> = ({ setStep, sale }) => {
           </Option>
         </div>
       </Body>
+      {/* 
+       {email}
+      <VirtualPinpad email={email} setEmail={setEmail} />
+       */}
     </Container>
   );
 };
