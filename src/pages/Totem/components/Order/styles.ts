@@ -20,7 +20,7 @@ export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 62.5rem;
+  width: 100%;
   max-height: 4.87rem;
   height: 10%;
   font-size: 2.5rem;
@@ -28,13 +28,22 @@ export const Header = styled.div`
   .bag-content {
     display: flex;
     justify-content: space-between;
+    align-items: end;
     width: 16.5rem;
     font-weight: 600;
+
+    span {
+      height: 2.7rem;
+    }
   }
   .price-content {
     display: flex;
     justify-content: space-between;
+    align-items: end;
     font-weight: 800;
+    span {
+      height: 2.7rem;
+    }
   }
 `;
 
@@ -42,7 +51,7 @@ export const Body = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 62.5rem;
+  width: 100%;
   min-height: 57.37rem;
   height: 100%;
   padding: 3rem 0;
@@ -55,7 +64,6 @@ export const Body = styled.div`
     font-size: 4rem;
     font-weight: 600;
     text-align: center;
-    margin-bottom: 2.5rem;
   }
 
   .order-list-content {
@@ -66,14 +74,15 @@ export const Body = styled.div`
     max-height: 35rem;
   }
 
+  .extra-product-title {
+    font-size: 2.5rem;
+    text-align: start;
+    margin: 2.5rem 0 1rem;
+  }
+
   .extra-products-content {
     width: 100%;
     max-height: 33rem;
-    .extra-product-title {
-      font-size: 2.5rem;
-      text-align: start;
-      margin: 0.3rem 0;
-    }
     .extra-products-list {
       display: flex;
       justify-content: center;
@@ -87,7 +96,7 @@ export const Body = styled.div`
 export const Footer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 62.5rem;
+  width: 100%;
   padding: 2.5rem;
 `;
 

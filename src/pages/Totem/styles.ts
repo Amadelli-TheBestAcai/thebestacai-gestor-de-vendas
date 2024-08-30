@@ -44,7 +44,6 @@ export const Content = styled.div<IContent>`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80%;
 
   ${({ customHeight }) => {
     if (customHeight)

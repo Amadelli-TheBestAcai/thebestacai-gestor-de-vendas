@@ -83,7 +83,7 @@ export const Button = styled(ButtonAnt)`
   :hover,
   :focus {
     background: var(--orange-250);
-    color: var(--brown-500);
+    color: var(--black);
     border: none;
   }
 `;

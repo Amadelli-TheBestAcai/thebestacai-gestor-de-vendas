@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Checkbox as CheckboxAnt, Button as ButtonAnt } from "antd";
 
@@ -7,75 +7,192 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  width: 50%;
+  width: 100%;
   height: 100%;
+  padding: 1.25rem 2.5rem 0;
+`;
 
-  .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    width: 50%;
-    height: 80%;
-    .info {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      width: 100%;
-      margin: 15px 0;
-      .info-footer {
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
-        align-items: center;
-      }
+export const Header = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5rem;
+
+  span {
+    font-size: 4rem;
+    font-weight: 600;
+    text-align: center;
+  }
+`;
+
+export const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-weight: 600;
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2.5rem;
+`;
+
+export const CpfInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  height: 10rem;
+  border-bottom: 2px solid var(--brown-300);
+
+  .ant-checkbox-input,
+  .ant-checkbox-inner {
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid var(--black);
+  }
+  .ant-checkbox-checked .ant-checkbox-inner {
+    position: relative;
+    background-color: var(--orange-250);
+    border: none;
+    :after {
+      position: absolute;
+      top: 45%;
+      filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(7500%)
+        hue-rotate(313deg) brightness(93%) contrast(107%);
+      zoom: 3.5;
     }
   }
-  .footer {
+
+  .info-header {
+    span {
+      font-size: 2.5rem;
+    }
+  }
+  .info-footer {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 20%;
+    margin: 0.5rem 0;
+    font-size: 2.25rem;
+  }
+`;
+
+export const ClubInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 12rem;
+  margin-top: 0.5rem;
+  border-bottom: 2px solid var(--brown-300);
+
+  .ant-checkbox-input,
+  .ant-checkbox-inner {
+    width: 4rem;
+    height: 4rem;
+    border: 1px solid var(--black);
+  }
+  .ant-checkbox-checked .ant-checkbox-inner {
+    position: relative;
+    background-color: var(--orange-250);
+    border: none;
+    :after {
+      position: absolute;
+      top: 45%;
+      filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(7500%)
+        hue-rotate(313deg) brightness(93%) contrast(107%);
+      zoom: 4.5;
+    }
+  }
+
+  .info-header {
+    span {
+      font-size: 2.25rem;
+    }
+  }
+
+  .info-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 1.5rem 0;
+    font-size: 2.5rem;
+  }
+`;
+export const OrderInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 12rem;
+  margin-top: 0.5rem;
+
+  span {
+    font-size: 2.5rem;
+  }
+
+  .info-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 1.5rem 0;
   }
 `;
 
 export const Checkbox = styled(CheckboxAnt)`
-  margin: 0 10px;
+  margin: 0 0.625rem;
+`;
+
+const ButtonCSS = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27.8rem;
+  height: 7.68rem;
+  border-radius: 0.625rem;
+  font-weight: 600;
+  font-size: 2.25rem;
+  color: var(--black);
 `;
 
 export const Button = styled(ButtonAnt)`
-  width: fit-content;
-  height: 50px;
-  background: var(--orange-250);
-  color: var(--brown-500);
-  border-radius: 5px;
-  font-weight: 500;
+  ${ButtonCSS}
+  background: var(--white);
+  border: 3px solid var(--black);
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--white);
+    color: var(--black);
+    border: 3px solid var(--black);
+  }
+`;
+
+export const ButtonFinalize = styled(ButtonAnt)`
+  ${ButtonCSS}
   border: none;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  background: var(--orange-250);
 
   :active,
   :hover,
   :focus {
     background: var(--orange-250);
-    color: var(--brown-500);
+    color: var(--black);
     border: none;
-  }
-
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      width: 105px;
-      height: 40px;
-    }
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 100px;
-    height: 35px;
-    font-size: 0.8rem;
   }
 `;

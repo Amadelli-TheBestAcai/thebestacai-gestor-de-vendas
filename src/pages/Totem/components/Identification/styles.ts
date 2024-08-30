@@ -79,6 +79,14 @@ export const Container = styled.div`
     height: 14.125rem;
     width: 100%;
   }
+  .actions-step4 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 14.125rem;
+    width: 100%;
+  }
 
   .information-content {
     width: 59.37rem;
@@ -131,9 +139,8 @@ const ButtonCSS = css`
   :active,
   :hover,
   :focus {
-    background: var(--orange-250);
-    color: var(--brown-500);
-    border: none;
+    background: var(--white);
+    color: var(--black);
   }
 `;
 
@@ -143,13 +150,18 @@ export const ButtonSendCPF = styled(ButtonAnt)`
   color: var(--black);
   margin-bottom: 0.5rem;
   box-shadow: #00000040 1.95px 1.95px 2.6px;
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--orange-250);
+    color: var(--black);
+    border: none;
+  }
 `;
 
 export const ButtonDontSendCPF = styled(ButtonAnt)`
   ${ButtonCSS}
-  background: var(--white);
-  color: var(--black);
-  box-shadow: none;
 `;
 
 export const ButtonCancel = styled(ButtonAnt)`
@@ -158,6 +170,11 @@ export const ButtonCancel = styled(ButtonAnt)`
   background: var(--white);
   color: var(--black);
   border: 1px solid var(--black);
+  :active,
+  :hover,
+  :focus {
+    border: 1px solid var(--black);
+  }
 `;
 
 export const ShowPasswordIcon = styled.img`

@@ -153,18 +153,31 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
           </PinPadOption>
         ))}
       </div>
-      <div className="actions">
-        <ButtonSendCPF onClick={() => onFinish(true)}>Confirmar</ButtonSendCPF>
-        <ButtonDontSendCPF onClick={() => onFinish(false)}>
-          Não desejo Informar
-        </ButtonDontSendCPF>
-      </div>
+      {sale.items.length ? (
+        <div className="actions-step4">
+          <ButtonCancel onClick={() => onFinish(false)} style={{width:"28.43rem", margin:"0 1rem"}}>
+           Cancelar
+          </ButtonCancel>
+          <ButtonSendCPF onClick={() => onFinish(true)} style={{width:"28.43rem", margin:"0 1rem"}}>
+            Continuar
+          </ButtonSendCPF>
+        </div>
+      ) : (
+        <div className="actions">
+          <ButtonSendCPF onClick={() => onFinish(true)}>
+            Confirmar
+          </ButtonSendCPF>
+          <ButtonDontSendCPF onClick={() => onFinish(false)}>
+            Não desejo Informar
+          </ButtonDontSendCPF>
+        </div>
+      )}
       <div className="information-content">
         <span>
           A inserção do CPF é opcional. Inseri-lo permite a nós verificarmos se
           você é participante do Clube The Best, onde você pode acumular pontos
-          e troca-los por <b>recompensas</b>! Você ainda pode inseri-lo no cupom fiscal
-          ao final da compra.
+          e troca-los por <b>recompensas</b>! Você ainda pode inseri-lo no cupom
+          fiscal ao final da compra.
         </span>
       </div>
       <div className="cancel-order">

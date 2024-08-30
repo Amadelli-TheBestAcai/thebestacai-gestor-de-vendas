@@ -2,7 +2,18 @@ import React, { Dispatch, SetStateAction } from "react";
 
 import { SaleDto } from "../../../../models/dtos/sale";
 
-import { Container, Checkbox, Button } from "./styles";
+import {
+  Container,
+  Checkbox,
+  Button,
+  Body,
+  Header,
+  Footer,
+  CpfInfo,
+  ClubInfo,
+  OrderInfo,
+  ButtonFinalize,
+} from "./styles";
 import { CampaignDto } from "../../../../models/dtos/campaign";
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
@@ -22,9 +33,11 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
 
   return (
     <Container>
-      <span>Resumo do Pedido</span>
-      <div className="content">
-        <div className="info">
+      <Header>
+        <span>Resumo do Pedido</span>
+      </Header>
+      <Body>
+        <CpfInfo>
           <div className="info-header">
             <Checkbox
               disabled={!sale.client_cpf}
@@ -39,7 +52,9 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
             <span>CPF/CNPJ NA NOTA?</span>
           </div>
           <div className="info-footer">
-            <span>{applyCPFMask(sale.client_cpf, false)}</span>
+            <span className="info-footer-cpf">
+              {applyCPFMask(sale.client_cpf, true)}
+            </span>
             <span
               style={{ textDecoration: "underline", cursor: "pointer" }}
               onClick={() => setStep(2)}
@@ -47,9 +62,9 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
               {sale.client_cpf ? "TROCAR CPF" : "ADICIONAR CPF"}
             </span>
           </div>
-        </div>
+        </CpfInfo>
 
-        <div className="info">
+        <ClubInfo>
           <div className="info-header">
             <Checkbox
               disabled={!sale.client_cpf}
@@ -61,28 +76,30 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
                 }))
               }
             />
-            <span>CLUBE THE BEST</span>
+            <span>Clube The Best</span>
           </div>
           <div className="info-footer">
             <span>PONTOS GANHOS NO CLUBE</span>
-            <span>+{getCampaignPointsPlus()}</span>
+            <span style={{ fontWeight: "800" }}>
+              +{getCampaignPointsPlus()}
+            </span>
           </div>
-        </div>
+        </ClubInfo>
 
-        <div className="info">
+        <OrderInfo>
           <div className="info-header">
             <span>TOTAL DO PEDIDO</span>
           </div>
           <div className="info-footer">
             <span>{sale.items.length} ITENS</span>
-            <span>R${sale.total_sold.toFixed(2).replace(".", ",")}</span>
+            <span style={{ fontWeight: "800" }}>R${sale.total_sold.toFixed(2).replace(".", ",")}</span>
           </div>
-        </div>
-      </div>
-      <div className="footer">
+        </OrderInfo>
+      </Body>
+      <Footer>
         <Button onClick={() => setStep(3)}>Voltar</Button>
-        <Button onClick={() => setStep(5)}>Concluir Pedido</Button>
-      </div>
+        <ButtonFinalize onClick={() => setStep(5)}>Concluir Pedido</ButtonFinalize>
+      </Footer>
     </Container>
   );
 };

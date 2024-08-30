@@ -256,7 +256,7 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
           {sale.items.length &&
           sale.items.some((item) => item.product.category.id === 1) ? (
             <Button
-              style={{ width: "100%", margin: "0.5rem 0" }}
+              style={{ width: "100%", margin: "1.5rem 0" }}
               onClick={getWeightByBalance}
               loading={fetchingBalanceWeight}
             >
@@ -272,9 +272,9 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
           )}
         </div>
         <div className="extra-products-content">
-          <span className="extra-product-title">
+          <div className="extra-product-title">
             <Icon src={bottle} /> Que tal adicionar uma água ou refrigerante?
-          </span>
+          </div>
           <ExtraProductList gutter={[6, 40]}>
             {storeProducts
               .filter((storeProduct) => storeProduct.product.category_id === 2)
