@@ -107,7 +107,8 @@ const Payment: React.FC<IProps> = ({ setStep, sale, setSale }) => {
       <div className="content">Adicionar integração ao TEF Aqui</div>
       <div className="footer">
         <Button onClick={() => setStep(4)}>Voltar</Button>
-        <Button onClick={onFinish} loading={loading}>
+        {/* <Button onClick={onFinish} loading={loading}> */}
+        <Button onClick={() => setStep(6)} loading={loading}>
           Finalizar
         </Button>
       </div>
