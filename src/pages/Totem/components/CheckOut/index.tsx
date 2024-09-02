@@ -26,7 +26,9 @@ interface IProps {
 
 const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
   const getCampaignPointsPlus = () => {
-    let points = Math.floor(sale.total_sold / campaign.average_ticket);
+    let points = campaign?.average_ticket
+      ? Math.floor(sale?.total_sold / campaign?.average_ticket)
+      : 0;
 
     return points;
   };
@@ -92,13 +94,17 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
           </div>
           <div className="info-footer">
             <span>{sale.items.length} ITENS</span>
-            <span style={{ fontWeight: "800" }}>R${sale.total_sold.toFixed(2).replace(".", ",")}</span>
+            <span style={{ fontWeight: "800" }}>
+              R${sale.total_sold.toFixed(2).replace(".", ",")}
+            </span>
           </div>
         </OrderInfo>
       </Body>
       <Footer>
         <Button onClick={() => setStep(3)}>Voltar</Button>
-        <ButtonFinalize onClick={() => setStep(5)}>Concluir Pedido</ButtonFinalize>
+        <ButtonFinalize onClick={() => setStep(5)}>
+          Concluir Pedido
+        </ButtonFinalize>
       </Footer>
     </Container>
   );
