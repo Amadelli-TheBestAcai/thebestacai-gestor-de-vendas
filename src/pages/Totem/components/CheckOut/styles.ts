@@ -131,6 +131,7 @@ export const ClubInfo = styled.div`
     font-size: 2.5rem;
   }
 `;
+
 export const OrderInfo = styled.div`
   display: flex;
   flex-direction: column;

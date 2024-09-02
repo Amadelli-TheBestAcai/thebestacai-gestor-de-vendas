@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Button as ButtonAnt, Modal as ModalAnt } from "antd";
 
@@ -7,64 +7,132 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  width: 50%;
+  width: 100%;
   height: 100%;
+  padding: 1.25rem 2.5rem 0;
+  `;
 
-  .header,
-  .content,
-  .footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+export const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5rem;
+  
+  span {
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
   }
-  .header {
-    justify-content: flex-start;
-    height: 25%;
-  }
-  .content {
-    justify-content: center;
-    height: 50%;
-  }
-  .footer {
-    justify-content: center;
-    height: 25%;
+  .span-title {
+    font-size: 4rem;
   }
 `;
 
-export const Modal = styled(ModalAnt)``;
+export const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 5rem 2.5rem ;
+  `;
+
+export const Footer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 2.5rem;
+`;
+
+export const Modal = styled(ModalAnt)`
+  .modal-title {
+    font-family: "VisbyCF";
+    font-size: 3.75rem;
+    font-weight: 600;
+  }
+
+  .ant-modal-content {
+    height: 100%;
+    width: 100%;
+    border-radius: 6.25rem;
+    padding: 5rem;
+    .ant-modal-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      width: 100%;
+      padding: 0;
+    }
+  }
+`;
+
+const ButtonCSS = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27.8rem;
+  height: 7.68rem;
+  border-radius: 0.625rem;
+  span {
+    font-family: "VisbyCF";
+    font-weight: 600;
+    font-size: 2.25rem;
+    color: var(--black);
+  }
+`;
 
 export const Button = styled(ButtonAnt)`
-  width: fit-content;
-  height: 50px;
+  ${ButtonCSS}
+  background: var(--white);
+  border: 3px solid var(--black);
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--white);
+    color: var(--black);
+    border: 3px solid var(--black);
+  }
+`;
+
+export const ButtonNewOrder = styled(ButtonAnt)`
+  ${ButtonCSS}
   background: var(--orange-250);
-  color: var(--brown-500);
-  border-radius: 5px;
-  font-weight: 500;
   border: none;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 
   :active,
   :hover,
   :focus {
     background: var(--orange-250);
-    color: var(--brown-500);
+    color: var(--black);
     border: none;
   }
+`;
 
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      width: 105px;
-      height: 40px;
-    }
+export const EvalutionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 9.3rem;
+  height: 12.37;
+
+  img {
+    width: 9.3rem;
+    height: 9.3rem;
+    background-size: cover;
+    background-position: center;
   }
 
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 100px;
-    height: 35px;
-    font-size: 0.8rem;
+  span {
+    font-family: "VisbyCF";
+    font-size: 2rem;
+    font-weight: 600;
   }
 `;
 
@@ -72,16 +140,5 @@ export const NpsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-
-  div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: solid 1px;
-    border-radius: 5px;
-    height: 5rem;
-    width: 5rem;
-
-    cursor: pointer;
-  }
+  width: 100%;
 `;
