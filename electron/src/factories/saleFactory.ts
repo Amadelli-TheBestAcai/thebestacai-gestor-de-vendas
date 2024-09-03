@@ -27,6 +27,7 @@ import {
   getCurrentCampaign,
   updateStepSale,
   removeStepSale,
+  updateStatusPaymentTef,
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto, CampaignDto } from "../models/gestor";
@@ -37,6 +38,7 @@ import {
   CustomerVoucherDTO,
 } from "../models/dtos";
 import { redeemReward } from "../usecases/sale/redeemReward";
+import { PaymentTefCancelType } from "../models/enums/PaymentTefCancelType";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -51,11 +53,12 @@ export const saleFactory = {
     }),
   decressItem: async (id: string) =>
     await useCaseFactory.execute<SaleDto>(decressItem, { id }),
-  addPayment: async (amount: number, type: number, flag_card?: number) =>
+  addPayment: async (amount: number, type: number, flag_card?: number, turnOffTef?: boolean) =>
     await useCaseFactory.execute<SaleDto>(addPayment, {
       amount,
       type,
       flag_card,
+      turnOffTef
     }),
   updateSale: async (id: string | number, payload: SaleDto) =>
     await useCaseFactory.execute<SaleDto>(updateSale, { id, payload }),
@@ -154,4 +157,6 @@ export const saleFactory = {
     }),
   getCurrentCampaign: async () =>
     await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
+  updateStatusPaymentTef: async (payment_id: number, code_nsu: string, justify: string, payment_tef_cancel_type: PaymentTefCancelType) =>
+    await useCaseFactory.execute<CampaignDto>(updateStatusPaymentTef, { payment_id, code_nsu, justify, payment_tef_cancel_type }),
 };

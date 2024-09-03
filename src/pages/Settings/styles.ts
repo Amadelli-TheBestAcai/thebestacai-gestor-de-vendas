@@ -27,7 +27,7 @@ export const PageContent = styled.div`
   background: var(--white);
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
-  padding: 1rem;
+  padding: 1rem 1rem 2rem;
   overflow-y: scroll;
 `;
 
@@ -66,15 +66,24 @@ export const DisabledButtonStyle = css`
 `;
 
 export const Button = styled(ButtonAnt)`
-  width: 110px;
   height: 50px;
-  background: transparent;
-  color: var(--orange-250);
+  padding: 0 1rem;
+  background: var(--orange-250);;
+  color: white;
   border: 1px solid var(--orange-250);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
+  z-index: 10;
+  &&&:hover,
+  &&&:active, 
+  &&&:focus {
+    background: var(--orange-250);;
+    color: white;
+    border: 1px solid var(--orange-250);
+    opacity: 80;
+  }
 
   &.disabled-button {
     ${DisabledButtonStyle}
@@ -84,6 +93,7 @@ export const Button = styled(ButtonAnt)`
 export const ContentButton = styled.div`
   display: flex;
   align-items: center;
+  margin-left: 2%;
 `;
 
 export const ButtonSave = styled(ButtonAnt)`
@@ -127,7 +137,7 @@ export const SelectsContainer = styled.div`
   align-items: center;
   padding: 2%;
   justify-content: space-evenly;
-  width: 22%;
+  width: 30%;
   height: 100%;
 `;
 
@@ -195,10 +205,7 @@ export const StoreChange = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-
-  .descriptionStore {
-    margin-left: 10px;
-  }
+  
   .storeObservation {
     border-left: 1px solid;
     margin-left: 1rem;

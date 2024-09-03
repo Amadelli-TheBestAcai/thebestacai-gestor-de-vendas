@@ -20,6 +20,7 @@
     "jsonwebtoken": "8.5.1",
     "jszip": "^3.10.0",
     "jwt-decode": "^3.1.2",
+    "koffi": "^2.8.8",
     "moment": "^2.29.1",
     "nedb-async": "^0.1.6",
     "node-abi": "^3.5.0",
@@ -46,8 +47,10 @@
     "zip-folder": "^1.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start",
+
+"build": "react-scripts --openssl-legacy-provider build",
+
     "test": "react-scripts test",
     "postinstall": "electron-builder install-app-deps",
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",

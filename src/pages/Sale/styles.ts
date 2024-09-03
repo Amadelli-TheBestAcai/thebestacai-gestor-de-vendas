@@ -7,7 +7,8 @@ import {
   FileInvoice,
   FileEarmarkPdf,
   Cancel,
-  PrinterNFCe
+  PrinterNFCe,
+  PrinterTef
 } from "../../styles/Icons";
 
 import {
@@ -227,6 +228,9 @@ export const RestoreIcon = styled(RepeatOutline)`
   ${IconCSS}
 `;
 export const PrinterIcon = styled(Printer)`
+  ${IconCSS}
+`;
+export const PrinterTefIcon = styled(PrinterTef)`
   ${IconCSS}
 `;
 

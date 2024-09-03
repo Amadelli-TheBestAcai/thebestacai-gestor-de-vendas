@@ -259,7 +259,7 @@ const Nfce: React.FC = () => {
           amount: totalSold,
           type: +payload.formaPagamento,
           flag_card:
-            paymentType === 1 || paymentType === 2
+            paymentType === 1 || paymentType === 2 || paymentType === 3
               ? +payload.bandeira_operadora
               : null,
         },

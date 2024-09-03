@@ -11,6 +11,7 @@ export interface NfeDTO {
     amount: number,
     flag_card: number,
     type: number,
+    code_nsu?: string
   }[];
   ref?: string;
   cash_history_id?: number;
