@@ -36,8 +36,8 @@ const SideBar: React.FC<IProps> = ({ history }) => {
   const handleClick = async (id: number, route: string) => {
     const isConnected = await window.Main.hasInternet();
 
+    const { response: storeCash } = await window.Main.storeCash.getCurrent();
     if (route === "/handler" || route === "/sale") {
-      const { response: storeCash } = await window.Main.storeCash.getCurrent();
       if (!storeCash?.is_online) {
         notification.info({
           message: "Caixa offline",
@@ -79,7 +79,7 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       Modal.confirm({
         title: `Modo Totem`,
         content: `Tem certeza que gostaria de iniciar o modo Totem`,
-        visible: visible,
+        visible: true,
         okText: "Sim",
         okType: "default",
         cancelText: "Não",
