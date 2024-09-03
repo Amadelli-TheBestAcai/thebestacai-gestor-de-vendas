@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Button as ButtonAnt } from "antd";
 
@@ -7,54 +7,89 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
   height: 100%;
+  padding: 5rem 2.5rem;
+`;
 
-  .content,
-  .footer {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
+export const Header = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5rem;
+
+  span {
+    font-size: 4rem;
+    font-weight: 600;
+    text-align: center;
   }
-  .content {
-    height: 80%;
-  }
-  .footer {
-    height: 20%;
+`;
+
+export const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-weight: 600;
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 2.5rem;
+`;
+
+const ButtonCSS = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 7.68rem;
+  border-radius: 0.625rem;
+  font-weight: 600;
+  font-size: 2.25rem;
+  color: var(--black);
+
+  img {
+    width: 2.75rem;
+    height: 2.75rem;
+    background-size: cover;
+    background-position: center;
+    margin: 0 1rem;
   }
 `;
 
 export const Button = styled(ButtonAnt)`
-  width: fit-content;
-  height: 50px;
-  background: var(--orange-250);
-  color: var(--brown-500);
-  border-radius: 5px;
-  font-weight: 500;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  ${ButtonCSS}
+  margin: 1rem 0;
+  background: var(--white);
+  border: 3px solid var(--black);
+  box-shadow: 0 4px 4px 0 #00000040;
 
   :active,
   :hover,
   :focus {
-    background: var(--orange-250);
-    color: var(--brown-500);
-    border: none;
+    background: var(--white);
+    color: var(--black);
+    border: 3px solid var(--black);
   }
+`;
 
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      width: 105px;
-      height: 40px;
-    }
-  }
+export const ButtonCancel = styled(ButtonAnt)`
+  ${ButtonCSS}
+  width: 27.8rem;
+  background: var(--white);
+  border: 3px solid var(--black);
 
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 100px;
-    height: 35px;
-    font-size: 0.8rem;
+  :active,
+  :hover,
+  :focus {
+    background: var(--white);
+    color: var(--black);
+    border: 3px solid var(--black);
   }
 `;

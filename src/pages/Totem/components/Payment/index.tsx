@@ -2,11 +2,25 @@ import React, { useState, Dispatch, SetStateAction } from "react";
 import moment from "moment";
 import { v4 } from "uuid";
 
-import { Container, Button } from "./styles";
-import { notification } from "antd";
-
 import { SaleDto } from "../../../../models/dtos/sale";
 import { useStore } from "../../../../hooks/useStore";
+
+import pix from "../../../../assets/totem/svg/pix.svg";
+import credit_card from "../../../../assets/totem/svg/credit_card.svg";
+import debit_card from "../../../../assets/totem/svg/debit_card.svg";
+import ticket from "../../../../assets/totem/svg/ticket.svg";
+import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
+
+import { notification } from "antd";
+
+import {
+  Container,
+  Button,
+  Body,
+  Header,
+  Footer,
+  ButtonCancel,
+} from "./styles";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -104,14 +118,28 @@ const Payment: React.FC<IProps> = ({ setStep, sale, setSale }) => {
 
   return (
     <Container>
-      <div className="content">Adicionar integração ao TEF Aqui</div>
-      <div className="footer">
-        <Button onClick={() => setStep(4)}>Voltar</Button>
-        {/* <Button onClick={onFinish} loading={loading}> */}
-        <Button onClick={() => setStep(6)} loading={loading}>
-          Finalizar
+      <Header>
+        <span>Forma de Pagamento</span>
+      </Header>
+      <Body>
+        <Button onClick={() => setStep(6)}>
+          <img src={pix} /> PIX
         </Button>
-      </div>
+        <Button onClick={() => setStep(6)} loading={loading}>
+          <img src={credit_card} /> Cartão de Crédito
+        </Button>
+        <Button onClick={() => setStep(6)} loading={loading}>
+          <img src={debit_card} /> Cartão de Débito
+        </Button>
+        <Button onClick={() => setStep(6)} loading={loading}>
+          <img src={ticket} /> Vale Refeição
+        </Button>
+      </Body>
+      <Footer>
+        <ButtonCancel onClick={() => setStep(4)}>
+          <img src={arrow_left} /> Voltar
+        </ButtonCancel>
+      </Footer>
     </Container>
   );
 };
