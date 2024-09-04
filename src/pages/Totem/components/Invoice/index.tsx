@@ -6,6 +6,8 @@ import printer from "../../../../assets/totem/svg/printer.svg";
 import mail from "../../../../assets/totem/svg/mail.svg";
 import cancel_circle from "../../../../assets/totem/svg/cancel_circle.svg";
 
+import VirtualPinpad from "../VirtualPinpad";
+
 import {
   Body,
   Button,
@@ -17,15 +19,16 @@ import {
   Input,
   Option,
 } from "./styles";
-import VirtualPinpad from "../VirtualPinpad";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   sale: SaleDto | null;
+  setSale: Dispatch<SetStateAction<SaleDto | null>>;
 }
-const Invoice: React.FC<IProps> = ({ setStep, sale }) => {
+const Invoice: React.FC<IProps> = ({ setStep }) => {
   const [email, setEmail] = useState<string>("");
   const [stepInvoice, setStepInvoice] = useState<number>(1);
+
   return (
     <Container>
       {stepInvoice === 1 ? (
@@ -77,7 +80,11 @@ const Invoice: React.FC<IProps> = ({ setStep, sale }) => {
           </Body>
           <Footer>
             <Button onClick={() => setStepInvoice(1)}>Ver Outra Opção</Button>
-            <ButtonFinalize onClick={() => setStepInvoice(1)}>
+            <ButtonFinalize
+              onClick={() => {
+                setStep(7);
+              }}
+            >
               Confirmar
             </ButtonFinalize>
           </Footer>

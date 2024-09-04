@@ -88,23 +88,6 @@ const Evaluation: React.FC<IProps> = ({ setStep, sale, setSale }) => {
 
   const onFinish = async (payload: SaleDto) => {
     setLoading(true);
-    const { has_internal_error: errorOnFinishSale, error_message } =
-      await window.Main.sale.finishSale({
-        ...payload,
-        formated_type: SalesTypes[payload.type],
-      });
-
-    if (errorOnFinishSale) {
-      error_message
-        ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
-        : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
-    }
     setLoading(false);
     setOpenNps(false);
   };
@@ -121,7 +104,7 @@ const Evaluation: React.FC<IProps> = ({ setStep, sale, setSale }) => {
     <>
       <Container>
         <Header>
-          <span className="span-title">Obrigado, "nome"</span>
+          <span className="span-title">Obrigado</span>
           <span>Pagamento Concluido!</span>
           <span>Curta o seu açai</span>
         </Header>

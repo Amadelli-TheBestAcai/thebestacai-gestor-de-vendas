@@ -33,7 +33,11 @@ export const Body = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  font-weight: 600;
+
+  span {
+    font-size: 2.5rem;
+    font-weight: 600;
+  }
 `;
 
 export const Footer = styled.div`
