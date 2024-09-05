@@ -1,12 +1,13 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { notification } from "antd";
 
-import { SaleDto } from "../../../../models/dtos/sale";
+import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
+import show_password from "../../../../assets/totem/svg/show_password.svg";
 
+import { validaCPF } from "../../helpers/validaCPF";
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
-import show_password from "../../../../assets/totem/svg/show_password.svg";
-import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
+import { useSale } from "../../../../hooks/useSale";
 
 import {
   Container,
@@ -21,10 +22,9 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
-  setSale: Dispatch<SetStateAction<SaleDto | null>>;
-  sale: SaleDto | null;
 }
-const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
+const Identification: React.FC<IProps> = ({ setStep }) => {
+  const { sale, setSale } = useSale();
   const [showCPF, setShowCPF] = useState<boolean>(true);
   const [cpf, setCpf] = useState(sale?.client_cpf || "");
 
@@ -105,28 +105,29 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
     },
   ];
 
-  const onFinish = (useCpf: boolean) => {
+  const onFinish = async (useCpf: boolean) => {
     if (useCpf) {
-      if (cpf.length !== 11) {
+      if (!validaCPF(cpf)) {
         return notification.warning({
           message:
-            "Para prosseguir é necessário informar um cpf ou remover o informado",
+            "Para prosseguir é necessário informar um cpf válido ou remover o informado",
           duration: 5,
         });
-      } else {
-        setSale((oldValues) => ({
-          ...oldValues,
-          client_cpf: cpf,
-          cpf_used_club: true,
-        }));
       }
-    } else {
-      setSale((oldValues) => ({
-        ...oldValues,
-        client_cpf: null,
-        cpf_used_club: false,
-      }));
     }
+
+    const { response: updatedSale } = await window.Main.sale.updateSale(
+      sale.id,
+      {
+        ...sale,
+        client_cpf: useCpf && cpf ? cpf : null,
+        cpf_used_nfce: useCpf,
+        cpf_used_club: useCpf,
+      }
+    );
+
+    setSale(updatedSale);
+
     setStep(sale.items.length ? 4 : 3);
   };
 
@@ -155,10 +156,16 @@ const Identification: React.FC<IProps> = ({ setStep, setSale, sale }) => {
       </div>
       {sale.items.length ? (
         <div className="actions-step4">
-          <ButtonCancel onClick={() => onFinish(false)} style={{width:"28.43rem", margin:"0 1rem"}}>
-           Cancelar
+          <ButtonCancel
+            onClick={() => onFinish(false)}
+            style={{ width: "28.43rem", margin: "0 1rem" }}
+          >
+            Cancelar
           </ButtonCancel>
-          <ButtonSendCPF onClick={() => onFinish(true)} style={{width:"28.43rem", margin:"0 1rem"}}>
+          <ButtonSendCPF
+            onClick={() => onFinish(true)}
+            style={{ width: "28.43rem", margin: "0 1rem" }}
+          >
             Continuar
           </ButtonSendCPF>
         </div>

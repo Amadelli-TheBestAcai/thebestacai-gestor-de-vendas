@@ -15,19 +15,18 @@ import { Container, Header, Content } from "./styles";
 
 import the_best_acai_logo from "../../assets/totem/svg/the_best_acai_logo.svg";
 
-import { SaleDto } from "../../models/dtos/sale";
 import { StoreProductDto } from "../../models/dtos/storeProduct";
 import { CampaignDto } from "../../models/dtos/campaign";
+import { useSale } from "../../hooks/useSale";
 
 type IProps = RouteComponentProps;
 
 const Totem: React.FC<IProps> = ({ history }) => {
-  const [sale, setSale] = useState<SaleDto | null>(null);
+  const { sale, setSale } = useSale();
+  const [fetchingSale, setFetchingSale] = useState<boolean>(false);
+  const [fetchingProducts, setFetchingProducts] = useState<boolean>(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
-
   const [storeProducts, setStoreProducts] = useState<StoreProductDto[]>([]);
-  const [fetchingSale, setFetchingSale] = useState(false);
-  const [fetchingProducts, setFetchingProducts] = useState(false);
 
   const [step, setStep] = useState(1);
 
@@ -95,20 +94,20 @@ const Totem: React.FC<IProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       setFetchingSale(true);
+      await window.Main.sale.deleteSale({ id: sale.id });
       const {
-        response: _newSale,
-        has_internal_error: errorOnBuildNewSale,
+        response: _sale,
+        has_internal_error: errorOnSale,
         error_message,
-      } = await window.Main.sale.buildNewSale(false);
-      if (errorOnBuildNewSale) {
-        console.log({ error_message });
+      } = await window.Main.sale.getCurrentSale();
+      if (errorOnSale) {
         return notification.error({
           message: "Erro ao iniciar uma venda. Contate o atendente",
           duration: 5,
         });
       }
 
-      setSale(_newSale);
+      setSale(_sale);
       setFetchingSale(false);
     }
     if (step === 1) init();
@@ -138,46 +137,20 @@ const Totem: React.FC<IProps> = ({ history }) => {
         ) : (
           <React.Fragment />
         )}
-        {step === 2 ? (
-          <Identification setStep={setStep} setSale={setSale} sale={sale} />
-        ) : (
-          <React.Fragment />
-        )}
+        {step === 2 ? <Identification setStep={setStep} /> : <React.Fragment />}
         {step === 3 ? (
-          <Order
-            setStep={setStep}
-            setSale={setSale}
-            sale={sale}
-            storeProducts={storeProducts}
-          />
+          <Order setStep={setStep} storeProducts={storeProducts} />
         ) : (
           <React.Fragment />
         )}
         {step === 4 ? (
-          <CheckOut
-            setStep={setStep}
-            setSale={setSale}
-            sale={sale}
-            campaign={campaign}
-          />
+          <CheckOut setStep={setStep} campaign={campaign} />
         ) : (
           <React.Fragment />
         )}
-        {step === 5 ? (
-          <Payment setStep={setStep} setSale={setSale} sale={sale} />
-        ) : (
-          <React.Fragment />
-        )}
-        {step === 6 ? (
-          <Invoice setStep={setStep} sale={sale} setSale={setSale}/>
-        ) : (
-          <React.Fragment />
-        )}
-        {step === 7 ? (
-          <Evaluation setStep={setStep} setSale={setSale} sale={sale} />
-        ) : (
-          <React.Fragment />
-        )}
+        {step === 5 ? <Payment setStep={setStep} /> : <React.Fragment />}
+        {/* {step === 6 ? <Invoice setStep={setStep} /> : <React.Fragment />} */}
+        {step === 6 ? <Evaluation setStep={setStep} /> : <React.Fragment />}
       </Content>
     </Container>
   );

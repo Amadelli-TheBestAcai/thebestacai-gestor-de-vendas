@@ -45,6 +45,12 @@ export const Footer = styled.div`
   justify-content: center;
   width: 100%;
   padding: 2.5rem;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
 `;
 
 const ButtonCSS = css`

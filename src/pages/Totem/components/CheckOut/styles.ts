@@ -38,10 +38,17 @@ export const Body = styled.div`
 
 export const Footer = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   padding: 2.5rem;
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
 `;
 
 export const CpfInfo = styled.div`
@@ -118,7 +125,7 @@ export const ClubInfo = styled.div`
 
   .info-header {
     span {
-      font-size: 2.25rem;
+      font-size: 2.5rem;
     }
   }
 

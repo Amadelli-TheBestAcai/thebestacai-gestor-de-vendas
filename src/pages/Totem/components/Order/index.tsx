@@ -2,17 +2,19 @@ import React, { useState, Dispatch, SetStateAction } from "react";
 import moment from "moment";
 import { v4 } from "uuid";
 
-import { Modal } from "antd";
-
-import { SaleDto } from "../../../../models/dtos/sale";
-import { StoreProductDto } from "../../../../models/dtos/storeProduct";
-
 import bag from "../../../../assets/totem/svg/bag.svg";
 import arrow_down from "../../../../assets/totem/svg/arrow_down.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
 import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
+
+import { useSale } from "../../../../hooks/useSale";
+
+import { ItemDto } from "../../../../models/dtos/item";
+import { StoreProductDto } from "../../../../models/dtos/storeProduct";
+
+import { Modal } from "antd";
 
 import {
   Container,
@@ -33,118 +35,12 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
-  sale: SaleDto | null;
-  setSale: Dispatch<SetStateAction<SaleDto | null>>;
   storeProducts: StoreProductDto[];
 }
 
-const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
+const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
+  const { sale, onAddItem, onDecressItem } = useSale();
   const [fetchingBalanceWeight, setFetchingBalanceWeight] = useState(false);
-
-  const onAddItem = (
-    productToAdd: StoreProductDto,
-    quantity: number,
-    price: number
-  ) => {
-    const saleToUpdate = { ...sale };
-
-    const itemIndex = saleToUpdate.items.findIndex(
-      (_item) =>
-        !_item.customer_reward_id &&
-        _item.product?.id === productToAdd.product?.id
-    );
-
-    if (
-      itemIndex >= 0 &&
-      saleToUpdate.items[itemIndex].product?.category.id !== 1
-    ) {
-      const newQuantity = +saleToUpdate.items[itemIndex].quantity + quantity;
-      saleToUpdate.items[itemIndex].quantity = newQuantity;
-      saleToUpdate.items[itemIndex].total = +(
-        newQuantity * +(productToAdd?.price_unit || 0)
-      ).toFixed(2);
-    } else {
-      const { product, ...storeProduct } = productToAdd;
-      saleToUpdate.items.push({
-        id: v4(),
-        store_product_id: storeProduct.id,
-        quantity,
-        update_stock: product?.category.id !== 1 ? true : false,
-        product,
-        storeProduct,
-        total: price ? price : +(productToAdd.price_unit || 0) * quantity,
-        created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
-      });
-    }
-
-    saleToUpdate.total_sold = +saleToUpdate.items
-      .reduce((total, item) => item.total + total, 0)
-      .toFixed(2);
-
-    if (saleToUpdate.customerVoucher?.voucher?.products?.length)
-      saleToUpdate.customerVoucher?.voucher?.products.forEach(
-        (product) => (saleToUpdate.total_sold -= +product.price_sell)
-      );
-
-    saleToUpdate.quantity = saleToUpdate.items.reduce(
-      (total, item) =>
-        +item.product?.category.id === 1 ? 1 + total : item.quantity + total,
-      0
-    );
-
-    setSale(saleToUpdate);
-  };
-
-  const onAddRemoveItem = (
-    id: string,
-    operation: string,
-    removeAll?: boolean
-  ) => {
-    const saleToUpdate = { ...sale };
-
-    const itemIndex = saleToUpdate.items.findIndex((_item) => _item.id === id);
-    let newQuantity;
-    if (operation === "add") {
-      newQuantity = +saleToUpdate.items[itemIndex]?.quantity + 1;
-    } else {
-      if (!removeAll) {
-        newQuantity = +saleToUpdate.items[itemIndex]?.quantity - 1;
-      } else {
-        newQuantity = 0;
-      }
-    }
-
-    if (
-      saleToUpdate.items[itemIndex]?.product.category.id === 1 ||
-      newQuantity <= 0
-    ) {
-      saleToUpdate.items = saleToUpdate.items.filter(
-        (_item) => _item.id !== id
-      );
-    } else {
-      saleToUpdate.items[itemIndex].quantity = newQuantity;
-      saleToUpdate.items[itemIndex].total =
-        newQuantity *
-        +(saleToUpdate.items[itemIndex].storeProduct.price_unit || 0);
-    }
-
-    saleToUpdate.total_sold = +saleToUpdate.items
-      .reduce((total, item) => item.total + total, 0)
-      .toFixed(2);
-
-    if (saleToUpdate.customerVoucher?.voucher?.products?.length)
-      saleToUpdate.customerVoucher?.voucher?.products.forEach(
-        (product) => (saleToUpdate.total_sold -= +product.price_sell)
-      );
-
-    saleToUpdate.quantity = saleToUpdate.items.reduce(
-      (total, item) =>
-        +item.product?.category.id === 1 ? 1 + total : item.quantity + total,
-      0
-    );
-
-    setSale(saleToUpdate);
-  };
 
   const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -195,6 +91,19 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
     }
   };
 
+  const addItemList = async (item: ItemDto) => {
+    const findProduct = storeProducts.find(
+      (_product) => +_product.id === +item.store_product_id
+    );
+    onAddItem(findProduct, 1, +findProduct.price_unit);
+  };
+
+  const removeAllItems = async (item: ItemDto): Promise<void> => {
+    for (let i = 0; i < item.quantity; i++) {
+      await onDecressItem(item.id, true);
+    }
+  };
+
   return (
     <Container>
       <Header>
@@ -224,23 +133,20 @@ const Order: React.FC<IProps> = ({ setStep, sale, setSale, storeProducts }) => {
 
                 <div className="order-item-actions">
                   <span>
-                    <img
-                      src={trash}
-                      onClick={() => onAddRemoveItem(item.id, "sub", true)}
-                    />
+                    <img src={trash} onClick={() => removeAllItems(item)} />
                   </span>
                   {item.product.category.id !== 1 && (
                     <AddSubItem>
                       <img
                         src={plus}
                         className="product-img-add"
-                        onClick={() => onAddRemoveItem(item.id, "add")}
+                        onClick={() => addItemList(item)}
                       />
                       {item.quantity}
                       <img
                         src={minus}
                         className="product-img-sub"
-                        onClick={() => onAddRemoveItem(item.id, "sub")}
+                        onClick={() => onDecressItem(item.id, true)}
                       />
                     </AddSubItem>
                   )}

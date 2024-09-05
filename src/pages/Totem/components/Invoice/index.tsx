@@ -1,10 +1,13 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 
-import { SaleDto } from "../../../../models/dtos/sale";
 
-import printer from "../../../../assets/totem/svg/printer.svg";
 import mail from "../../../../assets/totem/svg/mail.svg";
+import printer from "../../../../assets/totem/svg/printer.svg";
 import cancel_circle from "../../../../assets/totem/svg/cancel_circle.svg";
+
+import { useSale } from "../../../../hooks/useSale";
+
+import { SaleDto } from "../../../../models/dtos/sale";
 
 import VirtualPinpad from "../VirtualPinpad";
 
@@ -22,10 +25,9 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
-  sale: SaleDto | null;
-  setSale: Dispatch<SetStateAction<SaleDto | null>>;
 }
 const Invoice: React.FC<IProps> = ({ setStep }) => {
+  const { sale, setSale } = useSale();
   const [email, setEmail] = useState<string>("");
   const [stepInvoice, setStepInvoice] = useState<number>(1);
 

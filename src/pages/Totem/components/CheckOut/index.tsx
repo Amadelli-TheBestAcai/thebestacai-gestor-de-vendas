@@ -1,6 +1,10 @@
 import React, { Dispatch, SetStateAction } from "react";
 
-import { SaleDto } from "../../../../models/dtos/sale";
+import { applyCPFMask } from "../../helpers/applyCPFMask";
+
+import { useSale } from "../../../../hooks/useSale";
+
+import { CampaignDto } from "../../../../models/dtos/campaign";
 
 import {
   Container,
@@ -14,23 +18,31 @@ import {
   OrderInfo,
   ButtonFinalize,
 } from "./styles";
-import { CampaignDto } from "../../../../models/dtos/campaign";
-import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   campaign: CampaignDto | null;
-  sale: SaleDto | null;
-  setSale: Dispatch<SetStateAction<SaleDto | null>>;
 }
 
-const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
+const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
+  const { sale, setSale } = useSale();
   const getCampaignPointsPlus = () => {
     let points = campaign?.average_ticket
       ? Math.floor(sale?.total_sold / campaign?.average_ticket)
       : 0;
 
     return points;
+  };
+
+  const updateCheck = async (name: string, check: boolean) => {
+    const { response: updatedSale } = await window.Main.sale.updateSale(
+      sale.id,
+      {
+        ...sale,
+        [name]: check,
+      }
+    );
+    setSale(updatedSale);
   };
 
   return (
@@ -44,12 +56,7 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
             <Checkbox
               disabled={!sale.client_cpf}
               checked={sale.cpf_used_nfce}
-              onChange={() =>
-                setSale((oldValues) => ({
-                  ...oldValues,
-                  cpf_used_nfce: !sale.cpf_used_nfce,
-                }))
-              }
+              onChange={() => updateCheck("cpf_used_nfce", !sale.cpf_used_nfce)}
             />
             <span>CPF/CNPJ NA NOTA?</span>
           </div>
@@ -71,12 +78,7 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
             <Checkbox
               disabled={!sale.client_cpf}
               checked={sale.cpf_used_club}
-              onChange={() =>
-                setSale((oldValues) => ({
-                  ...oldValues,
-                  cpf_used_club: !sale.cpf_used_club,
-                }))
-              }
+              onChange={() => updateCheck("cpf_used_club", !sale.cpf_used_club)}
             />
             <span>Clube The Best</span>
           </div>
@@ -101,10 +103,13 @@ const CheckOut: React.FC<IProps> = ({ sale, campaign, setStep, setSale }) => {
         </OrderInfo>
       </Body>
       <Footer>
-        <Button onClick={() => setStep(3)}>Voltar</Button>
-        <ButtonFinalize onClick={() => setStep(5)}>
-          Concluir Pedido
-        </ButtonFinalize>
+        <div style={{ justifyContent: "space-between" }}>
+          <Button onClick={() => setStep(3)}>Voltar</Button>
+          <ButtonFinalize onClick={() => setStep(5)}>
+            Concluir Pedido
+          </ButtonFinalize>
+        </div>
+        <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
       </Footer>
     </Container>
   );
