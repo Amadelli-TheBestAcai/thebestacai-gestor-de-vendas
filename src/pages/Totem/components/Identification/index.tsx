@@ -9,6 +9,8 @@ import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import { useSale } from "../../../../hooks/useSale";
 
+import ModalInfo from "../ModalInfo";
+
 import {
   Container,
   Input,
@@ -26,6 +28,7 @@ interface IProps {
 const Identification: React.FC<IProps> = ({ setStep }) => {
   const { sale, setSale } = useSale();
   const [showCPF, setShowCPF] = useState<boolean>(true);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [cpf, setCpf] = useState(sale?.client_cpf || "");
 
   const handleSetCpf = (action: string, value?: number) => {
@@ -132,65 +135,75 @@ const Identification: React.FC<IProps> = ({ setStep }) => {
   };
 
   return (
-    <Container>
-      <span className="title">Gostaria de se Identificar?</span>
-      <div className="user-info">
-        <span>INFORME SEU NÚMERO DE CPF</span>
-        <div className="inputContainer">
-          <Input value={applyCPFMask(cpf, showCPF)} disabled />
-          <button onClick={() => setShowCPF(!showCPF)}>
-            <ShowPasswordIcon src={show_password} />
-          </button>
+    <>
+      <Container>
+        <span className="title">Gostaria de se Identificar?</span>
+        <div className="user-info">
+          <span>INFORME SEU NÚMERO DE CPF</span>
+          <div className="inputContainer">
+            <Input value={applyCPFMask(cpf, showCPF)} disabled />
+            <button onClick={() => setShowCPF(!showCPF)}>
+              <ShowPasswordIcon src={show_password} />
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="pin-pad">
-        {pinPadOptions.map((pinPadOption) => (
-          <PinPadOption
-            key={pinPadOption.id}
-            onClick={pinPadOption.action}
-            letters={pinPadOption.id === 10}
-          >
-            {pinPadOption.value}
-          </PinPadOption>
-        ))}
-      </div>
-      {sale.items.length ? (
-        <div className="actions-step4">
-          <ButtonCancel
-            onClick={() => onFinish(false)}
-            style={{ width: "28.43rem", margin: "0 1rem" }}
-          >
-            Cancelar
+        <div className="pin-pad">
+          {pinPadOptions.map((pinPadOption) => (
+            <PinPadOption
+              key={pinPadOption.id}
+              onClick={pinPadOption.action}
+              letters={pinPadOption.id === 10}
+            >
+              {pinPadOption.value}
+            </PinPadOption>
+          ))}
+        </div>
+        {sale.items.length ? (
+          <div className="actions-step4">
+            <ButtonCancel
+              onClick={() => onFinish(false)}
+              style={{ width: "28.43rem", margin: "0 1rem" }}
+            >
+              Cancelar
+            </ButtonCancel>
+            <ButtonSendCPF
+              onClick={() => onFinish(true)}
+              style={{ width: "28.43rem", margin: "0 1rem" }}
+            >
+              Continuar
+            </ButtonSendCPF>
+          </div>
+        ) : (
+          <div className="actions">
+            <ButtonSendCPF onClick={() => onFinish(true)}>
+              Confirmar
+            </ButtonSendCPF>
+            <ButtonDontSendCPF onClick={() => onFinish(false)}>
+              Não desejo Informar
+            </ButtonDontSendCPF>
+          </div>
+        )}
+        <div className="information-content">
+          <span>
+            A inserção do CPF é opcional. Inseri-lo permite a nós verificarmos
+            se você é participante do Clube The Best, onde você pode acumular
+            pontos e trocá-los por <b>recompensas</b>! Você ainda pode inseri-lo
+            no cupom fiscal ao final da compra.
+          </span>
+        </div>
+        <div className="cancel-order">
+          <ButtonCancel onClick={() => setVisibleModal(true)}>
+            Cancelar Pedido
           </ButtonCancel>
-          <ButtonSendCPF
-            onClick={() => onFinish(true)}
-            style={{ width: "28.43rem", margin: "0 1rem" }}
-          >
-            Continuar
-          </ButtonSendCPF>
         </div>
-      ) : (
-        <div className="actions">
-          <ButtonSendCPF onClick={() => onFinish(true)}>
-            Confirmar
-          </ButtonSendCPF>
-          <ButtonDontSendCPF onClick={() => onFinish(false)}>
-            Não desejo Informar
-          </ButtonDontSendCPF>
-        </div>
-      )}
-      <div className="information-content">
-        <span>
-          A inserção do CPF é opcional. Inseri-lo permite a nós verificarmos se
-          você é participante do Clube The Best, onde você pode acumular pontos
-          e trocá-los por <b>recompensas</b>! Você ainda pode inseri-lo no cupom
-          fiscal ao final da compra.
-        </span>
-      </div>
-      <div className="cancel-order">
-        <ButtonCancel onClick={() => setStep(1)}>Cancelar Pedido</ButtonCancel>
-      </div>
-    </Container>
+      </Container>
+      <ModalInfo
+        type={"cancel_oder"}
+        visible={visibleModal}
+        setVisible={setVisibleModal}
+        setStep={setStep}
+      />
+    </>
   );
 };
 

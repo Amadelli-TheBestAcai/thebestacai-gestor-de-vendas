@@ -1,10 +1,12 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import { useSale } from "../../../../hooks/useSale";
 
 import { CampaignDto } from "../../../../models/dtos/campaign";
+
+import ModalInfo from "../ModalInfo";
 
 import {
   Container,
@@ -26,6 +28,8 @@ interface IProps {
 
 const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
   const { sale, setSale } = useSale();
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  
   const getCampaignPointsPlus = () => {
     let points = campaign?.average_ticket
       ? Math.floor(sale?.total_sold / campaign?.average_ticket)
@@ -46,72 +50,84 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
   };
 
   return (
-    <Container>
-      <Header>
-        <span>Resumo do Pedido</span>
-      </Header>
-      <Body>
-        <CpfInfo>
-          <div className="info-header">
-            <Checkbox
-              disabled={!sale.client_cpf}
-              checked={sale.cpf_used_nfce}
-              onChange={() => updateCheck("cpf_used_nfce", !sale.cpf_used_nfce)}
-            />
-            <span>CPF/CNPJ NA NOTA?</span>
-          </div>
-          <div className="info-footer">
-            <span className="info-footer-cpf">
-              {applyCPFMask(sale.client_cpf, true)}
-            </span>
-            <span
-              style={{ textDecoration: "underline", cursor: "pointer" }}
-              onClick={() => setStep(2)}
-            >
-              {sale.client_cpf ? "TROCAR CPF" : "ADICIONAR CPF"}
-            </span>
-          </div>
-        </CpfInfo>
+    <>
+      <Container>
+        <Header>
+          <span>Resumo do Pedido</span>
+        </Header>
+        <Body>
+          <CpfInfo>
+            <div className="info-header">
+              <Checkbox
+                disabled={!sale.client_cpf}
+                checked={sale.cpf_used_nfce}
+                onChange={() =>
+                  updateCheck("cpf_used_nfce", !sale.cpf_used_nfce)
+                }
+              />
+              <span>CPF/CNPJ NA NOTA?</span>
+            </div>
+            <div className="info-footer">
+              <span className="info-footer-cpf">
+                {applyCPFMask(sale.client_cpf, true)}
+              </span>
+              <span
+                style={{ textDecoration: "underline", cursor: "pointer" }}
+                onClick={() => setStep(2)}
+              >
+                {sale.client_cpf ? "TROCAR CPF" : "ADICIONAR CPF"}
+              </span>
+            </div>
+          </CpfInfo>
 
-        <ClubInfo>
-          <div className="info-header">
-            <Checkbox
-              disabled={!sale.client_cpf}
-              checked={sale.cpf_used_club}
-              onChange={() => updateCheck("cpf_used_club", !sale.cpf_used_club)}
-            />
-            <span>Clube The Best</span>
-          </div>
-          <div className="info-footer">
-            <span>PONTOS GANHOS NO CLUBE</span>
-            <span style={{ fontWeight: "800" }}>
-              +{getCampaignPointsPlus()}
-            </span>
-          </div>
-        </ClubInfo>
+          <ClubInfo>
+            <div className="info-header">
+              <Checkbox
+                disabled={!sale.client_cpf}
+                checked={sale.cpf_used_club}
+                onChange={() =>
+                  updateCheck("cpf_used_club", !sale.cpf_used_club)
+                }
+              />
+              <span>Clube The Best</span>
+            </div>
+            <div className="info-footer">
+              <span>PONTOS GANHOS NO CLUBE</span>
+              <span style={{ fontWeight: "800" }}>
+                +{getCampaignPointsPlus()}
+              </span>
+            </div>
+          </ClubInfo>
 
-        <OrderInfo>
-          <div className="info-header">
-            <span>TOTAL DO PEDIDO</span>
+          <OrderInfo>
+            <div className="info-header">
+              <span>TOTAL DO PEDIDO</span>
+            </div>
+            <div className="info-footer">
+              <span>{sale.items.length} ITENS</span>
+              <span style={{ fontWeight: "800" }}>
+                R${sale.total_sold.toFixed(2).replace(".", ",")}
+              </span>
+            </div>
+          </OrderInfo>
+        </Body>
+        <Footer>
+          <div style={{ justifyContent: "space-between" }}>
+            <Button onClick={() => setStep(3)}>Voltar</Button>
+            <ButtonFinalize onClick={() => setStep(5)}>
+              Concluir Pedido
+            </ButtonFinalize>
           </div>
-          <div className="info-footer">
-            <span>{sale.items.length} ITENS</span>
-            <span style={{ fontWeight: "800" }}>
-              R${sale.total_sold.toFixed(2).replace(".", ",")}
-            </span>
-          </div>
-        </OrderInfo>
-      </Body>
-      <Footer>
-        <div style={{ justifyContent: "space-between" }}>
-          <Button onClick={() => setStep(3)}>Voltar</Button>
-          <ButtonFinalize onClick={() => setStep(5)}>
-            Concluir Pedido
-          </ButtonFinalize>
-        </div>
-        <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
-      </Footer>
-    </Container>
+          <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
+        </Footer>
+      </Container>
+      <ModalInfo
+        type={"cancel_oder"}
+        visible={visibleModal}
+        setVisible={setVisibleModal}
+        setStep={setStep}
+      />
+    </>
   );
 };
 

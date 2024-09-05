@@ -11,6 +11,8 @@ import { PaymentType } from "../../../../models/enums/paymentType";
 import { useSale } from "../../../../hooks/useSale";
 import { useSettings } from "../../../../hooks/useSettings";
 
+import ModalInfo from "../ModalInfo";
+
 import { notification } from "antd";
 
 import {
@@ -28,7 +30,8 @@ interface IProps {
 const Payment: React.FC<IProps> = ({ setStep }) => {
   const { sale, setSale } = useSale();
   const { settings } = useSettings();
-  const [loading, setLoading] = useState(false);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [stepPayment, setStepPayment] = useState<1 | 2 | 3>(1);
 
   const onFinish = async (method: number) => {
@@ -88,7 +91,7 @@ const Payment: React.FC<IProps> = ({ setStep }) => {
           </Body>
           <Footer>
             <div>
-              <ButtonCancel onClick={() => setStep(1)}>
+              <ButtonCancel onClick={() => setVisibleModal(true)}>
                 Cancelar Pedido
               </ButtonCancel>
               <ButtonCancel onClick={() => setStep(4)}>
@@ -136,6 +139,12 @@ const Payment: React.FC<IProps> = ({ setStep }) => {
           </Footer>
         </Container>
       )}
+      <ModalInfo
+        type={"cancel_oder"}
+        visible={visibleModal}
+        setVisible={setVisibleModal}
+        setStep={setStep}
+      />
     </>
   );
 };

@@ -14,6 +14,8 @@ import { useSale } from "../../../../hooks/useSale";
 import { ItemDto } from "../../../../models/dtos/item";
 import { StoreProductDto } from "../../../../models/dtos/storeProduct";
 
+import ModalInfo from "../ModalInfo";
+
 import { Modal } from "antd";
 
 import {
@@ -40,7 +42,9 @@ interface IProps {
 
 const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
   const { sale, onAddItem, onDecressItem } = useSale();
-  const [fetchingBalanceWeight, setFetchingBalanceWeight] = useState(false);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [fetchingBalanceWeight, setFetchingBalanceWeight] =
+    useState<boolean>(false);
 
   const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -105,125 +109,139 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
   };
 
   return (
-    <Container>
-      <Header>
-        <div className="bag-content">
-          <Icon src={bag} />
-          <span>Sua Sacola</span>
-        </div>
-        <div className="price-content">
-          <span>R$ {(sale?.total_sold || 0).toFixed(2).replace(".", ",")}</span>
-          <Icon src={arrow_down} />
-        </div>
-      </Header>
-      <Body style={{ paddingTop: sale.items.length ? "0" : "3rem" }}>
-        <div className="order-list-content">
-          <OrderProductList>
-            {sale.items.map((item) => (
-              <OrderProduct key={item.id} sm={24}>
-                <div className="order-item-content">
-                  <img src={bottle} className="order-item-image" />
-                  <div className="order-item-info">
-                    <span className="order-item-name">{item.product.name}</span>
-                    <span className="order-item-price">
-                      R$ {item.total?.toFixed(2).replace(".", ",")}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="order-item-actions">
-                  <span>
-                    <img src={trash} onClick={() => removeAllItems(item)} />
-                  </span>
-                  {item.product.category.id !== 1 && (
-                    <AddSubItem>
-                      <img
-                        src={plus}
-                        className="product-img-add"
-                        onClick={() => addItemList(item)}
-                      />
-                      {item.quantity}
-                      <img
-                        src={minus}
-                        className="product-img-sub"
-                        onClick={() => onDecressItem(item.id, true)}
-                      />
-                    </AddSubItem>
-                  )}
-                </div>
-              </OrderProduct>
-            ))}
-          </OrderProductList>
-        </div>
-        <div className="self-service-content">
-          {!sale.items.length && (
-            <span>Insira um item de cada vez sobre a balança</span>
-          )}
-          {sale.items.length &&
-          sale.items.some((item) => item.product.category.id === 1) ? (
-            <Button
-              style={{ width: "100%", margin: "1.5rem 0" }}
-              onClick={getWeightByBalance}
-              loading={fetchingBalanceWeight}
-            >
-              <Icon src={plus} /> Adicionar Nova Pesagem
-            </Button>
-          ) : (
-            <ButtonRegister
-              onClick={getWeightByBalance}
-              loading={fetchingBalanceWeight}
-            >
-              <Icon src={plus} /> Registrar Pesagem
-            </ButtonRegister>
-          )}
-        </div>
-        <div className="extra-products-content">
-          <div className="extra-product-title">
-            <Icon src={bottle} /> Que tal adicionar uma água ou refrigerante?
+    <>
+      <Container>
+        <Header>
+          <div className="bag-content">
+            <Icon src={bag} />
+            <span>Sua Sacola</span>
           </div>
-          <ExtraProductList gutter={[6, 40]}>
-            {storeProducts
-              .filter((storeProduct) => storeProduct.product.category_id === 2)
-              .map((storeProduct) => (
-                <ExtraProduct sm={6} key={storeProduct.id}>
-                  <ExtraProductCard
-                    key={storeProduct.id}
-                    onClick={() =>
-                      onAddItem(storeProduct, 1, +storeProduct.price_unit)
-                    }
-                  >
-                    <img className="product-img-add" src={plus} />
-                    <img src={bottle} />
+          <div className="price-content">
+            <span>
+              R$ {(sale?.total_sold || 0).toFixed(2).replace(".", ",")}
+            </span>
+            <Icon src={arrow_down} />
+          </div>
+        </Header>
+        <Body style={{ paddingTop: sale.items.length ? "0" : "3rem" }}>
+          <div className="order-list-content">
+            <OrderProductList>
+              {sale.items.map((item) => (
+                <OrderProduct key={item.id} sm={24}>
+                  <div className="order-item-content">
+                    <img src={bottle} className="order-item-image" />
+                    <div className="order-item-info">
+                      <span className="order-item-name">
+                        {item.product.name}
+                      </span>
+                      <span className="order-item-price">
+                        R$ {item.total?.toFixed(2).replace(".", ",")}
+                      </span>
+                    </div>
+                  </div>
 
-                    <span className="product-name">
-                      {storeProduct.product.name}
+                  <div className="order-item-actions">
+                    <span>
+                      <img src={trash} onClick={() => removeAllItems(item)} />
                     </span>
-                    <span className="product-price">
-                      R$
-                      {storeProduct.price_unit?.replace(".", ",")} /{" "}
-                      {storeProduct?.unity_taxable || ""}
-                    </span>
-                  </ExtraProductCard>
-                </ExtraProduct>
+                    {item.product.category.id !== 1 && (
+                      <AddSubItem>
+                        <img
+                          src={plus}
+                          className="product-img-add"
+                          onClick={() => addItemList(item)}
+                        />
+                        {item.quantity}
+                        <img
+                          src={minus}
+                          className="product-img-sub"
+                          onClick={() => onDecressItem(item.id, true)}
+                        />
+                      </AddSubItem>
+                    )}
+                  </div>
+                </OrderProduct>
               ))}
-          </ExtraProductList>
-        </div>
-      </Body>
-      <Footer
-        style={{
-          justifyContent: sale.items.length ? "space-between" : "center",
-        }}
-      >
-        <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
-        {sale.items.length ? (
-          <ButtonFinalize onClick={() => setStep(4)}>
-            Concluir Pedido
-          </ButtonFinalize>
-        ) : (
-          <></>
-        )}
-      </Footer>
-    </Container>
+            </OrderProductList>
+          </div>
+          <div className="self-service-content">
+            {!sale.items.length && (
+              <span>Insira um item de cada vez sobre a balança</span>
+            )}
+            {sale.items.length &&
+            sale.items.some((item) => item.product.category.id === 1) ? (
+              <Button
+                style={{ width: "100%", margin: "1.5rem 0" }}
+                onClick={getWeightByBalance}
+                loading={fetchingBalanceWeight}
+              >
+                <Icon src={plus} /> Adicionar Nova Pesagem
+              </Button>
+            ) : (
+              <ButtonRegister
+                onClick={getWeightByBalance}
+                loading={fetchingBalanceWeight}
+              >
+                <Icon src={plus} /> Registrar Pesagem
+              </ButtonRegister>
+            )}
+          </div>
+          <div className="extra-products-content">
+            <div className="extra-product-title">
+              <Icon src={bottle} /> Que tal adicionar uma água ou refrigerante?
+            </div>
+            <ExtraProductList gutter={[6, 40]}>
+              {storeProducts
+                .filter(
+                  (storeProduct) => storeProduct.product.category_id === 2
+                )
+                .map((storeProduct) => (
+                  <ExtraProduct sm={6} key={storeProduct.id}>
+                    <ExtraProductCard
+                      key={storeProduct.id}
+                      onClick={() =>
+                        onAddItem(storeProduct, 1, +storeProduct.price_unit)
+                      }
+                    >
+                      <img className="product-img-add" src={plus} />
+                      <img src={bottle} />
+
+                      <span className="product-name">
+                        {storeProduct.product.name}
+                      </span>
+                      <span className="product-price">
+                        R$
+                        {storeProduct.price_unit?.replace(".", ",")} /{" "}
+                        {storeProduct?.unity_taxable || ""}
+                      </span>
+                    </ExtraProductCard>
+                  </ExtraProduct>
+                ))}
+            </ExtraProductList>
+          </div>
+        </Body>
+        <Footer
+          style={{
+            justifyContent: sale.items.length ? "space-between" : "center",
+          }}
+        >
+          <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
+          {sale.items.length ? (
+            <ButtonFinalize onClick={() => setStep(4)}>
+              Concluir Pedido
+            </ButtonFinalize>
+          ) : (
+            <></>
+          )}
+        </Footer>
+      </Container>
+      <ModalInfo
+        type={"cancel_oder"}
+        visible={visibleModal}
+        setVisible={setVisibleModal}
+        setStep={setStep}
+      />
+    </>
   );
 };
 
