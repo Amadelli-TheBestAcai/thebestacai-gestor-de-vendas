@@ -100,7 +100,7 @@ export const saleFactory = {
   }
   ) => await useCaseFactory.execute<void>(deleteSale, params),
   deleteSaleFromApi: async (params: {
-    id: number;
+    id: string | number;
     cash_history: number;
     ref: string;
   }) => await useCaseFactory.execute<void>(deleteSaleFromApi, params),
