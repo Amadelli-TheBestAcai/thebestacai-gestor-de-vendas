@@ -19,6 +19,8 @@ import {
   ClubInfo,
   OrderInfo,
   ButtonFinalize,
+  OrderProductList,
+  OrderProduct,
 } from "./styles";
 
 interface IProps {
@@ -29,7 +31,7 @@ interface IProps {
 const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
   const { sale, setSale } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
-  
+
   const getCampaignPointsPlus = () => {
     let points = campaign?.average_ticket
       ? Math.floor(sale?.total_sold / campaign?.average_ticket)
@@ -58,13 +60,15 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
         <Body>
           <CpfInfo>
             <div className="info-header">
-              <Checkbox
-                disabled={!sale.client_cpf}
-                checked={sale.cpf_used_nfce}
-                onChange={() =>
-                  updateCheck("cpf_used_nfce", !sale.cpf_used_nfce)
-                }
-              />
+              {sale.client_cpf && (
+                <Checkbox
+                  disabled={!sale.client_cpf}
+                  checked={sale.cpf_used_nfce}
+                  onChange={() =>
+                    updateCheck("cpf_used_nfce", !sale.cpf_used_nfce)
+                  }
+                />
+              )}
               <span>CPF/CNPJ NA NOTA?</span>
             </div>
             <div className="info-footer">
@@ -82,23 +86,64 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
 
           <ClubInfo>
             <div className="info-header">
-              <Checkbox
-                disabled={!sale.client_cpf}
-                checked={sale.cpf_used_club}
-                onChange={() =>
-                  updateCheck("cpf_used_club", !sale.cpf_used_club)
-                }
-              />
+              {sale.client_cpf && (
+                <Checkbox
+                  disabled={!sale.client_cpf}
+                  checked={sale.cpf_used_club}
+                  onChange={() =>
+                    updateCheck("cpf_used_club", !sale.cpf_used_club)
+                  }
+                />
+              )}
+
               <span>Clube The Best</span>
             </div>
             <div className="info-footer">
               <span>PONTOS GANHOS NO CLUBE</span>
-              <span style={{ fontWeight: "800" }}>
-                +{getCampaignPointsPlus()}
-              </span>
+
+              {!sale.client_cpf ? (
+                <span
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
+                  onClick={() => setStep(2)}
+                >
+                  {sale.client_cpf ? "TROCAR CPF" : "ADICIONAR CPF"}
+                </span>
+              ) : (
+                <span style={{ fontWeight: "800" }}>
+                  +{getCampaignPointsPlus()}
+                </span>
+              )}
             </div>
           </ClubInfo>
 
+          <OrderInfo style={{ height: "36rem", justifyContent: "flex-start" }}>
+            <div className="info-header">
+              <span>ITENS</span>
+            </div>
+            <OrderProductList>
+              {sale.items
+                .map((item) => (
+                  <OrderProduct key={item.id} sm={24}>
+                    <div className="order-item-content">
+                      <div className="order-item-info">
+                        <span className="order-item-name">
+                          {item.product.category.id === 1
+                            ? `${item.quantity * 1000}g`
+                            : `${item.quantity} x`}
+                        </span>
+                        <span className="order-item-name">
+                          {item.product.name}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="order-item-price">
+                      <span>R$ {item.total?.toFixed(2).replace(".", ",")}</span>
+                    </div>
+                  </OrderProduct>
+                ))
+                .reverse()}
+            </OrderProductList>
+          </OrderInfo>
           <OrderInfo>
             <div className="info-header">
               <span>TOTAL DO PEDIDO</span>

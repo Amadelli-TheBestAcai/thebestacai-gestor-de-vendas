@@ -220,6 +220,11 @@ export const ExtraProductCard = styled.div`
     font-weight: 600;
   }
 
+  .product-img {
+    width: 5rem;
+    height: 5rem;
+  }
+
   .product-img-add {
     position: absolute;
     top: -1.5rem;

@@ -26,10 +26,12 @@ const ModalInfo: React.FC<IProps> = ({
     >
       <>
         <span className="modal-title">{"Cancelar pedido?"}</span>
-        <span className="modal-body">
-          {"Tem certeza que deseja cancelar seu pedido?"}
-        </span>
-        <span className="modal-body">{"Todos os dados serão perdidos."}</span>
+        <div className="modal-div-body">
+          <span className="modal-body">
+            {"Tem certeza que deseja cancelar seu pedido?"}
+          </span>
+          <span className="modal-body">{"Todos os dados serão perdidos."}</span>
+        </div>
 
         <div className="modal-footer">
           <ButtonCancel

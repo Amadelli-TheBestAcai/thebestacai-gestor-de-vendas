@@ -97,8 +97,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
       await window.Main.sale.deleteSale({ id: sale.id });
       const {
         response: _sale,
-        has_internal_error: errorOnSale,
-        error_message,
+        has_internal_error: errorOnSale
       } = await window.Main.sale.getCurrentSale();
       if (errorOnSale) {
         return notification.error({

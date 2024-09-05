@@ -21,8 +21,14 @@ export const Container = styled(ModalAnt)`
   }
   .modal-title {
     font-family: "VisbyCF";
-    font-size: 3rem;
+    font-size: 3.75rem;
     font-weight: 600;
+  }
+  .modal-div-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .modal-body {
     font-family: "VisbyCF";

@@ -1,13 +1,12 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
-import moment from "moment";
-import { v4 } from "uuid";
 
 import bag from "../../../../assets/totem/svg/bag.svg";
-import arrow_down from "../../../../assets/totem/svg/arrow_down.svg";
-import bottle from "../../../../assets/totem/svg/bottle.svg";
 import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
+import bottle from "../../../../assets/totem/svg/bottle.svg";
+import arrow_down from "../../../../assets/totem/svg/arrow_down.svg";
+import selfservice from "../../../../assets/totem/svg/selfservice.svg";
 
 import { useSale } from "../../../../hooks/useSale";
 
@@ -51,23 +50,24 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
   };
 
   const getWeightByBalance = async (): Promise<void> => {
+    setFetchingBalanceWeight(true);
     await sleep(1500);
-
+    
     const selfService = storeProducts.find(
       (_product) => _product.product.category_id === 1
     );
-
+    
     if (!selfService) {
       Modal.info({
         title: "Self service não encontrado",
         content:
-          "O produto self-service não foi encontrado. Contate o atendente",
+        "O produto self-service não foi encontrado. Contate o atendente",
       });
+      setFetchingBalanceWeight(false);
       return;
     }
 
     if (!fetchingBalanceWeight) {
-      setFetchingBalanceWeight(true);
       // window.Main.send("balance:get", ({ weight, error }) => {
       setFetchingBalanceWeight(false);
       // if (error) {
@@ -120,48 +120,55 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
             <span>
               R$ {(sale?.total_sold || 0).toFixed(2).replace(".", ",")}
             </span>
-            <Icon src={arrow_down} />
+            {/* <Icon src={arrow_down} /> */}
           </div>
         </Header>
         <Body style={{ paddingTop: sale.items.length ? "0" : "3rem" }}>
           <div className="order-list-content">
             <OrderProductList>
-              {sale.items.map((item) => (
-                <OrderProduct key={item.id} sm={24}>
-                  <div className="order-item-content">
-                    <img src={bottle} className="order-item-image" />
-                    <div className="order-item-info">
-                      <span className="order-item-name">
-                        {item.product.name}
-                      </span>
-                      <span className="order-item-price">
-                        R$ {item.total?.toFixed(2).replace(".", ",")}
-                      </span>
+              {sale.items
+                .map((item) => (
+                  <OrderProduct key={item.id} sm={24}>
+                    <div className="order-item-content">
+                      <img
+                        src={
+                          item.product.category.id === 1 ? selfservice : bottle
+                        }
+                        className="order-item-image"
+                      />
+                      <div className="order-item-info">
+                        <span className="order-item-name">
+                          {item.product.name}
+                        </span>
+                        <span className="order-item-price">
+                          R$ {item.total?.toFixed(2).replace(".", ",")}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="order-item-actions">
-                    <span>
-                      <img src={trash} onClick={() => removeAllItems(item)} />
-                    </span>
-                    {item.product.category.id !== 1 && (
-                      <AddSubItem>
-                        <img
-                          src={plus}
-                          className="product-img-add"
-                          onClick={() => addItemList(item)}
-                        />
-                        {item.quantity}
-                        <img
-                          src={minus}
-                          className="product-img-sub"
-                          onClick={() => onDecressItem(item.id, true)}
-                        />
-                      </AddSubItem>
-                    )}
-                  </div>
-                </OrderProduct>
-              ))}
+                    <div className="order-item-actions">
+                      <span>
+                        <img src={trash} onClick={() => removeAllItems(item)} />
+                      </span>
+                      {item.product.category.id !== 1 && (
+                        <AddSubItem>
+                          <img
+                            src={plus}
+                            className="product-img-add"
+                            onClick={() => addItemList(item)}
+                          />
+                          {item.quantity}
+                          <img
+                            src={minus}
+                            className="product-img-sub"
+                            onClick={() => onDecressItem(item.id, true)}
+                          />
+                        </AddSubItem>
+                      )}
+                    </div>
+                  </OrderProduct>
+                ))
+                .reverse()}
             </OrderProductList>
           </div>
           <div className="self-service-content">
@@ -204,15 +211,14 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
                       }
                     >
                       <img className="product-img-add" src={plus} />
-                      <img src={bottle} />
+                      <img className="product-img" src={bottle} />
 
                       <span className="product-name">
                         {storeProduct.product.name}
                       </span>
                       <span className="product-price">
                         R$
-                        {storeProduct.price_unit?.replace(".", ",")} /{" "}
-                        {storeProduct?.unity_taxable || ""}
+                        {storeProduct.price_unit?.replace(".", ",")}
                       </span>
                     </ExtraProductCard>
                   </ExtraProduct>

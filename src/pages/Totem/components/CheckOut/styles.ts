@@ -1,6 +1,11 @@
 import styled, { css } from "styled-components";
 
-import { Checkbox as CheckboxAnt, Button as ButtonAnt } from "antd";
+import {
+  Checkbox as CheckboxAnt,
+  Button as ButtonAnt,
+  Row as RowAnt,
+  Col as ColAnt,
+} from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -136,6 +141,42 @@ export const ClubInfo = styled.div`
     width: 100%;
     margin: 1.5rem 0;
     font-size: 2.5rem;
+  }
+`;
+
+export const OrderProductList = styled(RowAnt)`
+  width: 100%;
+  overflow-y: scroll;
+`;
+
+export const OrderProduct = styled(ColAnt)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 1.25rem 2.5rem;
+  background: var(--orange-190);
+  border-radius: 0.625rem;
+
+  .order-item-content {
+    display: flex;
+    flex-direction: row;
+  }
+  .order-item-info {
+    display: flex;
+    justify-content: center;
+    font-weight: 600;
+
+    .order-item-name {
+      margin-right: 0.5rem;
+      font-size: 2.5rem;
+    }
+  }
+  .order-item-price {
+    span {
+      font-size: 2.5rem;
+    }
   }
 `;
 
