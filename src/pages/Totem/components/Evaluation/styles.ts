@@ -10,7 +10,7 @@ export const Container = styled.div`
   width: 100%;
   height: 100%;
   padding: 1.25rem 2.5rem 0;
-  `;
+`;
 
 export const Header = styled.div`
   display: flex;
@@ -19,7 +19,7 @@ export const Header = styled.div`
   align-items: center;
   width: 100%;
   margin-bottom: 5rem;
-  
+
   span {
     font-size: 2.5rem;
     font-weight: 600;
@@ -37,8 +37,8 @@ export const Body = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 5rem 2.5rem ;
-  `;
+  padding: 5rem 2.5rem;
+`;
 
 export const Footer = styled.div`
   display: flex;
@@ -114,31 +114,84 @@ export const ButtonNewOrder = styled(ButtonAnt)`
   }
 `;
 
-export const EvalutionContainer = styled.div`
+interface IEvaluation {
+  loading?: boolean;
+  select?: boolean;
+}
+
+export const EvalutionContainer = styled.div<IEvaluation>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   width: 9.3rem;
-  height: 12.37;
+  height: 12.37rem;
 
-  img {
-    width: 9.3rem;
-    height: 9.3rem;
-    background-size: cover;
-    background-position: center;
-  }
+  ${({ loading, select }) => {
+    if (loading) {
+      if (select) {
+        return css`
+          img {
+            width: 15rem;
+            height: 15rem;
+            background-size: cover;
+            background-position: center;
+            transition: height 1s ease;
+            transition: width 1s ease;
+          }
+          span {
+            font-family: "VisbyCF";
+            font-size: 3rem;
+            font-weight: 600;
+            transition: font-size 1s ease;
+          }
+        `;
+      } else {
+        return css`
+          width: 0rem;
+          height: 0rem;
+          transition: height 1s ease;
+          transition: width 1s ease;
+          img,
+          span {
+            display: none;
+            transition: display 1s ease;
+          }
+        `;
+      }
+    }
+    if (!loading) {
+      return css`
+        img {
+          width: 9.3rem;
+          height: 9.3rem;
+          background-size: cover;
+          background-position: center;
+        }
 
-  span {
-    font-family: "VisbyCF";
-    font-size: 2rem;
-    font-weight: 600;
-  }
+        span {
+          font-family: "VisbyCF";
+          font-size: 2rem;
+          font-weight: 600;
+        }
+      `;
+    }
+  }}
 `;
 
-export const NpsContainer = styled.div`
+export const NpsContainer = styled.div<IEvaluation>`
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
+
+  ${({ loading }) => {
+    if (loading) {
+      return css`
+        height: 100%;
+        align-items: flex-start;
+        justify-content: center;
+      `;
+    }
+  }}
 `;

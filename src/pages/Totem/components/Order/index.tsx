@@ -166,7 +166,7 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
               onClick={getWeightByBalance}
               loading={fetchingBalanceWeight}
             >
-              <Icon src={plus} /> Fazer Nova Pesagem
+              <Icon src={plus} /> Adicionar Nova Pesagem
             </Button>
           ) : (
             <ButtonRegister

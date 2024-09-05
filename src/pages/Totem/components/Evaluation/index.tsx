@@ -35,12 +35,13 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
   const { store } = useStore();
   const [loading, setLoading] = useState(false);
   const [openNps, setOpenNps] = useState(true);
+  const [npsScore, setNpsScore] = useState<number>(0);
 
   const npsScores = [
     {
       id: 1,
       element: (
-        <EvalutionContainer>
+        <EvalutionContainer select={npsScore === 1} loading={loading}>
           <img src={totem_very_bad} />
           <span>Péssima</span>
         </EvalutionContainer>
@@ -50,7 +51,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     {
       id: 2,
       element: (
-        <EvalutionContainer>
+        <EvalutionContainer select={npsScore === 2} loading={loading}>
           <img src={totem_bad} />
           <span>Ruim</span>
         </EvalutionContainer>
@@ -60,7 +61,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     {
       id: 3,
       element: (
-        <EvalutionContainer>
+        <EvalutionContainer select={npsScore === 3} loading={loading}>
           <img src={totem_normal} />
           <span>Regular</span>
         </EvalutionContainer>
@@ -70,7 +71,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     {
       id: 4,
       element: (
-        <EvalutionContainer>
+        <EvalutionContainer select={npsScore === 4} loading={loading}>
           <img src={totem_good} />
           <span>Boa</span>
         </EvalutionContainer>
@@ -80,7 +81,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     {
       id: 5,
       element: (
-        <EvalutionContainer>
+        <EvalutionContainer select={npsScore === 5} loading={loading}>
           <img src={totem_very_good} />
           <span>Incrível</span>
         </EvalutionContainer>
@@ -100,6 +101,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     if (errorOnPrintCupomTef) {
       notification.error({
         message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+        description: "Por favor informe o atendente",
         duration: 5,
       });
     }
@@ -117,6 +119,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
       notification.error({
         message:
           error_message_finalize_tef || "Erro ao finalizar transação TEF",
+          description: "Por favor informe o atendente",
         duration: 5,
       });
       setLoading(false);
@@ -157,27 +160,13 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
       response: nfceResponse,
       has_internal_error: errorOnEmitNfce,
       error_message: error_message_emit_nfe,
-    } = await window.Main.sale.emitNfce(nfcePayload, null, true);
+    } = await window.Main.sale.emitNfce(nfcePayload, payload.id, true);
     if (errorOnEmitNfce) {
-      if (error_message_emit_nfe === "Store token not found.") {
-        notification.error({
-          message: "O token da nota fiscal não está cadastrado na loja.",
-          duration: 5,
-        });
-        return;
-      }
-      return notification.error({
-        message: error_message_emit_nfe || "Erro ao emitir NFCe",
-        duration: 5,
-      });
-    }
-
-    if (nfceResponse.status_sefaz !== "100") {
       notification.error({
-        message: nfceResponse.mensagem_sefaz || nfceResponse.mensagem,
+        message: error_message_emit_nfe || "Erro ao emitir NFCe",
+        description: "Por favor informe o atendente",
         duration: 5,
       });
-      return;
     } else {
       notification.success({
         message: nfceResponse.mensagem_sefaz,
@@ -186,6 +175,16 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
 
       payload.nfce_focus_id = nfceResponse.id;
       payload.nfce_url = `https://api.focusnfe.com.br${nfceResponse.caminho_xml_nota_fiscal}`;
+
+      const { response: _printDanfe, has_internal_error: errorOnPrintNfce } =
+        await window.Main.common.printDanfe(nfceResponse);
+      if (errorOnPrintNfce) {
+        notification.error({
+          message: error_message_emit_nfe || "Erro ao imprimir NFCe",
+          description: "Por favor informe o atendente",
+          duration: 5,
+        });
+      }
     }
 
     const {
@@ -197,8 +196,6 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     });
 
     if (errorOnFinishSAle) {
-      setLoading(false);
-
       error_message_finalize_sale
         ? notification.warning({
             message: error_message_finalize_sale,
@@ -206,6 +203,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
           })
         : notification.error({
             message: "Erro ao finalizar venda",
+            description: "Por favor informe o atendente",
             duration: 5,
           });
     }
@@ -215,6 +213,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
 
   const onHandleNps = async (score: number) => {
     if (loading) return;
+    setNpsScore(score);
 
     const { response: updatedSale } = await window.Main.sale.updateSale(
       sale.id,
@@ -233,7 +232,12 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
         <Header>
           <span className="span-title">Obrigado</span>
           <span>Pagamento Concluido!</span>
-          <span>Curta o seu açai</span>
+          <span>
+            Curta o seu açai
+            {sale.items.some((_item) => _item.product.category.id !== 1)
+              ? " e não esqueça de pegar sua bebida no caixa!"
+              : ""}
+          </span>
         </Header>
         <Body>
           <img src={finish_image} />
@@ -256,7 +260,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
       >
         <>
           <span className="modal-title">Como foi sua experiência?</span>
-          <NpsContainer>
+          <NpsContainer loading={loading}>
             {npsScores.map((npsScore) => (
               <div
                 key={npsScore.id}
@@ -267,7 +271,9 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
             ))}
           </NpsContainer>
           <div>
-            <Button onClick={() => onFinish(sale)}>Pular</Button>
+            <Button onClick={() => onFinish(sale)} loading={loading}>
+              Pular
+            </Button>
           </div>
         </>
       </Modal>

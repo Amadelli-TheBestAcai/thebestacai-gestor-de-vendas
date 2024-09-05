@@ -121,7 +121,7 @@ const Identification: React.FC<IProps> = ({ setStep }) => {
       {
         ...sale,
         client_cpf: useCpf && cpf ? cpf : null,
-        cpf_used_nfce: useCpf,
+        cpf_used_nfce: false,
         cpf_used_club: useCpf,
       }
     );
@@ -183,7 +183,7 @@ const Identification: React.FC<IProps> = ({ setStep }) => {
         <span>
           A inserção do CPF é opcional. Inseri-lo permite a nós verificarmos se
           você é participante do Clube The Best, onde você pode acumular pontos
-          e troca-los por <b>recompensas</b>! Você ainda pode inseri-lo no cupom
+          e trocá-los por <b>recompensas</b>! Você ainda pode inseri-lo no cupom
           fiscal ao final da compra.
         </span>
       </div>

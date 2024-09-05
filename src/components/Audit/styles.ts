@@ -20,7 +20,7 @@ export const Container = styled(RowAnt)<IProps>`
   padding: 0 10px;
 
   ${({ newvalue, oldvalue }) => {
-    if (!oldvalue && newvalue > 0) {
+    if (!oldvalue && +newvalue > 0) {
       return css`
         border: 1px solid #c9f2a0;
         background: #f6ffed;
@@ -75,7 +75,7 @@ export const Action = styled.div<IProps>`
   font-size: 12px;
 
   ${({ newvalue, oldvalue }) => {
-    if (!oldvalue && newvalue > 0) {
+    if (!oldvalue && +newvalue > 0) {
       return css`
         background: #a6e665;
       `;
