@@ -96,11 +96,11 @@ export const saleFactory = {
   getVoucher: async (hash_code: string) =>
     await useCaseFactory.execute<CustomerVoucherDTO>(getVoucher, { hash_code }),
   deleteSale: async (params: {
-    id: number
+    id: string | number
   }
   ) => await useCaseFactory.execute<void>(deleteSale, params),
   deleteSaleFromApi: async (params: {
-    id: string | number;
+    id: number;
     cash_history: number;
     ref: string;
   }) => await useCaseFactory.execute<void>(deleteSaleFromApi, params),
