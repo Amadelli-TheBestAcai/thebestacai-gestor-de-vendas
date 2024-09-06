@@ -6,7 +6,6 @@ import totem_welcome_image1 from "../../../../assets/totem/img/totem_welcome_img
 import totem_welcome_image2 from "../../../../assets/totem/img/totem_welcome_img2.png";
 import totem_welcome_image3 from "../../../../assets/totem/img/totem_welcome_img3.png";
 import totem_welcome_image4 from "../../../../assets/totem/img/totem_welcome_img4.png";
-import totem_welcome_image5 from "../../../../assets/totem/img/totem_welcome_img5.png";
 
 interface IProps {
   stepChange: (step: number) => void;
@@ -29,14 +28,11 @@ const Welcome: React.FC<IProps> = ({ stepChange, is_loading }) => {
     {
       url: totem_welcome_image4,
     },
-    {
-      url: totem_welcome_image5,
-    },
   ];
 
   useEffect(() => {
     const intervalo = setInterval(() => {
-      setCurrentImage((oldImage) => (oldImage + 1) % 5);
+      setCurrentImage((oldImage) => (oldImage + 1) % images.lenth);
     }, 8000);
 
     return () => clearInterval(intervalo);
