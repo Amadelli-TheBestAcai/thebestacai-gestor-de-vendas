@@ -111,8 +111,8 @@ export const ClubInfo = styled.div`
 
   .ant-checkbox-input,
   .ant-checkbox-inner {
-    width: 4rem;
-    height: 4rem;
+    width: 3rem;
+    height: 3rem;
     border: 1px solid var(--black);
   }
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -124,7 +124,7 @@ export const ClubInfo = styled.div`
       top: 45%;
       filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(7500%)
         hue-rotate(313deg) brightness(93%) contrast(107%);
-      zoom: 4.5;
+      zoom: 3.5;
     }
   }
 
@@ -170,12 +170,12 @@ export const OrderProduct = styled(ColAnt)`
 
     .order-item-name {
       margin-right: 0.5rem;
-      font-size: 2.5rem;
+      font-size: 2.25rem;
     }
   }
   .order-item-price {
     span {
-      font-size: 2.5rem;
+      font-size: 2.25rem;
     }
   }
 `;

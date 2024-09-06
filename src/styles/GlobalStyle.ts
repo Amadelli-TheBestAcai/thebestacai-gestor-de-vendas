@@ -72,6 +72,39 @@ export const GlobalStyle = createGlobalStyle`
       background: var(--grey-80);
       border-radius: 5px;
     }
+
+    .notification-totem{
+      display: flex;
+      align-items: center;
+      max-width: 100% !important;
+      width: 65rem !important;
+      height: 10rem !important;
+      width: 65rem !important;
+      height: 15rem !important;
+      svg{
+        display: flex;
+        align-items: center;
+        width: 3rem;
+        height: 2.5rem;
+      }
+      .ant-notification-notice-message, .ant-notification-notice-description{
+        display: flex;
+        align-items: center;
+        width: 100% !important;
+        height: 2.5rem !important;
+        line-height: 1 !important;
+      }
+      .ant-notification-notice-content{
+        .ant-notification-notice-message, .ant-notification-notice-message-single-line-auto-margin{
+          font-size: 2.5rem !important;
+          margin-left: 4rem !important;
+        }
+        .ant-notification-notice-description{
+          margin-top: 1rem !important;
+          font-size: 2rem !important;
+        }
+      }
+    }
   }
 
   .ant-radio-inner::after {

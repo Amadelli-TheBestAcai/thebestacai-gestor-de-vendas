@@ -18,7 +18,7 @@ export const Container = styled.div<IProp>`
 
   ${({ urlImage }) => {
     return css`
-      background-image: url(${urlImage});
+      background-image: linear-gradient(to top, #000000AA 0%, #00000033 20%, #00000033 20%, transparent 100%), url(${urlImage});
     `;
   }}
 `;

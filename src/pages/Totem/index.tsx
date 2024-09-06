@@ -36,10 +36,10 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const handleIncrement = () => {
     const result = redirectHomeCount + 1;
 
-    if (result === 5) {
+    if (result === 10) {
       Modal.confirm({
         title: `Modo Totem`,
-        content: `Tem certeza que gostaria de iniciar o modo Totem`,
+        content: `Tem certeza que gostaria de sair do modo Totem`,
         visible: true,
         okText: "Sim",
         okType: "default",
@@ -77,6 +77,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
         notification.error({
           message: "Erro ao encontrar todos produtos",
           duration: 5,
+          className:"notification-totem",
         });
       }
 
@@ -103,6 +104,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
         return notification.error({
           message: "Erro ao iniciar uma venda. Contate o atendente",
           duration: 5,
+          className:"notification-totem",
         });
       }
 

@@ -5,7 +5,6 @@ import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
-import arrow_down from "../../../../assets/totem/svg/arrow_down.svg";
 import selfservice from "../../../../assets/totem/svg/selfservice.svg";
 
 import { useSale } from "../../../../hooks/useSale";
@@ -15,7 +14,7 @@ import { StoreProductDto } from "../../../../models/dtos/storeProduct";
 
 import ModalInfo from "../ModalInfo";
 
-import { Modal } from "antd";
+import { notification } from "antd";
 
 import {
   Container,
@@ -52,16 +51,17 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
   const getWeightByBalance = async (): Promise<void> => {
     setFetchingBalanceWeight(true);
     await sleep(1500);
-    
+
     const selfService = storeProducts.find(
       (_product) => _product.product.category_id === 1
     );
-    
+
     if (!selfService) {
-      Modal.info({
-        title: "Self service não encontrado",
-        content:
-        "O produto self-service não foi encontrado. Contate o atendente",
+      notification.info({
+        message: "Self service não encontrado",
+        description: "O produto self-service não foi encontrado. Contate o atendente",
+        duration: 5,
+        className: "notification-totem",
       });
       setFetchingBalanceWeight(false);
       return;
@@ -71,19 +71,23 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
       // window.Main.send("balance:get", ({ weight, error }) => {
       setFetchingBalanceWeight(false);
       // if (error) {
-      //   Modal.info({
-      //     title: "Falha de Leitura",
-      //     content:
-      //       "Erro ao obter dados da balança. Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
-      //   });
+      // notification.info({
+      //   message: "Falha de Leitura. Erro ao obter dados da balança.",
+      //   description:
+      //     "Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+      //   duration: 5,
+      //   className: "notification-totem",
+      // });
       //   return;
       // }
       // if (!weight) {
-      //   Modal.info({
-      //     title: "Falha de Leitura",
-      //     content:
-      //       "Não foi possível ler o peso de seu self-service. Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
-      //   });
+      // notification.info({
+      //   message: "Falha de Leitura. Não foi possível ler o peso de seu self-service.",
+      //   description:
+      //     "Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
+      //   duration: 5,
+      //   className: "notification-totem",
+      // });
       //   return;
       // }
       // const amount = +weight * +selfService?.price_unit;
@@ -233,7 +237,10 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
         >
           <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
           {sale.items.length ? (
-            <ButtonFinalize onClick={() => setStep(4)}>
+            <ButtonFinalize
+              onClick={() => setStep(4)}
+              loading={fetchingBalanceWeight}
+            >
               Concluir Pedido
             </ButtonFinalize>
           ) : (

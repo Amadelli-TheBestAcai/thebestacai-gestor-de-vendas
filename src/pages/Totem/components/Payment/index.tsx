@@ -40,6 +40,7 @@ const Payment: React.FC<IProps> = ({ setStep }) => {
         message: "Tef desativado",
         description: "Chame o atendente para realizar a ativação do Tef",
         duration: 5,
+        className:"notification-totem",
       });
     setLoading(true);
     setStepPayment(method === PaymentType.PIX ? 2 : 3);
@@ -55,12 +56,14 @@ const Payment: React.FC<IProps> = ({ setStep }) => {
       return notification.error({
         message: error_message_payment || "Erro ao adicionar pagamento",
         duration: 5,
+        className: "notification-totem",
       });
     }
 
     notification.success({
       message: `Pagamento adicionado com sucesso`,
       duration: 5,
+      className: "notification-totem",
     });
 
     setSale(updatedSale);

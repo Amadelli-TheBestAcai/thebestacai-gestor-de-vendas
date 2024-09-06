@@ -99,16 +99,13 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
               <span>Clube The Best</span>
             </div>
             <div className="info-footer">
-              <span>PONTOS GANHOS NO CLUBE</span>
-
-              {!sale.client_cpf ? (
-                <span
-                  style={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => setStep(2)}
-                >
-                  {sale.client_cpf ? "TROCAR CPF" : "ADICIONAR CPF"}
-                </span>
+              {sale.client_cpf ? (
+                <span>PONTOS GANHOS NO CLUBE</span>
               ) : (
+                <span>Adicione seu CPF para ganhar pontos!</span>
+              )}
+
+              {sale.client_cpf && (
                 <span style={{ fontWeight: "800" }}>
                   +{getCampaignPointsPlus()}
                 </span>
