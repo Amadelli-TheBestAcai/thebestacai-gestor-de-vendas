@@ -115,6 +115,18 @@ app.whenReady().then(async () => {
   });
 });
 
+ipcMain.on("enter-fullscreen", () => {
+  if (win) {
+    win.setFullScreen(true);
+  }
+});
+
+ipcMain.on("exit-fullscreen", () => {
+  if (win) {
+    win.setFullScreen(false); 
+  }
+});
+
 ipcMain.on("app_version", (event) => {
   event.sender.send("app_version:response", app.getVersion());
 });

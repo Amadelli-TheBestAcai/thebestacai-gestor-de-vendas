@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { ipcRenderer } from "electron"; // Importa ipcRenderer
 
 import Welcome from "./components/Welcome";
 import Identification from "./components/Identification";
@@ -27,11 +28,13 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const [fetchingProducts, setFetchingProducts] = useState<boolean>(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
   const [storeProducts, setStoreProducts] = useState<StoreProductDto[]>([]);
-
   const [step, setStep] = useState(1);
-
   const [redirectHomeCount, setRedirectHomeCount] = useState(0);
   const [redirectHomeCountTimer, setredirectHomeCountTimer] = useState(null);
+
+  useEffect(() => {
+    window.Main.message("enter-fullscreen");
+  }, []); 
 
   const handleIncrement = () => {
     const result = redirectHomeCount + 1;
@@ -46,6 +49,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
         cancelText: "Não",
         centered: true,
         async onOk() {
+          window.Main.message("exit-fullscreen");
           history.push("/home");
         },
       });
@@ -192,7 +196,6 @@ const Totem: React.FC<IProps> = ({ history }) => {
         ) : (
           <React.Fragment />
         )}
-        {/* {step === 6 ? <Invoice setStep={setStep} /> : <React.Fragment />} */}
         {step === 6 ? <Evaluation setStep={setStep} /> : <React.Fragment />}
       </Content>
     </Container>
