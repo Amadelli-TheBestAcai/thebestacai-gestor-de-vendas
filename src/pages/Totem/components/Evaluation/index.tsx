@@ -174,7 +174,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     } else {
       notification.success({
         message: nfceResponse.mensagem_sefaz,
-        description: "",
+        description: "Nota emitida com sucesso",
         duration: 5,
         className: "notification-totem",
       });

@@ -78,8 +78,6 @@ export const GlobalStyle = createGlobalStyle`
       align-items: center;
       max-width: 100% !important;
       width: 65rem !important;
-      height: 10rem !important;
-      width: 65rem !important;
       height: 15rem !important;
       svg{
         display: flex;
@@ -96,12 +94,12 @@ export const GlobalStyle = createGlobalStyle`
       }
       .ant-notification-notice-content{
         .ant-notification-notice-message, .ant-notification-notice-message-single-line-auto-margin{
-          font-size: 2.5rem !important;
+          font-size: 2rem !important;
           margin-left: 4rem !important;
         }
         .ant-notification-notice-description{
           margin-top: 1rem !important;
-          font-size: 2rem !important;
+          font-size: 1.5rem !important;
         }
       }
     }
