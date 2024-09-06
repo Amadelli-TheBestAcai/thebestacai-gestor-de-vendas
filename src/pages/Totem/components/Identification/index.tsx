@@ -2,7 +2,8 @@ import React, { useState, Dispatch, SetStateAction } from "react";
 import { notification } from "antd";
 
 import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
-import show_password from "../../../../assets/totem/svg/show_password.svg";
+import show_cpf from "../../../../assets/totem/svg/show_cpf.svg";
+import hidden_cpf from "../../../../assets/totem/svg/hidden_cpf.svg";
 
 import { validaCPF } from "../../helpers/validaCPF";
 import { applyCPFMask } from "../../helpers/applyCPFMask";
@@ -15,7 +16,7 @@ import {
   Container,
   Input,
   PinPadOption,
-  ShowPasswordIcon,
+  ShowCPFIcon,
   EraseIcon,
   ButtonSendCPF,
   ButtonDontSendCPF,
@@ -151,7 +152,11 @@ const Identification: React.FC<IProps> = ({
           <div className="inputContainer">
             <Input value={applyCPFMask(cpf, showCPF)} disabled />
             <button onClick={() => setShowCPF(!showCPF)}>
-              <ShowPasswordIcon src={show_password} />
+              {showCPF ? (
+                <ShowCPFIcon src={show_cpf} />
+              ) : (
+                <ShowCPFIcon src={hidden_cpf} />
+              )}
             </button>
           </div>
         </div>

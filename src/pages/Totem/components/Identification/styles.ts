@@ -177,7 +177,7 @@ export const ButtonCancel = styled(ButtonAnt)`
   }
 `;
 
-export const ShowPasswordIcon = styled.img`
+export const ShowCPFIcon = styled.img`
   width: 1.875rem;
   height: 1.2rem;
   background-size: cover;
