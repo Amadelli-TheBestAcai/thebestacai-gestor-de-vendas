@@ -24,8 +24,9 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
+  cancelSale: () => void;
 }
-const Identification: React.FC<IProps> = ({ setStep }) => {
+const Identification: React.FC<IProps> = ({ setStep, cancelSale }) => {
   const { sale, setSale } = useSale();
   const [showCPF, setShowCPF] = useState<boolean>(true);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -112,9 +113,11 @@ const Identification: React.FC<IProps> = ({ setStep }) => {
     if (useCpf) {
       if (!validaCPF(cpf)) {
         return notification.warning({
-          message:
+          message: "CPF inválido",
+          description:
             "Para prosseguir é necessário informar um cpf válido ou remover o informado",
           duration: 5,
+          className: "notification-totem",
         });
       }
     }
@@ -164,18 +167,22 @@ const Identification: React.FC<IProps> = ({ setStep }) => {
               onClick={() => onFinish(false)}
               style={{ width: "28.43rem", margin: "0 1rem" }}
             >
-              Cancelar
+              {cpf.length === 11 ? "Remover CPF" : "Não desejo Informar"}
             </ButtonCancel>
             <ButtonSendCPF
               onClick={() => onFinish(true)}
               style={{ width: "28.43rem", margin: "0 1rem" }}
+              disabled={cpf.length !== 11}
             >
               Continuar
             </ButtonSendCPF>
           </div>
         ) : (
           <div className="actions">
-            <ButtonSendCPF onClick={() => onFinish(true)}>
+            <ButtonSendCPF
+              onClick={() => onFinish(true)}
+              disabled={cpf.length !== 11}
+            >
               Confirmar
             </ButtonSendCPF>
             <ButtonDontSendCPF onClick={() => onFinish(false)}>
@@ -198,10 +205,9 @@ const Identification: React.FC<IProps> = ({ setStep }) => {
         </div>
       </Container>
       <ModalInfo
-        type={"cancel_oder"}
         visible={visibleModal}
         setVisible={setVisibleModal}
-        setStep={setStep}
+        cancelSale={cancelSale}
       />
     </>
   );

@@ -3,17 +3,15 @@ import React, { Dispatch, SetStateAction } from "react";
 import { Container, ButtonContinue, ButtonCancel } from "./styles";
 
 interface IProps {
-  type: string;
   text?: string;
   visible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
-  setStep: Dispatch<SetStateAction<number>>;
+  cancelSale: () => void;
 }
 const ModalInfo: React.FC<IProps> = ({
-  setStep,
   visible,
   setVisible,
-  type,
+  cancelSale,
 }) => {
   return (
     <Container
@@ -36,7 +34,7 @@ const ModalInfo: React.FC<IProps> = ({
         <div className="modal-footer">
           <ButtonCancel
             onClick={() => {
-              setStep(1), setVisible(false);
+              cancelSale(), setVisible(false);
             }}
           >
             Cancelar Pedido

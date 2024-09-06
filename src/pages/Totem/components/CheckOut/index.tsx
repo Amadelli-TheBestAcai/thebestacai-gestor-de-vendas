@@ -26,9 +26,10 @@ import {
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   campaign: CampaignDto | null;
+  cancelSale: () => void;
 }
 
-const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
+const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale }) => {
   const { sale, setSale } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
 
@@ -164,10 +165,9 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep }) => {
         </Footer>
       </Container>
       <ModalInfo
-        type={"cancel_oder"}
         visible={visibleModal}
         setVisible={setVisibleModal}
-        setStep={setStep}
+        cancelSale={cancelSale}
       />
     </>
   );

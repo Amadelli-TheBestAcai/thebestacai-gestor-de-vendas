@@ -76,8 +76,9 @@ const Totem: React.FC<IProps> = ({ history }) => {
       if (errorOnProducts) {
         notification.error({
           message: "Erro ao encontrar todos produtos",
+          description: "Por favor informe o atendente",
           duration: 5,
-          className:"notification-totem",
+          className: "notification-totem",
         });
       }
 
@@ -95,16 +96,14 @@ const Totem: React.FC<IProps> = ({ history }) => {
   useEffect(() => {
     async function init() {
       setFetchingSale(true);
-      await window.Main.sale.deleteSale({ id: sale.id });
-      const {
-        response: _sale,
-        has_internal_error: errorOnSale
-      } = await window.Main.sale.getCurrentSale();
+      const { response: _sale, has_internal_error: errorOnSale } =
+        await window.Main.sale.getCurrentSale();
       if (errorOnSale) {
         return notification.error({
-          message: "Erro ao iniciar uma venda. Contate o atendente",
+          message: "Erro ao iniciar uma venda.",
+          description: "Por favor informe o atendente",
           duration: 5,
-          className:"notification-totem",
+          className: "notification-totem",
         });
       }
 
@@ -113,6 +112,11 @@ const Totem: React.FC<IProps> = ({ history }) => {
     }
     if (step === 1) init();
   }, [step]);
+
+  const cancelSale = async () => {
+    await window.Main.sale.deleteSale({ id: sale.id });
+    setStep(1);
+  };
 
   return (
     <Container>
@@ -138,18 +142,34 @@ const Totem: React.FC<IProps> = ({ history }) => {
         ) : (
           <React.Fragment />
         )}
-        {step === 2 ? <Identification setStep={setStep} /> : <React.Fragment />}
+        {step === 2 ? (
+          <Identification setStep={setStep} cancelSale={cancelSale} />
+        ) : (
+          <React.Fragment />
+        )}
         {step === 3 ? (
-          <Order setStep={setStep} storeProducts={storeProducts} />
+          <Order
+            setStep={setStep}
+            storeProducts={storeProducts}
+            cancelSale={cancelSale}
+          />
         ) : (
           <React.Fragment />
         )}
         {step === 4 ? (
-          <CheckOut setStep={setStep} campaign={campaign} />
+          <CheckOut
+            setStep={setStep}
+            campaign={campaign}
+            cancelSale={cancelSale}
+          />
         ) : (
           <React.Fragment />
         )}
-        {step === 5 ? <Payment setStep={setStep} /> : <React.Fragment />}
+        {step === 5 ? (
+          <Payment setStep={setStep} cancelSale={cancelSale} />
+        ) : (
+          <React.Fragment />
+        )}
         {/* {step === 6 ? <Invoice setStep={setStep} /> : <React.Fragment />} */}
         {step === 6 ? <Evaluation setStep={setStep} /> : <React.Fragment />}
       </Content>

@@ -36,9 +36,10 @@ import {
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   storeProducts: StoreProductDto[];
+  cancelSale: () => void;
 }
 
-const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
+const Order: React.FC<IProps> = ({ setStep, storeProducts, cancelSale}) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
@@ -249,10 +250,9 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts }) => {
         </Footer>
       </Container>
       <ModalInfo
-        type={"cancel_oder"}
         visible={visibleModal}
         setVisible={setVisibleModal}
-        setStep={setStep}
+        cancelSale={cancelSale}
       />
     </>
   );

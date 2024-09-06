@@ -103,7 +103,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
         message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
         description: "Por favor informe o atendente",
         duration: 5,
-        className:"notification-totem",
+        className: "notification-totem",
       });
     }
 
@@ -120,9 +120,9 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
       notification.error({
         message:
           error_message_finalize_tef || "Erro ao finalizar transação TEF",
-          description: "Por favor informe o atendente",
+        description: "Por favor informe o atendente",
         duration: 5,
-        className:"notification-totem",
+        className: "notification-totem",
       });
       setLoading(false);
       return;
@@ -168,13 +168,14 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
         message: error_message_emit_nfe || "Erro ao emitir NFCe",
         description: "Por favor informe o atendente",
         duration: 5,
-        className:"notification-totem",
+        className: "notification-totem",
       });
     } else {
       notification.success({
         message: nfceResponse.mensagem_sefaz,
+        description: "",
         duration: 5,
-        className:"notification-totem",
+        className: "notification-totem",
       });
 
       payload.nfce_focus_id = nfceResponse.id;
@@ -187,7 +188,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
           message: error_message_emit_nfe || "Erro ao imprimir NFCe",
           description: "Por favor informe o atendente",
           duration: 5,
-          className:"notification-totem",
+          className: "notification-totem",
         });
       }
     }
@@ -204,14 +205,15 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
       error_message_finalize_sale
         ? notification.warning({
             message: error_message_finalize_sale,
+            description: "Por favor informe o atendente",
             duration: 5,
-            className:"notification-totem",
+            className: "notification-totem",
           })
         : notification.error({
             message: "Erro ao finalizar venda",
             description: "Por favor informe o atendente",
             duration: 5,
-            className:"notification-totem",
+            className: "notification-totem",
           });
     }
     setLoading(false);

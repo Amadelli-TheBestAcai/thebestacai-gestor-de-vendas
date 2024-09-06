@@ -26,8 +26,9 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
+  cancelSale: () => void;
 }
-const Payment: React.FC<IProps> = ({ setStep }) => {
+const Payment: React.FC<IProps> = ({ setStep, cancelSale }) => {
   const { sale, setSale } = useSale();
   const { settings } = useSettings();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -55,6 +56,7 @@ const Payment: React.FC<IProps> = ({ setStep }) => {
       setLoading(false);
       return notification.error({
         message: error_message_payment || "Erro ao adicionar pagamento",
+        description: "Por favor contate o atendente",
         duration: 5,
         className: "notification-totem",
       });
@@ -62,6 +64,7 @@ const Payment: React.FC<IProps> = ({ setStep }) => {
 
     notification.success({
       message: `Pagamento adicionado com sucesso`,
+      description: "Agradecemos por utilizar nosso serviço",
       duration: 5,
       className: "notification-totem",
     });
@@ -143,10 +146,9 @@ const Payment: React.FC<IProps> = ({ setStep }) => {
         </Container>
       )}
       <ModalInfo
-        type={"cancel_oder"}
         visible={visibleModal}
         setVisible={setVisibleModal}
-        setStep={setStep}
+        cancelSale={cancelSale}
       />
     </>
   );
