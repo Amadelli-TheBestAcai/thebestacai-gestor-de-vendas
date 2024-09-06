@@ -3,6 +3,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { useUser } from "../../hooks/useUser";
 import { useSale } from "../../hooks/useSale";
+import { useSettings } from "../../hooks/useSettings";
 
 import LogoImg from "../../assets/img/logo-login.png";
 
@@ -33,6 +34,7 @@ type IProps = RouteComponentProps;
 const SideBar: React.FC<IProps> = ({ history }) => {
   const { hasPermission } = useUser();
   const { sale } = useSale();
+  const { settings } = useSettings();
 
   const handleClick = async (id: number, route: string) => {
     const isConnected = await window.Main.hasInternet();
@@ -93,6 +95,27 @@ const SideBar: React.FC<IProps> = ({ history }) => {
         return notification.info({
           message: "Pagamentos pendentes",
           description: `Existem pagamentos pendentes, por favor remova os pagamentos para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.should_use_printer) {
+        return notification.info({
+          message: "Balança desabilitada",
+          description: `Por favor ative a balança em settings para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.should_use_tef) {
+        return notification.info({
+          message: "TEF desabilitado",
+          description: `Por favor ative o TEF em settings para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.cnpj_credenciadora) {
+        return notification.info({
+          message: "CNPJ da credenciadora não selecionado",
+          description: `Por favor seçecione o CNPJ da credenciadora em settings para entrar no modo totem`,
           duration: 3,
         });
       }

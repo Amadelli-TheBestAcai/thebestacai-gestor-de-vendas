@@ -68,7 +68,6 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
       return;
     }
 
-    if (!fetchingBalanceWeight) {
       window.Main.send("balance:get", ({ weight, error }) => {
       setFetchingBalanceWeight(false);
       if (error) {
@@ -94,7 +93,6 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
       const amount = +weight * +selfService?.price_unit;
       onAddItem(selfService, +weight, +amount);
       });
-    }
   };
 
   const addItemList = async (item: ItemDto) => {
