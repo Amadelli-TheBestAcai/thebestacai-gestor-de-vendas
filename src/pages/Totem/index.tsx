@@ -114,8 +114,25 @@ const Totem: React.FC<IProps> = ({ history }) => {
   }, [step]);
 
   const cancelSale = async () => {
-    await window.Main.sale.deleteSale({ id: sale.id });
-    setStep(1);
+    const { has_internal_error } = await window.Main.sale.deleteSale({
+      id: sale.id,
+    });
+    if (!has_internal_error) setStep(1);
+  };
+
+  const stepChange = async (step: number) => {
+    let hasInternet = await window.Main.hasInternet();
+    if (hasInternet) {
+      setStep(step);
+    } else {
+      notification.info({
+        message: "Problema de conexão",
+        description:
+          "Espere um momento e tente novamente, caso o problema persista informe o atendente.",
+        duration: 5,
+        className: "notification-totem",
+      });
+    }
   };
 
   return (
@@ -136,20 +153,24 @@ const Totem: React.FC<IProps> = ({ history }) => {
       <Content customHeight={step === 1 ? "100%" : "90%"}>
         {step === 1 ? (
           <Welcome
-            setStep={setStep}
+            stepChange={stepChange}
             is_loading={fetchingSale || fetchingProducts}
           />
         ) : (
           <React.Fragment />
         )}
         {step === 2 ? (
-          <Identification setStep={setStep} cancelSale={cancelSale} />
+          <Identification
+            setStep={setStep}
+            cancelSale={cancelSale}
+            stepChange={stepChange}
+          />
         ) : (
           <React.Fragment />
         )}
         {step === 3 ? (
           <Order
-            setStep={setStep}
+            stepChange={stepChange}
             storeProducts={storeProducts}
             cancelSale={cancelSale}
           />
@@ -159,6 +180,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
         {step === 4 ? (
           <CheckOut
             setStep={setStep}
+            stepChange={stepChange}
             campaign={campaign}
             cancelSale={cancelSale}
           />

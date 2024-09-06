@@ -27,9 +27,10 @@ interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   campaign: CampaignDto | null;
   cancelSale: () => void;
+  stepChange: (step: number) => void;
 }
 
-const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale }) => {
+const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange }) => {
   const { sale, setSale } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
 
@@ -157,11 +158,11 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale }) => {
         <Footer>
           <div style={{ justifyContent: "space-between" }}>
             <Button onClick={() => setStep(3)}>Voltar</Button>
-            <ButtonFinalize onClick={() => setStep(5)}>
+            <ButtonFinalize onClick={() => stepChange(5)}>
               Concluir Pedido
             </ButtonFinalize>
           </div>
-          <Button onClick={() => setStep(1)}>Cancelar Pedido</Button>
+          <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
         </Footer>
       </Container>
       <ModalInfo

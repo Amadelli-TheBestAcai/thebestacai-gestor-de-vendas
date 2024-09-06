@@ -13,6 +13,7 @@ function createWindow() {
   win = new BrowserWindow({
     width,
     height,
+    autoHideMenuBar: true,
     resizable: false,
     backgroundColor: "#191622",
     webPreferences: {
@@ -108,7 +109,7 @@ app.whenReady().then(async () => {
 
   app.on("window-all-closed", async () => {
     if (process.platform !== "darwin") {
-      await finalizeServerTef()
+      await finalizeServerTef();
       app.quit();
     }
   });

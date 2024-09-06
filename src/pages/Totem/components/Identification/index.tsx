@@ -25,8 +25,13 @@ import {
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   cancelSale: () => void;
+  stepChange: (step: number) => void;
 }
-const Identification: React.FC<IProps> = ({ setStep, cancelSale }) => {
+const Identification: React.FC<IProps> = ({
+  setStep,
+  cancelSale,
+  stepChange,
+}) => {
   const { sale, setSale } = useSale();
   const [showCPF, setShowCPF] = useState<boolean>(true);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -134,7 +139,7 @@ const Identification: React.FC<IProps> = ({ setStep, cancelSale }) => {
 
     setSale(updatedSale);
 
-    setStep(sale.items.length ? 4 : 3);
+    sale.items.length ? setStep(4) : stepChange(3);
   };
 
   return (

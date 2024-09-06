@@ -34,12 +34,12 @@ import {
 } from "./styles";
 
 interface IProps {
-  setStep: Dispatch<SetStateAction<number>>;
+  stepChange: (step: number) => void;
   storeProducts: StoreProductDto[];
   cancelSale: () => void;
 }
 
-const Order: React.FC<IProps> = ({ setStep, storeProducts, cancelSale}) => {
+const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
@@ -239,7 +239,7 @@ const Order: React.FC<IProps> = ({ setStep, storeProducts, cancelSale}) => {
           <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
           {sale.items.length ? (
             <ButtonFinalize
-              onClick={() => setStep(4)}
+              onClick={() => stepChange(4)}
               loading={fetchingBalanceWeight}
             >
               Concluir Pedido

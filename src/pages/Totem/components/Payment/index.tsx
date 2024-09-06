@@ -36,12 +36,23 @@ const Payment: React.FC<IProps> = ({ setStep, cancelSale }) => {
   const [stepPayment, setStepPayment] = useState<1 | 2 | 3>(1);
 
   const onFinish = async (method: number) => {
+    let hasInternet = await window.Main.hasInternet();
+    if (!hasInternet) {
+      return notification.info({
+        message: "Problema de conexão",
+        description:
+          "Espere um momento e tente novamente, caso o problema persista informe o atendente.",
+        duration: 5,
+        className: "notification-totem",
+      });
+    }
+
     if (!settings?.should_use_tef)
       return notification.info({
         message: "Tef desativado",
         description: "Chame o atendente para realizar a ativação do Tef",
         duration: 5,
-        className:"notification-totem",
+        className: "notification-totem",
       });
     setLoading(true);
     setStepPayment(method === PaymentType.PIX ? 2 : 3);

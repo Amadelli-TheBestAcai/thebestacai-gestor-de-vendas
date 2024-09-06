@@ -9,11 +9,11 @@ import totem_welcome_image4 from "../../../../assets/totem/img/totem_welcome_img
 import totem_welcome_image5 from "../../../../assets/totem/img/totem_welcome_img5.png";
 
 interface IProps {
-  setStep: Dispatch<SetStateAction<number>>;
+  stepChange: (step: number) => void;
   is_loading: boolean;
 }
 
-const Welcome: React.FC<IProps> = ({ setStep, is_loading }) => {
+const Welcome: React.FC<IProps> = ({ stepChange, is_loading }) => {
   const [currentImage, setCurrentImage] = useState(0);
 
   const images = [
@@ -49,7 +49,7 @@ const Welcome: React.FC<IProps> = ({ setStep, is_loading }) => {
         <p>Faça seu check-out AQUI</p>
       </TextHeader>
       <Footer>
-        <Button onClick={() => setStep(2)} loading={is_loading}>
+        <Button onClick={() => stepChange(2)} loading={is_loading}>
           Iniciar Checkout
         </Button>
       </Footer>
