@@ -100,6 +100,13 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       }
       if (!settings.should_use_printer) {
         return notification.info({
+          message: "Impressora desabilitada",
+          description: `Por favor ative a impressora em settings para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.should_use_balance) {
+        return notification.info({
           message: "Balança desabilitada",
           description: `Por favor ative a balança em settings para entrar no modo totem`,
           duration: 3,
