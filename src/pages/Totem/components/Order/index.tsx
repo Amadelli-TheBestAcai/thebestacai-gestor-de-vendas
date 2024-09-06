@@ -69,34 +69,31 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
     }
 
     if (!fetchingBalanceWeight) {
-      // window.Main.send("balance:get", ({ weight, error }) => {
+      window.Main.send("balance:get", ({ weight, error }) => {
       setFetchingBalanceWeight(false);
-      // if (error) {
-      // notification.info({
-      //   message: "Falha de Leitura. Erro ao obter dados da balança.",
-      //   description:
-      //     "Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
-      //   duration: 5,
-      //   className: "notification-totem",
-      // });
-      //   return;
-      // }
-      // if (!weight) {
-      // notification.info({
-      //   message: "Falha de Leitura. Não foi possível ler o peso de seu self-service.",
-      //   description:
-      //     "Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
-      //   duration: 5,
-      //   className: "notification-totem",
-      // });
-      //   return;
-      // }
-      // const amount = +weight * +selfService?.price_unit;
-      // onAddItem(selfService, +weight, +amount);
-      const amount = +0.5 * +selfService?.price_unit;
-
-      onAddItem(selfService, +0.5, +amount);
-      // });
+      if (error) {
+      notification.info({
+        message: "Falha de Leitura. Erro ao obter dados da balança.",
+        description:
+          "Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+        duration: 5,
+        className: "notification-totem",
+      });
+        return;
+      }
+      if (!weight) {
+      notification.info({
+        message: "Falha de Leitura. Não foi possível ler o peso de seu self-service.",
+        description:
+          "Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
+        duration: 5,
+        className: "notification-totem",
+      });
+        return;
+      }
+      const amount = +weight * +selfService?.price_unit;
+      onAddItem(selfService, +weight, +amount);
+      });
     }
   };
 
