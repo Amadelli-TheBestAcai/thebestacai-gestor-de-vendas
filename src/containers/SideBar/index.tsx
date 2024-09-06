@@ -32,6 +32,7 @@ type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history }) => {
   const { hasPermission } = useUser();
+  const { sale } = useSale();
 
   const handleClick = async (id: number, route: string) => {
     const isConnected = await window.Main.hasInternet();
@@ -73,6 +74,33 @@ const SideBar: React.FC<IProps> = ({ history }) => {
         return notification.info({
           message: "Caixa offline",
           description: `O caixa deve estar ONLINE para entrar no modo Totem`,
+          duration: 3,
+        });
+      }
+      if (
+        sale.items.some(
+          (item) =>
+            item.product.category.id !== 1 && item.product.category.id !== 2
+        )
+      ) {
+        return notification.info({
+          message: "Itens de categorias inválidas",
+          description: `Por favor remova os itens que não sejam SelfService ou Bebidas para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (sale.payments.length) {
+        return notification.info({
+          message: "Pagamentos pendentes",
+          description: `Existem pagamentos pendentes, por favor remova os pagamentos para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      const { response: _stepSales } = await window.Main.sale.getAllStepSales();
+      if (_stepSales.length) {
+        return notification.info({
+          message: "Comandas encontradas",
+          description: `Por favor remova todas as comandas antes de entrar no modo totem`,
           duration: 3,
         });
       }

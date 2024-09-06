@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 
 import totem_bad from "../../../../assets/totem/svg/totem_bad.svg";
 import totem_good from "../../../../assets/totem/svg/totem_good.svg";
@@ -36,6 +36,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
   const [loading, setLoading] = useState(false);
   const [openNps, setOpenNps] = useState(true);
   const [npsScore, setNpsScore] = useState<number>(0);
+  const [userName, setUserName] = useState("")
 
   const npsScores = [
     {
@@ -235,11 +236,26 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     onFinish(updatedSale);
   };
 
+  useEffect(() =>{
+    const getUserName = async () => {
+
+      const { response, has_internal_error } =
+      await window.Main.user.getCustomerByCpf(sale.client_cpf);
+
+      if(response && !has_internal_error){
+        setUserName(response.name)
+      }else{
+        setUserName("")
+      }
+    }
+    getUserName()
+  },[sale]);
+
   return (
     <>
       <Container>
         <Header>
-          <span className="span-title">Obrigado</span>
+          <span className="span-title">{`Obrigado${userName ? `, ${userName}` : ""}`}</span>
           <span>Pagamento Concluido!</span>
           <span>
             Curta o seu açai
