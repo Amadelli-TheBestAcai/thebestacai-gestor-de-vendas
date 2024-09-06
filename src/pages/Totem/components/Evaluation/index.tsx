@@ -35,7 +35,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
   const { store } = useStore();
   const [loading, setLoading] = useState(false);
   const [openNps, setOpenNps] = useState(true);
-  const [npsScore, setNpsScore] = useState<number>(0);
+  const [npsScore, setNpsScore] = useState<number>(null);
   const [userName, setUserName] = useState("")
 
   const npsScores = [
@@ -285,7 +285,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
       >
         <>
           <span className="modal-title">Como foi sua experiência?</span>
-          <NpsContainer loading={loading}>
+          <NpsContainer loading={loading} select={npsScore === 0}>
             {npsScores.map((npsScore) => (
               <div
                 key={npsScore.id}
@@ -296,7 +296,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
             ))}
           </NpsContainer>
           <div>
-            <Button onClick={() => onFinish(sale)} loading={loading}>
+            <Button onClick={() => {onFinish(sale), setNpsScore(0)}} loading={loading}>
               Pular
             </Button>
           </div>

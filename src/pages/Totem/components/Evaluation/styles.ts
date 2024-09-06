@@ -185,12 +185,17 @@ export const NpsContainer = styled.div<IEvaluation>`
   align-items: center;
   width: 100%;
 
-  ${({ loading }) => {
+  ${({ loading, select }) => {
     if (loading) {
       return css`
         height: 100%;
         align-items: flex-start;
         justify-content: center;
+      `;
+    }
+    if (select) {
+      return css`
+        height: 0;
       `;
     }
   }}
