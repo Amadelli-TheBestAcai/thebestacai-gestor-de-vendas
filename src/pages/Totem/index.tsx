@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ipcRenderer } from "electron"; // Importa ipcRenderer
 
@@ -10,9 +10,9 @@ import Payment from "./components/Payment";
 import Invoice from "./components/Invoice";
 import Evaluation from "./components/Evaluation";
 
-import { Modal, notification } from "antd";
+import { notification } from "antd";
 
-import { Container, Header, Content } from "./styles";
+import { Container, Header, Content, Modal, ButtonContinue } from "./styles";
 
 import the_best_acai_logo from "../../assets/totem/svg/the_best_acai_logo.svg";
 
@@ -32,9 +32,95 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const [redirectHomeCount, setRedirectHomeCount] = useState(0);
   const [redirectHomeCountTimer, setredirectHomeCountTimer] = useState(null);
 
+  const [inactive, setInactive] = useState<boolean>(false);
+  const [openInactive, setOpenInactive] = useState<boolean>(false);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState<number>(15);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resetTimer = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setOpenInactive(false);
+    setVisibleModal(false);
+
+    timeoutRef.current = setTimeout(() => {
+      setOpenInactive(true);
+      setTimeLeft(15);
+      timeoutRef.current = setTimeout(() => setInactive(true), 15000);
+    }, 15000);
+  };
+
+  useEffect(() => {
+    if (inactive && step !== 6 && step !== 1) {
+      cancelSale();
+      setVisibleModal(false);
+    }
+    if (openInactive && !visibleModal && step !== 6 && step !== 1) {
+      setVisibleModal(true);
+    }
+  }, [inactive, openInactive]);
+
+  useEffect(() => {
+    const handleUserActivity = () => {
+      setInactive(false);
+      resetTimer();
+    };
+
+    window.addEventListener("touchstart", handleUserActivity);
+    window.addEventListener("touchmove", handleUserActivity);
+    window.addEventListener("touchend", handleUserActivity);
+    window.addEventListener("mousemove", handleUserActivity);
+    window.addEventListener("mousedown", handleUserActivity);
+
+    resetTimer();
+
+    return () => {
+      window.removeEventListener("touchstart", handleUserActivity);
+      window.removeEventListener("touchmove", handleUserActivity);
+      window.removeEventListener("touchend", handleUserActivity);
+      window.removeEventListener("mousemove", handleUserActivity);
+      window.removeEventListener("mousedown", handleUserActivity);
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (visibleModal && timeLeft > 0) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      intervalRef.current = setInterval(() => {
+        setTimeLeft((time) => {
+          if (time > 0) {
+            return time - 1;
+          } else {
+            clearInterval(intervalRef.current);
+            return 0;
+          }
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [visibleModal]);
+
   useEffect(() => {
     window.Main.message("enter-fullscreen");
-  }, []); 
+  }, []);
 
   const handleIncrement = () => {
     const result = redirectHomeCount + 1;
@@ -140,65 +226,94 @@ const Totem: React.FC<IProps> = ({ history }) => {
   };
 
   return (
-    <Container>
-      {step !== 1 ? (
-        <Header>
-          <div className="logo-content">
-            <img
-              src={the_best_acai_logo}
-              alt="the_best_acai_logo"
-              onClick={handleIncrement}
+    <>
+      <Container>
+        {step !== 1 ? (
+          <Header>
+            <div className="logo-content">
+              <img
+                src={the_best_acai_logo}
+                alt="the_best_acai_logo"
+                onClick={handleIncrement}
+              />
+            </div>
+          </Header>
+        ) : (
+          <></>
+        )}
+        <Content customHeight={step === 1 ? "100%" : "90%"}>
+          {step === 1 ? (
+            <Welcome
+              stepChange={stepChange}
+              is_loading={fetchingSale || fetchingProducts}
             />
+          ) : (
+            <React.Fragment />
+          )}
+          {step === 2 ? (
+            <Identification
+              setStep={setStep}
+              cancelSale={cancelSale}
+              stepChange={stepChange}
+            />
+          ) : (
+            <React.Fragment />
+          )}
+          {step === 3 ? (
+            <Order
+              stepChange={stepChange}
+              storeProducts={storeProducts}
+              cancelSale={cancelSale}
+            />
+          ) : (
+            <React.Fragment />
+          )}
+          {step === 4 ? (
+            <CheckOut
+              setStep={setStep}
+              stepChange={stepChange}
+              campaign={campaign}
+              cancelSale={cancelSale}
+            />
+          ) : (
+            <React.Fragment />
+          )}
+          {step === 5 ? (
+            <Payment setStep={setStep} cancelSale={cancelSale} />
+          ) : (
+            <React.Fragment />
+          )}
+          {step === 6 ? (
+            <Evaluation setStep={setStep} inactive={inactive} />
+          ) : (
+            <React.Fragment />
+          )}
+        </Content>
+      </Container>
+      <Modal
+        visible={visibleModal}
+        cancelButtonProps={{ hidden: true }}
+        closable={false}
+        centered
+        width={"62.5rem"}
+        style={{ height: "44.56rem" }}
+        footer={false}
+      >
+        <>
+          <span className="modal-title">{"Ei! Você ainda está ai?"}</span>
+          <div className="modal-div-body">
+            <span className="modal-body">
+              {"Notamos que o seu pedido está parado há algum tempo!"}
+            </span>
+            <span className="modal-body">{`A operação será cancelada em`}</span>
+            <span className="modal-count-timer">{`${timeLeft} segundos.`}</span>
           </div>
-        </Header>
-      ) : (
-        <></>
-      )}
-      <Content customHeight={step === 1 ? "100%" : "90%"}>
-        {step === 1 ? (
-          <Welcome
-            stepChange={stepChange}
-            is_loading={fetchingSale || fetchingProducts}
-          />
-        ) : (
-          <React.Fragment />
-        )}
-        {step === 2 ? (
-          <Identification
-            setStep={setStep}
-            cancelSale={cancelSale}
-            stepChange={stepChange}
-          />
-        ) : (
-          <React.Fragment />
-        )}
-        {step === 3 ? (
-          <Order
-            stepChange={stepChange}
-            storeProducts={storeProducts}
-            cancelSale={cancelSale}
-          />
-        ) : (
-          <React.Fragment />
-        )}
-        {step === 4 ? (
-          <CheckOut
-            setStep={setStep}
-            stepChange={stepChange}
-            campaign={campaign}
-            cancelSale={cancelSale}
-          />
-        ) : (
-          <React.Fragment />
-        )}
-        {step === 5 ? (
-          <Payment setStep={setStep} cancelSale={cancelSale} />
-        ) : (
-          <React.Fragment />
-        )}
-        {step === 6 ? <Evaluation setStep={setStep} /> : <React.Fragment />}
-      </Content>
-    </Container>
+          <div className="modal-footer">
+            <ButtonContinue>Continuar pedido</ButtonContinue>
+          </div>
+        </>
+      </Modal>
+    </>
   );
 };
 

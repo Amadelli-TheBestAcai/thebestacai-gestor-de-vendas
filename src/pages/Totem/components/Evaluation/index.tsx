@@ -29,14 +29,15 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
+  inactive: boolean;
 }
-const Evaluation: React.FC<IProps> = ({ setStep }) => {
+const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
   const { sale } = useSale();
   const { store } = useStore();
   const [loading, setLoading] = useState(false);
   const [openNps, setOpenNps] = useState(true);
   const [npsScore, setNpsScore] = useState<number>(null);
-  const [userName, setUserName] = useState("")
+  const [userName, setUserName] = useState("");
 
   const npsScores = [
     {
@@ -90,6 +91,20 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
       value: 5,
     },
   ];
+
+  useEffect(() => {
+    if (inactive) {
+      onFinish(sale);
+    }
+  }, [inactive]);
+
+  useEffect(() => {
+    if (!openNps) {
+      setTimeout(() => {
+        setStep(1);
+      }, 10000);
+    }
+  }, [openNps]);
 
   const onFinish = async (payload: SaleDto) => {
     setLoading(true);
@@ -236,26 +251,27 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
     onFinish(updatedSale);
   };
 
-  useEffect(() =>{
+  useEffect(() => {
     const getUserName = async () => {
-
       const { response, has_internal_error } =
-      await window.Main.user.getCustomerByCpf(sale.client_cpf);
+        await window.Main.user.getCustomerByCpf(sale.client_cpf);
 
-      if(response && !has_internal_error){
-        setUserName(response.name)
-      }else{
-        setUserName("")
+      if (response && !has_internal_error) {
+        setUserName(response.name);
+      } else {
+        setUserName("");
       }
-    }
-    getUserName()
-  },[sale]);
+    };
+    getUserName();
+  }, [sale]);
 
   return (
     <>
       <Container>
         <Header>
-          <span className="span-title">{`Obrigado${userName ? `, ${userName}` : ""}`}</span>
+          <span className="span-title">{`Obrigado${
+            userName ? `, ${userName}` : ""
+          }`}</span>
           <span>Pagamento Concluido!</span>
           <span>
             Curta o seu açai
@@ -280,7 +296,7 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
         closable={false}
         centered
         width={"62.5rem"}
-        style={{ height: "44.56rem" }}
+        style={{ height: npsScore !== 0 ? "44.56rem" : "24rem" }}
         footer={false}
       >
         <>
@@ -296,7 +312,12 @@ const Evaluation: React.FC<IProps> = ({ setStep }) => {
             ))}
           </NpsContainer>
           <div>
-            <Button onClick={() => {onFinish(sale), setNpsScore(0)}} loading={loading}>
+            <Button
+              onClick={() => {
+                onFinish(sale), setNpsScore(0);
+              }}
+              loading={loading}
+            >
               Pular
             </Button>
           </div>

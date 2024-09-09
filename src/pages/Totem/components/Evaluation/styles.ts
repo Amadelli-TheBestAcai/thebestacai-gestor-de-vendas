@@ -48,6 +48,7 @@ export const Footer = styled.div`
 `;
 
 export const Modal = styled(ModalAnt)`
+  transition: height 1s ease;
   .modal-title {
     font-family: "VisbyCF";
     font-size: 3.75rem;

@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-import { Button as ButtonAnt, Input as InputAnt } from "antd";
+import { Button as ButtonAnt, Modal as ModalAnt } from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -53,38 +53,82 @@ export const Content = styled.div<IContent>`
   }}
 `;
 
-export const Button = styled(ButtonAnt)`
-  width: 113px;
-  height: 50px;
-  background: var(--orange-250);
-  color: var(--brown-500);
-  border-radius: 5px;
-  font-weight: 500;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+export const Modal = styled(ModalAnt)`
+  .ant-modal-content {
+    height: 100%;
+    width: 100%;
+    border-radius: 6.25rem;
+    padding: 5rem;
+    .ant-modal-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      padding: 0;
+      font-size: 2rem;
+    }
+  }
+  .modal-title {
+    font-family: "VisbyCF";
+    font-size: 3.75rem;
+    font-weight: 600;
+  }
+  .modal-div-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-body {
+    margin-top: 1rem;
+    font-family: "VisbyCF";
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+  }
+  .modal-count-timer {
+    font-family: "VisbyCF";
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+  .modal-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+`;
 
-  margin-right: 1.5rem;
+const ButtonCSS = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 23.8rem;
+  height: 7.68rem;
+  border-radius: 0.625rem;
+  margin: 0 1rem;
+  span {
+    font-family: "VisbyCF";
+    font-weight: 600;
+    font-size: 2.25rem;
+    color: var(--black);
+  }
+`;
+
+export const ButtonContinue = styled(ButtonAnt)`
+  ${ButtonCSS}
+  background: var(--white);
+  border: 3px solid var(--black);
 
   :active,
   :hover,
   :focus {
-    background: var(--orange-250);
-    color: var(--brown-500);
-    border: none;
-  }
-
-  /*Responsive 1600px*/
-  @media (max-width: 1600px) {
-    @media (max-height: 900px) {
-      width: 105px;
-      height: 40px;
-    }
-  }
-
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
-    width: 100px;
-    height: 35px;
-    font-size: 0.8rem;
+    background: var(--white);
+    color: var(--black);
+    border: 3px solid var(--black);
   }
 `;
