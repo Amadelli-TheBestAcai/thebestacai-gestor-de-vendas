@@ -296,7 +296,7 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
         closable={false}
         centered
         width={"62.5rem"}
-        style={{ height: npsScore !== 0 ? "44.56rem" : "24rem" }}
+        style={{ height: npsScore !== 0 || !loading ? "44.56rem" : "24rem" }}
         footer={false}
       >
         <>
