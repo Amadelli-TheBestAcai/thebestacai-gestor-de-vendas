@@ -46,11 +46,13 @@ const Totem: React.FC<IProps> = ({ history }) => {
     setOpenInactive(false);
     setVisibleModal(false);
 
+    const time = step === 5 ? 30000 : 15000;
+
     timeoutRef.current = setTimeout(() => {
       setOpenInactive(true);
-      setTimeLeft(15);
-      timeoutRef.current = setTimeout(() => setInactive(true), 15000);
-    }, 15000);
+      setTimeLeft(time / 1000);
+      timeoutRef.current = setTimeout(() => setInactive(true), time);
+    }, time);
   };
 
   useEffect(() => {
@@ -91,7 +93,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, []);
+  }, [step]);
 
   useEffect(() => {
     if (visibleModal && timeLeft > 0) {
