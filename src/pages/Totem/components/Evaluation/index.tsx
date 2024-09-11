@@ -271,7 +271,7 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
         <Header>
           <span className="span-title">{`Obrigado${
             userName ? `, ${userName}` : ""
-          }`}</span>
+          }`}!</span>
           <span>Pagamento Concluido!</span>
           <span>
             Curta o seu açai

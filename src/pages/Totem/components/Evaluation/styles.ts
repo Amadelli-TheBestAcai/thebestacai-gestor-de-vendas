@@ -21,12 +21,14 @@ export const Header = styled.div`
   margin-bottom: 5rem;
 
   span {
+    margin: 0.5rem 0;
     font-size: 2.5rem;
     font-weight: 600;
     text-align: center;
   }
   .span-title {
     font-size: 4rem;
+    text-transform: capitalize;
   }
 `;
 
