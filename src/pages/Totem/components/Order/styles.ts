@@ -181,11 +181,33 @@ export const AddSubItem = styled.div`
   }
 `;
 
-export const ExtraProductList = styled(RowAnt)`
+interface IExtra {
+  size: number;
+}
+
+export const ExtraProductList = styled(RowAnt)<IExtra>`
   width: 100%;
-  max-height: 33rem;
+  max-height: 55rem;
   padding: 2.5rem 0 0 0;
   overflow-y: scroll;
+  
+  ${({ size }) => {
+    if (size === 1) {
+      return css`
+      max-height: 55rem;
+        `;
+    }
+    if (size === 2) {
+      return css`
+      max-height: 45rem;
+        `;
+    }
+    if (size >= 3) {
+      return css`
+      max-height: 33rem;
+        `;
+    }
+  }}
 `;
 
 export const ExtraProduct = styled(ColAnt)`

@@ -197,7 +197,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
             <div className="extra-product-title">
               <Icon src={bottle} /> Que tal adicionar uma água ou refrigerante?
             </div>
-            <ExtraProductList gutter={[6, 40]}>
+            <ExtraProductList gutter={[6, 40]} size={sale?.items?.length}>
               {storeProducts
                 .filter(
                   (storeProduct) => storeProduct.product.category_id === 2
