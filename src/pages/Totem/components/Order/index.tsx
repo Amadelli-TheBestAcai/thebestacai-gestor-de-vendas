@@ -39,7 +39,7 @@ interface IProps {
   cancelSale: () => void;
 }
 
-const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
+const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
@@ -60,7 +60,8 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
     if (!selfService) {
       notification.info({
         message: "Self service não encontrado",
-        description: "O produto self-service não foi encontrado. Contate o atendente",
+        description:
+          "O produto self-service não foi encontrado. Contate o atendente",
         duration: 5,
         className: "notification-totem",
       });
@@ -68,31 +69,32 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
       return;
     }
 
-      window.Main.send("balance:get", ({ weight, error }) => {
+    window.Main.send("balance:get", ({ weight, error }) => {
       setFetchingBalanceWeight(false);
       if (error) {
-      notification.info({
-        message: "Falha de Leitura. Erro ao obter dados da balança.",
-        description:
-          "Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
-        duration: 5,
-        className: "notification-totem",
-      });
+        notification.info({
+          message: "Falha de Leitura. Erro ao obter dados da balança.",
+          description:
+            "Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+          duration: 5,
+          className: "notification-totem",
+        });
         return;
       }
       if (!weight) {
-      notification.info({
-        message: "Falha de Leitura. Não foi possível ler o peso de seu self-service.",
-        description:
-          "Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
-        duration: 5,
-        className: "notification-totem",
-      });
+        notification.info({
+          message:
+            "Falha de Leitura. Não foi possível ler o peso de seu self-service.",
+          description:
+            "Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
+          duration: 5,
+          className: "notification-totem",
+        });
         return;
       }
       const amount = +weight * +selfService?.price_unit;
       onAddItem(selfService, +weight, +amount);
-      });
+    });
   };
 
   const addItemList = async (item: ItemDto) => {
@@ -211,7 +213,14 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale}) => {
                       }
                     >
                       <img className="product-img-add" src={plus} />
-                      <img className="product-img" src={bottle} />
+                      <img
+                        className="product-img"
+                        src={
+                          storeProduct?.product?.upload_url
+                            ? storeProduct?.product?.upload_url?.toString()
+                            : bottle
+                        }
+                      />
 
                       <span className="product-name">
                         {storeProduct.product.name}
