@@ -134,7 +134,11 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
                     <div className="order-item-content">
                       <img
                         src={
-                          item.product.category.id === 1 ? selfservice : bottle
+                          item.product.category.id === 1
+                            ? selfservice
+                            : item?.product?.upload_url
+                            ? item?.product?.upload_url
+                            : bottle
                         }
                         className="order-item-image"
                       />

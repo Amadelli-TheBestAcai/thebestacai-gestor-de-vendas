@@ -147,6 +147,15 @@ export const OrderProduct = styled(ColAnt)`
     align-items: center;
     width: 16rem;
   }
+
+  .order-item-image {
+    width: 7.5rem;
+    height: 7.5rem;
+    margin-right: 0.18rem;
+    object-fit: contain;
+    background-size: cover;
+    background-position: center;
+  }
 `;
 
 export const AddSubItem = styled.div`
@@ -190,22 +199,22 @@ export const ExtraProductList = styled(RowAnt)<IExtra>`
   max-height: 55rem;
   padding: 2.5rem 0 0 0;
   overflow-y: auto;
-  
+
   ${({ size }) => {
     if (size === 1) {
       return css`
-      max-height: 55rem;
-        `;
+        max-height: 55rem;
+      `;
     }
     if (size === 2) {
       return css`
-      max-height: 45rem;
-        `;
+        max-height: 45rem;
+      `;
     }
     if (size >= 3) {
       return css`
-      max-height: 33rem;
-        `;
+        max-height: 33rem;
+      `;
     }
   }}
 `;
@@ -245,6 +254,7 @@ export const ExtraProductCard = styled.div`
   .product-img {
     width: 5rem;
     height: 5rem;
+    object-fit: contain;
   }
 
   .product-img-add {

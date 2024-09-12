@@ -19,6 +19,7 @@ export type ItemDto = {
     description?: string;
     created_at?: string;
     deleted_at?: string;
+    upload_url?: string;
     category: {
       id: number;
       name: string;
