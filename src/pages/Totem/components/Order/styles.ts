@@ -102,7 +102,7 @@ export const Footer = styled.div`
 
 export const OrderProductList = styled(RowAnt)`
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 export const OrderProduct = styled(ColAnt)`
@@ -189,7 +189,7 @@ export const ExtraProductList = styled(RowAnt)<IExtra>`
   width: 100%;
   max-height: 55rem;
   padding: 2.5rem 0 0 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   
   ${({ size }) => {
     if (size === 1) {

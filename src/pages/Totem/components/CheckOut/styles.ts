@@ -146,7 +146,7 @@ export const ClubInfo = styled.div`
 
 export const OrderProductList = styled(RowAnt)`
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 export const OrderProduct = styled(ColAnt)`
