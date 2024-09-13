@@ -25,10 +25,11 @@ import {
 } from "./styles";
 
 interface IProps {
+  setCancelTimer: Dispatch<SetStateAction<boolean>>;
   setStep: Dispatch<SetStateAction<number>>;
   cancelSale: () => void;
 }
-const Payment: React.FC<IProps> = ({ setStep, cancelSale }) => {
+const Payment: React.FC<IProps> = ({ setCancelTimer, setStep, cancelSale }) => {
   const { sale, setSale } = useSale();
   const { settings } = useSettings();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -55,6 +56,7 @@ const Payment: React.FC<IProps> = ({ setStep, cancelSale }) => {
         className: "notification-totem",
       });
     setLoading(true);
+    setCancelTimer(true);
     setStepPayment(method === PaymentType.PIX ? 2 : 3);
 
     const {
@@ -128,7 +130,10 @@ const Payment: React.FC<IProps> = ({ setStep, cancelSale }) => {
           </Body>
           <Footer>
             <ButtonCancel
-              onClick={() => setStepPayment(1)}
+              onClick={() => {
+                setStepPayment(1);
+                setCancelTimer(false);
+              }}
               style={{ width: "36.5rem" }}
               loading={loading}
             >
@@ -147,7 +152,10 @@ const Payment: React.FC<IProps> = ({ setStep, cancelSale }) => {
           </Body>
           <Footer>
             <ButtonCancel
-              onClick={() => setStepPayment(1)}
+              onClick={() => {
+                setStepPayment(1);
+                setCancelTimer(false);
+              }}
               style={{ width: "36.5rem" }}
               loading={loading}
             >

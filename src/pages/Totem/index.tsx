@@ -32,6 +32,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const [redirectHomeCount, setRedirectHomeCount] = useState(0);
   const [redirectHomeCountTimer, setredirectHomeCountTimer] = useState(null);
 
+  const [cancelTimer, setCancelTimer] = useState<boolean>(false);
   const [inactive, setInactive] = useState<boolean>(false);
   const [openInactive, setOpenInactive] = useState<boolean>(false);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -48,11 +49,13 @@ const Totem: React.FC<IProps> = ({ history }) => {
 
     const time = step === 5 ? 30000 : 15000;
 
-    timeoutRef.current = setTimeout(() => {
-      setOpenInactive(true);
-      setTimeLeft(time / 1000);
-      timeoutRef.current = setTimeout(() => setInactive(true), time);
-    }, time);
+    if (!cancelTimer) {
+      timeoutRef.current = setTimeout(() => {
+        setOpenInactive(true);
+        setTimeLeft(time / 1000);
+        timeoutRef.current = setTimeout(() => setInactive(true), time);
+      }, time);
+    }
   };
 
   useEffect(() => {
@@ -79,6 +82,10 @@ const Totem: React.FC<IProps> = ({ history }) => {
 
     resetTimer();
 
+    if(step === 1){
+      setCancelTimer(false);
+    }
+
     return () => {
       window.removeEventListener("touchstart", handleUserActivity);
       window.removeEventListener("touchmove", handleUserActivity);
@@ -93,7 +100,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [step]);
+  }, [step, cancelTimer]);
 
   useEffect(() => {
     if (visibleModal && timeLeft > 0) {
@@ -281,7 +288,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
             <React.Fragment />
           )}
           {step === 5 ? (
-            <Payment setStep={setStep} cancelSale={cancelSale} />
+            <Payment setStep={setStep} cancelSale={cancelSale} setCancelTimer={setCancelTimer}/>
           ) : (
             <React.Fragment />
           )}

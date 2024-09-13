@@ -1,4 +1,10 @@
-import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
+import React, {
+  useState,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+} from "react";
 
 import totem_bad from "../../../../assets/totem/svg/totem_bad.svg";
 import totem_good from "../../../../assets/totem/svg/totem_good.svg";
@@ -34,10 +40,11 @@ interface IProps {
 const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
   const { sale } = useSale();
   const { store } = useStore();
-  const [loading, setLoading] = useState(false);
-  const [openNps, setOpenNps] = useState(true);
+  const [openNps, setOpenNps] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [npsScore, setNpsScore] = useState<number>(null);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState<string>("");
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const npsScores = [
     {
@@ -100,10 +107,15 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
 
   useEffect(() => {
     if (!openNps) {
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setStep(1);
       }, 10000);
     }
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [openNps]);
 
   const onFinish = async (payload: SaleDto) => {
@@ -269,9 +281,9 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
     <>
       <Container>
         <Header>
-          <span className="span-title">{`Obrigado${
-            userName ? `, ${userName}` : ""
-          }`}!</span>
+          <span className="span-title">
+            {`Obrigado${userName ? `, ${userName}` : ""}`}!
+          </span>
           <span>Pagamento Concluido!</span>
           <span>
             Curta o seu açai
@@ -284,7 +296,12 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
           <img src={finish_image} />
         </Body>
         <Footer>
-          <ButtonNewOrder onClick={() => setStep(1)}>
+          <ButtonNewOrder
+            onClick={() => {
+              clearTimeout(timeoutRef.current);
+              setStep(1);
+            }}
+          >
             Iniciar novo pedido
           </ButtonNewOrder>
         </Footer>
