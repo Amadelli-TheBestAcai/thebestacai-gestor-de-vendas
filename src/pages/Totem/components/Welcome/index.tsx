@@ -7,6 +7,7 @@ import totem_welcome_image2 from "../../../../assets/totem/img/totem_welcome_ima
 import totem_welcome_image3 from "../../../../assets/totem/img/totem_welcome_image3.png";
 import totem_welcome_image4 from "../../../../assets/totem/img/totem_welcome_image4.png";
 import totem_welcome_image5 from "../../../../assets/totem/img/totem_welcome_image5.png";
+import totem_welcome_image6 from "../../../../assets/totem/img/totem_welcome_image6.png";
 
 interface IProps {
   stepChange: (step: number) => void;
@@ -31,6 +32,9 @@ const Welcome: React.FC<IProps> = ({ stepChange, is_loading }) => {
     },
     {
       url: totem_welcome_image5,
+    },
+    {
+      url: totem_welcome_image6,
     },
   ];
 
