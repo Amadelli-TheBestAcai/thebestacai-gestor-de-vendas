@@ -16,7 +16,6 @@ function extractDataFromHTML(htmlContent) {
   const { document } = window;
 
   const data = {
-    logomarca: document.querySelector("#logomarca img").getAttribute("src"),
     dados_da_empresa: Array.from(
       document.querySelectorAll("#dados-da-empresa td")
     ).map((td: any) => td.textContent.trim()),
