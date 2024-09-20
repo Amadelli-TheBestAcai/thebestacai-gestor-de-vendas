@@ -17,7 +17,7 @@ function extractDataFromHTML(htmlContent) {
 
   let data;
 
-  const dados_da_empresa_temp = document.querySelector(".logomarca img")
+  const logomarca_temp = document.querySelector(".logomarca img")
     ? document.querySelector(".logomarca img").getAttribute("src")
     : "";
 
