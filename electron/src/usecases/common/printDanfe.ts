@@ -17,6 +17,10 @@ function extractDataFromHTML(htmlContent) {
 
   let data;
 
+  const dados_da_empresa_temp = document.querySelector(".logomarca img")
+    ? document.querySelector(".logomarca img").getAttribute("src")
+    : "";
+
   const dados_da_empresa_temp = document.querySelectorAll(
     ".dados-da-empresa td"
   )
@@ -86,6 +90,7 @@ function extractDataFromHTML(htmlContent) {
 
   data = {
     ...data,
+    logomarca: logomarca_temp,
     dados_da_empresa: dados_da_empresa_temp,
     documento_auxiliar: documento_auxiliar_temp,
     lista_produtos: lista_produtos_temp,
@@ -135,9 +140,9 @@ class PrintDanfe implements IUseCaseFactory {
     const printer = settings?.printer;
 
     const html = await ipcRenderer.invoke("get-danfe", payload);
-    
+
     const content = extractDataFromHTML(html);
-    
+
     const termalPrinter = Printer.getPrinter(printer);
 
     this.printerFormater.clear();
