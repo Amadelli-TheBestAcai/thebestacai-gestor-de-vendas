@@ -250,7 +250,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
               onClick={() => stepChange(4)}
               loading={fetchingBalanceWeight}
             >
-              Concluir Pedido
+              Avançar
             </ButtonFinalize>
           ) : (
             <></>

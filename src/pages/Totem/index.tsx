@@ -32,6 +32,8 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const [redirectHomeCount, setRedirectHomeCount] = useState(0);
   const [redirectHomeCountTimer, setredirectHomeCountTimer] = useState(null);
 
+  const [printTef, setPrintTef] = useState<boolean>(false);
+
   const [cancelTimer, setCancelTimer] = useState<boolean>(false);
   const [inactive, setInactive] = useState<boolean>(false);
   const [openInactive, setOpenInactive] = useState<boolean>(false);
@@ -288,12 +290,12 @@ const Totem: React.FC<IProps> = ({ history }) => {
             <React.Fragment />
           )}
           {step === 5 ? (
-            <Payment setStep={setStep} cancelSale={cancelSale} setCancelTimer={setCancelTimer}/>
+            <Payment setStep={setStep} cancelSale={cancelSale} setCancelTimer={setCancelTimer} setPrintTef={setPrintTef}/>
           ) : (
             <React.Fragment />
           )}
           {step === 6 ? (
-            <Evaluation setStep={setStep} inactive={inactive} />
+            <Evaluation setStep={setStep} inactive={inactive} printTef={printTef}/>
           ) : (
             <React.Fragment />
           )}

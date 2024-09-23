@@ -159,7 +159,7 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange 
           <div style={{ justifyContent: "space-between" }}>
             <Button onClick={() => setStep(3)}>Voltar</Button>
             <ButtonFinalize onClick={() => stepChange(5)}>
-              Concluir Pedido
+              Avançar
             </ButtonFinalize>
           </div>
           <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>

@@ -1,4 +1,10 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, {
+  useState,
+  Dispatch,
+  SetStateAction,
+  useRef,
+  useEffect,
+} from "react";
 
 import pix from "../../../../assets/totem/svg/pix.svg";
 import ticket from "../../../../assets/totem/svg/ticket.svg";
@@ -22,19 +28,46 @@ import {
   Header,
   Footer,
   ButtonCancel,
+  Modal,
+  ButtonModal,
+  ButtonPrintModal,
 } from "./styles";
 
 interface IProps {
   setCancelTimer: Dispatch<SetStateAction<boolean>>;
   setStep: Dispatch<SetStateAction<number>>;
+  setPrintTef: Dispatch<SetStateAction<boolean>>;
   cancelSale: () => void;
 }
-const Payment: React.FC<IProps> = ({ setCancelTimer, setStep, cancelSale }) => {
+const Payment: React.FC<IProps> = ({
+  setCancelTimer,
+  setStep,
+  cancelSale,
+  setPrintTef,
+}) => {
   const { sale, setSale } = useSale();
   const { settings } = useSettings();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [visiblePrintTefModal, setVisiblePrintTefModal] =
+    useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [stepPayment, setStepPayment] = useState<1 | 2 | 3>(1);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (visiblePrintTefModal) {
+      timeoutRef.current = setTimeout(() => {
+        setVisiblePrintTefModal(false);
+        setPrintTef(false);
+        setStep(6);
+      }, 10000);
+    }
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [visiblePrintTefModal]);
 
   const onFinish = async (method: number) => {
     let hasInternet = await window.Main.hasInternet();
@@ -83,7 +116,7 @@ const Payment: React.FC<IProps> = ({ setCancelTimer, setStep, cancelSale }) => {
     });
 
     setSale(updatedSale);
-    setStep(6);
+    setVisiblePrintTefModal(true);
     setLoading(false);
   };
 
@@ -169,6 +202,43 @@ const Payment: React.FC<IProps> = ({ setCancelTimer, setStep, cancelSale }) => {
         setVisible={setVisibleModal}
         cancelSale={cancelSale}
       />
+
+      <Modal
+        visible={visiblePrintTefModal}
+        confirmLoading={loading}
+        cancelButtonProps={{ hidden: true }}
+        closable={false}
+        centered
+        width={"62.5rem"}
+        style={{ height: "24rem" }}
+        footer={false}
+      >
+        <>
+          <span className="modal-title">
+            Deseja realizar a impressão do cupom TEF?
+          </span>
+          <div>
+            <ButtonModal
+              onClick={() => {
+                setVisiblePrintTefModal(false);
+                setPrintTef(false);
+                setStep(6);
+              }}
+            >
+              Pular
+            </ButtonModal>
+            <ButtonPrintModal
+              onClick={() => {
+                setVisiblePrintTefModal(false);
+                setPrintTef(true);
+                setStep(6);
+              }}
+            >
+              Imprimir Cupom
+            </ButtonPrintModal>
+          </div>
+        </>
+      </Modal>
     </>
   );
 };

@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-import { Button as ButtonAnt } from "antd";
+import { Button as ButtonAnt, Modal as ModalAnt } from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -101,5 +101,72 @@ export const ButtonCancel = styled(ButtonAnt)`
     background: var(--white);
     color: var(--black);
     border: 3px solid var(--black);
+  }
+`;
+
+export const Modal = styled(ModalAnt)`
+  .modal-title {
+    font-family: "VisbyCF";
+    font-size: 2.5rem;
+    font-weight: 600;
+  }
+
+  .ant-modal-content {
+    height: 100%;
+    width: 100%;
+    border-radius: 6.25rem;
+    padding: 5rem;
+    .ant-modal-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      width: 100%;
+      padding: 0;
+
+      span {
+        font-family: "VisbyCF" !important;
+      }
+    }
+  }
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+`;
+
+export const ButtonModal = styled(ButtonAnt)`
+  ${ButtonCSS}
+  margin: 1rem;
+  width: 27.8rem;
+  background: var(--white);
+  border: 3px solid var(--black);
+
+  :active,
+  :hover,
+  :focus {
+    background: var(--white);
+    color: var(--black);
+    border: 3px solid var(--black);
+  }
+`;
+
+export const ButtonPrintModal = styled(ButtonAnt)`
+  ${ButtonCSS}
+  margin: 1rem;
+  width: 27.8rem;
+  background: var(--orange-250);
+  color: var(--black);
+  border: none;
+  
+  :active,
+  :hover,
+  :focus {
+    background: var(--orange-250);
+    color: var(--black);
+    border: none;
   }
 `;

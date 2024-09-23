@@ -36,8 +36,9 @@ import {
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   inactive: boolean;
+  printTef: boolean;
 }
-const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
+const Evaluation: React.FC<IProps> = ({ setStep, inactive, printTef }) => {
   const { sale } = useSale();
   const { store } = useStore();
   const [openNps, setOpenNps] = useState<boolean>(true);
@@ -121,18 +122,19 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive }) => {
   const onFinish = async (payload: SaleDto) => {
     setLoading(true);
 
-    const {
-      has_internal_error: errorOnPrintCupomTef,
-      error_message: error_message_print_cupom_tef,
-    } = await window.Main.common.printCouponTef();
-
-    if (errorOnPrintCupomTef) {
-      notification.error({
-        message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
-        description: "Por favor informe o atendente",
-        duration: 5,
-        className: "notification-totem",
-      });
+    if (printTef) {
+      const {
+        has_internal_error: errorOnPrintCupomTef,
+        error_message: error_message_print_cupom_tef,
+      } = await window.Main.common.printCouponTef();
+      if (errorOnPrintCupomTef) {
+        notification.error({
+          message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+          description: "Por favor informe o atendente",
+          duration: 5,
+          className: "notification-totem",
+        });
+      }
     }
 
     const codes_nsu = payload.payments
