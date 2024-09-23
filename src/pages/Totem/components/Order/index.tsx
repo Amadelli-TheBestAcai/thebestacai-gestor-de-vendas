@@ -207,7 +207,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
               {storeProducts
                 .filter(
                   (storeProduct) => storeProduct.product.category_id === 2
-                )
+                ).sort((a, b) => a.product.name.localeCompare(b.product.name))
                 .map((storeProduct) => (
                   <ExtraProduct sm={6} key={storeProduct.id}>
                     <ExtraProductCard
