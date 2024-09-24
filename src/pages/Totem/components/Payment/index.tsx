@@ -96,7 +96,7 @@ const Payment: React.FC<IProps> = ({
       response: updatedSale,
       has_internal_error: errorOnAddPayment,
       error_message: error_message_payment,
-    } = await window.Main.sale.addPayment(sale.total_sold, method);
+    } = await window.Main.sale.addPayment(sale.total_sold, method, 0, true);
 
     if (errorOnAddPayment) {
       setLoading(false);

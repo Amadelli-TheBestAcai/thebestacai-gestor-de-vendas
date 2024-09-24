@@ -123,40 +123,40 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive, printTef }) => {
     setLoading(true);
 
     if (printTef) {
-      const {
-        has_internal_error: errorOnPrintCupomTef,
-        error_message: error_message_print_cupom_tef,
-      } = await window.Main.common.printCouponTef();
-      if (errorOnPrintCupomTef) {
-        notification.error({
-          message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
-          description: "Por favor informe o atendente",
-          duration: 5,
-          className: "notification-totem",
-        });
-      }
+      // const {
+      //   has_internal_error: errorOnPrintCupomTef,
+      //   error_message: error_message_print_cupom_tef,
+      // } = await window.Main.common.printCouponTef();
+      // if (errorOnPrintCupomTef) {
+      //   notification.error({
+      //     message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+      //     description: "Por favor informe o atendente",
+      //     duration: 5,
+      //     className: "notification-totem",
+      //   });
+      // }
     }
 
-    const codes_nsu = payload.payments
-      .map((payment) => payment.code_nsu)
-      .filter((code_nsu) => code_nsu !== undefined && code_nsu !== null);
+    // const codes_nsu = payload.payments
+    //   .map((payment) => payment.code_nsu)
+    //   .filter((code_nsu) => code_nsu !== undefined && code_nsu !== null);
 
-    const {
-      has_internal_error: errorOnFinalizaTransacao,
-      error_message: error_message_finalize_tef,
-    } = await window.Main.tefFactory.finalizeTransaction(codes_nsu);
+    // const {
+    //   has_internal_error: errorOnFinalizaTransacao,
+    //   error_message: error_message_finalize_tef,
+    // } = await window.Main.tefFactory.finalizeTransaction(codes_nsu);
 
-    if (errorOnFinalizaTransacao) {
-      notification.error({
-        message:
-          error_message_finalize_tef || "Erro ao finalizar transação TEF",
-        description: "Por favor informe o atendente",
-        duration: 5,
-        className: "notification-totem",
-      });
-      setLoading(false);
-      return;
-    }
+    // if (errorOnFinalizaTransacao) {
+    //   notification.error({
+    //     message:
+    //       error_message_finalize_tef || "Erro ao finalizar transação TEF",
+    //     description: "Por favor informe o atendente",
+    //     duration: 5,
+    //     className: "notification-totem",
+    //   });
+    //   setLoading(false);
+    //   return;
+    // }
 
     const nfcePayload = {
       cpf: payload.cpf_used_nfce ? payload.client_cpf : null,

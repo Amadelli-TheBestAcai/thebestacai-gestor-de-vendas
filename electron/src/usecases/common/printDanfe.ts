@@ -147,6 +147,9 @@ class PrintDanfe implements IUseCaseFactory {
 
     this.printerFormater.clear();
 
+    this.printerFormater.setTextSize(0, 0);
+    this.printerFormater.print("\x1B\x33\x10");
+
     this.printerFormater.alignLeft();
     content?.dados_da_empresa.forEach((info) =>
       this.printerFormater.println(info)
