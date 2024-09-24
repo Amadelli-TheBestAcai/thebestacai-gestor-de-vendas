@@ -109,6 +109,7 @@ export const Modal = styled(ModalAnt)`
     font-family: "VisbyCF";
     font-size: 2.5rem;
     font-weight: 600;
+    text-align: center;
   }
 
   .ant-modal-content {
@@ -161,7 +162,7 @@ export const ButtonPrintModal = styled(ButtonAnt)`
   background: var(--orange-250);
   color: var(--black);
   border: none;
-  
+
   :active,
   :hover,
   :focus {

@@ -36,14 +36,14 @@ import {
 interface IProps {
   setCancelTimer: Dispatch<SetStateAction<boolean>>;
   setStep: Dispatch<SetStateAction<number>>;
-  setPrintTef: Dispatch<SetStateAction<boolean>>;
+  setPrinter: Dispatch<SetStateAction<boolean>>;
   cancelSale: () => void;
 }
 const Payment: React.FC<IProps> = ({
   setCancelTimer,
   setStep,
   cancelSale,
-  setPrintTef,
+  setPrinter,
 }) => {
   const { sale, setSale } = useSale();
   const { settings } = useSettings();
@@ -58,7 +58,7 @@ const Payment: React.FC<IProps> = ({
     if (visiblePrintTefModal) {
       timeoutRef.current = setTimeout(() => {
         setVisiblePrintTefModal(false);
-        setPrintTef(false);
+        setPrinter(false);
         setStep(6);
       }, 10000);
     }
@@ -215,13 +215,13 @@ const Payment: React.FC<IProps> = ({
       >
         <>
           <span className="modal-title">
-            Deseja realizar a impressão do cupom TEF?
+            Deseja realizar a impressão do cupom TEF e NFCe?
           </span>
           <div>
             <ButtonModal
               onClick={() => {
                 setVisiblePrintTefModal(false);
-                setPrintTef(false);
+                setPrinter(false);
                 setStep(6);
               }}
             >
@@ -230,11 +230,11 @@ const Payment: React.FC<IProps> = ({
             <ButtonPrintModal
               onClick={() => {
                 setVisiblePrintTefModal(false);
-                setPrintTef(true);
+                setPrinter(true);
                 setStep(6);
               }}
             >
-              Imprimir Cupom
+              Desejo Imprimir
             </ButtonPrintModal>
           </div>
         </>

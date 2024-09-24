@@ -36,9 +36,9 @@ import {
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   inactive: boolean;
-  printTef: boolean;
+  printer: boolean;
 }
-const Evaluation: React.FC<IProps> = ({ setStep, inactive, printTef }) => {
+const Evaluation: React.FC<IProps> = ({ setStep, inactive, printer }) => {
   const { sale } = useSale();
   const { store } = useStore();
   const [openNps, setOpenNps] = useState<boolean>(true);
@@ -122,7 +122,7 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive, printTef }) => {
   const onFinish = async (payload: SaleDto) => {
     setLoading(true);
 
-    if (printTef) {
+    if (printer) {
       const {
         has_internal_error: errorOnPrintCupomTef,
         error_message: error_message_print_cupom_tef,
@@ -211,15 +211,17 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive, printTef }) => {
       payload.nfce_focus_id = nfceResponse.id;
       payload.nfce_url = `https://api.focusnfe.com.br${nfceResponse.caminho_xml_nota_fiscal}`;
 
-      const { response: _printDanfe, has_internal_error: errorOnPrintNfce } =
-        await window.Main.common.printDanfe(nfceResponse);
-      if (errorOnPrintNfce) {
-        notification.error({
-          message: error_message_emit_nfe || "Erro ao imprimir NFCe",
-          description: "Por favor informe o atendente",
-          duration: 5,
-          className: "notification-totem",
-        });
+      if (printer) {
+        const { response: _printDanfe, has_internal_error: errorOnPrintNfce } =
+          await window.Main.common.printDanfe(nfceResponse);
+        if (errorOnPrintNfce) {
+          notification.error({
+            message: error_message_emit_nfe || "Erro ao imprimir NFCe",
+            description: "Por favor informe o atendente",
+            duration: 5,
+            className: "notification-totem",
+          });
+        }
       }
     }
 
