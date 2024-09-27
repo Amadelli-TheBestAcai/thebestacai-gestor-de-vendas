@@ -35,14 +35,17 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
-  inactive: boolean;
   printer: boolean;
 }
-const Evaluation: React.FC<IProps> = ({ setStep, inactive, printer }) => {
+
+const Evaluation: React.FC<IProps> = ({ setStep, printer }) => {
   const { sale } = useSale();
   const { store } = useStore();
   const [openNps, setOpenNps] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+  const [verifyFinishSale, setVerifyFinishSale] = useState<boolean>(true);
+  const [finalizaTef, setFinalizaTef] = useState<boolean>(false);
+  const [emitNfce, setEmitNfce] = useState<boolean>(false);
   const [npsScore, setNpsScore] = useState<number>(null);
   const [userName, setUserName] = useState<string>("");
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,126 +104,151 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive, printer }) => {
   ];
 
   useEffect(() => {
-    if (inactive) {
-      onFinish(sale);
-    }
-  }, [inactive]);
-
-  useEffect(() => {
     if (!openNps) {
       timeoutRef.current = setTimeout(() => {
         setStep(1);
       }, 10000);
     }
+    if (openNps && verifyFinishSale) {
+      timeoutRef.current = setTimeout(() => {
+        setNpsScore(0);
+        setVerifyFinishSale(false);
+        onFinish(sale);
+      }, 30000);
+    }
+
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [openNps]);
+  }, [openNps, verifyFinishSale]);
 
   const onFinish = async (payload: SaleDto) => {
     setLoading(true);
-
-    if (printer) {
-      const {
-        has_internal_error: errorOnPrintCupomTef,
-        error_message: error_message_print_cupom_tef,
-      } = await window.Main.common.printCouponTef();
-      if (errorOnPrintCupomTef) {
-        notification.error({
-          message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
-          description: "Por favor informe o atendente",
-          duration: 5,
-          className: "notification-totem",
-        });
-      }
-    }
-
-    const codes_nsu = payload.payments
-      .map((payment) => payment.code_nsu)
-      .filter((code_nsu) => code_nsu !== undefined && code_nsu !== null);
-
-    const {
-      has_internal_error: errorOnFinalizaTransacao,
-      error_message: error_message_finalize_tef,
-    } = await window.Main.tefFactory.finalizeTransaction(codes_nsu);
-
-    if (errorOnFinalizaTransacao) {
-      notification.error({
-        message:
-          error_message_finalize_tef || "Erro ao finalizar transação TEF",
-        description: "Por favor informe o atendente",
-        duration: 5,
-        className: "notification-totem",
-      });
+    let hasInternet = await window.Main.hasInternet();
+    if (!hasInternet) {
+      setVerifyFinishSale(true);
       setLoading(false);
-      return;
+      return notification.info({
+        message: "Problema de conexão",
+        description:
+          "Espere um momento e tente novamente, caso o problema persista informe o atendente.",
+        duration: 5,
+        className: "notification-totem",
+      });
     }
 
-    const nfcePayload = {
-      cpf: payload.cpf_used_nfce ? payload.client_cpf : null,
-      store_id: store.company_id,
-      total: payload.total_sold,
-      discount: 0,
-      change_amount: 0,
-      items: payload.items.map((product) => ({
-        product_store_id: product.store_product_id,
-        price_sell: product.total,
-        quantity: product.quantity,
-      })),
-      payments: payload.payments.map((payment) => ({
-        amount: +payment.amount.toFixed(2),
-        type: +payment.type,
-        flag_card: payment.flag_card ? +payment.flag_card : payment.flag_card,
-        code_nsu: payment.code_nsu ? payment.code_nsu : null,
-        cnpj_credenciadora: payment.code_nsu
-          ? payment.cnpj_credenciadora
-          : null,
-        numero_autorizacao: payment.code_nsu
-          ? payment.numero_autorizacao
-          : null,
-        cnpj_beneficiario: payment.code_nsu ? payment.cnpj_beneficiario : null,
-        id_terminal_pagamento: payment.code_nsu
-          ? payment.id_terminal_pagamento
-          : null,
-      })),
-      ref: payload.ref,
-    };
-
-    const {
-      response: nfceResponse,
-      has_internal_error: errorOnEmitNfce,
-      error_message: error_message_emit_nfe,
-    } = await window.Main.sale.emitNfce(nfcePayload, payload.id, true);
-    if (errorOnEmitNfce) {
-      notification.error({
-        message: error_message_emit_nfe || "Erro ao emitir NFCe",
-        description: "Por favor informe o atendente",
-        duration: 5,
-        className: "notification-totem",
-      });
-    } else {
-      notification.success({
-        message: nfceResponse.mensagem_sefaz,
-        description: "Nota emitida com sucesso",
-        duration: 5,
-        className: "notification-totem",
-      });
-
-      payload.nfce_focus_id = nfceResponse.id;
-      payload.nfce_url = `https://api.focusnfe.com.br${nfceResponse.caminho_xml_nota_fiscal}`;
-
+    if (!finalizaTef) {
       if (printer) {
-        const { response: _printDanfe, has_internal_error: errorOnPrintNfce } =
-          await window.Main.common.printDanfe(nfceResponse);
-        if (errorOnPrintNfce) {
+        const {
+          has_internal_error: errorOnPrintCupomTef,
+          error_message: error_message_print_cupom_tef,
+        } = await window.Main.common.printCouponTef();
+        if (errorOnPrintCupomTef) {
           notification.error({
-            message: error_message_emit_nfe || "Erro ao imprimir NFCe",
+            message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
             description: "Por favor informe o atendente",
             duration: 5,
             className: "notification-totem",
           });
+        }
+      }
+
+      const codes_nsu = payload.payments
+        .map((payment) => payment.code_nsu)
+        .filter((code_nsu) => code_nsu !== undefined && code_nsu !== null);
+
+      const {
+        has_internal_error: errorOnFinalizaTransacao,
+        error_message: error_message_finalize_tef,
+      } = await window.Main.tefFactory.finalizeTransaction(codes_nsu);
+
+      if (errorOnFinalizaTransacao) {
+        setVerifyFinishSale(true);
+        setLoading(false);
+        return notification.error({
+          message:
+            error_message_finalize_tef || "Erro ao finalizar transação TEF",
+          description: "Por favor informe o atendente",
+          duration: 5,
+          className: "notification-totem",
+        });
+      } else {
+        setFinalizaTef(true);
+      }
+    }
+
+    if (!emitNfce) {
+      const nfcePayload = {
+        cpf: payload.cpf_used_nfce ? payload.client_cpf : null,
+        store_id: store.company_id,
+        total: payload.total_sold,
+        discount: 0,
+        change_amount: 0,
+        items: payload.items.map((product) => ({
+          product_store_id: product.store_product_id,
+          price_sell: product.total,
+          quantity: product.quantity,
+        })),
+        payments: payload.payments.map((payment) => ({
+          amount: +payment.amount.toFixed(2),
+          type: +payment.type,
+          flag_card: payment.flag_card ? +payment.flag_card : payment.flag_card,
+          code_nsu: payment.code_nsu ? payment.code_nsu : null,
+          cnpj_credenciadora: payment.code_nsu
+            ? payment.cnpj_credenciadora
+            : null,
+          numero_autorizacao: payment.code_nsu
+            ? payment.numero_autorizacao
+            : null,
+          cnpj_beneficiario: payment.code_nsu
+            ? payment.cnpj_beneficiario
+            : null,
+          id_terminal_pagamento: payment.code_nsu
+            ? payment.id_terminal_pagamento
+            : null,
+        })),
+        ref: payload.ref,
+      };
+
+      const {
+        response: nfceResponse,
+        has_internal_error: errorOnEmitNfce,
+        error_message: error_message_emit_nfe,
+      } = await window.Main.sale.emitNfce(nfcePayload, payload.id, true);
+      if (errorOnEmitNfce) {
+        notification.error({
+          message: error_message_emit_nfe || "Erro ao emitir NFCe",
+          description: "Por favor informe o atendente",
+          duration: 5,
+          className: "notification-totem",
+        });
+      } else {
+        setEmitNfce(true);
+        notification.success({
+          message: nfceResponse.mensagem_sefaz,
+          description: "Nota emitida com sucesso",
+          duration: 5,
+          className: "notification-totem",
+        });
+
+        payload.nfce_focus_id = nfceResponse.id;
+        payload.nfce_url = `https://api.focusnfe.com.br${nfceResponse.caminho_xml_nota_fiscal}`;
+
+        if (printer) {
+          const {
+            response: _printDanfe,
+            has_internal_error: errorOnPrintNfce,
+          } = await window.Main.common.printDanfe(nfceResponse);
+          if (errorOnPrintNfce) {
+            notification.error({
+              message: error_message_emit_nfe || "Erro ao imprimir NFCe",
+              description: "Por favor informe o atendente",
+              duration: 5,
+              className: "notification-totem",
+            });
+          }
         }
       }
     }
@@ -234,7 +262,8 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive, printer }) => {
     });
 
     if (errorOnFinishSAle) {
-      error_message_finalize_sale
+      setVerifyFinishSale(true);
+      return error_message_finalize_sale
         ? notification.warning({
             message: error_message_finalize_sale,
             description: "Por favor informe o atendente",
@@ -250,21 +279,29 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive, printer }) => {
     }
     setLoading(false);
     setOpenNps(false);
+    setVerifyFinishSale(false);
+    setFinalizaTef(false);
   };
 
   const onHandleNps = async (score: number) => {
     if (loading) return;
+    clearTimeout(timeoutRef.current);
+    setVerifyFinishSale(false);
     setNpsScore(score);
+    let _sale = sale;
 
-    const { response: updatedSale } = await window.Main.sale.updateSale(
-      sale.id,
-      {
-        ...sale,
-        nps_score: score,
-      }
-    );
+    if (score) {
+      const { response: updatedSale } = await window.Main.sale.updateSale(
+        sale.id,
+        {
+          ...sale,
+          nps_score: score,
+        }
+      );
+      _sale = updatedSale;
+    }
 
-    onFinish(updatedSale);
+    onFinish(_sale);
   };
 
   useEffect(() => {
@@ -335,7 +372,7 @@ const Evaluation: React.FC<IProps> = ({ setStep, inactive, printer }) => {
           <div>
             <Button
               onClick={() => {
-                onFinish(sale), setNpsScore(0);
+                onHandleNps(0);
               }}
               loading={loading}
             >

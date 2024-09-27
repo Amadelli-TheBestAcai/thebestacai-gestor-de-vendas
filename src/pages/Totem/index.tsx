@@ -55,7 +55,9 @@ const Totem: React.FC<IProps> = ({ history }) => {
       timeoutRef.current = setTimeout(() => {
         setOpenInactive(true);
         setTimeLeft(time / 1000);
-        timeoutRef.current = setTimeout(() => setInactive(true), time);
+        timeoutRef.current = setTimeout(() => {
+          setInactive(true);
+        }, time);
       }, time);
     }
   };
@@ -84,7 +86,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
 
     resetTimer();
 
-    if(step === 1){
+    if (step === 1 || step === 6) {
       setCancelTimer(false);
     }
 
@@ -223,7 +225,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
 
   const stepChange = async (step: number) => {
     let hasInternet = await window.Main.hasInternet();
-    if (hasInternet) {
+    if (hasInternet || step === 2) {
       setStep(step);
     } else {
       notification.info({
@@ -290,12 +292,20 @@ const Totem: React.FC<IProps> = ({ history }) => {
             <React.Fragment />
           )}
           {step === 5 ? (
-            <Payment setStep={setStep} cancelSale={cancelSale} setCancelTimer={setCancelTimer} setPrinter={setPrinter}/>
+            <Payment
+              setStep={setStep}
+              cancelSale={cancelSale}
+              setCancelTimer={setCancelTimer}
+              setPrinter={setPrinter}
+            />
           ) : (
             <React.Fragment />
           )}
           {step === 6 ? (
-            <Evaluation setStep={setStep} inactive={inactive} printer={printer}/>
+            <Evaluation
+              setStep={setStep}
+              printer={printer}
+            />
           ) : (
             <React.Fragment />
           )}
