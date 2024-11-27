@@ -118,7 +118,8 @@ const StockList: React.FC<IProps> = ({
   return (
     <Container>
       <Header>
-        <Col sm={6}>Imagem</Col>
+        <Col sm={4}>Imagem</Col>
+        <Col sm={2}>Categoria</Col>
         <Col sm={6}>Produto</Col>
         <Col sm={4}>Quantidade</Col>
         <Col sm={4}>Status</Col>
@@ -131,9 +132,10 @@ const StockList: React.FC<IProps> = ({
         <Content>
           {(filteredProducts || products)?.map((storeProduct) => (
             <Tupla key={storeProduct.id}>
-              <Col sm={6}>
+              <Col sm={4}>
                 <img src={notImage} alt="Imagem não encontrada" />
               </Col>
+              <Col sm={2}>{storeProduct?.product?.category?.name}</Col>
               <Col sm={6}>{storeProduct.product?.name}</Col>
               <Col sm={4}>{storeProduct.quantity}</Col>
               <Col sm={4}>
