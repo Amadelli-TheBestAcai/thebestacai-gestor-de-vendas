@@ -43,7 +43,8 @@ import {
   PdfIcon,
   CancelIcon,
   Form,
-  PrinterNFCeIcon
+  PrinterNFCeIcon,
+  IconOfferDiscount,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -53,7 +54,7 @@ import { v4 } from "uuid";
 type IProps = RouteComponentProps;
 
 const Sale: React.FC<IProps> = () => {
-  const [formCancelJustify] = Form.useForm()
+  const [formCancelJustify] = Form.useForm();
   const { user } = useUser();
   const [shouldSearch, setShouldSearch] = useState(true);
   const [nfceCancelJustify, setNfceCancelJustify] = useState("");
@@ -86,9 +87,9 @@ const Sale: React.FC<IProps> = () => {
         total_sold: _sale.items.length
           ? _sale.items.reduce((total, _item) => total + _item.total, 0)
           : _sale.payments.reduce(
-            (total, _payment) => total + _payment.amount,
-            0
-          ),
+              (total, _payment) => total + _payment.amount,
+              0
+            ),
       }));
 
       if (_sales.length) {
@@ -110,9 +111,17 @@ const Sale: React.FC<IProps> = () => {
         <Form.Item
           label=""
           name="textArea"
-          rules={[{ required: true, message: "Campo obrigatório" },
-          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
-          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
+          rules={[
+            { required: true, message: "Campo obrigatório" },
+            {
+              min: 15,
+              message: "A justificativa deve ter no minimo 15 caracteres",
+            },
+            {
+              max: 255,
+              message: "A justificativa deve ter no máximo 255 caracteres",
+            },
+          ]}
         >
           <Textarea
             id="nfceDeleteJustifyInput"
@@ -120,7 +129,9 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+            onChange={({ target: { value } }) =>
+              setNfceCancelJustify(value || "")
+            }
           />
         </Form.Item>
       </Form>
@@ -128,53 +139,54 @@ const Sale: React.FC<IProps> = () => {
 
     const creationTime = moment(hasNfce?.created_at);
     const currentTime = moment();
-    const timeDifference = currentTime.diff(creationTime, 'minutes');
+    const timeDifference = currentTime.diff(creationTime, "minutes");
 
     Modal.confirm({
-      title: hasNfce ?
-        (hasNfce.status_sefaz !== '100') ? 'Ocorreu um erro ao tentar emitir a nota fiscal. Deletar a venda mesmo assim?' :
-          (timeDifference > 30) ?
-            `A nota fiscal foi emitida há mais de 30 minutos, 
+      title: hasNfce
+        ? hasNfce.status_sefaz !== "100"
+          ? "Ocorreu um erro ao tentar emitir a nota fiscal. Deletar a venda mesmo assim?"
+          : timeDifference > 30
+          ? `A nota fiscal foi emitida há mais de 30 minutos, 
           o que impossibilita o cancelamento da NFCe. 
           No entanto, é possível excluir a venda associada à nota. 
           Você tem certeza de que deseja prosseguir com a remoção?`
-            :
-            `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
+          : `Confirmar a exclusão da venda implica no cancelamento permanente da NFCe associada. 
           Deseja prosseguir com esta ação?`
-        :
-        'Não foi emitida a nota fiscal da venda. Gostaria de removê-la mesmo assim?',
+        : "Não foi emitida a nota fiscal da venda. Gostaria de removê-la mesmo assim?",
       content: renderTextArea,
       okText: "Sim",
       okType: "default",
       cancelText: "Não",
       centered: true,
       async onOk() {
-        await formCancelJustify.validateFields()
+        await formCancelJustify.validateFields();
         try {
           setIsLoading(true);
           if (hasNfce) {
             //@ts-ignore
-            const justify = document.getElementById('nfceDeleteJustifyInput')?.value;
+            const justify = document.getElementById(
+              "nfceDeleteJustifyInput"
+              //@ts-ignore
+            )?.value;
             if (!justify || justify.length < 15 || justify.length > 255) {
-              throw new Error("Justificativa deve ter entre 15 e 255 caracteres");
+              throw new Error(
+                "Justificativa deve ter entre 15 e 255 caracteres"
+              );
             }
             params = {
               ...params,
-              justify: justify
-            }
+              justify: justify,
+            };
           }
-          const {
-            has_internal_error: errorOnDeleteSale,
-            error_message,
-          }
-            = await window.Main.sale.deleteSaleFromApi(params);
+          const { has_internal_error: errorOnDeleteSale, error_message } =
+            await window.Main.sale.deleteSaleFromApi(params);
           if (errorOnDeleteSale) {
             return notification.error({
               message: error_message || "Oops! Falha ao remover venda.",
               duration: 5,
             });
           }
-          formCancelJustify.resetFields()
+          formCancelJustify.resetFields();
           return notification.success({
             message: "Venda excluída com sucesso! NFC-e cancelada com sucesso!",
             duration: 5,
@@ -213,12 +225,18 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
+    const voucherDiscount =
+      JSON.parse(selectedSale.cupom)?.voucher?.products?.reduce(
+        (sum, product) => sum + +product?.price_sell,
+        0
+      ) || 0;
+
     const nfcePayload = {
       cpf: "",
       email: "",
       store_id: store.company_id,
       total: selectedSale.total_sold,
-      discount: +selectedSale.discount,
+      discount: +selectedSale.discount + voucherDiscount,
       change_amount: +selectedSale.change_amount,
       items: selectedSale.items.map((product) => ({
         product_store_id: product.product_store_id,
@@ -277,9 +295,17 @@ const Sale: React.FC<IProps> = () => {
         <Form.Item
           label=""
           name="textArea"
-          rules={[{ required: true, message: "Campo obrigatório" },
-          { min: 15, message: "A justificativa deve ter no minimo 15 caracteres" },
-          { max: 255, message: "A justificativa deve ter no máximo 255 caracteres" }]}
+          rules={[
+            { required: true, message: "Campo obrigatório" },
+            {
+              min: 15,
+              message: "A justificativa deve ter no minimo 15 caracteres",
+            },
+            {
+              max: 255,
+              message: "A justificativa deve ter no máximo 255 caracteres",
+            },
+          ]}
         >
           <Textarea
             id="nfceJustifyInput"
@@ -287,7 +313,9 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) => setNfceCancelJustify(value || "")}
+            onChange={({ target: { value } }) =>
+              setNfceCancelJustify(value || "")
+            }
           />
         </Form.Item>
       </Form>
@@ -310,7 +338,7 @@ const Sale: React.FC<IProps> = () => {
         },
       },
       async onOk() {
-        await formCancelJustify.validateFields()
+        await formCancelJustify.validateFields();
         //@ts-ignore
         const justify = document.getElementById("nfceJustifyInput")?.value;
         const { error_message, has_internal_error: errorOnCancelNfce } =
@@ -322,7 +350,7 @@ const Sale: React.FC<IProps> = () => {
           });
           return;
         }
-        formCancelJustify.resetFields()
+        formCancelJustify.resetFields();
         notification.success({
           message: "Nota fiscal cancelada com sucesso",
           duration: 5,
@@ -490,6 +518,18 @@ const Sale: React.FC<IProps> = () => {
     };
   };
 
+  const voucherData = selectedSale?.cupom
+    ? JSON.parse(selectedSale.cupom)
+    : null;
+
+  const voucherDiscount =
+    voucherData?.voucher?.products?.reduce(
+      (sum, product) => sum + +product?.price_sell,
+      0
+    ) || 0;
+
+  const voucherName = voucherData?.voucher?.name || "";
+
   return (
     <Container>
       <PageContent>
@@ -510,7 +550,18 @@ const Sale: React.FC<IProps> = () => {
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
-                    <Col sm={4}>ID</Col>
+                    <Col
+                      sm={
+                        +selectedSale?.discount > 0 || voucherDiscount > 0
+                          ? 2
+                          : 4
+                      }
+                    >
+                      ID
+                    </Col>
+                    {+selectedSale?.discount > 0 || voucherDiscount > 0 ? (
+                      <Col sm={2}>Desconto</Col>
+                    ) : null}
                     <Col sm={4}>VALOR</Col>
                     <Col sm={2}>QUANTIDADE</Col>
                     <Col sm={4}>HORA</Col>
@@ -523,7 +574,53 @@ const Sale: React.FC<IProps> = () => {
                       <Panel
                         header={
                           <>
-                            <Col sm={4}>{selectedSale.id}</Col>
+                            <Col
+                              sm={
+                                +selectedSale?.discount > 0 ||
+                                voucherDiscount > 0
+                                  ? 2
+                                  : 4
+                              }
+                            >
+                              {selectedSale.id}
+                            </Col>
+                            {+selectedSale?.discount > 0 ||
+                            voucherDiscount > 0 ? (
+                              <Col sm={2}>
+                                <Tooltip
+                                  title={`Desconto manual R$${
+                                    selectedSale.discount
+                                  } ${
+                                    voucherDiscount
+                                      ? `, Desconto promocional: R$ ${voucherDiscount.toFixed(
+                                          2
+                                        )} - ${voucherName}`
+                                      : ""
+                                  }`}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      gap: "2px",
+                                    }}
+                                  >
+                                    {voucherDiscount ? (
+                                      <IconOfferDiscount></IconOfferDiscount>
+                                    ) : (
+                                      <></>
+                                    )}
+                                    R$
+                                    {voucherDiscount
+                                      ? +selectedSale.discount +
+                                        +voucherDiscount
+                                      : selectedSale.discount}
+                                  </div>
+                                </Tooltip>
+                              </Col>
+                            ) : null}
+
                             <Col sm={4}>
                               {" "}
                               R$ {currencyFormater(selectedSale?.total_sold)}
@@ -577,7 +674,10 @@ const Sale: React.FC<IProps> = () => {
                               </Tooltip>
                               {hasPermission("sales.remove_sale") &&
                                 !selectedSale.deleted_at && (
-                                  <Tooltip title="Remover venda" placement="bottom">
+                                  <Tooltip
+                                    title="Remover venda"
+                                    placement="bottom"
+                                  >
                                     <RemoveIcon
                                       style={{ width: "8%" }}
                                       onClick={() => {
@@ -591,7 +691,6 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-
                             </Col>
                           </>
                         }
@@ -627,7 +726,7 @@ const Sale: React.FC<IProps> = () => {
                                     R${" "}
                                     {currencyFormater(
                                       +_item.quantity *
-                                      +_item.storeProduct.price_unit
+                                        +_item.storeProduct.price_unit
                                     )}
                                   </Col>
                                 </Row>

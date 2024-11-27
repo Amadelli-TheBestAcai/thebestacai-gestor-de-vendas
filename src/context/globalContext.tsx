@@ -259,9 +259,15 @@ export function GlobalProvider({ children }) {
         (total, item) => +item.total + total,
         0
       );
+
+      const voucherDiscount =
+        sale.customerVoucher?.voucher?.products?.reduce(
+          (sum, product) => sum + +product?.price_sell,
+          0
+        ) || 0;
       const nfePayload = {
         cpf: currentSale?.cpf_used_nfce ? currentSale?.client_cpf : null,
-        discount: +currentSale.discount,
+        discount: +currentSale.discount + +voucherDiscount,
         change_amount: +currentSale.change_amount,
         total: total,
         store_id: +store.company_id,

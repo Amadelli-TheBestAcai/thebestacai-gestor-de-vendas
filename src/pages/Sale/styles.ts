@@ -7,7 +7,8 @@ import {
   FileInvoice,
   FileEarmarkPdf,
   Cancel,
-  PrinterNFCe
+  PrinterNFCe,
+  Offer,
 } from "../../styles/Icons";
 
 import {
@@ -138,7 +139,7 @@ export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
-  .buttonText{ 
+  .buttonText {
     cursor: pointer;
   }
 `;
@@ -201,6 +202,11 @@ export const Panel = styled(CollapseAnt.Panel)`
   @media (max-width: 1366px) {
     font-size: 0.8rem;
   }
+`;
+
+export const IconOfferDiscount = styled(Offer)`
+  width: 1rem;
+  color: var(--orange-250);
 `;
 
 export const SalesHistoryContainer = styled.div`
@@ -366,4 +372,4 @@ export const Form = styled(FormAnt)`
   .ant-form-item-control-input {
     padding: 0;
   }
-`
+`;
