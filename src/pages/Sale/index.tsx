@@ -44,6 +44,7 @@ import {
   CancelIcon,
   Form,
   PrinterNFCeIcon,
+  IconOfferDiscount,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -517,6 +518,18 @@ const Sale: React.FC<IProps> = () => {
     };
   };
 
+  const voucherData = selectedSale?.cupom
+    ? JSON.parse(selectedSale.cupom)
+    : null;
+
+  const voucherDiscount =
+    voucherData?.voucher?.products?.reduce(
+      (sum, product) => sum + +product?.price_sell,
+      0
+    ) || 0;
+
+  const voucherName = voucherData?.voucher?.name || "";
+
   return (
     <Container>
       <PageContent>
@@ -537,7 +550,18 @@ const Sale: React.FC<IProps> = () => {
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
-                    <Col sm={4}>ID</Col>
+                    <Col
+                      sm={
+                        +selectedSale?.discount > 0 || voucherDiscount > 0
+                          ? 2
+                          : 4
+                      }
+                    >
+                      ID
+                    </Col>
+                    {+selectedSale?.discount > 0 || voucherDiscount > 0 ? (
+                      <Col sm={2}>Desconto</Col>
+                    ) : null}
                     <Col sm={4}>VALOR</Col>
                     <Col sm={2}>QUANTIDADE</Col>
                     <Col sm={4}>HORA</Col>
@@ -550,7 +574,53 @@ const Sale: React.FC<IProps> = () => {
                       <Panel
                         header={
                           <>
-                            <Col sm={4}>{selectedSale.id}</Col>
+                            <Col
+                              sm={
+                                +selectedSale?.discount > 0 ||
+                                voucherDiscount > 0
+                                  ? 2
+                                  : 4
+                              }
+                            >
+                              {selectedSale.id}
+                            </Col>
+                            {+selectedSale?.discount > 0 ||
+                            voucherDiscount > 0 ? (
+                              <Col sm={2}>
+                                <Tooltip
+                                  title={`Desconto manual R$${
+                                    selectedSale.discount
+                                  } ${
+                                    voucherDiscount
+                                      ? `, Desconto promocional: R$ ${voucherDiscount.toFixed(
+                                          2
+                                        )} - ${voucherName}`
+                                      : ""
+                                  }`}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      gap: "2px",
+                                    }}
+                                  >
+                                    {voucherDiscount ? (
+                                      <IconOfferDiscount></IconOfferDiscount>
+                                    ) : (
+                                      <></>
+                                    )}
+                                    R$
+                                    {voucherDiscount
+                                      ? +selectedSale.discount +
+                                        +voucherDiscount
+                                      : selectedSale.discount}
+                                  </div>
+                                </Tooltip>
+                              </Col>
+                            ) : null}
+
                             <Col sm={4}>
                               {" "}
                               R$ {currencyFormater(selectedSale?.total_sold)}
