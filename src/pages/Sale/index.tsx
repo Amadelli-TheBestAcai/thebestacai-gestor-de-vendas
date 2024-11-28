@@ -253,7 +253,9 @@ const Sale: React.FC<IProps> = () => {
         amount: payment.amount,
         type: payment.type,
         flag_card:
-          payment.type === 1 || payment.type === 2 || payment.type === 3 ? payment.flag_card : null,
+          payment.type === 1 || payment.type === 2 || payment.type === 3
+            ? payment.flag_card
+            : null,
         code_nsu: payment.code_nsu ? payment.code_nsu : null,
         cnpj_credenciadora: payment.code_nsu
           ? payment.cnpj_credenciadora
@@ -261,12 +263,10 @@ const Sale: React.FC<IProps> = () => {
         numero_autorizacao: payment.code_nsu
           ? payment.numero_autorizacao
           : null,
-        cnpj_beneficiario: payment.code_nsu
-          ? payment.cnpj_beneficiario
-          : null,
+        cnpj_beneficiario: payment.code_nsu ? payment.cnpj_beneficiario : null,
         id_terminal_pagamento: payment.code_nsu
           ? payment.id_terminal_pagamento
-          : null
+          : null,
       })),
       ref: selectedSale.ref,
     };
@@ -603,7 +603,7 @@ const Sale: React.FC<IProps> = () => {
         duration: 5,
       });
     }
-    
+
     const {
       has_internal_error: errorOnPrintCupomTef,
       error_message: error_message_print_cupom_tef,
@@ -733,7 +733,7 @@ const Sale: React.FC<IProps> = () => {
                       ID
                     </Col>
                     {+selectedSale?.discount > 0 || voucherDiscount > 0 ? (
-                      <Col sm={2}>Desconto</Col>
+                      <Col sm={2}>DESCONTO</Col>
                     ) : null}
                     <Col sm={4}>VALOR</Col>
                     <Col sm={2}>QUANTIDADE</Col>
@@ -761,15 +761,24 @@ const Sale: React.FC<IProps> = () => {
                             voucherDiscount > 0 ? (
                               <Col sm={2}>
                                 <Tooltip
-                                  title={`Desconto manual R$${
-                                    selectedSale.discount
-                                  } ${
-                                    voucherDiscount
-                                      ? `, Desconto promocional: R$ ${voucherDiscount.toFixed(
-                                          2
+                                  title={
+                                    +selectedSale.discount > 0 &&
+                                    voucherDiscount > 0
+                                      ? `Desconto manual: R$ ${currencyFormater(
+                                          +selectedSale.discount
+                                        )}, Desconto promocional: R$ ${currencyFormater(
+                                          voucherDiscount
+                                        )} - ${voucherName}`
+                                      : +selectedSale.discount > 0
+                                      ? `Desconto manual: R$ ${currencyFormater(
+                                          +selectedSale.discount
+                                        )}`
+                                      : voucherDiscount > 0
+                                      ? `Desconto promocional: R$ ${currencyFormater(
+                                          voucherDiscount
                                         )} - ${voucherName}`
                                       : ""
-                                  }`}
+                                  }
                                 >
                                   <div
                                     style={{
@@ -784,11 +793,15 @@ const Sale: React.FC<IProps> = () => {
                                     ) : (
                                       <></>
                                     )}
-                                    R$
+                                    R${" "}
                                     {voucherDiscount
-                                      ? +selectedSale.discount +
-                                        +voucherDiscount
-                                      : selectedSale.discount}
+                                      ? currencyFormater(
+                                          +selectedSale.discount +
+                                            +voucherDiscount
+                                        )
+                                      : currencyFormater(
+                                          +selectedSale.discount
+                                        )}
                                   </div>
                                 </Tooltip>
                               </Col>
@@ -916,7 +929,9 @@ const Sale: React.FC<IProps> = () => {
                                       )?.value
                                     : ""}
                                 </Col>
-                                <Col sm={3}>R$ {_payment?.amount}</Col>
+                                <Col sm={3}>
+                                  R$ {currencyFormater(_payment?.amount)}
+                                </Col>
                                 <Col sm={3}>
                                   {_payment?.tef_status_payment ===
                                   TefPaymentType.APROVADO ? (
