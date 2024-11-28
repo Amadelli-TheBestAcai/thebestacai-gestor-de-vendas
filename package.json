@@ -47,10 +47,8 @@
     "zip-folder": "^1.0.0"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
-
-"build": "react-scripts --openssl-legacy-provider build",
-
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "postinstall": "electron-builder install-app-deps",
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
