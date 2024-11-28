@@ -119,6 +119,7 @@ export interface SaleFromApi {
     created_at?: Date;
     updated_at?: Date;
   };
+  cupom?: string;
   ref?: string;
   created_at: string;
   deleted_at?: string;

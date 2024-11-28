@@ -9,7 +9,12 @@ import moment from "moment";
 import midasApi from "../../providers/midasApi";
 
 import { buildNewSale, onlineIntegration } from "./index";
-import { SaleDto, StoreCashDto, ProductDto, StoreDto } from "../../models/gestor";
+import {
+  SaleDto,
+  StoreCashDto,
+  ProductDto,
+  StoreDto,
+} from "../../models/gestor";
 import { NfeDTO } from "../../models/dtos/nfe";
 
 interface Request {
@@ -20,7 +25,7 @@ interface Request {
 
 class EmitNfce implements IUseCaseFactory {
   constructor(
-        private storeCashRepository = new BaseRepository<StoreCashDto>(
+    private storeCashRepository = new BaseRepository<StoreCashDto>(
       StorageNames.StoreCash
     ),
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
@@ -39,7 +44,7 @@ class EmitNfce implements IUseCaseFactory {
     if (!hasInternet) {
       throw new Error("Dispositivo sem conexão");
     }
-    
+
     const storeCash = await this.storeCashRepository.getOne();
 
     if (!storeCash || !storeCash.is_opened) {
@@ -62,16 +67,20 @@ class EmitNfce implements IUseCaseFactory {
     } = await midasApi.post("/sales/nfce", {
       ...nfe,
       ref: nfe.ref || saleResponse.ref,
-      cash_history_id: storeCash.history_id
+      cash_history_id: storeCash.history_id,
     });
 
-    saleResponse.nfce_focus_id = data.id;
-    saleResponse.nfce_url = `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`;
+    saleResponse.nfce_focus_id = data?.id;
+    saleResponse.nfce_url = data.caminho_xml_nota_fiscal
+      ? `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`
+      : undefined;
 
     if (local_update) {
       await this.saleRepository.update(saleIdToUpdate, {
-        nfce_focus_id: data.id,
-        nfce_url: `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`,
+        nfce_focus_id: data?.id,
+        nfce_url: data.caminho_xml_nota_fiscal
+          ? `https://api.focusnfe.com.br${data.caminho_xml_nota_fiscal}`
+          : undefined,
       });
     } else if (!saleIdToUpdate && !local_update) {
       nfe.payments.forEach((payment) =>
@@ -112,7 +121,7 @@ class EmitNfce implements IUseCaseFactory {
       try {
         await midasApi.put(`/sales/${saleIdToUpdate}`, {
           nfce_focus_id: saleResponse.nfce_focus_id,
-          nfce_url: saleResponse.nfce_url
+          nfce_url: saleResponse.nfce_url,
         });
       } catch {
         throw new Error(

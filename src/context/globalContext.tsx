@@ -216,12 +216,37 @@ export function GlobalProvider({ children }) {
       return;
     }
 
+    const totalSold = +currentSale.total_sold.toFixed(2) || 0;
+    const totalPaid = +currentSale.total_paid.toFixed(2) || 0;
+    const manualDiscount = currentSale.discount || 0;
+
+    let toleranceDiscount = 0;
+    if (
+      totalSold > totalPaid + manualDiscount &&
+      totalSold - totalPaid - manualDiscount <= 0.5
+    ) {
+      toleranceDiscount = totalSold - totalPaid - manualDiscount;
+    }
+
+    const combinedDiscount = manualDiscount + toleranceDiscount;
+
+    currentSale.discount = combinedDiscount;
+
+    let changeAmount = +(totalPaid - (totalSold - combinedDiscount)).toFixed(2);
+
+    if (changeAmount < 0) {
+      changeAmount = 0;
+    }
+
+    currentSale.change_amount = changeAmount;
+
+    setSavingSale(true);
+
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-      ((currentSale.discount || 0) +
-        (currentSale.customer_nps_reward_discount || 0)) +
-      0.5
+        (combinedDiscount + (currentSale.customer_nps_reward_discount || 0)) +
+        0.5
     ) {
       setSavingSale(false);
       return notification.warning({
@@ -283,9 +308,15 @@ export function GlobalProvider({ children }) {
         (total, item) => +item.total + total,
         0
       );
+
+      const voucherDiscount =
+        sale.customerVoucher?.voucher?.products?.reduce(
+          (sum, product) => sum + +product?.price_sell,
+          0
+        ) || 0;
       const nfePayload = {
         cpf: currentSale?.cpf_used_nfce ? currentSale?.client_cpf : null,
-        discount: +currentSale.discount,
+        discount: +currentSale.discount + +voucherDiscount,
         change_amount: +currentSale.change_amount,
         total: total,
         store_id: +store.company_id,

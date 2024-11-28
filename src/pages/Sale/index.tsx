@@ -45,6 +45,7 @@ import {
   Form,
   PrinterNFCeIcon,
   PrinterTefIcon,
+  IconOfferDiscount,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -138,6 +139,9 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
+            onChange={({ target: { value } }) =>
+              setNfceCancelJustify(value || "")
+            }
           />
         </Form.Item>
       </Form>
@@ -230,12 +234,18 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
+    const voucherDiscount =
+      JSON.parse(selectedSale.cupom)?.voucher?.products?.reduce(
+        (sum, product) => sum + +product?.price_sell,
+        0
+      ) || 0;
+
     const nfcePayload = {
       cpf: "",
       email: "",
       store_id: store.company_id,
       total: selectedSale.total_sold,
-      discount: +selectedSale.discount,
+      discount: +selectedSale.discount + voucherDiscount,
       change_amount: +selectedSale.change_amount,
       items: selectedSale.items.map((product) => ({
         product_store_id: product.product_store_id,
@@ -309,7 +319,7 @@ const Sale: React.FC<IProps> = () => {
             { required: true, message: "Campo obrigatório" },
             {
               min: 15,
-              message: "A justificativa deve ter no mínimo 15 caracteres",
+              message: "A justificativa deve ter no minimo 15 caracteres",
             },
             {
               max: 255,
@@ -323,6 +333,9 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
+            onChange={({ target: { value } }) =>
+              setNfceCancelJustify(value || "")
+            }
           />
         </Form.Item>
       </Form>
@@ -684,6 +697,18 @@ const Sale: React.FC<IProps> = () => {
     };
   };
 
+  const voucherData = selectedSale?.cupom
+    ? JSON.parse(selectedSale.cupom)
+    : null;
+
+  const voucherDiscount =
+    voucherData?.voucher?.products?.reduce(
+      (sum, product) => sum + +product?.price_sell,
+      0
+    ) || 0;
+
+  const voucherName = voucherData?.voucher?.name || "";
+
   return (
     <Container>
       <PageContent>
@@ -704,7 +729,18 @@ const Sale: React.FC<IProps> = () => {
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
-                    <Col sm={4}>ID</Col>
+                    <Col
+                      sm={
+                        +selectedSale?.discount > 0 || voucherDiscount > 0
+                          ? 2
+                          : 4
+                      }
+                    >
+                      ID
+                    </Col>
+                    {+selectedSale?.discount > 0 || voucherDiscount > 0 ? (
+                      <Col sm={2}>Desconto</Col>
+                    ) : null}
                     <Col sm={4}>VALOR</Col>
                     <Col sm={2}>QUANTIDADE</Col>
                     <Col sm={4}>HORA</Col>
@@ -717,7 +753,53 @@ const Sale: React.FC<IProps> = () => {
                       <Panel
                         header={
                           <>
-                            <Col sm={4}>{selectedSale.id}</Col>
+                            <Col
+                              sm={
+                                +selectedSale?.discount > 0 ||
+                                voucherDiscount > 0
+                                  ? 2
+                                  : 4
+                              }
+                            >
+                              {selectedSale.id}
+                            </Col>
+                            {+selectedSale?.discount > 0 ||
+                            voucherDiscount > 0 ? (
+                              <Col sm={2}>
+                                <Tooltip
+                                  title={`Desconto manual R$${
+                                    selectedSale.discount
+                                  } ${
+                                    voucherDiscount
+                                      ? `, Desconto promocional: R$ ${voucherDiscount.toFixed(
+                                          2
+                                        )} - ${voucherName}`
+                                      : ""
+                                  }`}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      gap: "2px",
+                                    }}
+                                  >
+                                    {voucherDiscount ? (
+                                      <IconOfferDiscount></IconOfferDiscount>
+                                    ) : (
+                                      <></>
+                                    )}
+                                    R$
+                                    {voucherDiscount
+                                      ? +selectedSale.discount +
+                                        +voucherDiscount
+                                      : selectedSale.discount}
+                                  </div>
+                                </Tooltip>
+                              </Col>
+                            ) : null}
+
                             <Col sm={4}>
                               {" "}
                               R$ {currencyFormater(selectedSale?.total_sold)}
