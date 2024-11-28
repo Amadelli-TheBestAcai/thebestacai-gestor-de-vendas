@@ -139,9 +139,6 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) =>
-              setNfceCancelJustify(value || "")
-            }
           />
         </Form.Item>
       </Form>
@@ -333,9 +330,6 @@ const Sale: React.FC<IProps> = () => {
             minLength={15}
             maxLength={255}
             style={{ width: "100%" }}
-            onChange={({ target: { value } }) =>
-              setNfceCancelJustify(value || "")
-            }
           />
         </Form.Item>
       </Form>
