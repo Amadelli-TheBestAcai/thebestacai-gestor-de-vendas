@@ -125,7 +125,7 @@ const Sale: React.FC<IProps> = () => {
             { required: true, message: "Campo obrigatório" },
             {
               min: 15,
-              message: "A justificativa deve ter no minimo 15 caracteres",
+              message: "A justificativa deve ter no mínimo 15 caracteres",
             },
             {
               max: 255,
