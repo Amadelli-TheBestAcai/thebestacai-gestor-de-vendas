@@ -2,6 +2,7 @@ import { checkInternet } from "../../providers/internetConnection";
 import configsTefApi from "../../providers/configsTefApi";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { ConfigTefDTO } from "../../models/dtos";
+import janusApi from "../../providers/janusApi";
 
 class GetCnpjAccreditor implements IUseCaseFactory {
     async execute(): Promise<ConfigTefDTO[]> {
@@ -10,7 +11,8 @@ class GetCnpjAccreditor implements IUseCaseFactory {
             throw new Error("Sem conexão com a internet. Verifique sua conexão para usar o serviço TEF e tente novamente.")
         }
 
-        const { data } = await configsTefApi.get(`/credenciadoras`)
+        const { data } = await janusApi.get(`/files-management/ti/gestor-de-vendas/tef-credenciadoras.json/beautify`)
+
         return data
     }
 }

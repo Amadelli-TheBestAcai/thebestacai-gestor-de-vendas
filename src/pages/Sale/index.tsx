@@ -45,6 +45,7 @@ import {
   Form,
   PrinterNFCeIcon,
   PrinterTefIcon,
+  IconOfferDiscount,
 } from "./styles";
 
 import { useUser } from "../../hooks/useUser";
@@ -124,7 +125,7 @@ const Sale: React.FC<IProps> = () => {
             { required: true, message: "Campo obrigatório" },
             {
               min: 15,
-              message: "A justificativa deve ter no minimo 15 caracteres",
+              message: "A justificativa deve ter no mínimo 15 caracteres",
             },
             {
               max: 255,
@@ -230,12 +231,18 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
+    const voucherDiscount =
+      JSON.parse(selectedSale.cupom)?.voucher?.products?.reduce(
+        (sum, product) => sum + +product?.price_sell,
+        0
+      ) || 0;
+
     const nfcePayload = {
       cpf: "",
       email: "",
       store_id: store.company_id,
       total: selectedSale.total_sold,
-      discount: +selectedSale.discount,
+      discount: +selectedSale.discount + voucherDiscount,
       change_amount: +selectedSale.change_amount,
       items: selectedSale.items.map((product) => ({
         product_store_id: product.product_store_id,
@@ -246,7 +253,9 @@ const Sale: React.FC<IProps> = () => {
         amount: payment.amount,
         type: payment.type,
         flag_card:
-          payment.type === 1 || payment.type === 2 || payment.type === 3 ? payment.flag_card : null,
+          payment.type === 1 || payment.type === 2 || payment.type === 3
+            ? payment.flag_card
+            : null,
         code_nsu: payment.code_nsu ? payment.code_nsu : null,
         cnpj_credenciadora: payment.code_nsu
           ? payment.cnpj_credenciadora
@@ -254,12 +263,10 @@ const Sale: React.FC<IProps> = () => {
         numero_autorizacao: payment.code_nsu
           ? payment.numero_autorizacao
           : null,
-        cnpj_beneficiario: payment.code_nsu
-          ? payment.cnpj_beneficiario
-          : null,
+        cnpj_beneficiario: payment.code_nsu ? payment.cnpj_beneficiario : null,
         id_terminal_pagamento: payment.code_nsu
           ? payment.id_terminal_pagamento
-          : null
+          : null,
       })),
       ref: selectedSale.ref,
     };
@@ -309,7 +316,7 @@ const Sale: React.FC<IProps> = () => {
             { required: true, message: "Campo obrigatório" },
             {
               min: 15,
-              message: "A justificativa deve ter no mínimo 15 caracteres",
+              message: "A justificativa deve ter no minimo 15 caracteres",
             },
             {
               max: 255,
@@ -596,7 +603,7 @@ const Sale: React.FC<IProps> = () => {
         duration: 5,
       });
     }
-    
+
     const {
       has_internal_error: errorOnPrintCupomTef,
       error_message: error_message_print_cupom_tef,
@@ -684,6 +691,18 @@ const Sale: React.FC<IProps> = () => {
     };
   };
 
+  const voucherData = selectedSale?.cupom
+    ? JSON.parse(selectedSale.cupom)
+    : null;
+
+  const voucherDiscount =
+    voucherData?.voucher?.products?.reduce(
+      (sum, product) => sum + +product?.price_sell,
+      0
+    ) || 0;
+
+  const voucherName = voucherData?.voucher?.name || "";
+
   return (
     <Container>
       <PageContent>
@@ -704,7 +723,18 @@ const Sale: React.FC<IProps> = () => {
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
-                    <Col sm={4}>ID</Col>
+                    <Col
+                      sm={
+                        +selectedSale?.discount > 0 || voucherDiscount > 0
+                          ? 2
+                          : 4
+                      }
+                    >
+                      ID
+                    </Col>
+                    {+selectedSale?.discount > 0 || voucherDiscount > 0 ? (
+                      <Col sm={2}>DESCONTO</Col>
+                    ) : null}
                     <Col sm={4}>VALOR</Col>
                     <Col sm={2}>QUANTIDADE</Col>
                     <Col sm={4}>HORA</Col>
@@ -717,7 +747,66 @@ const Sale: React.FC<IProps> = () => {
                       <Panel
                         header={
                           <>
-                            <Col sm={4}>{selectedSale.id}</Col>
+                            <Col
+                              sm={
+                                +selectedSale?.discount > 0 ||
+                                voucherDiscount > 0
+                                  ? 2
+                                  : 4
+                              }
+                            >
+                              {selectedSale.id}
+                            </Col>
+                            {+selectedSale?.discount > 0 ||
+                            voucherDiscount > 0 ? (
+                              <Col sm={2}>
+                                <Tooltip
+                                  title={
+                                    +selectedSale.discount > 0 &&
+                                    voucherDiscount > 0
+                                      ? `Desconto manual: R$ ${currencyFormater(
+                                          +selectedSale.discount
+                                        )}, Desconto promocional: R$ ${currencyFormater(
+                                          voucherDiscount
+                                        )} - ${voucherName}`
+                                      : +selectedSale.discount > 0
+                                      ? `Desconto manual: R$ ${currencyFormater(
+                                          +selectedSale.discount
+                                        )}`
+                                      : voucherDiscount > 0
+                                      ? `Desconto promocional: R$ ${currencyFormater(
+                                          voucherDiscount
+                                        )} - ${voucherName}`
+                                      : ""
+                                  }
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      gap: "2px",
+                                    }}
+                                  >
+                                    {voucherDiscount ? (
+                                      <IconOfferDiscount></IconOfferDiscount>
+                                    ) : (
+                                      <></>
+                                    )}
+                                    R${" "}
+                                    {voucherDiscount
+                                      ? currencyFormater(
+                                          +selectedSale.discount +
+                                            +voucherDiscount
+                                        )
+                                      : currencyFormater(
+                                          +selectedSale.discount
+                                        )}
+                                  </div>
+                                </Tooltip>
+                              </Col>
+                            ) : null}
+
                             <Col sm={4}>
                               {" "}
                               R$ {currencyFormater(selectedSale?.total_sold)}
@@ -840,7 +929,9 @@ const Sale: React.FC<IProps> = () => {
                                       )?.value
                                     : ""}
                                 </Col>
-                                <Col sm={3}>R$ {_payment?.amount}</Col>
+                                <Col sm={3}>
+                                  R$ {currencyFormater(_payment?.amount)}
+                                </Col>
                                 <Col sm={3}>
                                   {_payment?.tef_status_payment ===
                                   TefPaymentType.APROVADO ? (
