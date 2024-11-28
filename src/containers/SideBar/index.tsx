@@ -238,11 +238,13 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       });
     }
 
+    if (hasPermission("totem.totem_access")) {
     response.push({
       id: 12,
       icon: <TotemIcon />,
       label: "Totem",
     });
+  }
 
     response.push({
       id: 10,
