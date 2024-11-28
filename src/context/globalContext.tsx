@@ -39,6 +39,8 @@ type GlobalContextType = {
   };
   shouldOpenClientInfo: boolean;
   setShouldOpenClientInfo: Dispatch<SetStateAction<boolean>>;
+  visibleRemoveTefModal: boolean;
+  setVisibleRemoveTefModal: Dispatch<SetStateAction<boolean>>;
   cupomModalState: boolean;
   setCupomModalState: Dispatch<SetStateAction<boolean>>;
   user: UserDto | null;
@@ -62,6 +64,7 @@ export function GlobalProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [cupomModalState, setCupomModalState] = useState(false);
   const [discountModalState, setDiscountModalState] = useState(false);
+  const [visibleRemoveTefModal, setVisibleRemoveTefModal] = useState(false);
   const [user, setUser] = useState<UserDto | null>(null);
   const [store, setStore] = useState<StoreDto | null>(null);
   const [shouldOpenClientInfo, setShouldOpenClientInfo] = useState(false);
@@ -195,6 +198,7 @@ export function GlobalProvider({ children }) {
     if (savingSale) {
       return;
     }
+    setSavingSale(true);
 
     const { response: currentSale } = await window.Main.sale.getCurrentSale();
 
@@ -208,6 +212,7 @@ export function GlobalProvider({ children }) {
                       ao carrinho para que seja possível finalizá-la.`,
         duration: 5,
       });
+      setSavingSale(false);
       return;
     }
 
@@ -251,6 +256,50 @@ export function GlobalProvider({ children }) {
       });
     }
 
+    currentSale.change_amount = +(
+      currentSale.total_paid +
+      currentSale.discount -
+      currentSale.total_sold
+    ).toFixed(2);
+
+    const codes_nsu = currentSale.payments
+      .map((payment) => payment.code_nsu)
+      .filter((code_nsu) => code_nsu !== undefined && code_nsu !== null);
+
+    if (codes_nsu.length > 0) {
+      let hasInternet = await window.Main.hasInternet();
+      
+      if (!hasInternet) {
+        setSavingSale(false);
+        setVisibleRemoveTefModal(true);
+        return;
+      }
+
+      if (settings?.should_print_sale) {
+        const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
+          await window.Main.common.printCouponTef()
+
+        if (errorOnPrintCupomTef) {
+          notification.error({
+            message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
+            duration: 5,
+          });
+        }
+      }
+
+      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
+        await window.Main.tefFactory.finalizeTransaction(codes_nsu);
+
+      if (errorOnFinalizaTransacao) {
+        notification.error({
+          message: error_message || "Erro ao finalizar transação TEF",
+          duration: 5,
+        });
+        setSavingSale(false);
+        return;
+      }
+    }
+
     if (
       (currentSale.items.length && settings.should_emit_nfce_per_sale) ||
       (currentSale.items.length && currentSale.cpf_used_nfce)
@@ -279,7 +328,20 @@ export function GlobalProvider({ children }) {
         payments: currentSale.payments.map((payment) => ({
           amount: +payment.amount.toFixed(2),
           type: +payment.type,
-          flag_card: +payment.flag_card,
+          flag_card: payment.flag_card ? +payment.flag_card : payment.flag_card,
+          code_nsu: payment.code_nsu ? payment.code_nsu : null,
+          cnpj_credenciadora: payment.code_nsu
+            ? payment.cnpj_credenciadora
+            : null,
+          numero_autorizacao: payment.code_nsu
+            ? payment.numero_autorizacao
+            : null,
+          cnpj_beneficiario: payment.code_nsu
+            ? payment.cnpj_beneficiario
+            : null,
+          id_terminal_pagamento: payment.code_nsu
+            ? payment.id_terminal_pagamento
+            : null
         })),
         ref: currentSale.ref,
       };
@@ -340,7 +402,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -361,13 +423,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
+          message: error_message,
+          duration: 5,
+        })
         : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+          message: "Erro ao finalizar venda",
+          duration: 5,
+        });
     }
 
     const { response: cashHandlers } =
@@ -530,6 +592,8 @@ export function GlobalProvider({ children }) {
         setStoreCash,
         loading,
         savingSale,
+        visibleRemoveTefModal,
+        setVisibleRemoveTefModal,
         discountModalState,
         discountModalHandler,
         onAddDiscount,

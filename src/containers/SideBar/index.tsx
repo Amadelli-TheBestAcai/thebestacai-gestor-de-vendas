@@ -30,17 +30,13 @@ import {
 type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history }) => {
-  const [visible, setVisible] = useState(false);
-  const { storeCash } = useSale();
   const { hasPermission } = useUser();
 
   const handleClick = async (id: number, route: string) => {
     const isConnected = await window.Main.hasInternet();
-    if (
-      storeCash &&
-      (!storeCash?.is_online || !isConnected) &&
-      (route === "/handler" || route === "/sale")
-    ) {
+
+    if (route === "/handler" || route === "/sale") {
+      const { response: storeCash } = await window.Main.storeCash.getCurrent();
       if (!storeCash?.is_online) {
         notification.info({
           message: "Caixa offline",
@@ -49,7 +45,7 @@ const SideBar: React.FC<IProps> = ({ history }) => {
           }`,
           duration: 3,
         });
-      } else if (storeCash?.is_online || !isConnected) {
+      } else if (!isConnected) {
         notification.info({
           message: "Sem acesso a internet",
           description: `Você está sem conexão com a internet para realizar o acesso a tela de ${
@@ -57,6 +53,8 @@ const SideBar: React.FC<IProps> = ({ history }) => {
           }`,
           duration: 3,
         });
+      } else {
+        history.push(route);
       }
     } else {
       history.push(route);
@@ -66,7 +64,6 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       Modal.confirm({
         title: `Logout`,
         content: `Tem certeza que gostaria de sair`,
-        visible: visible,
         okText: "Sim",
         okType: "default",
         cancelText: "Não",

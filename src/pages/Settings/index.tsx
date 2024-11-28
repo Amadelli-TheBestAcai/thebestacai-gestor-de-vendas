@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import CardSettings from "../../components/CardSettings";
@@ -26,15 +26,40 @@ import {
 import { useSettings } from "../../hooks/useSettings";
 import { useStore } from "../../hooks/useStore";
 import { useSale } from "../../hooks/useSale";
+import { useUser } from "../../hooks/useUser";
 
 type IProps = RouteComponentProps;
 
 const Settings: React.FC<IProps> = ({ history }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingConfigurationTef, setLoadingConfigurationTef] = useState(false);
   const { settings, setSettings } = useSettings();
   const { setStore } = useStore();
   const { storeCash } = useSale();
+  const { hasPermission } = useUser();
   const [inputPortCOM, setInputPortCOM] = useState<string>();
+  const [cnpjAccreditorList, setCnpjAccreditorList] = useState<
+    { cnpj_credenciadora: string; nome_credenciadora: string }[]
+  >([]);
+
+  useEffect(() => {
+    const getCnpj = async () => {
+      const { response: _accreditorList, has_internal_error: error } =
+        await window.Main.tefFactory.getCnpjAccreditor();
+      if (error) {
+        notification.error({
+          message: "Não foi possível buscar a lista de CNPJ da credenciadora",
+          duration: 5,
+        });
+        return;
+      }
+      setCnpjAccreditorList(_accreditorList);
+    };
+
+    if (settings.should_use_tef) {
+      getCnpj();
+    }
+  }, [settings.should_use_tef]);
 
   const handleSave = () => {
     Modal.confirm({
@@ -285,16 +310,19 @@ const Settings: React.FC<IProps> = ({ history }) => {
         </CardSettings>
 
         <CardSettings title="Alterar loja">
-          <StoreChange>
-            <span className="descriptionStore">
-              Ao solicitar a alteração de loja, será necessário refazer o login.
-            </span>
-            {storeCash?.is_opened && (
-              <span className="storeObservation">
-                Para alterar a loja é necessário que o caixa esteja fechado
+          <div style={{ padding: "2%" }}>
+            <StoreChange>
+              <span>
+                Ao solicitar a alteração de loja, será necessário refazer o
+                login.
               </span>
-            )}
-          </StoreChange>
+              {storeCash?.is_opened && (
+                <span className="storeObservation">
+                  Para alterar a loja é necessário que o caixa esteja fechado
+                </span>
+              )}
+            </StoreChange>
+          </div>
           {storeCash?.is_opened ? (
             <Tooltip title="Para alterar a loja é necessário que o caixa esteja fechado">
               <ButtonSaveStore
@@ -317,6 +345,79 @@ const Settings: React.FC<IProps> = ({ history }) => {
             </ButtonSaveStore>
           )}
         </CardSettings>
+
+        {hasPermission("config.activeTef") && (
+          <CardSettings title="Integração de TEF">
+            <span style={{ padding: "2%" }}>
+              Ao habilitar, a cada pagamento será feito a integração com o TEF.
+            </span>
+
+            <ActionContainer>
+              <Switch
+                checked={settings.should_use_tef}
+                onChange={() =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    should_use_tef: !settings.should_use_tef,
+                  }))
+                }
+              />
+              <span>
+                {!settings.should_use_tef ? "DESABILITADO" : "HABILITADO"}
+              </span>
+            </ActionContainer>
+          </CardSettings>
+        )}
+        {settings.should_use_tef && (
+          <CardSettings title="CNPJ Credenciadora">
+            <span style={{ padding: "2%" }}>
+              Para efetuar uma venda por PIX via TEF, é imprescindível
+              selecionar o CNPJ da credenciadora do PIX.
+            </span>
+            <SelectsContainer>
+              <Select
+                disabled={!settings.should_use_tef}
+                placeholder="Credenciadora"
+                value={settings.cnpj_credenciadora}
+                onChange={(cnpj) => {
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    cnpj_credenciadora: cnpj.toString(),
+                  }));
+                }}
+              >
+                {cnpjAccreditorList.map((item: any) => (
+                  <Option key={item.cnpj_credenciadora}>
+                    {item.nome_credenciadora}
+                  </Option>
+                ))}
+              </Select>
+              <span
+                style={{
+                  width: settings?.cnpj_credenciadora ? "90%" : "0%",
+                  marginLeft: "0.3rem",
+                }}
+              >
+                {settings?.cnpj_credenciadora
+                  ? `
+                ${settings?.cnpj_credenciadora?.slice(
+                  0,
+                  2
+                )}.${settings?.cnpj_credenciadora?.slice(
+                      2,
+                      5
+                    )}.${settings?.cnpj_credenciadora?.slice(
+                      5,
+                      8
+                    )}/${settings?.cnpj_credenciadora?.slice(
+                      8,
+                      12
+                    )}-${settings?.cnpj_credenciadora?.slice(12, 14)}`
+                  : ""}
+              </span>
+            </SelectsContainer>
+          </CardSettings>
+        )}
       </PageContent>
 
       <Footer>

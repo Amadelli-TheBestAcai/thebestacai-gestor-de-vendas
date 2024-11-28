@@ -97,3 +97,4 @@ export { RemoveCircleOutline } from "@styled-icons/material/RemoveCircleOutline"
 export { ClipboardNotes } from "@styled-icons/foundation/ClipboardNotes";
 export { InfoCircle } from "@styled-icons/boxicons-regular/InfoCircle";
 export { FileInvoice } from "@styled-icons/fa-solid/FileInvoice";
+export { Printer as PrinterTef } from "@styled-icons/typicons/Printer";

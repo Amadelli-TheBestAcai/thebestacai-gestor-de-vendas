@@ -11,7 +11,8 @@ import {
   settingsFactory,
   storeCashFactory,
   storeFactory,
-  productWasteFactory
+  productWasteFactory,
+  tefFactory
 } from "./src/factories";
 
 export const api = {
@@ -36,5 +37,6 @@ export const api = {
   settings: settingsFactory,
   common: commonFactory,
   productWaste: productWasteFactory,
+  tefFactory: tefFactory
 };
 contextBridge.exposeInMainWorld("Main", { ...api });

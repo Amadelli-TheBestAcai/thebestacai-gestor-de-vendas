@@ -29,7 +29,7 @@ class OnlineIntegration implements IUseCaseFactory {
   async execute(): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
-      throw new Error("O sistema está offline");
+      throw new Error("Não foi possível detectar uma conexão com a internet. Por favor, verifique sua conexão.");
     }
 
     let storeCash = (await this.storeCashRepository.getOne()) as StoreCashDto;

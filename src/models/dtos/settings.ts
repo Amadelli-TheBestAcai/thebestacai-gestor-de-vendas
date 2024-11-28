@@ -10,5 +10,7 @@ export interface SettingsDto {
   rememberd_user?: string;
   balance_port?: string;
   printer?: string;
+  should_use_tef?: boolean
   created_at?: Date;
+  cnpj_credenciadora?: string;
 }

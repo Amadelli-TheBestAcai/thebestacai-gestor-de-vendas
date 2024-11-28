@@ -57,7 +57,7 @@ const NfeForm: React.FC<IProps> = ({
         amount: payment.amount,
         type: payment.type,
         flag_card:
-          payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
+          payment.type === 1 || payment.type === 2 || payment.type === 3 ? payment.flag_card : null,
       }));
 
       setProductsNfe(products);
@@ -111,9 +111,8 @@ const NfeForm: React.FC<IProps> = ({
       });
     }
     const validationCpfOrCnpj =
-      payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
-      payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14;
-
+      (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
+        payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
     if (payload.cpf) {
       if (!validationCpfOrCnpj) {
         return notification.warning({
@@ -133,9 +132,23 @@ const NfeForm: React.FC<IProps> = ({
         amount: paymentNfe.amount,
         type: paymentNfe.type,
         flag_card:
-          paymentNfe.type === 1 || paymentNfe.type === 2
+          paymentNfe.type === 1 || paymentNfe.type === 2 || paymentNfe.type === 3
             ? paymentNfe.flag_card
             : null,
+        code_nsu: paymentNfe.code_nsu ? paymentNfe.code_nsu
+          : null,
+        cnpj_credenciadora: paymentNfe.code_nsu
+          ? paymentNfe.cnpj_credenciadora
+          : null,
+        numero_autorizacao: paymentNfe.code_nsu
+          ? paymentNfe.numero_autorizacao
+          : null,
+        cnpj_beneficiario: paymentNfe.code_nsu
+          ? paymentNfe.cnpj_beneficiario
+          : null,
+        id_terminal_pagamento: paymentNfe.code_nsu
+          ? paymentNfe.id_terminal_pagamento
+          : null
       })),
       ref: sale.ref,
     };
@@ -281,8 +294,8 @@ const NfeForm: React.FC<IProps> = ({
         <Divider orientation="left" plain>
           Pagamentos
         </Divider>
-        {paymentsNfe?.map((paymentNfe) => (
-          <Row>
+        {paymentsNfe?.map((paymentNfe, index) => (
+          <Row key={index}>
             <Col span={12}>
               <FormItem label="Valor do pagamento">
                 <Input
