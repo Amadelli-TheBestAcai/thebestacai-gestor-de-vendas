@@ -41,12 +41,16 @@ class PrintSale implements IUseCaseFactory {
     const settings = await this.settingsRepository.getOne();
 
     const printer = settings?.printer;
-    
+
     if (!settings?.should_use_printer) {
       return;
     }
 
     const termalPrinter = Printer.getPrinter(printer);
+
+    if (termalPrinter.status.toString().includes("ERROR")) {
+      throw new Error("Erro ao tentar imprimir. Por favor, verifique a conexão da sua impressora.")
+    }
 
     this.printerFormater.clear();
 

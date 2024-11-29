@@ -3,6 +3,8 @@ import { autoUpdater } from "electron-updater";
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
 import axios from "axios";
+import { inicializeServerTef } from "./src/helpers/inicializeServerTef";
+import { finalizeServerTef } from "./src/helpers/finalizeServerTef";
 
 let win: Electron.BrowserWindow | null;
 
@@ -96,6 +98,7 @@ ipcMain.on("check_for_update", function () {
 app.whenReady().then(async () => {
   createWindow();
   inicializeControllers();
+  const serverTefProcess = await inicializeServerTef();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -103,8 +106,9 @@ app.whenReady().then(async () => {
     }
   });
 
-  app.on("window-all-closed", () => {
+  app.on("window-all-closed", async () => {
     if (process.platform !== "darwin") {
+      await finalizeServerTef()
       app.quit();
     }
   });

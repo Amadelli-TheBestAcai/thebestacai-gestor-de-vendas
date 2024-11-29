@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import MonetaryInput from "../../components/MonetaryInput";
 import { Trash } from "../../styles/Icons";
 
-import { Modal as ModalAnt, Col, Select as SelectAnt } from "antd";
+import { Modal as ModalAnt, Col, Select as SelectAnt, Button as ButtonAnt } from "antd";
 
 import {
   MoneyBillAlt,
@@ -203,7 +203,7 @@ export const ButtonCancel = styled.button`
   }
 `;
 
-export const ButtonSave = styled.button`
+export const ButtonSave = styled(ButtonAnt)`
   padding: 3px 7px;
   font-weight: 500;
   border-radius: 1rem;
@@ -212,7 +212,13 @@ export const ButtonSave = styled.button`
   color: white;
   transition: 0.5s;
 
-  :hover {
+  
+  &&&:hover,
+  &&&:active, 
+  &&&:focus  {
+    border: none;
+    color: white;
+    opacity: 80;
     background: var(--orange-200);
   }
 

@@ -57,20 +57,28 @@ const NfeForm: React.FC<IProps> = ({
         amount: payment.amount,
         type: payment.type,
         flag_card:
-          payment.type === 1 || payment.type === 2 ? payment.flag_card : null,
+          payment.type === 1 || payment.type === 2 || payment.type === 3 ? payment.flag_card : null,
       }));
 
       setProductsNfe(products);
       setPaymentsNfe(payments);
 
+      const voucherDiscount =
+        JSON.parse(sale.cupom)?.voucher?.products?.reduce(
+          (sum, product) => sum + +product?.price_sell,
+          0
+        ) || 0;
+
       form.setFieldsValue({
         total_sold: sale.total_sold.toFixed(2).replace(".", ","),
-        discount: (+sale.discount).toFixed(2).replace(".", ","),
+        discount: (+sale.discount + voucherDiscount)
+          .toFixed(2)
+          .replace(".", ","),
       });
 
       setNfe((oldValues) => ({
         ...oldValues,
-        discount: +sale.discount,
+        discount: +sale.discount + voucherDiscount,
         change_amount: +sale.change_amount,
         total: sale.total_sold,
         store_id: store.company_id,
@@ -102,11 +110,10 @@ const NfeForm: React.FC<IProps> = ({
         duration: 5,
       });
     }
-    const validationCpfOrCnpj = 
+    const validationCpfOrCnpj =
       (payload.cpf?.replace(/[^0-9]+/g, "")?.length === 11 ||
         payload.cpf?.replace(/[^0-9]+/g, "")?.length === 14)
-
-    if(payload.cpf) {
+    if (payload.cpf) {
       if (!validationCpfOrCnpj) {
         return notification.warning({
           message: "CPF ou CNPJ inválido",
@@ -125,11 +132,25 @@ const NfeForm: React.FC<IProps> = ({
         amount: paymentNfe.amount,
         type: paymentNfe.type,
         flag_card:
-          paymentNfe.type === 1 || paymentNfe.type === 2
+          paymentNfe.type === 1 || paymentNfe.type === 2 || paymentNfe.type === 3
             ? paymentNfe.flag_card
             : null,
+        code_nsu: paymentNfe.code_nsu ? paymentNfe.code_nsu
+          : null,
+        cnpj_credenciadora: paymentNfe.code_nsu
+          ? paymentNfe.cnpj_credenciadora
+          : null,
+        numero_autorizacao: paymentNfe.code_nsu
+          ? paymentNfe.numero_autorizacao
+          : null,
+        cnpj_beneficiario: paymentNfe.code_nsu
+          ? paymentNfe.cnpj_beneficiario
+          : null,
+        id_terminal_pagamento: paymentNfe.code_nsu
+          ? paymentNfe.id_terminal_pagamento
+          : null
       })),
-      ref: sale.ref
+      ref: sale.ref,
     };
 
     try {
@@ -149,7 +170,7 @@ const NfeForm: React.FC<IProps> = ({
           });
           return;
         }
-        console.log(error_message, 'error')
+        console.log(error_message, "error");
         return notification.error({
           message: error_message || "Erro ao emitir NFCe",
           duration: 5,
@@ -167,7 +188,7 @@ const NfeForm: React.FC<IProps> = ({
       setModalState(false);
       setIsLoading(false);
       setShouldSearch(true);
-      form.resetFields()
+      form.resetFields();
     }
   };
 
@@ -273,8 +294,8 @@ const NfeForm: React.FC<IProps> = ({
         <Divider orientation="left" plain>
           Pagamentos
         </Divider>
-        {paymentsNfe?.map((paymentNfe) => (
-          <Row>
+        {paymentsNfe?.map((paymentNfe, index) => (
+          <Row key={index}>
             <Col span={12}>
               <FormItem label="Valor do pagamento">
                 <Input

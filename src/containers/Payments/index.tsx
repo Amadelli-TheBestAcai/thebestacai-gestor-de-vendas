@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SaleDto } from "../../models/dtos/sale";
@@ -29,15 +29,17 @@ import {
   OnlineIcon,
   Select,
   Option,
-  RemoveIcon
+  RemoveIcon,
 } from "./styles";
 import { FlagCard } from "../../models/enums/flagCard";
 import { Form } from "antd";
 import { useSale } from "../../hooks/useSale";
+import { useSettings } from "../../hooks/useSettings";
+import { PaymentDto } from "../../models/dtos/payment";
 
 interface IProps {
   sale: SaleDto;
-  removePayment: (id: string) => Promise<void>;
+  removePayment: (payment: PaymentDto, justify?: string) => Promise<void>;
   addPayment: () => Promise<void>;
   handleOpenPayment: (type: number, title: string, flag_card?: number) => void;
   setCurrentPayment: Dispatch<SetStateAction<number>>;
@@ -49,6 +51,11 @@ interface IProps {
   shouldViewValues?: boolean;
   shouldDisableButtons?: boolean;
   usingDelivery?: boolean;
+  loadingPayment?: boolean;
+  setLoadingPayment?: Dispatch<SetStateAction<boolean>>;
+  paymentModalConnect?: boolean;
+  selectTef?: string;
+  setSelectTef?: Dispatch<SetStateAction<string>>;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -65,16 +72,27 @@ const PaymentsContainer: React.FC<IProps> = ({
   usingDelivery,
   setFlagCard,
   flagCard,
+  loadingPayment,
+  setLoadingPayment,
+  paymentModalConnect,
+  selectTef,
+  setSelectTef,
 }) => {
-const { onRemoveDiscount } = useSale();
+  const { onRemoveDiscount } = useSale();
+  const { settings } = useSettings();
 
   const onModalCancel = (): void => {
+    setSelectTef("Sim");
     setModalState(false);
     setFlagCard(99);
   };
 
   const getAmount = (amount: number): void => {
     setCurrentPayment(amount);
+  };
+
+  const setValue = (event) => {
+    setSelectTef(event);
   };
 
   const buttonsPaymentsStyle = [
@@ -110,7 +128,7 @@ const { onRemoveDiscount } = useSale();
       icon: <PixIcon src={PixLogo} />,
       label: "Pix [P]",
       background: "var(--teal-400)",
-      action: () => handleOpenPayment(PaymentType.PIX, "Pix"),
+      action: () => handleOpenPayment(PaymentType.PIX, "PIX"),
     },
   ];
 
@@ -144,15 +162,18 @@ const { onRemoveDiscount } = useSale();
 
       <PaymentsInfoContainer>
         <Header>
-          <Column sm={8}>Forma de Pagamento</Column>
-          <Column sm={8}>Valor</Column>
-          <Column sm={8}>Ação</Column>
+          <Column sm={6}>Forma de Pagamento</Column>
+          <Column sm={6}>Bandeira</Column>
+          <Column sm={6}>Valor</Column>
+          <Column sm={6}>Ação</Column>
         </Header>
         {sale?.payments?.map((payment) => (
           <Payment
             key={payment.id}
             payment={payment}
             removePayment={removePayment}
+            loadingPayment={loadingPayment}
+            setLoadingPayment={setLoadingPayment}
           />
         ))}
       </PaymentsInfoContainer>
@@ -186,7 +207,9 @@ const { onRemoveDiscount } = useSale();
               {((sale.customer_nps_reward_discount || 0) + sale?.discount)
                 .toFixed(2)
                 .replace(".", ",")}
-              {sale?.discount > 0 && <RemoveIcon onClick={() => onRemoveDiscount(sale.id)}/>}
+              {sale?.discount > 0 && (
+                <RemoveIcon onClick={() => onRemoveDiscount(sale.id)} />
+              )}
             </strong>
           </ValueInfo>
           <ValueInfo>
@@ -215,7 +238,15 @@ const { onRemoveDiscount } = useSale();
         footer={
           <Footer>
             <ButtonCancel onClick={onModalCancel}>Cancelar</ButtonCancel>
-            <ButtonSave onClick={addPayment}>Salvar Alteração</ButtonSave>
+            <ButtonSave loading={loadingPayment} onClick={addPayment}>
+              {settings?.should_use_tef &&
+              modalTitle !== "Dinheiro" &&
+              selectTef !== "Não" &&
+              paymentModalConnect && 
+              !(modalTitle === "PIX" && !settings.cnpj_credenciadora)
+                ? "Solicitar Pagamento TEF"
+                : "Salvar Alteração"}
+            </ButtonSave>
           </Footer>
         }
       >
@@ -233,22 +264,41 @@ const { onRemoveDiscount } = useSale();
               : 0
           }
         />
-        {(modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
-          <>
-            Bandeira:
-            <Form.Item>
-              <Select
-                placeholder="Escolha a opção"
-                onChange={(value) => setFlagCard(+value)}
-                defaultValue={"Outros"}
-              >
-                {FlagCard.map((_flagCard) => (
-                  <Option key={_flagCard.id}>{_flagCard.value}</Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </>
-        )}
+        {(!settings?.should_use_tef ||
+          !paymentModalConnect) &&
+          (modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
+            <>
+              Bandeira:
+              <Form.Item>
+                <Select
+                  placeholder="Escolha a opção"
+                  onChange={(value) => setFlagCard(+value)}
+                  defaultValue={"Outros"}
+                >
+                  {FlagCard.map((_flagCard) => (
+                    <Option key={_flagCard.id}>{_flagCard.value}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </>
+          )}
+        {settings?.should_use_tef &&
+          modalTitle === "PIX" &&
+          settings?.cnpj_credenciadora && (
+            <div style={{ marginTop: "0.5rem" }}>
+              Habilitar pagamento TEF
+              <Form.Item>
+                <Select
+                  placeholder="Escolha a opção"
+                  onChange={setValue}
+                  value={selectTef}
+                >
+                  <Option key={"Não"}>Não</Option>
+                  <Option key={"Sim"}>Sim</Option>
+                </Select>
+              </Form.Item>
+            </div>
+          )}
       </Modal>
     </Container>
   );

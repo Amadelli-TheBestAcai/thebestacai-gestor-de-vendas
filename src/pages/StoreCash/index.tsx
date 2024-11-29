@@ -237,10 +237,10 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       await window.Main.storeCash.openOnlineStoreCash();
 
     if (has_internal_error) {
-      if (error_message === "O sistema está offline") {
+      if (error_message === "Sem conexão com a internet. Por favor, verifique sua conexão.") {
         return notification.warning({
           message:
-            "Não é possivel abrir um caixa online, pois o sistema está offline",
+            "Não é possivel abrir um caixa online, pois você está sem conexão com a internet. Por favor verifique a conexão e tente novamente",
           duration: 5,
         });
       }
@@ -319,6 +319,27 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
           duration: 5,
         });
     }
+
+    const {
+      has_internal_error: errorOnIntegrationPaymentTefAudit,
+      error_message: errorMessageOnIntegrationPaymentTefAudit,
+    } = await window.Main.tefFactory.integrationPaymentTefAudit();
+
+    if (errorOnIntegrationPaymentTefAudit) {
+      errorMessageOnIntegrationPaymentTefAudit
+        ? notification.warning({
+          message: errorMessageOnIntegrationPaymentTefAudit,
+          duration: 5,
+        })
+        : notification.error({
+          message:
+            errorMessageOnIntegrationPaymentTefAudit ||
+            "Erro ao integrar auditoria de pagamentos TEF",
+          duration: 5,
+        });
+    }
+
+
   };
 
   return (

@@ -20,7 +20,7 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
   async execute(): Promise<StoreCashDto | undefined> {
     const hasConnection = await checkInternet();
     if (!hasConnection) {
-      throw new Error("O sistema está offline");
+      throw new Error("Sem conexão com a internet. Por favor, verifique sua conexão.");
     }
 
     const storeCash = (await this.storeCashRepository.getOne()) as StoreCashDto;

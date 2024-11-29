@@ -7,7 +7,9 @@ import {
   FileInvoice,
   FileEarmarkPdf,
   Cancel,
-  PrinterNFCe
+  PrinterNFCe,
+  PrinterTef,
+  Offer,
 } from "../../styles/Icons";
 
 import {
@@ -138,7 +140,7 @@ export const Col = styled(ColAnt)`
   display: flex;
   align-items: center;
   justify-content: center;
-  .buttonText{ 
+  .buttonText {
     cursor: pointer;
   }
 `;
@@ -203,6 +205,11 @@ export const Panel = styled(CollapseAnt.Panel)`
   }
 `;
 
+export const IconOfferDiscount = styled(Offer)`
+  width: 1rem;
+  color: var(--orange-250);
+`;
+
 export const SalesHistoryContainer = styled.div`
   display: flex;
   width: 100%;
@@ -227,6 +234,9 @@ export const RestoreIcon = styled(RepeatOutline)`
   ${IconCSS}
 `;
 export const PrinterIcon = styled(Printer)`
+  ${IconCSS}
+`;
+export const PrinterTefIcon = styled(PrinterTef)`
   ${IconCSS}
 `;
 
@@ -366,4 +376,4 @@ export const Form = styled(FormAnt)`
   .ant-form-item-control-input {
     padding: 0;
   }
-`
+`;

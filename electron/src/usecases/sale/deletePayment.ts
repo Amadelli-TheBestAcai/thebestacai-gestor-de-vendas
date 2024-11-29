@@ -12,7 +12,7 @@ interface Request {
 class DeletePayment implements IUseCaseFactory {
   constructor(
     private saleRepository = new BaseRepository<SaleDto>(StorageNames.Sale),
-    private getCurrentSaleUseCase = getCurrentSale
+    private getCurrentSaleUseCase = getCurrentSale,
   ) { }
 
   async execute({ id }: Request): Promise<SaleDto> {
@@ -40,6 +40,7 @@ class DeletePayment implements IUseCaseFactory {
     await this.saleRepository.update(sale.id, sale);
     return sale;
   }
+
 }
 
 export const deletePayment = new DeletePayment();

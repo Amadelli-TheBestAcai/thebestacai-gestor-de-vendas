@@ -26,3 +26,4 @@ export * from "./getVoucher";
 export * from "./getCurrentCampaign";
 export * from "./updateStepSale";
 export * from "./removeStepSale";
+export * from './updateStatusPaymentTef'
