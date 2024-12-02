@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 import {
   Trash,
@@ -6,9 +6,9 @@ import {
   InfoCircle,
   Search,
   TrashRestoreAlt,
-} from '../../styles/Icons';
+} from "../../styles/Icons";
 
-import MonetaryInput from '../../components/MonetaryInput';
+import MonetaryInput from "../../components/MonetaryInput";
 
 import {
   Form as FormAnt,
@@ -19,7 +19,7 @@ import {
   Button as ButtonAnt,
   Tabs as TabsAnd,
   Modal,
-} from 'antd';
+} from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -39,11 +39,13 @@ export const PageContent = styled.div`
   box-shadow: 0px 0px 6px 1px rgba(163, 163, 163, 0.28);
   border-radius: 10px;
   padding: 1rem;
+  gap: 1rem;
 `;
 
 export const Header = styled.header`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   height: 5%;
 
