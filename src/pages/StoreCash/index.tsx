@@ -33,6 +33,8 @@ import {
 } from "./styles";
 import { useSale } from "../../hooks/useSale";
 import { useSettings } from "../../hooks/useSettings";
+import InfoStore from "../../containers/InfoStore";
+import { useStore } from "../../hooks/useStore";
 
 interface IProp extends RouteComponentProps {}
 
@@ -55,6 +57,7 @@ moment.updateLocale("pt", {
 });
 
 const StoreCash: React.FC<IProp> = ({ history }) => {
+  const { store } = useStore();
   const { storeCash, setStoreCash } = useSale();
   const [storeCashHistory, setStoreCashHistory] =
     useState<StoreCashHistoryDTO | null>(null);
@@ -237,7 +240,10 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       await window.Main.storeCash.openOnlineStoreCash();
 
     if (has_internal_error) {
-      if (error_message === "Sem conexão com a internet. Por favor, verifique sua conexão.") {
+      if (
+        error_message ===
+        "Sem conexão com a internet. Por favor, verifique sua conexão."
+      ) {
         return notification.warning({
           message:
             "Não é possivel abrir um caixa online, pois você está sem conexão com a internet. Por favor verifique a conexão e tente novamente",
@@ -247,14 +253,13 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
 
       error_message
         ? notification.warning({
-          message: error_message,
-          duration: 5,
-        })
+            message: error_message,
+            duration: 5,
+          })
         : notification.error({
-          message: "Erro ao abrir caixa",
-          duration: 5,
-        });
-
+            message: "Erro ao abrir caixa",
+            duration: 5,
+          });
 
       return;
     }
@@ -273,14 +278,14 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     if (internalErrorOnOnlineIntegrate) {
       errorMessageOnOnlineTntegrate
         ? notification.warning({
-          message: errorMessageOnOnlineTntegrate,
-          duration: 5,
-        })
+            message: errorMessageOnOnlineTntegrate,
+            duration: 5,
+          })
         : notification.error({
-          message:
-            errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
-          duration: 5,
-        });
+            message:
+              errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
+            duration: 5,
+          });
     }
 
     const {
@@ -291,14 +296,14 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     if (errorOnIntegrateHandler) {
       errorMessageOnIntegrateHandler
         ? notification.warning({
-          message: errorMessageOnIntegrateHandler,
-          duration: 5,
-        })
+            message: errorMessageOnIntegrateHandler,
+            duration: 5,
+          })
         : notification.error({
-          message:
-            errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
-          duration: 5,
-        });
+            message:
+              errorMessageOnIntegrateHandler || "Erro ao integrar movimentação",
+            duration: 5,
+          });
     }
 
     const {
@@ -309,15 +314,15 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     if (errorOnIntegrateItemOutCart) {
       errorMessageOnIntegrateItemOutCart
         ? notification.warning({
-          message: errorMessageOnIntegrateItemOutCart,
-          duration: 5,
-        })
+            message: errorMessageOnIntegrateItemOutCart,
+            duration: 5,
+          })
         : notification.error({
-          message:
-            errorMessageOnIntegrateItemOutCart ||
-            "Erro ao integrar itens fora do carrinho",
-          duration: 5,
-        });
+            message:
+              errorMessageOnIntegrateItemOutCart ||
+              "Erro ao integrar itens fora do carrinho",
+            duration: 5,
+          });
     }
 
     const {
@@ -328,18 +333,16 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     if (errorOnIntegrationPaymentTefAudit) {
       errorMessageOnIntegrationPaymentTefAudit
         ? notification.warning({
-          message: errorMessageOnIntegrationPaymentTefAudit,
-          duration: 5,
-        })
+            message: errorMessageOnIntegrationPaymentTefAudit,
+            duration: 5,
+          })
         : notification.error({
-          message:
-            errorMessageOnIntegrationPaymentTefAudit ||
-            "Erro ao integrar auditoria de pagamentos TEF",
-          duration: 5,
-        });
+            message:
+              errorMessageOnIntegrationPaymentTefAudit ||
+              "Erro ao integrar auditoria de pagamentos TEF",
+            duration: 5,
+          });
     }
-
-
   };
 
   return (
@@ -347,6 +350,11 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       <PageContent>
         <Header>
           <h2>Gerenciamento de Caixa</h2>
+          <InfoStore
+            companyName={store?.company?.company_name}
+            isOnline={storeCash?.is_online}
+            isOpened={storeCash?.is_opened}
+          />
         </Header>
         {loading ? (
           <Spinner />
@@ -388,8 +396,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       {storeCash?.is_opened && storeCash?.is_online
                         ? "Fechar Caixa"
                         : storeCash?.is_opened && !storeCash?.is_online
-                          ? "Abrir caixa online"
-                          : "Abrir Caixa"}
+                        ? "Abrir caixa online"
+                        : "Abrir Caixa"}
                     </OpenCloseButton>
                   </CloseCashContatiner>
                 </StatusWrapper>

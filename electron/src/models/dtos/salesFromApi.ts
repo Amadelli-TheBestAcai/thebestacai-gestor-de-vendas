@@ -1,7 +1,7 @@
 export interface SaleFromApiDTO {
   id: number;
   client_id?: number;
-  abstract_sale: boolean
+  abstract_sale: boolean;
   quantity: number;
   nfce?: {
     qrcode_url: string;
@@ -85,8 +85,8 @@ export interface SaleFromApiDTO {
     cnpj_credenciadora?: string;
     numero_autorizacao?: string;
     tef_status_payment?: number;
-    cnpj_beneficiario?: string,
-    id_terminal_pagamento?: string
+    cnpj_beneficiario?: string;
+    id_terminal_pagamento?: string;
   }[];
   change_amount: string;
   cash_id: number;
@@ -97,6 +97,7 @@ export interface SaleFromApiDTO {
   nfce_focus_id?: number;
   nfce_url?: string;
   ref?: string;
+  cupom?: string;
   created_at: string;
   deleted_at?: string;
 }

@@ -238,11 +238,15 @@ const PaymentsContainer: React.FC<IProps> = ({
         footer={
           <Footer>
             <ButtonCancel onClick={onModalCancel}>Cancelar</ButtonCancel>
-            <ButtonSave loading={loadingPayment} onClick={addPayment}>
+            <ButtonSave
+              loading={loadingPayment}
+              onClick={addPayment}
+              disabled={loadingPayment}
+            >
               {settings?.should_use_tef &&
               modalTitle !== "Dinheiro" &&
               selectTef !== "Não" &&
-              paymentModalConnect && 
+              paymentModalConnect &&
               !(modalTitle === "PIX" && !settings.cnpj_credenciadora)
                 ? "Solicitar Pagamento TEF"
                 : "Salvar Alteração"}
@@ -264,8 +268,7 @@ const PaymentsContainer: React.FC<IProps> = ({
               : 0
           }
         />
-        {(!settings?.should_use_tef ||
-          !paymentModalConnect) &&
+        {(!settings?.should_use_tef || !paymentModalConnect) &&
           (modalTitle === "C. Crédito" || modalTitle === "C. Débito") && (
             <>
               Bandeira:
