@@ -249,6 +249,7 @@ const Home: React.FC = () => {
   }, []);
 
   const addPayment = async () => {
+    if (loadingPayment) return;
     setLoadingPayment(true);
     const payment = sale.total_paid + currentPayment;
 
@@ -750,6 +751,17 @@ const Home: React.FC = () => {
     document.getElementById("balanceInput")?.focus();
   };
 
+  const canOpenCupomModal = () => {
+    const totalPaid = sale?.payments?.reduce(
+      (total, payment) => total + payment.amount,
+      0
+    );
+    if (totalPaid > 0) {
+      return;
+    }
+    setCupomModalState(true);
+  };
+
   const keyMap = {
     money: "a",
     MONEY: "A",
@@ -789,8 +801,8 @@ const Home: React.FC = () => {
     FOCUS_BALANCE: () => sendFocusToBalance(),
     insert_discount: () => discountModalHandler.openDiscoundModal(),
     INSERT_DISCOUNT: () => discountModalHandler.openDiscoundModal(),
-    insert_cupom: () => setCupomModalState(true),
-    INSERT_CUPOM: () => setCupomModalState(true),
+    insert_cupom: () => canOpenCupomModal(),
+    INSERT_CUPOM: () => canOpenCupomModal(),
     insert_cpf: () => setShouldOpenClientInfo(true),
     INSERT_CPF: () => setShouldOpenClientInfo(true),
   };
