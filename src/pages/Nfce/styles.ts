@@ -40,6 +40,7 @@ export const PageContent = styled.div`
   border-radius: 10px;
   padding: 1rem;
   gap: 1rem;
+  overflow: auto;
 `;
 
 export const Header = styled.header`
