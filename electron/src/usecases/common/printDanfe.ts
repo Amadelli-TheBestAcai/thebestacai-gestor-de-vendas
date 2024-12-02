@@ -229,6 +229,34 @@ class PrintDanfe implements IUseCaseFactory {
         cols: 20,
       },
     ]);
+    if (content?.valor_total[4]) {
+      this.printerFormater.tableCustom([
+        {
+          text: content.valor_total[4] || "",
+          align: "LEFT",
+          cols: 25,
+        },
+        {
+          text: content.valor_total[5] || "",
+          align: "RIGHT",
+          cols: 20,
+        },
+      ]);
+    }
+    if (content?.valor_total[6]) {
+      this.printerFormater.tableCustom([
+        {
+          text: content?.valor_total[6] || "",
+          align: "LEFT",
+          cols: 25,
+        },
+        {
+          text: content?.valor_total[7] || "",
+          align: "RIGHT",
+          cols: 20,
+        },
+      ]);
+    }
 
     count = 0;
     while (count <= content?.forma_pagamento.length - 2) {
@@ -293,7 +321,7 @@ class PrintDanfe implements IUseCaseFactory {
         console.log("printed with success");
       },
       error: function (err) {
-        console.log(err);
+        console.log(err, "error");
       },
     });
   }
