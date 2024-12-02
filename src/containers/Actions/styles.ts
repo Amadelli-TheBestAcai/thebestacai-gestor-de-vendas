@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 import {
   Offer,
@@ -8,7 +8,7 @@ import {
   TrophyFill,
   Discount,
   IdCard,
-} from '../../styles/Icons';
+} from "../../styles/Icons";
 
 const BasicCSS = css`
   height: 100%;
@@ -39,6 +39,10 @@ const ButtonCSS = css`
     svg {
       color: var(--orange-250);
     }
+  }
+  :disabled {
+    background-color: var(--white-90);
+    cursor: not-allowed;
   }
 
   /* Responsive 1680 */
@@ -109,7 +113,6 @@ export const ContentGeneral = styled.div`
 
 export const ActionButtons = styled.div`
   ${BasicCSS}
-  align-items: flex-start;
   width: 100%;
   justify-content: space-between;
 `;
@@ -122,8 +125,8 @@ export const InfosAndChat = styled.div`
 
 export const ContentHeaderInfos = styled.div`
   ${BasicCSS}
-  width: 11rem;
   height: 3.3rem;
+  padding: 0.5rem;
   background: var(--white);
   border: 1px solid var(--gray-50);
   box-sizing: border-box;
@@ -158,7 +161,7 @@ export const ContentHeaderInfos = styled.div`
 
 export const CpfContetGeneral = styled.div`
   display: flex;
-  width: 75%;
+  width: 70%;
   justify-content: space-between;
   align-items: center;
 `;
@@ -173,7 +176,7 @@ export const CpfContent = styled.div<ICpfBackgroundProps>`
   padding: 1rem;
   margin-top: 0.4rem;
   border-radius: 4px;
-  background-color: ${({ haveCpf }) => (!haveCpf ? '#FF8D3A33' : '#00BF0A33')};
+  background-color: ${({ haveCpf }) => (!haveCpf ? "#FF8D3A33" : "#00BF0A33")};
   span {
     font-size: 1rem;
     font-weight: 400;
