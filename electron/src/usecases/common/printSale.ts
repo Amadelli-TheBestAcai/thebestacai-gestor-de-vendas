@@ -5,12 +5,13 @@ import { StoreDto, SettingsDto } from "../../models/gestor";
 import { SaleFromApiDTO } from "../../models/dtos/salesFromApi";
 import { SaleDto } from "../../models/gestor/sale";
 import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
-import moment from 'moment';
+import moment from "moment";
 import {
   printer as ThermalPrinter,
   types as TermalTypes,
 } from "node-thermal-printer";
 import Printer from "printer";
+import { PaymentType } from "../../models/enums/paymentType";
 
 interface Request {
   sale: SaleFromApiDTO | SaleDto;
@@ -49,7 +50,9 @@ class PrintSale implements IUseCaseFactory {
     const termalPrinter = Printer.getPrinter(printer);
 
     if (termalPrinter.status.toString().includes("ERROR")) {
-      throw new Error("Erro ao tentar imprimir. Por favor, verifique a conexão da sua impressora.")
+      throw new Error(
+        "Erro ao tentar imprimir. Por favor, verifique a conexão da sua impressora."
+      );
     }
 
     this.printerFormater.clear();
@@ -87,16 +90,16 @@ class PrintSale implements IUseCaseFactory {
     this.printerFormater.drawLine();
 
     this.printerFormater.tableCustom([
-      { text: "PRODUTO", align: "LEFT", cols: 20 },
+      { text: "PRODUTO", align: "LEFT", cols: 17 },
       { text: "QTD UN", align: "CENTER", cols: 10 },
       { text: "VL UN", align: "CENTER", cols: 10 },
-      { text: "VL Tot", align: "CENTER", cols: 10 },
+      { text: "VL Tot", align: "CENTER", cols: 13 },
     ]);
 
     sale.items.forEach((item) => {
       if (item.product.category_id === 1) {
         this.printerFormater.tableCustom([
-          { text: item.product.name, align: "LEFT", cols: 20 },
+          { text: item.product.name, align: "LEFT", cols: 17 },
           { text: item.quantity.toFixed(3), align: "CENTER", cols: 10 },
           {
             text: "R$" + item.storeProduct.price_unit,
@@ -106,7 +109,7 @@ class PrintSale implements IUseCaseFactory {
           {
             text: "R$" + item.total.toFixed(2),
             align: "CENTER",
-            cols: 10,
+            cols: 13,
           },
         ]);
       } else {
@@ -144,9 +147,43 @@ class PrintSale implements IUseCaseFactory {
       { text: sale.items.length.toString(), align: "CENTER", cols: 10 },
     ]);
     this.printerFormater.tableCustom([
-      { text: "Valor Total dos Produtos", align: "LEFT", cols: 40 },
-      { text: "R$" + totalItems, align: "CENTER", cols: 10 },
+      { text: "Valor Total dos Produtos", align: "LEFT", cols: 33 },
+      { text: "R$" + totalItems, align: "CENTER", cols: 20 },
     ]);
+    this.printerFormater.drawLine();
+
+    const voucherData = sale?.cupom ? JSON.parse(sale.cupom) : null;
+    const voucherDiscount =
+      voucherData?.voucher?.products?.reduce(
+        (sum, product) => sum + +product?.price_sell,
+        0
+      ) || 0;
+    const discount = (+sale?.discount + +voucherDiscount)
+      ?.toFixed(2)
+      ?.toString();
+    this.printerFormater.tableCustom([
+      { text: "Desconto", align: "LEFT", cols: 33 },
+      { text: "R$" + discount, align: "CENTER", cols: 20 },
+    ]);
+
+    const totalPaid = sale.payments
+      //@ts-ignore
+      ?.reduce((total, payment) => total + payment.amount, 0)
+      .toFixed(2)
+      .toString();
+    this.printerFormater.tableCustom([
+      { text: "Valor Pago", align: "LEFT", cols: 33 },
+      { text: "R$" + totalPaid, align: "CENTER", cols: 20 },
+    ]);
+
+    this.printerFormater.table(["Formas de Pagamento"]);
+    sale.payments?.forEach((payment) => {
+      const paymentType = PaymentType[payment.type] || "Desconhecido";
+      this.printerFormater.tableCustom([
+        { text: paymentType, align: "LEFT", cols: 33 },
+        { text: "R$" + payment.amount.toFixed(2), align: "CENTER", cols: 20 },
+      ]);
+    });
     this.printerFormater.drawLine();
 
     if (sale.nfce?.qrcode_url) {
@@ -160,11 +197,11 @@ class PrintSale implements IUseCaseFactory {
       this.printerFormater.newLine();
     }
 
-    const created_at = moment(sale.created_at).parseZone().format('DD/MM/YYYY-HH:mm:ss');
+    const created_at = moment(sale.created_at)
+      .parseZone()
+      .format("DD/MM/YYYY-HH:mm:ss");
 
-    this.printerFormater.println(
-      `Data: ${created_at}`
-    );
+    this.printerFormater.println(`Data: ${created_at}`);
     this.printerFormater.alignCenter();
     this.printerFormater.cut();
 
