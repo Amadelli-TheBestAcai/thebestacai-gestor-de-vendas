@@ -484,7 +484,6 @@ export function GlobalProvider({ children }) {
     if (_storeCash && _storeCash?.is_online) {
       setStoreCash(_storeCash);
     }
-    console.log(currentSale, "Venda Current");
     document.getElementById("balanceInput")?.focus();
   };
 
