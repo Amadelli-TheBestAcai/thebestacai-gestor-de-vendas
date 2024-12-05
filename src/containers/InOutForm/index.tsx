@@ -120,7 +120,6 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           store_id: store.company_id,
           due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-          purchase_date: new Date(),
           payment_method: 0,
           total:
             +shopInfo.quantity * +shopInfo.unitary_value +
@@ -139,6 +138,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
               observation: `Nome: ${shopInfo.observation}`,
             },
           ],
+          purchase_date: new Date(),
         };
       }
       if (!shopIsValid(shopOrder)) {
@@ -177,8 +177,6 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       shopOrder,
       sendToShop,
     };
-
-    console.log(JSON.stringify(payload));
 
     setLoading(true);
 
