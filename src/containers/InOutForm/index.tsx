@@ -103,6 +103,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
             },
           ],
           purchase_date: new Date(),
+          auto_generated: true,
         };
       }
 
@@ -139,6 +140,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
             },
           ],
           purchase_date: new Date(),
+          auto_generated: true,
         };
       }
       if (!shopIsValid(shopOrder)) {

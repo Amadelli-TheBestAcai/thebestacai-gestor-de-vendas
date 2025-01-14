@@ -75,6 +75,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       if (response) {
         setCampaign(response);
       }
+      console.log(campaign);
     };
 
     if (!campaign) {
