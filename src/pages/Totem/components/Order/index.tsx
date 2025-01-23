@@ -36,10 +36,16 @@ import {
 interface IProps {
   stepChange: (step: number) => void;
   storeProducts: StoreProductDto[];
+  taggedStoreProducts: StoreProductDto[];
   cancelSale: () => void;
 }
 
-const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
+const Order: React.FC<IProps> = ({
+  stepChange,
+  storeProducts,
+  cancelSale,
+  taggedStoreProducts,
+}) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
@@ -207,7 +213,54 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
               {storeProducts
                 .filter(
                   (storeProduct) => storeProduct.product.category_id === 2
-                ).sort((a, b) => a.product.name.localeCompare(b.product.name))
+                )
+                .sort((a, b) => a.product.name.localeCompare(b.product.name))
+                .map((storeProduct) => (
+                  <ExtraProduct sm={6} key={storeProduct.id}>
+                    <ExtraProductCard
+                      key={storeProduct.id}
+                      onClick={() =>
+                        onAddItem(storeProduct, 1, +storeProduct.price_unit)
+                      }
+                    >
+                      <img className="product-img-add" src={plus} />
+                      <img
+                        className="product-img"
+                        src={
+                          storeProduct?.product?.upload_url
+                            ? storeProduct?.product?.upload_url?.toString()
+                            : bottle
+                        }
+                      />
+
+                      <span className="product-name">
+                        {storeProduct.product.name}
+                      </span>
+                      <span className="product-price">
+                        R$
+                        {storeProduct.price_unit?.replace(".", ",")}
+                      </span>
+                    </ExtraProductCard>
+                  </ExtraProduct>
+                ))}
+            </ExtraProductList>
+            <div className="extra-product-title">Confira nossos produtos!</div>
+            <ExtraProductList gutter={[6, 40]} size={sale?.items?.length}>
+              {storeProducts
+                .filter(
+                  (storeProduct) =>
+                    ![1, 2].some(
+                      (category) =>
+                        category === storeProduct.product.category_id
+                    )
+                )
+                .filter((storeProduct) =>
+                  taggedStoreProducts.some(
+                    (_taggedStoreProduct) =>
+                      _taggedStoreProduct.product_id === storeProduct.product_id
+                  )
+                )
+                .sort((a, b) => a.product.name.localeCompare(b.product.name))
                 .map((storeProduct) => (
                   <ExtraProduct sm={6} key={storeProduct.id}>
                     <ExtraProductCard

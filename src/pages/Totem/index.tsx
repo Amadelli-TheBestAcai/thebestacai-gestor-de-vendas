@@ -27,7 +27,12 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const [fetchingSale, setFetchingSale] = useState<boolean>(false);
   const [fetchingProducts, setFetchingProducts] = useState<boolean>(false);
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
+
   const [storeProducts, setStoreProducts] = useState<StoreProductDto[]>([]);
+  const [taggedStoreProducts, setTaggedStoreProducts] = useState<
+    StoreProductDto[]
+  >([]);
+
   const [step, setStep] = useState(1);
   const [redirectHomeCount, setRedirectHomeCount] = useState(0);
   const [redirectHomeCountTimer, setredirectHomeCountTimer] = useState(null);
@@ -176,7 +181,15 @@ const Totem: React.FC<IProps> = ({ history }) => {
       setFetchingProducts(true);
       const { response: products, has_internal_error: errorOnProducts } =
         await window.Main.product.getProducts(true);
-      if (errorOnProducts) {
+
+      const {
+        response: taggedProducts,
+        has_internal_error: errorOnTaggedProducts,
+      } = await window.Main.product.getProductsByTags(["totem"]);
+
+      if (errorOnTaggedProducts) console.log({ errorOnTaggedProducts });
+
+      if (errorOnProducts || errorOnTaggedProducts) {
         notification.error({
           message: "Erro ao encontrar todos produtos",
           description: "Por favor informe o atendente",
@@ -191,6 +204,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
 
       setFetchingProducts(false);
       setStoreProducts(products);
+      setTaggedStoreProducts(taggedProducts);
     }
 
     fetchProducts();
@@ -276,6 +290,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
             <Order
               stepChange={stepChange}
               storeProducts={storeProducts}
+              taggedStoreProducts={taggedStoreProducts}
               cancelSale={cancelSale}
             />
           ) : (
@@ -302,10 +317,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
             <React.Fragment />
           )}
           {step === 6 ? (
-            <Evaluation
-              setStep={setStep}
-              printer={printer}
-            />
+            <Evaluation setStep={setStep} printer={printer} />
           ) : (
             <React.Fragment />
           )}

@@ -52,8 +52,7 @@ export const Body = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  min-height: 57.37rem;
-  height: 100%;
+  height: fit-content;
   padding: 3rem 0;
 
   .self-service-content {
@@ -82,7 +81,7 @@ export const Body = styled.div`
 
   .extra-products-content {
     width: 100%;
-    max-height: 33rem;
+    max-height: fit-content;
     .extra-products-list {
       display: flex;
       justify-content: center;
