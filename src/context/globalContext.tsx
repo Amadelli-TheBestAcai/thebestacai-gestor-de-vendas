@@ -190,6 +190,7 @@ export function GlobalProvider({ children }) {
       description: `O item selecionado foi retirado do carrinho.`,
       duration: 3,
     });
+    setSale(updatedSale);
     document.getElementById("balanceInput")?.focus();
   };
   const onRegisterSale = async (): Promise<void> => {
