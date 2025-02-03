@@ -37,13 +37,16 @@ export const Header = styled.div`
 
 interface IContent {
   customHeight: any;
+  customJustifyContent?: any;
 }
 
 export const Content = styled.div<IContent>`
   display: flex;
-  justify-content: center;
+  justify-content: ${({ customJustifyContent }) =>
+    customJustifyContent || "center"};
   align-items: center;
   width: 100%;
+  flex-direction: column;
 
   ${({ customHeight }) => {
     if (customHeight)

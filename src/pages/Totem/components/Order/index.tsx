@@ -292,24 +292,24 @@ const Order: React.FC<IProps> = ({
             </ExtraProductList>
           </div>
         </Body>
-        <Footer
-          style={{
-            justifyContent: sale.items.length ? "space-between" : "center",
-          }}
-        >
-          <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
-          {sale.items.length ? (
-            <ButtonFinalize
-              onClick={() => stepChange(4)}
-              loading={fetchingBalanceWeight}
-            >
-              Avançar
-            </ButtonFinalize>
-          ) : (
-            <></>
-          )}
-        </Footer>
       </Container>
+      <Footer
+        style={{
+          justifyContent: sale.items.length ? "space-between" : "center",
+        }}
+      >
+        <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
+        {sale.items.length ? (
+          <ButtonFinalize
+            onClick={() => stepChange(4)}
+            loading={fetchingBalanceWeight}
+          >
+            Avançar
+          </ButtonFinalize>
+        ) : (
+          <></>
+        )}
+      </Footer>
       <ModalInfo
         visible={visibleModal}
         setVisible={setVisibleModal}

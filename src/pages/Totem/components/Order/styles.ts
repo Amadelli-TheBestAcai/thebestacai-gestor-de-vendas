@@ -12,8 +12,10 @@ export const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 100%;
   padding: 1.25rem 2.5rem 0;
+  height: 90%;
+  position: relative;
+  overflow-y: auto;
 `;
 
 export const Header = styled.div`
@@ -97,6 +99,8 @@ export const Footer = styled.div`
   flex-direction: row;
   width: 100%;
   padding: 2.5rem;
+  position: absolute;
+  bottom: 0;
 `;
 
 export const OrderProductList = styled(RowAnt)`
