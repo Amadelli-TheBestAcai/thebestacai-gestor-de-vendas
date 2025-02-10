@@ -38,6 +38,7 @@ type ShopInfo = {
   discount_value?: number;
   quantity?: number;
   observation?: string;
+  observationFreeLancer?: string;
   name?: string;
 };
 
@@ -136,7 +137,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
               quantity: +shopInfo.quantity,
               unitary_value: +shopInfo.unitary_value,
               category_id: +category.id,
-              observation: `Nome: ${shopInfo.observation}`,
+              observation: `${reasontype}: ${shopInfo?.observationFreeLancer}`,
             },
           ],
           purchase_date: new Date(),
@@ -172,7 +173,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           reasontype === "Outros"
             ? reasson
             : reasontype === "Pagamento freelance"
-            ? reasontype + `: ${shopInfo.observation}`
+            ? reasontype + `: ${shopInfo?.observationFreeLancer}`
             : reasontype,
         amount: +shopOrder?.total || value,
       },
@@ -450,7 +451,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                   <Col sm={24}>
                     <Form.Item
                       label="Nome Freelancer"
-                      name="observation"
+                      name="observationFreeLancer"
                       rules={[
                         {
                           required: true,
@@ -461,7 +462,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                       <Input
                         placeholder="Nome Freelancer"
                         onChange={({ target: { value } }) =>
-                          handleShopInfo("observation", value)
+                          handleShopInfo("observationFreeLancer", value)
                         }
                       />
                     </Form.Item>
