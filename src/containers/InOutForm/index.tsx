@@ -143,6 +143,22 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
           purchase_date: new Date(),
           auto_generated: true,
         };
+
+        if (+shopOrder?.total >= 1000 && +shopOrder?.total <= 9999) {
+          notification.warning({
+            message: "Valor total elevado",
+            description:
+              "Por favor verifique se os valores foram inseridos corretamente através da tela de movimentações.",
+            duration: 10,
+          });
+        } else if (+shopOrder?.total > 9999) {
+          return notification.warning({
+            message: "Valor total muito elevado para pagamento de FreeLancer.",
+            description:
+              "Por favor verifique se os valores foram inseridos corretamente.",
+            duration: 10,
+          });
+        }
       }
       if (!shopIsValid(shopOrder)) {
         return notification.warning({
