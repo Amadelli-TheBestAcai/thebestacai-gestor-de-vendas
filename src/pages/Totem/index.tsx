@@ -185,7 +185,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
       const {
         response: taggedProducts,
         has_internal_error: errorOnTaggedProducts,
-      } = await window.Main.product.getProductsByTags(["totem"]);
+      } = await window.Main.product.getProductsByTags(["Totem"]);
 
       if (errorOnTaggedProducts) console.log({ errorOnTaggedProducts });
 
@@ -255,7 +255,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
   return (
     <>
       <Container>
-        {step !== 1 ? (
+        {step !== 1 && step !== 3 ? (
           <Header>
             <div className="logo-content">
               <img
@@ -269,7 +269,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
           <></>
         )}
         <Content
-          customHeight={step === 1 ? "100%" : "90%"}
+          customHeight={step === 1 || step === 3 ? "100%" : "90%"}
           customJustifyContent={"flex-start"}
         >
           {step === 1 ? (

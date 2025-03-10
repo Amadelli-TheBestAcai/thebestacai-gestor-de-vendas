@@ -1,11 +1,12 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 
 import bag from "../../../../assets/totem/svg/bag.svg";
 import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
-import selfservice from "../../../../assets/totem/svg/selfservice.svg";
+import self_service from "../../../../assets/totem/svg/self_service.svg";
+import totem_order_flag from "../../../../assets/totem/img/totem_order_flag.png";
 
 import { useSale } from "../../../../hooks/useSale";
 
@@ -23,7 +24,6 @@ import {
   ExtraProductCard,
   OrderProduct,
   Icon,
-  Header,
   Body,
   Footer,
   ButtonRegister,
@@ -31,8 +31,17 @@ import {
   ButtonFinalize,
   OrderProductList,
   AddSubItem,
+  MenuCategory,
+  CardCategoryMenu,
 } from "./styles";
 
+interface Category {
+  id: number;
+  name: string;
+  sort?: number;
+  created_at?: string;
+  deleted_at?: string;
+}
 interface IProps {
   stepChange: (step: number) => void;
   storeProducts: StoreProductDto[];
@@ -48,11 +57,46 @@ const Order: React.FC<IProps> = ({
 }) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<number>(0);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
     useState<boolean>(false);
 
   const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  useEffect(() => {
+    const _categories = getCategories();
+
+    if (_categories) {
+      setCategories(_categories);
+      setSelectedCategory(_categories[0].id || 0);
+    }
+  }, []);
+
+  const getCategories = () => {
+    const _categories: number[] = [];
+
+    const _categoriesList = storeProducts
+      .filter(
+        (_product) =>
+          _product.product.category.id !== 1 &&
+          taggedStoreProducts.some(
+            (_taggedProduct) => _taggedProduct.id === _product.id
+          )
+      )
+      .map((_product) => {
+        const category = _product.product.category;
+        if (!_categories.includes(category.id)) {
+          _categories.push(category.id);
+          return category;
+        }
+        return null;
+      })
+      .filter((category) => category !== null);
+
+    return _categoriesList;
   };
 
   const getWeightByBalance = async (): Promise<void> => {
@@ -119,20 +163,101 @@ const Order: React.FC<IProps> = ({
   return (
     <>
       <Container>
-        <Header>
-          <div className="bag-content">
-            <Icon src={bag} />
-            <span>Sua Sacola</span>
+        <MenuCategory onClick={() => console.log(taggedStoreProducts)}>
+          <img src={totem_order_flag} />
+          {categories.map((_category) => (
+            <CardCategoryMenu
+              active={selectedCategory === _category.id}
+              onClick={() => setSelectedCategory(_category.id)}
+            >
+              <span>{_category?.name}</span>
+            </CardCategoryMenu>
+          ))}
+        </MenuCategory>
+        <Body>
+          <span className="title">
+            Bem-vindo a The Best Açaí!
+            <br />O que vai querer hoje?
+          </span>
+
+          <div className="self-service-content">
+            <div className="title">
+              {" "}
+              <Icon src={self_service} /> Self-Service
+            </div>
+            {sale.items.length &&
+            sale.items.some((item) => item.product.category.id === 1) ? (
+              <ButtonRegister
+                style={{ width: "100%", margin: "1.5rem 0" }}
+                onClick={getWeightByBalance}
+                loading={fetchingBalanceWeight}
+              >
+                <Icon src={plus} /> Adicionar Nova Pesagem
+              </ButtonRegister>
+            ) : (
+              <ButtonRegister
+                onClick={getWeightByBalance}
+                loading={fetchingBalanceWeight}
+              >
+                <Icon src={plus} /> Registrar Pesagem
+              </ButtonRegister>
+            )}
           </div>
-          <div className="price-content">
-            <span>
-              R$ {(sale?.total_sold || 0).toFixed(2).replace(".", ",")}
-            </span>
-            {/* <Icon src={arrow_down} /> */}
+
+          <div className="extra-products-content">
+            <div className="extra-products-title">
+              <Icon src={bottle} />{" "}
+              <span>
+                {
+                  categories.find(
+                    (_category) => _category.id === selectedCategory
+                  )?.name
+                }
+              </span>
+            </div>
+            <ExtraProductList gutter={[6, 40]} size={sale?.items?.length}>
+              {storeProducts
+                .filter(
+                  (storeProduct) =>
+                    storeProduct.product.category_id === selectedCategory &&
+                    taggedStoreProducts.some(
+                      (_taggedProduct) => _taggedProduct.id === storeProduct.id
+                    ) &&
+                    storeProduct.product.category_id !== 1
+                )
+                .sort((a, b) => a.product.name.localeCompare(b.product.name))
+                .map((storeProduct) => (
+                  <ExtraProduct sm={8} key={storeProduct.id}>
+                    <ExtraProductCard
+                      key={storeProduct.id}
+                      onClick={() =>
+                        onAddItem(storeProduct, 1, +storeProduct.price_unit)
+                      }
+                    >
+                      <img className="product-img-add" src={plus} />
+                      <img
+                        className="product-img"
+                        src={
+                          storeProduct?.product?.upload_url
+                            ? storeProduct?.product?.upload_url?.toString()
+                            : bottle
+                        }
+                      />
+
+                      <span className="product-name">
+                        {storeProduct.product.name}
+                      </span>
+                      <span className="product-price">
+                        R$
+                        {storeProduct.price_unit?.replace(".", ",")}
+                      </span>
+                    </ExtraProductCard>
+                  </ExtraProduct>
+                ))}
+            </ExtraProductList>
           </div>
-        </Header>
-        <Body style={{ paddingTop: sale.items.length ? "0" : "3rem" }}>
-          <div className="order-list-content">
+
+          {/* <div className="order-list-content">
             <OrderProductList>
               {sale.items
                 .map((item) => (
@@ -290,15 +415,11 @@ const Order: React.FC<IProps> = ({
                   </ExtraProduct>
                 ))}
             </ExtraProductList>
-          </div>
+          </div> */}
         </Body>
       </Container>
-      <Footer
-        style={{
-          justifyContent: sale.items.length ? "space-between" : "center",
-        }}
-      >
-        <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
+      <Footer>
+        {/* <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
         {sale.items.length ? (
           <ButtonFinalize
             onClick={() => stepChange(4)}
@@ -308,7 +429,7 @@ const Order: React.FC<IProps> = ({
           </ButtonFinalize>
         ) : (
           <></>
-        )}
+        )} */}
       </Footer>
       <ModalInfo
         visible={visibleModal}

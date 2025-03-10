@@ -8,63 +8,92 @@ import {
 
 export const Container = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
-  padding: 1.25rem 2.5rem 0;
-  height: 90%;
+  height: 77%;
   position: relative;
   overflow-y: auto;
+  /* background: green; */
 `;
 
-export const Header = styled.div`
+export const MenuCategory = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  width: 27%;
+  height: 100%;
+  /* background: red; */
+  padding: 0 0.65rem;
+
+  img {
+    width: 12rem;
+    height: 15.6rem;
+  }
+`;
+
+interface IMenu {
+  active: boolean;
+}
+
+export const CardCategoryMenu = styled.div<IMenu>`
+  display: flex;
   align-items: center;
   width: 100%;
-  max-height: 4.87rem;
-  height: 10%;
-  font-size: 2.5rem;
+  height: 3.75rem;
+  margin: 1rem 0;
+  padding: 0.125rem;
+  border-radius: 0.31rem;
+  box-shadow: 0.2rem 0.2rem 0.2rem var(--black-opacity-20);
+  border-right: 0.625rem solid var(--white);
+  background: var(--white);
 
-  .bag-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    width: 16.5rem;
+  span {
+    font-size: 1.5rem;
     font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
-    span {
-      height: 2.7rem;
+  ${({ active }) => {
+    if (active) {
+      return css`
+        border-right: 0.625rem solid var(--orange-250);
+      `;
     }
-  }
-  .price-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    font-weight: 800;
-    span {
-      height: 2.7rem;
-    }
-  }
+  }}
 `;
 
 export const Body = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: fit-content;
-  padding: 3rem 0;
+  width: 73%;
+  height: 100%;
+  padding: 2.5rem;
+
+  .title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .extra-products-content {
+    width: 100%;
+    max-height: fit-content;
+  }
+
+  .extra-products-title {
+    display: flex;
+    align-items: flex-start;
+    text-transform: capitalize;
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
 
   .self-service-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
     width: 100%;
-    font-size: 4rem;
-    font-weight: 600;
-    text-align: center;
+    margin: 3rem 0;
   }
 
   .order-list-content {
@@ -80,27 +109,16 @@ export const Body = styled.div`
     text-align: start;
     margin: 2.5rem 0 1rem;
   }
-
-  .extra-products-content {
-    width: 100%;
-    max-height: fit-content;
-    .extra-products-list {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      overflow: hidden;
-    }
-  }
 `;
 
 export const Footer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 2.5rem;
+  height: 23%;
   position: absolute;
   bottom: 0;
+  background: yellow;
 `;
 
 export const OrderProductList = styled(RowAnt)`
@@ -283,12 +301,12 @@ export const ButtonRegister = styled(ButtonAnt)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 7.68rem;
+  height: 5rem;
   background: var(--orange-250);
   color: var(--black);
   border-radius: 0.625rem;
   font-weight: 600;
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   border: none;
   box-shadow: #00000040 1.95px 1.95px 2.6px;
   margin: 1.5rem 0;
@@ -307,10 +325,10 @@ const ButtonCSS = css`
   align-items: center;
   justify-content: center;
   width: 27.8rem;
-  height: 7.68rem;
+  height: 5rem;
   border-radius: 0.625rem;
   font-weight: 600;
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   color: var(--black);
 `;
 
@@ -343,8 +361,8 @@ export const ButtonFinalize = styled(ButtonAnt)`
 `;
 
 const IconCSS = css`
-  height: 3rem;
-  width: 3rem;
+  height: 2.5rem;
+  width: 2.5rem;
   cursor: pointer;
 `;
 
