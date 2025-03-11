@@ -5,6 +5,7 @@ import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
+import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
 import self_service from "../../../../assets/totem/svg/self_service.svg";
 import totem_order_flag from "../../../../assets/totem/img/totem_order_flag.png";
 
@@ -33,6 +34,7 @@ import {
   AddSubItem,
   MenuCategory,
   CardCategoryMenu,
+  ButtonReturn,
 } from "./styles";
 
 interface Category {
@@ -163,16 +165,23 @@ const Order: React.FC<IProps> = ({
   return (
     <>
       <Container>
-        <MenuCategory onClick={() => console.log(taggedStoreProducts)}>
-          <img src={totem_order_flag} />
-          {categories.map((_category) => (
-            <CardCategoryMenu
-              active={selectedCategory === _category.id}
-              onClick={() => setSelectedCategory(_category.id)}
-            >
-              <span>{_category?.name}</span>
-            </CardCategoryMenu>
-          ))}
+        <MenuCategory>
+          <div className="body-menu">
+            <img src={totem_order_flag} />
+            {categories.map((_category) => (
+              <CardCategoryMenu
+                key={_category.id}
+                active={selectedCategory === _category.id}
+                onClick={() => setSelectedCategory(_category.id)}
+              >
+                <span>{_category?.name}</span>
+              </CardCategoryMenu>
+            ))}
+          </div>
+
+          <ButtonReturn onClick={() => stepChange(2)}>
+            <img src={arrow_left} /> <span>Voltar</span>
+          </ButtonReturn>
         </MenuCategory>
         <Body>
           <span className="title">
@@ -256,180 +265,84 @@ const Order: React.FC<IProps> = ({
                 ))}
             </ExtraProductList>
           </div>
-
-          {/* <div className="order-list-content">
-            <OrderProductList>
-              {sale.items
-                .map((item) => (
-                  <OrderProduct key={item.id} sm={24}>
-                    <div className="order-item-content">
-                      <img
-                        src={
-                          item.product.category.id === 1
-                            ? selfservice
-                            : item?.product?.upload_url
-                            ? item?.product?.upload_url
-                            : bottle
-                        }
-                        className="order-item-image"
-                      />
-                      <div className="order-item-info">
-                        <span className="order-item-name">
-                          {item.product.name}
-                        </span>
-                        <span className="order-item-price">
-                          R$ {item.total?.toFixed(2).replace(".", ",")}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="order-item-actions">
-                      <span>
-                        <img src={trash} onClick={() => removeAllItems(item)} />
-                      </span>
-                      {item.product.category.id !== 1 && (
-                        <AddSubItem>
-                          <img
-                            src={plus}
-                            className="product-img-add"
-                            onClick={() => addItemList(item)}
-                          />
-                          {item.quantity}
-                          <img
-                            src={minus}
-                            className="product-img-sub"
-                            onClick={() => onDecressItem(item.id, true)}
-                          />
-                        </AddSubItem>
-                      )}
-                    </div>
-                  </OrderProduct>
-                ))
-                .reverse()}
-            </OrderProductList>
-          </div>
-          <div className="self-service-content">
-            {!sale.items.length && (
-              <span>Insira um item de cada vez sobre a balança</span>
-            )}
-            {sale.items.length &&
-            sale.items.some((item) => item.product.category.id === 1) ? (
-              <Button
-                style={{ width: "100%", margin: "1.5rem 0" }}
-                onClick={getWeightByBalance}
-                loading={fetchingBalanceWeight}
-              >
-                <Icon src={plus} /> Adicionar Nova Pesagem
-              </Button>
-            ) : (
-              <ButtonRegister
-                onClick={getWeightByBalance}
-                loading={fetchingBalanceWeight}
-              >
-                <Icon src={plus} /> Registrar Pesagem
-              </ButtonRegister>
-            )}
-          </div>
-          <div className="extra-products-content">
-            <div className="extra-product-title">
-              <Icon src={bottle} /> Que tal adicionar uma água ou refrigerante?
-            </div>
-            <ExtraProductList gutter={[6, 40]} size={sale?.items?.length}>
-              {storeProducts
-                .filter(
-                  (storeProduct) => storeProduct.product.category_id === 2
-                )
-                .sort((a, b) => a.product.name.localeCompare(b.product.name))
-                .map((storeProduct) => (
-                  <ExtraProduct sm={6} key={storeProduct.id}>
-                    <ExtraProductCard
-                      key={storeProduct.id}
-                      onClick={() =>
-                        onAddItem(storeProduct, 1, +storeProduct.price_unit)
-                      }
-                    >
-                      <img className="product-img-add" src={plus} />
-                      <img
-                        className="product-img"
-                        src={
-                          storeProduct?.product?.upload_url
-                            ? storeProduct?.product?.upload_url?.toString()
-                            : bottle
-                        }
-                      />
-
-                      <span className="product-name">
-                        {storeProduct.product.name}
-                      </span>
-                      <span className="product-price">
-                        R$
-                        {storeProduct.price_unit?.replace(".", ",")}
-                      </span>
-                    </ExtraProductCard>
-                  </ExtraProduct>
-                ))}
-            </ExtraProductList>
-            <div className="extra-product-title">Confira nossos produtos!</div>
-            <ExtraProductList gutter={[6, 40]} size={sale?.items?.length}>
-              {storeProducts
-                .filter(
-                  (storeProduct) =>
-                    ![1, 2].some(
-                      (category) =>
-                        category === storeProduct.product.category_id
-                    )
-                )
-                .filter((storeProduct) =>
-                  taggedStoreProducts.some(
-                    (_taggedStoreProduct) =>
-                      _taggedStoreProduct.product_id === storeProduct.product_id
-                  )
-                )
-                .sort((a, b) => a.product.name.localeCompare(b.product.name))
-                .map((storeProduct) => (
-                  <ExtraProduct sm={6} key={storeProduct.id}>
-                    <ExtraProductCard
-                      key={storeProduct.id}
-                      onClick={() =>
-                        onAddItem(storeProduct, 1, +storeProduct.price_unit)
-                      }
-                    >
-                      <img className="product-img-add" src={plus} />
-                      <img
-                        className="product-img"
-                        src={
-                          storeProduct?.product?.upload_url
-                            ? storeProduct?.product?.upload_url?.toString()
-                            : bottle
-                        }
-                      />
-
-                      <span className="product-name">
-                        {storeProduct.product.name}
-                      </span>
-                      <span className="product-price">
-                        R$
-                        {storeProduct.price_unit?.replace(".", ",")}
-                      </span>
-                    </ExtraProductCard>
-                  </ExtraProduct>
-                ))}
-            </ExtraProductList>
-          </div> */}
         </Body>
       </Container>
       <Footer>
-        {/* <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
-        {sale.items.length ? (
-          <ButtonFinalize
-            onClick={() => stepChange(4)}
-            loading={fetchingBalanceWeight}
-          >
-            Avançar
-          </ButtonFinalize>
-        ) : (
-          <></>
-        )} */}
+        <div className="order-list-footer">
+          <div className="order-title-footer">
+            <img src={bag} /> Sua sacola
+          </div>
+          <OrderProductList>
+            {sale.items
+              .map((item) => (
+                <OrderProduct key={item.id} sm={24}>
+                  <div className="order-item-content">
+                    <img
+                      src={
+                        item.product.category.id === 1
+                          ? self_service
+                          : item?.product?.upload_url
+                          ? item?.product?.upload_url
+                          : bottle
+                      }
+                      className="order-item-image"
+                    />
+                    <span className="order-item-name">{item.product.name}</span>
+                  </div>
+
+                  <div className="order-item-actions">
+                    <span>
+                      <img
+                        className="order-item-image"
+                        src={trash}
+                        onClick={() => removeAllItems(item)}
+                      />
+                    </span>
+                    <span className="order-item-price">
+                      R$ {item.total?.toFixed(2).replace(".", ",")}
+                    </span>
+                    {item.product.category.id !== 1 && (
+                      <AddSubItem>
+                        <img
+                          src={plus}
+                          className="product-img-add"
+                          onClick={() => addItemList(item)}
+                        />
+                        {item.quantity}
+                        <img
+                          src={minus}
+                          className="product-img-sub"
+                          onClick={() => onDecressItem(item.id, true)}
+                        />
+                      </AddSubItem>
+                    )}
+                  </div>
+                </OrderProduct>
+              ))
+              .reverse()}
+          </OrderProductList>
+        </div>
+        <div className="action-footer">
+          <div className="order-title-footer">
+            <span className="title-strong">
+              R${" "}
+              {sale.items
+                .reduce((total, item) => total + +(item.total || 0), 0)
+                .toFixed(2)}
+            </span>
+          </div>
+          {sale.items.length ? (
+            <ButtonFinalize
+              onClick={() => stepChange(4)}
+              loading={fetchingBalanceWeight}
+            >
+              Finalizar Pedido
+            </ButtonFinalize>
+          ) : (
+            <></>
+          )}
+          <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
+        </div>
       </Footer>
       <ModalInfo
         visible={visibleModal}

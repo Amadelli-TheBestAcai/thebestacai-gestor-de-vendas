@@ -12,21 +12,28 @@ export const Container = styled.div`
   height: 77%;
   position: relative;
   overflow-y: auto;
-  /* background: green; */
 `;
 
 export const MenuCategory = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
   width: 27%;
   height: 100%;
-  /* background: red; */
   padding: 0 0.65rem;
 
   img {
     width: 12rem;
     height: 15.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .body-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
   }
 `;
 
@@ -42,7 +49,7 @@ export const CardCategoryMenu = styled.div<IMenu>`
   margin: 1rem 0;
   padding: 0.125rem;
   border-radius: 0.31rem;
-  box-shadow: 0.2rem 0.2rem 0.2rem var(--black-opacity-20);
+  box-shadow: 0.2rem 0.2rem 0.5rem var(--black-opacity-30);
   border-right: 0.625rem solid var(--white);
   background: var(--white);
 
@@ -60,6 +67,39 @@ export const CardCategoryMenu = styled.div<IMenu>`
       `;
     }
   }}
+`;
+
+export const ButtonReturn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+
+  padding: 1.25rem;
+  border: none;
+  box-shadow: none;
+
+  :hover,
+  :active,
+  :focus {
+    color: var(--black);
+    border: none;
+    box-shadow: none;
+  }
+
+  img {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 0;
+  }
+
+  span {
+    height: 2.68rem;
+    font-weight: 500;
+    font-size: 2.25rem;
+    color: var(--black);
+    border-bottom: 3px solid var(--black);
+  }
 `;
 
 export const Body = styled.div`
@@ -96,14 +136,6 @@ export const Body = styled.div`
     margin: 3rem 0;
   }
 
-  .order-list-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-height: 35rem;
-  }
-
   .extra-product-title {
     font-size: 2.5rem;
     text-align: start;
@@ -116,9 +148,45 @@ export const Footer = styled.div`
   flex-direction: row;
   width: 100%;
   height: 23%;
-  position: absolute;
-  bottom: 0;
-  background: yellow;
+  padding: 0.5rem 1.8rem;
+  background: var(--white-70);
+  box-shadow: 0.2rem 0.2rem 0.5rem var(--black-opacity-30);
+
+  .order-list-footer {
+    display: flex;
+    flex-direction: column;
+    width: 73.15%;
+    height: 100%;
+    margin-right: 1.8rem;
+  }
+
+  .action-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 26.85%;
+    height: 100%;
+  }
+
+  .order-title-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: 600;
+    width: 100%;
+    height: 3.75rem;
+
+    img {
+      width: 2.5rem;
+      height: 2.5rem;
+      margin: 0 0.5rem 0.3rem 0;
+    }
+
+    .title-strong {
+      font-weight: 800;
+    }
+  }
 `;
 
 export const OrderProductList = styled(RowAnt)`
@@ -131,47 +199,39 @@ export const OrderProduct = styled(ColAnt)`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 10rem;
+  height: 5rem;
   margin: 0.5rem 0;
-  padding: 1.25rem 2.5rem;
+  padding: 0.625rem;
   background: var(--orange-190);
   border-radius: 0.625rem;
 
   .order-item-content {
     display: flex;
     flex-direction: row;
+    align-items: center;
   }
-  .order-item-image {
-    width: 7.5rem;
-    height: 7.5rem;
-    margin-right: 0.18rem;
-    background-size: cover;
-    background-position: center;
-  }
-  .order-item-info {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    font-weight: 600;
 
-    .order-item-name {
-      font-size: 2rem;
-    }
-    .order-item-price {
-      font-size: 1.5rem;
-    }
+  .order-item-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: capitalize;
   }
+  .order-item-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 0.2rem;
+  }
+
   .order-item-actions {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
     align-items: center;
-    width: 16rem;
   }
 
   .order-item-image {
-    width: 7.5rem;
-    height: 7.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
     margin-right: 0.18rem;
     object-fit: contain;
     background-size: cover;
@@ -324,30 +384,39 @@ const ButtonCSS = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 27.8rem;
-  height: 5rem;
+  height: 3.31rem;
   border-radius: 0.625rem;
   font-weight: 600;
-  font-size: 1.75rem;
+  font-size: 1.375rem;
   color: var(--black);
+  margin-top: 1rem;
+  box-shadow: 0.2rem 0.2rem 0.5rem var(--black-opacity-30);
 `;
 
 export const Button = styled(ButtonAnt)`
   ${ButtonCSS}
-  background: var(--white);
-  border: 3px solid var(--black);
+  width: fit-content;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  border-bottom: 2px solid var(--black);
+  box-shadow: none;
 
   :active,
   :hover,
   :focus {
-    background: var(--white);
+    background: transparent;
     color: var(--black);
-    border: 3px solid var(--black);
+    border-radius: 0;
+    border: none;
+    border-bottom: 2px solid var(--black);
+    box-shadow: none;
   }
 `;
 
 export const ButtonFinalize = styled(ButtonAnt)`
   ${ButtonCSS}
+  width: 100%;
   border: none;
   background: var(--orange-250);
 
