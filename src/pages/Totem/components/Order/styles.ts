@@ -60,6 +60,12 @@ export const CardCategoryMenu = styled.div<IMenu>`
     text-transform: uppercase;
   }
 
+  img {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 0 1rem;
+  }
+
   ${({ active }) => {
     if (active) {
       return css`
@@ -356,7 +362,11 @@ export const ExtraProductCard = styled.div`
 
 export const Input = styled(InputAnt)``;
 
-export const ButtonRegister = styled(ButtonAnt)`
+interface IRegisterButton {
+  loadingRegister?: boolean;
+}
+
+export const ButtonRegister = styled(ButtonAnt)<IRegisterButton>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -370,6 +380,7 @@ export const ButtonRegister = styled(ButtonAnt)`
   border: none;
   box-shadow: #00000040 1.95px 1.95px 2.6px;
   margin: 1.5rem 0;
+  transition: background-color 2s ease;
 
   :active,
   :hover,
@@ -378,6 +389,23 @@ export const ButtonRegister = styled(ButtonAnt)`
     color: var(--black);
     border: none;
   }
+
+  ${({ loadingRegister }) => {
+    if (loadingRegister) {
+      return css`
+        background: var(--green-500);
+        transition: background-color 2s ease;
+
+        :active,
+        :hover,
+        :focus {
+          background: var(--green-500);
+          color: var(--black);
+          border: none;
+        }
+      `;
+    }
+  }}
 `;
 
 const ButtonCSS = css`

@@ -1,9 +1,12 @@
 import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 
 import bag from "../../../../assets/totem/svg/bag.svg";
+import pot from "../../../../assets/totem/svg/pot.svg";
 import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
+import check from "../../../../assets/totem/svg/check.svg";
+import others from "../../../../assets/totem/svg/others.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
 import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
 import self_service from "../../../../assets/totem/svg/self_service.svg";
@@ -63,6 +66,8 @@ const Order: React.FC<IProps> = ({
   const [categories, setCategories] = useState<Category[]>([]);
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
     useState<boolean>(false);
+  const [loadingButtonRegister, setLoadingButtonRegister] =
+    useState<boolean>(false);
 
   const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -101,6 +106,19 @@ const Order: React.FC<IProps> = ({
     return _categoriesList;
   };
 
+  const getCategoryIcon = (_category: Category) => {
+    if (_category?.name?.toLocaleLowerCase()?.includes("pote")) {
+      return pot;
+    }
+    if (_category?.name?.toLocaleLowerCase()?.includes("bebida")) {
+      return bottle;
+    }
+    if (_category?.name?.toLocaleLowerCase()?.includes("self")) {
+      return self_service;
+    }
+    return others;
+  };
+
   const getWeightByBalance = async (): Promise<void> => {
     setFetchingBalanceWeight(true);
     await sleep(1500);
@@ -121,32 +139,44 @@ const Order: React.FC<IProps> = ({
       return;
     }
 
-    window.Main.send("balance:get", ({ weight, error }) => {
-      setFetchingBalanceWeight(false);
-      if (error) {
-        notification.info({
-          message: "Falha de Leitura. Erro ao obter dados da balança.",
-          description:
-            "Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
-          duration: 5,
-          className: "notification-totem",
-        });
-        return;
-      }
-      if (!weight) {
-        notification.info({
-          message:
-            "Falha de Leitura. Não foi possível ler o peso de seu self-service.",
-          description:
-            "Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
-          duration: 5,
-          className: "notification-totem",
-        });
-        return;
-      }
-      const amount = +weight * +selfService?.price_unit;
-      onAddItem(selfService, +weight, +amount);
-    });
+    // window.Main.send("balance:get", ({ weight, error }) => {
+    //   setFetchingBalanceWeight(false);
+    //   if (error) {
+    //     notification.info({
+    //       message: "Falha de Leitura. Erro ao obter dados da balança.",
+    //       description:
+    //         "Reconecte o cabo de dados na balança e no computador, feche o APP, reinicie a balança e abra o APP novamente",
+    //       duration: 5,
+    //       className: "notification-totem",
+    //     });
+    //     return;
+    //   }
+    //   if (!weight) {
+    //     notification.info({
+    //       message:
+    //         "Falha de Leitura. Não foi possível ler o peso de seu self-service.",
+    //       description:
+    //         "Retire o copo da balança e coloque-o novamente. Se o erro persistir, contate o atendente",
+    //       duration: 5,
+    //       className: "notification-totem",
+    //     });
+    //     return;
+    //   }
+    //   const amount = +weight * +selfService?.price_unit;
+    //   onAddItem(selfService, +weight, +amount);
+
+    //   colorChange();
+    // });
+    const amount = +0.5 * +selfService?.price_unit;
+    onAddItem(selfService, +0.5, +amount);
+    setFetchingBalanceWeight(false);
+    colorChange();
+  };
+
+  const colorChange = async () => {
+    setLoadingButtonRegister(() => true);
+    await sleep(2000);
+    setLoadingButtonRegister(() => false);
   };
 
   const addItemList = async (item: ItemDto) => {
@@ -174,14 +204,16 @@ const Order: React.FC<IProps> = ({
                 active={selectedCategory === _category.id}
                 onClick={() => setSelectedCategory(_category.id)}
               >
+                <img src={getCategoryIcon(_category)} />
                 <span>{_category?.name}</span>
               </CardCategoryMenu>
             ))}
           </div>
-
-          <ButtonReturn onClick={() => stepChange(2)}>
-            <img src={arrow_left} /> <span>Voltar</span>
-          </ButtonReturn>
+          {!sale.items.length && (
+            <ButtonReturn onClick={() => stepChange(2)}>
+              <img src={arrow_left} /> <span>Voltar</span>
+            </ButtonReturn>
+          )}
         </MenuCategory>
         <Body>
           <span className="title">
@@ -194,23 +226,26 @@ const Order: React.FC<IProps> = ({
               {" "}
               <Icon src={self_service} /> Self-Service
             </div>
-            {sale.items.length &&
-            sale.items.some((item) => item.product.category.id === 1) ? (
-              <ButtonRegister
-                style={{ width: "100%", margin: "1.5rem 0" }}
-                onClick={getWeightByBalance}
-                loading={fetchingBalanceWeight}
-              >
-                <Icon src={plus} /> Adicionar Nova Pesagem
-              </ButtonRegister>
-            ) : (
-              <ButtonRegister
-                onClick={getWeightByBalance}
-                loading={fetchingBalanceWeight}
-              >
-                <Icon src={plus} /> Registrar Pesagem
-              </ButtonRegister>
-            )}
+
+            <ButtonRegister
+              onClick={getWeightByBalance}
+              loading={fetchingBalanceWeight}
+              loadingRegister={loadingButtonRegister}
+            >
+              {loadingButtonRegister ? (
+                <Icon src={check} />
+              ) : (
+                !fetchingBalanceWeight && <Icon src={plus} />
+              )}
+              {fetchingBalanceWeight
+                ? "Registrando Pesagem"
+                : sale.items.length &&
+                  sale.items.some((item) => item.product.category.id === 1)
+                ? !loadingButtonRegister
+                  ? "Adicionar Nova Pesagem"
+                  : "Pesagem concluída"
+                : "Registrar Pesagem"}
+            </ButtonRegister>
           </div>
 
           <div className="extra-products-content">
@@ -279,11 +314,9 @@ const Order: React.FC<IProps> = ({
                   <div className="order-item-content">
                     <img
                       src={
-                        item.product.category.id === 1
-                          ? self_service
-                          : item?.product?.upload_url
+                        item?.product?.upload_url
                           ? item?.product?.upload_url
-                          : bottle
+                          : getCategoryIcon(item?.product?.category)
                       }
                       className="order-item-image"
                     />
