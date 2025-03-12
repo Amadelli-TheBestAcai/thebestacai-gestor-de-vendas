@@ -56,7 +56,7 @@ export const Product = styled(ColAnt)`
   justify-content: center;
   width: 25%;
   height: 15.81rem;
-  margin: 0 0.5rem;
+  margin: 1rem 0.5rem;
 `;
 
 const ButtonCSS = css`
