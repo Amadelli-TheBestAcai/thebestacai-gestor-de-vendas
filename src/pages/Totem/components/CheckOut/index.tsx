@@ -1,12 +1,16 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import { useSale } from "../../../../hooks/useSale";
 
 import { CampaignDto } from "../../../../models/dtos/campaign";
+import { StoreProductDto } from "../../../../models/dtos/storeProduct";
+import { ItemDto } from "../../../../models/dtos/item";
 
 import ModalInfo from "../ModalInfo";
+import ModalItensOffer from "../ModalItensOffer";
+import OrderProductList from "../OrderProductList";
 
 import {
   Container,
@@ -19,8 +23,6 @@ import {
   ClubInfo,
   OrderInfo,
   ButtonFinalize,
-  OrderProductList,
-  OrderProduct,
 } from "./styles";
 
 interface IProps {
@@ -28,19 +30,27 @@ interface IProps {
   campaign: CampaignDto | null;
   cancelSale: () => void;
   stepChange: (step: number) => void;
+  storeProducts: StoreProductDto[];
 }
 
-const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange }) => {
-  const { sale, setSale } = useSale();
+const CheckOut: React.FC<IProps> = ({
+  campaign,
+  setStep,
+  cancelSale,
+  stepChange,
+  storeProducts,
+}) => {
+  const { sale, setSale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [visibleModalOffer, setVisibleModalOffer] = useState<boolean>(false);
+  const [totalPoints, setTotalPoints] = useState<number>(0);
 
-  const getCampaignPointsPlus = () => {
+  useEffect(() => {
     let points = campaign?.average_ticket
       ? Math.floor(sale?.total_sold / campaign?.average_ticket)
       : 0;
-
-    return points;
-  };
+    setTotalPoints(points);
+  }, [sale]);
 
   const updateCheck = async (name: string, check: boolean) => {
     const { response: updatedSale } = await window.Main.sale.updateSale(
@@ -52,6 +62,28 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange 
     );
     setSale(updatedSale);
   };
+
+  const addItemList = async (item: ItemDto) => {
+    const findProduct = storeProducts.find(
+      (_product) => +_product.id === +item.store_product_id
+    );
+    onAddItem(findProduct, 1, +findProduct.price_unit);
+  };
+
+  const removeAllItems = async (item: ItemDto): Promise<void> => {
+    for (let i = 0; i < item.quantity; i++) {
+      await onDecressItem(item.id, true);
+    }
+  };
+
+  const offerItem = async () =>{
+    const findItem = sale?.items?.every((_item) => !_item?.product?.category?.name?.toLowerCase()?.includes("bebida"));
+    if(findItem){
+      setVisibleModalOffer(true);
+    }else{
+      stepChange(5)
+    }
+  }
 
   return (
     <>
@@ -108,9 +140,7 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange 
               )}
 
               {sale.client_cpf && (
-                <span style={{ fontWeight: "800" }}>
-                  +{getCampaignPointsPlus()}
-                </span>
+                <span style={{ fontWeight: "800" }}>+{totalPoints}</span>
               )}
             </div>
           </ClubInfo>
@@ -119,29 +149,11 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange 
             <div className="info-header">
               <span>ITENS</span>
             </div>
-            <OrderProductList>
-              {sale.items
-                .map((item) => (
-                  <OrderProduct key={item.id} sm={24}>
-                    <div className="order-item-content">
-                      <div className="order-item-info">
-                        <span className="order-item-name">
-                          {item.product.category.id === 1
-                            ? `${item.quantity * 1000}g`
-                            : `${item.quantity} x`}
-                        </span>
-                        <span className="order-item-name">
-                          {item.product.name}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="order-item-price">
-                      <span>R$ {item.total?.toFixed(2).replace(".", ",")}</span>
-                    </div>
-                  </OrderProduct>
-                ))
-                .reverse()}
-            </OrderProductList>
+            <OrderProductList
+              addItemList={addItemList}
+              onDecressItem={onDecressItem}
+              removeAllItems={removeAllItems}
+            />
           </OrderInfo>
           <OrderInfo>
             <div className="info-header">
@@ -158,7 +170,10 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange 
         <Footer>
           <div style={{ justifyContent: "space-between" }}>
             <Button onClick={() => setStep(3)}>Voltar</Button>
-            <ButtonFinalize onClick={() => stepChange(5)}>
+            <ButtonFinalize
+              onClick={() => offerItem()}
+              disabled={!sale?.items?.length}
+            >
               Avançar
             </ButtonFinalize>
           </div>
@@ -169,6 +184,12 @@ const CheckOut: React.FC<IProps> = ({ campaign, setStep, cancelSale, stepChange 
         visible={visibleModal}
         setVisible={setVisibleModal}
         cancelSale={cancelSale}
+      />
+      <ModalItensOffer
+        visible={visibleModalOffer}
+        setVisible={setVisibleModalOffer}
+        stepChange={stepChange}
+        storeProducts={storeProducts}
       />
     </>
   );

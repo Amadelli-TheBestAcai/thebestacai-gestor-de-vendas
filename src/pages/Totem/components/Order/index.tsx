@@ -1,16 +1,14 @@
-import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import bag from "../../../../assets/totem/svg/bag.svg";
-import pot from "../../../../assets/totem/svg/pot.svg";
 import plus from "../../../../assets/totem/svg/plus.svg";
-import minus from "../../../../assets/totem/svg/minus.svg";
-import trash from "../../../../assets/totem/svg/trash.svg";
 import check from "../../../../assets/totem/svg/check.svg";
-import others from "../../../../assets/totem/svg/others.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
 import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
 import self_service from "../../../../assets/totem/svg/self_service.svg";
 import totem_order_flag from "../../../../assets/totem/img/totem_order_flag.png";
+
+import { getCategoryIcon } from "../../helpers/getCategoryIcon";
 
 import { useSale } from "../../../../hooks/useSale";
 
@@ -18,6 +16,8 @@ import { ItemDto } from "../../../../models/dtos/item";
 import { StoreProductDto } from "../../../../models/dtos/storeProduct";
 
 import ModalInfo from "../ModalInfo";
+import ProductCard from "../ProductCard";
+import OrderProductList from "../OrderProductList";
 
 import { notification } from "antd";
 
@@ -25,16 +25,12 @@ import {
   Container,
   Button,
   ExtraProductList,
-  ExtraProductCard,
-  OrderProduct,
   Icon,
   Body,
   Footer,
   ButtonRegister,
   ExtraProduct,
   ButtonFinalize,
-  OrderProductList,
-  AddSubItem,
   MenuCategory,
   CardCategoryMenu,
   ButtonReturn,
@@ -50,16 +46,10 @@ interface Category {
 interface IProps {
   stepChange: (step: number) => void;
   storeProducts: StoreProductDto[];
-  taggedStoreProducts: StoreProductDto[];
   cancelSale: () => void;
 }
 
-const Order: React.FC<IProps> = ({
-  stepChange,
-  storeProducts,
-  cancelSale,
-  taggedStoreProducts,
-}) => {
+const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
@@ -78,7 +68,13 @@ const Order: React.FC<IProps> = ({
 
     if (_categories) {
       setCategories(_categories);
-      setSelectedCategory(_categories[0].id || 0);
+      setSelectedCategory(
+        _categories.find((_category) =>
+          _category?.name?.toLowerCase()?.includes("bebida")
+        )?.id ||
+          _categories[0]?.id ||
+          0
+      );
     }
   }, []);
 
@@ -86,13 +82,7 @@ const Order: React.FC<IProps> = ({
     const _categories: number[] = [];
 
     const _categoriesList = storeProducts
-      .filter(
-        (_product) =>
-          _product.product.category.id !== 1 &&
-          taggedStoreProducts.some(
-            (_taggedProduct) => _taggedProduct.id === _product.id
-          )
-      )
+      .filter((_product) => _product.product.category.id !== 1)
       .map((_product) => {
         const category = _product.product.category;
         if (!_categories.includes(category.id)) {
@@ -104,19 +94,6 @@ const Order: React.FC<IProps> = ({
       .filter((category) => category !== null);
 
     return _categoriesList;
-  };
-
-  const getCategoryIcon = (_category: Category) => {
-    if (_category?.name?.toLocaleLowerCase()?.includes("pote")) {
-      return pot;
-    }
-    if (_category?.name?.toLocaleLowerCase()?.includes("bebida")) {
-      return bottle;
-    }
-    if (_category?.name?.toLocaleLowerCase()?.includes("self")) {
-      return self_service;
-    }
-    return others;
   };
 
   const getWeightByBalance = async (): Promise<void> => {
@@ -260,38 +237,15 @@ const Order: React.FC<IProps> = ({
                 .filter(
                   (storeProduct) =>
                     storeProduct.product.category_id === selectedCategory &&
-                    taggedStoreProducts.some(
-                      (_taggedProduct) => _taggedProduct.id === storeProduct.id
-                    ) &&
                     storeProduct.product.category_id !== 1
                 )
                 .sort((a, b) => a.product.name.localeCompare(b.product.name))
                 .map((storeProduct) => (
                   <ExtraProduct sm={8} key={storeProduct.id}>
-                    <ExtraProductCard
+                    <ProductCard
                       key={storeProduct.id}
-                      onClick={() =>
-                        onAddItem(storeProduct, 1, +storeProduct.price_unit)
-                      }
-                    >
-                      <img className="product-img-add" src={plus} />
-                      <img
-                        className="product-img"
-                        src={
-                          storeProduct?.product?.upload_url
-                            ? storeProduct?.product?.upload_url?.toString()
-                            : bottle
-                        }
-                      />
-
-                      <span className="product-name">
-                        {storeProduct.product.name}
-                      </span>
-                      <span className="product-price">
-                        R$
-                        {storeProduct.price_unit?.replace(".", ",")}
-                      </span>
-                    </ExtraProductCard>
+                      storeProduct={storeProduct}
+                    />
                   </ExtraProduct>
                 ))}
             </ExtraProductList>
@@ -303,53 +257,11 @@ const Order: React.FC<IProps> = ({
           <div className="order-title-footer">
             <img src={bag} /> Sua sacola
           </div>
-          <OrderProductList>
-            {sale.items
-              .map((item) => (
-                <OrderProduct key={item.id} sm={24}>
-                  <div className="order-item-content">
-                    <img
-                      src={
-                        item?.product?.upload_url
-                          ? item?.product?.upload_url
-                          : getCategoryIcon(item?.product?.category)
-                      }
-                      className="order-item-image"
-                    />
-                    <span className="order-item-name">{item.product.name}</span>
-                  </div>
-
-                  <div className="order-item-actions">
-                    <span>
-                      <img
-                        className="order-item-image"
-                        src={trash}
-                        onClick={() => removeAllItems(item)}
-                      />
-                    </span>
-                    <span className="order-item-price">
-                      R$ {item.total?.toFixed(2).replace(".", ",")}
-                    </span>
-                    {item.product.category.id !== 1 && (
-                      <AddSubItem>
-                        <img
-                          src={plus}
-                          className="product-img-add"
-                          onClick={() => addItemList(item)}
-                        />
-                        {item.quantity}
-                        <img
-                          src={minus}
-                          className="product-img-sub"
-                          onClick={() => onDecressItem(item.id, true)}
-                        />
-                      </AddSubItem>
-                    )}
-                  </div>
-                </OrderProduct>
-              ))
-              .reverse()}
-          </OrderProductList>
+          <OrderProductList
+            addItemList={addItemList}
+            onDecressItem={onDecressItem}
+            removeAllItems={removeAllItems}
+          />
         </div>
         <div className="action-footer">
           <div className="order-title-footer">

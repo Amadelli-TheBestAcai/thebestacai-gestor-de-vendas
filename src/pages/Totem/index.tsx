@@ -202,9 +202,14 @@ const Totem: React.FC<IProps> = ({ history }) => {
         await window.Main.sale.getCurrentCampaign();
       setCampaign(currentCampaign);
 
+      const filterProductWithTag = products.filter((storeProduct) =>
+        taggedProducts.some(
+          (_taggedProduct) => _taggedProduct.id === storeProduct.id
+        )
+      );
+
       setFetchingProducts(false);
-      setStoreProducts(products);
-      setTaggedStoreProducts(taggedProducts);
+      setStoreProducts(filterProductWithTag);
     }
 
     fetchProducts();
@@ -293,18 +298,18 @@ const Totem: React.FC<IProps> = ({ history }) => {
             <Order
               stepChange={stepChange}
               storeProducts={storeProducts}
-              taggedStoreProducts={taggedStoreProducts}
               cancelSale={cancelSale}
-            />
-          ) : (
-            <React.Fragment />
-          )}
+              />
+            ) : (
+              <React.Fragment />
+            )}
           {step === 4 ? (
             <CheckOut
-              setStep={setStep}
-              stepChange={stepChange}
-              campaign={campaign}
-              cancelSale={cancelSale}
+            setStep={setStep}
+            stepChange={stepChange}
+            campaign={campaign}
+            cancelSale={cancelSale}
+            storeProducts={storeProducts}
             />
           ) : (
             <React.Fragment />
