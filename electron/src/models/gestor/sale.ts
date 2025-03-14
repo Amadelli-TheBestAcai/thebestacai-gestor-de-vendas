@@ -35,7 +35,7 @@ export interface SaleDto {
   customer_nps_reward_discount?: number;
   cpf_used_club?: boolean;
   cpf_used_nfce?: boolean;
-
+  customer_voucher_id?: number;
   nfce?: {
     qrcode_url: string;
   };

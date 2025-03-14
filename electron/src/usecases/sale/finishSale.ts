@@ -24,7 +24,6 @@ class FinishSale implements IUseCaseFactory {
     private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Not_Integrated_Sale
     ),
-    private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private onlineIntegrationUseCase = onlineIntegration
   ) { }
 
