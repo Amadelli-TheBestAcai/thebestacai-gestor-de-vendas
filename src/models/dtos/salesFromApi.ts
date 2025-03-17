@@ -3,8 +3,10 @@ export interface SaleFromApi {
   gv_id?: number;
   client_id?: number;
   abstract_sale: boolean;
+  
   quantity: number;
   total_sold: number;
+  customer_reward_id?: number;
   items: {
     name: string;
     product_id: number;
