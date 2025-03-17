@@ -58,6 +58,11 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
       local_opened_at: storeCash.local_opened_at,
     });
 
+    console.log({
+      amount_on_open: storeCash.amount_on_open.toString() || "0",
+      local_opened_at: storeCash.local_opened_at,
+    })
+
     storeCash.code = code;
     storeCash.cash_id = cash_id;
     storeCash.history_id = history_id;
