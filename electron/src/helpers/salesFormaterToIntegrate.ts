@@ -15,6 +15,7 @@ export const salesFormaterToIntegrate = (
       abstract_sale: _payload.abstract_sale,
       change_amount: _payload.change_amount,
       type: _payload.type,
+      customer_reward_id: _payload.customer_reward_id,
       discount: _payload.discount,
       cash_id: _payload.cash_id || storeCash.cash_id,
       user_id: _payload.user_id,
@@ -113,7 +114,9 @@ export const salesFormaterToIntegrate = (
       ref: _payload.ref,
       created_at: _payload.created_at,
       cpf_used_club: _payload.cpf_used_club,
-      cpf_used_nfce: _payload.cpf_used_nfce
+      cpf_used_nfce: _payload.cpf_used_nfce,
+      customer_voucher_id: _payload.customerVoucher?.id,
+      client_id: _payload.customerVoucher?.customer_id,
     }));
   } else {
     const response = {
@@ -132,6 +135,7 @@ export const salesFormaterToIntegrate = (
       nfce_id: payload.nfce_id,
       nfce_focus_id: payload.nfce_focus_id,
       cupom: payload.customerVoucher,
+      customer_reward_id: payload.customer_reward_id,
       nfce_url: payload.nfce_url,
       payments: payload.payments.map((_payment) => ({
         amount: +_payment.amount,
@@ -222,7 +226,9 @@ export const salesFormaterToIntegrate = (
       ref: payload.ref,
       created_at: payload.created_at,
       cpf_used_club: payload.cpf_used_club,
-      cpf_used_nfce: payload.cpf_used_nfce
+      cpf_used_nfce: payload.cpf_used_nfce,
+      customer_voucher_id: payload.customerVoucher?.id,
+      client_id: payload.customerVoucher?.customer_id,
     };
     return [response];
   }

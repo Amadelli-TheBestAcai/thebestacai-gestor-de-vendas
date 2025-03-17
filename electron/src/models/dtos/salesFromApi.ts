@@ -3,6 +3,7 @@ export interface SaleFromApiDTO {
   client_id?: number;
   abstract_sale: boolean;
   quantity: number;
+  customer_reward_id?: number;
   nfce?: {
     qrcode_url: string;
   };

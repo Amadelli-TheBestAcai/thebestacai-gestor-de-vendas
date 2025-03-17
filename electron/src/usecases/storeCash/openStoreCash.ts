@@ -11,6 +11,7 @@ import { backupDatabase } from "../common/backupDatabase";
 import { v4 } from "uuid";
 import { deleteLogs } from "../linxTef/deleteLogs";
 import { useCaseFactory } from "../useCaseFactory";
+import moment from "moment";
 
 interface Request {
   amount_on_open: number;
@@ -33,8 +34,7 @@ class OpenStoreCash implements IUseCaseFactory {
       StorageNames.Old_Cash_History
     ),
     private deleteLogsTefUseCase = deleteLogs
-
-  ) { }
+  ) {}
 
   async execute({
     amount_on_open,
@@ -49,10 +49,11 @@ class OpenStoreCash implements IUseCaseFactory {
       store_id: store?.company_id,
       is_opened: true,
       is_online: false,
+      local_opened_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
     };
 
     backupDatabase.execute();
-
+    
     await this.saleRepository.clear();
     await this.integratedSaleRepository.clear();
     await this.integratedHandlerRepository.clear();
@@ -61,10 +62,7 @@ class OpenStoreCash implements IUseCaseFactory {
     await this.storeCashRepository.create(payload);
     await this.oldCashHistoryRepository.clear();
 
-
-    await useCaseFactory.execute<void>(
-      this.deleteLogsTefUseCase
-    );
+    await useCaseFactory.execute<void>(this.deleteLogsTefUseCase);
 
     return payload;
   }
