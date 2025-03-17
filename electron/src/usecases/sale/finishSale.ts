@@ -26,19 +26,22 @@ class FinishSale implements IUseCaseFactory {
     ),
     private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
     private onlineIntegrationUseCase = onlineIntegration
-  ) { }
+  ) {}
 
   async execute({ payload, fromDelivery }: Request): Promise<void> {
     if (payload.customerVoucher?.id) {
       const is_online = await checkInternet();
       if (!is_online) {
-        throw new Error('Para finalizar a venda com cupom é necessário estar online')
+        throw new Error(
+          "Para finalizar a venda com cupom é necessário estar online"
+        );
       }
       const currentStore = await this.storeRepository.getOne();
-  
+
       await thorApi.put(`/customerVoucher/mark-as-used`, {
-        customerVoucherId: payload.customerVoucher,
-        company_id: currentStore?.company_id,})
+        customerVoucherId: payload.customerVoucher.id,
+        company_id: currentStore?.company_id,
+      });
     }
 
     payload.is_current = false;
