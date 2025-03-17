@@ -36,7 +36,7 @@ class FinishSale implements IUseCaseFactory {
       }
       const currentStore = await this.storeRepository.getOne();
   
-      await thorApi.put(`/customerVoucher/mark-as-used/`, {
+      await thorApi.put(`/customerVoucher/mark-as-used`, {
         customerVoucherId: payload.customerVoucher,
         company_id: currentStore?.company_id,})
     }
