@@ -115,6 +115,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_email: info.email,
         cpf_used_club: info.cpf_used_club,
         cpf_used_nfce: info.cpf_used_nfce,
+        client_id: sale.customerVoucher?.customer_id
       }
     );
 
@@ -161,6 +162,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_email: null,
         cpf_used_club: null,
         cpf_used_nfce: null,
+        client_id: null
       }
     );
     setSale(updatedSale);
