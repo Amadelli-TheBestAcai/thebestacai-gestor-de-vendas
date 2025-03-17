@@ -53,7 +53,7 @@ class OpenStoreCash implements IUseCaseFactory {
     };
 
     backupDatabase.execute();
-    console.log("[LOG] payload:", payload);
+    
     await this.saleRepository.clear();
     await this.integratedSaleRepository.clear();
     await this.integratedHandlerRepository.clear();

@@ -47,11 +47,10 @@ class CloseStoreCash implements IUseCaseFactory {
       storeCash?.id,
       {
         is_opened: false,
-        local_closed_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
       }
     );
 
-    console.log("[LOG] updatedStoreCash:", updatedStoreCash);
+    
     const {
       data: { history },
     } = await odinApi.get(
@@ -115,7 +114,9 @@ class CloseStoreCash implements IUseCaseFactory {
 
     await odinApi.put(
       `/store_cashes/${currentStore.company_id}-${code}/close`,
-      { amount_on_close: +amount_on_close?.toString() || 0 }
+      { amount_on_close: +amount_on_close?.toString() || 0,
+        local_closed_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+       }
     );
 
     return this.closeCashLocal(currentStore.company_id);
