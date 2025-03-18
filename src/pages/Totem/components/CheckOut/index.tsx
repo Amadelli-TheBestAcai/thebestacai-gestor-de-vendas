@@ -1,5 +1,8 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
+import cupom from "../../../../assets/totem/svg/cupom.svg";
+import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
+
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import { useSale } from "../../../../hooks/useSale";
@@ -23,6 +26,7 @@ import {
   ClubInfo,
   OrderInfo,
   ButtonFinalize,
+  ButtonCupom,
 } from "./styles";
 
 interface IProps {
@@ -76,14 +80,17 @@ const CheckOut: React.FC<IProps> = ({
     }
   };
 
-  const offerItem = async () =>{
-    const findItem = sale?.items?.every((_item) => !_item?.product?.category?.name?.toLowerCase()?.includes("bebida"));
-    if(findItem){
+  const offerItem = async () => {
+    const findItem = sale?.items?.every(
+      (_item) =>
+        !_item?.product?.category?.name?.toLowerCase()?.includes("bebida")
+    );
+    if (findItem) {
       setVisibleModalOffer(true);
-    }else{
-      stepChange(5)
+    } else {
+      stepChange(5);
     }
-  }
+  };
 
   return (
     <>
@@ -148,6 +155,9 @@ const CheckOut: React.FC<IProps> = ({
           <OrderInfo style={{ height: "36rem", justifyContent: "flex-start" }}>
             <div className="info-header">
               <span>ITENS</span>
+              <ButtonCupom onClick={() => setStep(4.5)}>
+                <img src={cupom} /> Adicionar cupom
+              </ButtonCupom>
             </div>
             <OrderProductList
               addItemList={addItemList}
@@ -156,7 +166,7 @@ const CheckOut: React.FC<IProps> = ({
             />
           </OrderInfo>
           <OrderInfo>
-            <div className="info-header">
+            <div >
               <span>TOTAL DO PEDIDO</span>
             </div>
             <div className="info-footer">
@@ -169,7 +179,7 @@ const CheckOut: React.FC<IProps> = ({
         </Body>
         <Footer>
           <div style={{ justifyContent: "space-between" }}>
-            <Button onClick={() => setStep(3)}>Voltar</Button>
+            <Button onClick={() => setStep(3)}> <img src={arrow_left} />Voltar</Button>
             <ButtonFinalize
               onClick={() => offerItem()}
               disabled={!sale?.items?.length}

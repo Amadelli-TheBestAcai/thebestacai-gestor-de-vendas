@@ -79,3 +79,16 @@ export const pinPadOptions6 = (
     { id: 6, value: "$", width: "5rem", action: () => handleSetEmail("add", "$") },
     { id: 7, value: "", width: "5rem", action: () => handleSetEmail("clear-last") },
   ];
+  
+  export const pinPadOptions7 = (
+    handleSetEmail: (action: string, value?: string) => void
+  ) => [
+    { id: 1, value: "Z", width: "5rem", action: () => handleSetEmail("add", "Z") },
+    { id: 2, value: "X", width: "5rem", action: () => handleSetEmail("add", "X") },
+    { id: 3, value: "C", width: "5rem", action: () => handleSetEmail("add", "C") },
+    { id: 4, value: "V", width: "5rem", action: () => handleSetEmail("add", "V") },
+    { id: 5, value: "B", width: "5rem", action: () => handleSetEmail("add", "B") },
+    { id: 6, value: "N", width: "5rem", action: () => handleSetEmail("add", "N") },
+    { id: 7, value: "M", width: "5rem", action: () => handleSetEmail("add", "M") },
+    { id: 8, value: "", width: "5rem", action: () => handleSetEmail("clear-last") },
+  ];

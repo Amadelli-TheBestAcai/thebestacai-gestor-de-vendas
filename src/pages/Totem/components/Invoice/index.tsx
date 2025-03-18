@@ -77,7 +77,7 @@ const Invoice: React.FC<IProps> = ({ setStep }) => {
               <Input value={email} placeholder={"email@email.com"} disabled />
             </div>
             <div className="div-pinpad">
-              <VirtualPinpad email={email} setEmail={setEmail} />
+              <VirtualPinpad value={email} setValue={setEmail} />
             </div>
           </Body>
           <Footer>

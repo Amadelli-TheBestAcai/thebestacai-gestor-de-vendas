@@ -9,40 +9,54 @@ import {
   pinPadOptions4,
   pinPadOptions5,
   pinPadOptions6,
+  pinPadOptions7,
 } from "./pinpadOptions";
 
 import { Container, PinPadOption, EraseIcon, Row } from "./styles";
 
 interface IProps {
-  email: string;
-  setEmail: Dispatch<SetStateAction<string>>;
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
+  emailOptions?: boolean;
+  othersOptions?: boolean;
+  maxLenght?: number;
 }
-const VirtualPinpad: React.FC<IProps> = ({ email, setEmail }) => {
+const VirtualPinpad: React.FC<IProps> = ({
+  value,
+  setValue,
+  emailOptions,
+  othersOptions,
+  maxLenght,
+}) => {
   const [upLowerCase, setUpLowerCase] = useState<boolean>(true);
-  const handleSetEmail = (
+
+  const handleSetValue = (
     action: string,
-    value?: string,
+    _value?: string,
     lowerCase?: boolean
   ) => {
     if (action === "up-lower-case") {
       setUpLowerCase((oldValue) => !oldValue);
     }
     if (action === "clear-all") {
-      setEmail("");
+      setValue("");
     }
     if (action === "clear-last") {
-      if (email.length === 1) setEmail("");
-      else setEmail((oldValue) => oldValue.slice(0, -1));
+      if (value.length === 1) setValue("");
+      else setValue((oldValue) => oldValue.slice(0, -1));
     }
     if (action === "add") {
-      setEmail(
+      if (maxLenght && value.length >= maxLenght) {
+        return;
+      }
+      setValue(
         (oldValue) =>
           oldValue +
           (lowerCase
-            ? value.toLowerCase()
+            ? _value.toLowerCase()
             : upLowerCase
-            ? value.toUpperCase()
-            : value.toLowerCase()
+            ? _value.toUpperCase()
+            : _value.toLowerCase()
           )?.toString()
       );
     }
@@ -51,7 +65,17 @@ const VirtualPinpad: React.FC<IProps> = ({ email, setEmail }) => {
   return (
     <Container>
       <Row>
-        {pinPadOptions1(handleSetEmail).map((pinPadOption) => (
+        {emailOptions &&
+          pinPadOptions1(handleSetValue).map((pinPadOption) => (
+            <PinPadOption
+              key={pinPadOption.id}
+              onClick={pinPadOption.action}
+              width={pinPadOption.width}
+            >
+              {pinPadOption.value}
+            </PinPadOption>
+          ))}
+        {pinPadOptions2(handleSetValue).map((pinPadOption) => (
           <PinPadOption
             key={pinPadOption.id}
             onClick={pinPadOption.action}
@@ -60,16 +84,7 @@ const VirtualPinpad: React.FC<IProps> = ({ email, setEmail }) => {
             {pinPadOption.value}
           </PinPadOption>
         ))}
-        {pinPadOptions2(handleSetEmail).map((pinPadOption) => (
-          <PinPadOption
-            key={pinPadOption.id}
-            onClick={pinPadOption.action}
-            width={pinPadOption.width}
-          >
-            {pinPadOption.value}
-          </PinPadOption>
-        ))}
-        {pinPadOptions3(handleSetEmail).map((pinPadOption) => (
+        {pinPadOptions3(handleSetValue).map((pinPadOption) => (
           <PinPadOption
             key={pinPadOption.id}
             onClick={pinPadOption.action}
@@ -80,7 +95,7 @@ const VirtualPinpad: React.FC<IProps> = ({ email, setEmail }) => {
               : pinPadOption.value.toLowerCase()}
           </PinPadOption>
         ))}
-        {pinPadOptions4(handleSetEmail).map((pinPadOption) => (
+        {pinPadOptions4(handleSetValue).map((pinPadOption) => (
           <PinPadOption
             key={pinPadOption.id}
             onClick={pinPadOption.action}
@@ -91,34 +106,54 @@ const VirtualPinpad: React.FC<IProps> = ({ email, setEmail }) => {
               : pinPadOption.value.toLowerCase()}
           </PinPadOption>
         ))}
-        {pinPadOptions5(handleSetEmail).map((pinPadOption) => (
-          <PinPadOption
-            key={pinPadOption.id}
-            onClick={pinPadOption.action}
-            width={pinPadOption.width}
-          >
-            {upLowerCase
-              ? pinPadOption.value.toUpperCase()
-              : pinPadOption.value.toLowerCase()}
-          </PinPadOption>
-        ))}
-        {pinPadOptions6(handleSetEmail).map((pinPadOption) => (
-          <PinPadOption
-            key={pinPadOption.id}
-            onClick={pinPadOption.action}
-            width={pinPadOption.width}
-          >
-            {pinPadOption.value ? (
-              upLowerCase ? (
-                pinPadOption.value.toUpperCase()
+        {othersOptions &&
+          pinPadOptions5(handleSetValue).map((pinPadOption) => (
+            <PinPadOption
+              key={pinPadOption.id}
+              onClick={pinPadOption.action}
+              width={pinPadOption.width}
+            >
+              {upLowerCase
+                ? pinPadOption.value.toUpperCase()
+                : pinPadOption.value.toLowerCase()}
+            </PinPadOption>
+          ))}
+        {othersOptions &&
+          pinPadOptions6(handleSetValue).map((pinPadOption) => (
+            <PinPadOption
+              key={pinPadOption.id}
+              onClick={pinPadOption.action}
+              width={pinPadOption.width}
+            >
+              {pinPadOption.value ? (
+                upLowerCase ? (
+                  pinPadOption.value.toUpperCase()
+                ) : (
+                  pinPadOption.value.toLowerCase()
+                )
               ) : (
-                pinPadOption.value.toLowerCase()
-              )
-            ) : (
-              <EraseIcon src={pinpad_erase} />
-            )}
-          </PinPadOption>
-        ))}
+                <EraseIcon src={pinpad_erase} />
+              )}
+            </PinPadOption>
+          ))}
+        {!othersOptions &&
+          pinPadOptions7(handleSetValue).map((pinPadOption) => (
+            <PinPadOption
+              key={pinPadOption.id}
+              onClick={pinPadOption.action}
+              width={pinPadOption.width}
+            >
+              {pinPadOption.value ? (
+                upLowerCase ? (
+                  pinPadOption.value.toUpperCase()
+                ) : (
+                  pinPadOption.value.toLowerCase()
+                )
+              ) : (
+                <EraseIcon src={pinpad_erase} />
+              )}
+            </PinPadOption>
+          ))}
       </Row>
     </Container>
   );

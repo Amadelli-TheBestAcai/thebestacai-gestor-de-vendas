@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { ipcRenderer } from "electron"; // Importa ipcRenderer
 
 import Welcome from "./components/Welcome";
-import Identification from "./components/Identification";
 import Order from "./components/Order";
-import CheckOut from "./components/CheckOut";
+import Cupom from "./components/Cupom";
 import Payment from "./components/Payment";
 import Invoice from "./components/Invoice";
+import CheckOut from "./components/CheckOut";
 import Evaluation from "./components/Evaluation";
+import Identification from "./components/Identification";
 
 import { notification } from "antd";
 
@@ -54,7 +54,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
     setOpenInactive(false);
     setVisibleModal(false);
 
-    const time = step === 5 ? 30000 : 15000;
+    const time = step === 5 || step === 4.5 ? 30000 : 15000;
 
     if (!cancelTimer) {
       timeoutRef.current = setTimeout(() => {
@@ -299,21 +299,22 @@ const Totem: React.FC<IProps> = ({ history }) => {
               stepChange={stepChange}
               storeProducts={storeProducts}
               cancelSale={cancelSale}
-              />
-            ) : (
-              <React.Fragment />
-            )}
-          {step === 4 ? (
-            <CheckOut
-            setStep={setStep}
-            stepChange={stepChange}
-            campaign={campaign}
-            cancelSale={cancelSale}
-            storeProducts={storeProducts}
             />
           ) : (
             <React.Fragment />
           )}
+          {step === 4 ? (
+            <CheckOut
+              setStep={setStep}
+              stepChange={stepChange}
+              campaign={campaign}
+              cancelSale={cancelSale}
+              storeProducts={storeProducts}
+            />
+          ) : (
+            <React.Fragment />
+          )}
+          {step === 4.5 ? <Cupom setStep={setStep} /> : <React.Fragment />}
           {step === 5 ? (
             <Payment
               setStep={setStep}
