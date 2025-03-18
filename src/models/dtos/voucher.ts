@@ -13,6 +13,8 @@ export type Voucher = {
   created_at: string;
   updated_at: string;
   deleted_at?: string;
+  available_any_store: boolean;
+  points_multiplier: number;
   companies: Company[];
   products: ProductVoucher[];
 };

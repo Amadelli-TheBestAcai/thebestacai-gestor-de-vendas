@@ -12,6 +12,7 @@ import {
 } from "../../models/gestor";
 import { updateBalanceHistory } from "./updateBalanceHistory";
 import { integrateProductWaste } from "../productWaste/integrateProductWaste";
+import moment from "moment";
 
 interface Request {
   code: string;
@@ -36,9 +37,11 @@ class CloseStoreCash implements IUseCaseFactory {
       StorageNames.Delivery_Sale
     ),
     private integrateProductWasteUseCase = integrateProductWaste
-  ) { }
+  ) {}
 
-  private async closeCashLocal(company_id: number): Promise<StoreCashDto | undefined> {
+  private async closeCashLocal(
+    company_id: number
+  ): Promise<StoreCashDto | undefined> {
     const storeCash = await this.storeCashRepository.getOne();
     const updatedStoreCash = await this.storeCashRepository.update(
       storeCash?.id,
@@ -47,6 +50,7 @@ class CloseStoreCash implements IUseCaseFactory {
       }
     );
 
+    
     const {
       data: { history },
     } = await odinApi.get(
@@ -69,12 +73,14 @@ class CloseStoreCash implements IUseCaseFactory {
   async execute({
     amount_on_close,
     code,
-    closeCashLocal
+    closeCashLocal,
   }: Request): Promise<StoreCashDto | undefined> {
     const currentStore = await this.storeRepository.getOne();
 
     if (!currentStore?.company_id) {
-      throw new Error("Não foi possível obter os dados da loja. Por favor, tente novamente.");
+      throw new Error(
+        "Não foi possível obter os dados da loja. Por favor, tente novamente."
+      );
     }
 
     if (closeCashLocal) {
@@ -84,7 +90,9 @@ class CloseStoreCash implements IUseCaseFactory {
     const isConnected = await checkInternet();
 
     if (!isConnected) {
-      throw new Error("Para fechar o caixa, é necessário estar conectado à internet. Por favor verifique sua conexão.");
+      throw new Error(
+        "Para fechar o caixa, é necessário estar conectado à internet. Por favor verifique sua conexão."
+      );
     }
 
     let stepSales = (await this.stepSaleRepository.getAll()).filter(
@@ -106,7 +114,9 @@ class CloseStoreCash implements IUseCaseFactory {
 
     await odinApi.put(
       `/store_cashes/${currentStore.company_id}-${code}/close`,
-      { amount_on_close: +amount_on_close?.toString() || 0 }
+      { amount_on_close: +amount_on_close?.toString() || 0,
+        local_closed_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+       }
     );
 
     return this.closeCashLocal(currentStore.company_id);

@@ -55,7 +55,13 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
       },
     } = await odinApi.put(`/store_cashes/${store?.company_id}-${code}/open`, {
       amount_on_open: storeCash.amount_on_open.toString() || "0",
+      local_opened_at: storeCash.local_opened_at,
     });
+
+    console.log({
+      amount_on_open: storeCash.amount_on_open.toString() || "0",
+      local_opened_at: storeCash.local_opened_at,
+    })
 
     storeCash.code = code;
     storeCash.cash_id = cash_id;

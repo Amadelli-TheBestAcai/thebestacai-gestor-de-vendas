@@ -8,6 +8,8 @@ import { finalizeServerTef } from "./src/helpers/finalizeServerTef";
 
 let win: Electron.BrowserWindow | null;
 
+let isUpdating = false; // Variável para controlar se o fechamento é devido ao autoUpdater
+
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   win = new BrowserWindow({
@@ -37,6 +39,8 @@ function createWindow() {
   });
 
   win.on("close", (e) => {
+    if (isUpdating) return; 
+
     const choice = dialog.showMessageBoxSync(win as any, {
       type: "question",
       buttons: ["Sim", "Não"],
@@ -100,6 +104,7 @@ autoUpdater.on("download-progress", (progressObj) => {
 });
 
 autoUpdater.on("update-downloaded", () => {
+  isUpdating = true;
   autoUpdater.quitAndInstall();
 });
 

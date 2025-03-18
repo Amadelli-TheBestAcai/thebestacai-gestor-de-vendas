@@ -9,4 +9,6 @@ export interface StoreCashDto {
   is_opened: boolean;
   is_online: boolean;
   created_at?: string;
+  local_opened_at?: string;
+  local_closed_at?: string;
 }
