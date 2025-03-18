@@ -198,7 +198,6 @@ export function GlobalProvider({ children }) {
     }
     setSale(updatedSale);
   };
-
   const onRegisterSale = async (): Promise<void> => {
     if (savingSale) {
       return;
@@ -273,7 +272,7 @@ export function GlobalProvider({ children }) {
 
     if (codes_nsu.length > 0) {
       let hasInternet = await window.Main.hasInternet();
-      
+
       if (!hasInternet) {
         setSavingSale(false);
         setVisibleRemoveTefModal(true);
@@ -281,8 +280,10 @@ export function GlobalProvider({ children }) {
       }
 
       if (settings?.should_print_sale) {
-        const { has_internal_error: errorOnPrintCupomTef, error_message: error_message_print_cupom_tef } =
-          await window.Main.common.printCouponTef()
+        const {
+          has_internal_error: errorOnPrintCupomTef,
+          error_message: error_message_print_cupom_tef,
+        } = await window.Main.common.printCouponTef();
 
         if (errorOnPrintCupomTef) {
           notification.error({
@@ -305,6 +306,12 @@ export function GlobalProvider({ children }) {
       }
     }
 
+    const voucherDiscount =
+      sale.customerVoucher?.voucher?.products?.reduce(
+        (sum, product) => sum + +product?.price_sell,
+        0
+      ) || 0;
+
     if (
       (currentSale.items.length && settings.should_emit_nfce_per_sale) ||
       (currentSale.items.length && currentSale.cpf_used_nfce)
@@ -314,14 +321,11 @@ export function GlobalProvider({ children }) {
         0
       );
 
-      const voucherDiscount =
-        sale.customerVoucher?.voucher?.products?.reduce(
-          (sum, product) => sum + +product?.price_sell,
-          0
-        ) || 0;
       const nfePayload = {
         cpf: currentSale?.cpf_used_nfce ? currentSale?.client_cpf : null,
-        discount: +currentSale.discount + +voucherDiscount,
+        discount: voucherDiscount
+          ? +currentSale?.discount + +voucherDiscount
+          : currentSale.discount,
         change_amount: +currentSale.change_amount,
         total: total,
         store_id: +store.company_id,
@@ -346,7 +350,7 @@ export function GlobalProvider({ children }) {
             : null,
           id_terminal_pagamento: payment.code_nsu
             ? payment.id_terminal_pagamento
-            : null
+            : null,
         })),
         ref: currentSale.ref,
       };
@@ -374,19 +378,11 @@ export function GlobalProvider({ children }) {
         const { response: _printDanfe, has_internal_error: errorOnDanfe } =
           await window.Main.common.printDanfe(response);
 
-        // @ts-ignore
-        if (!_printDanfe) {
+        if (errorOnDanfe) {
           notification.warning({
             message: "Não foi possível concluir a impressão da NFC-e.",
             description: `Por favor, verifique a conexão da sua impressora.
             Após isso tente emitir novamente pela tela de vendas.`,
-            duration: 5,
-          });
-        }
-
-        if (errorOnDanfe) {
-          notification.error({
-            message: "Erro ao tentar imprimir",
             duration: 5,
           });
         }
@@ -407,7 +403,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -428,13 +424,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-          message: error_message,
-          duration: 5,
-        })
+            message: error_message,
+            duration: 5,
+          })
         : notification.error({
-          message: "Erro ao finalizar venda",
-          duration: 5,
-        });
+            message: "Erro ao finalizar venda",
+            duration: 5,
+          });
     }
 
     const { response: cashHandlers } =
@@ -478,16 +474,22 @@ export function GlobalProvider({ children }) {
     });
 
     if (settings.should_print_sale && settings.should_use_printer) {
+      const discountVouncherCombined = (
+        voucherDiscount
+          ? +currentSale?.discount + +voucherDiscount
+          : currentSale?.discount
+      )?.toString();
       //@ts-expect-error
-      window.Main.common.printSale(currentSale);
+      window.Main.common.printSale({
+        ...currentSale,
+        discount: discountVouncherCombined,
+      });
     }
-
     const { response: _storeCash } = await window.Main.storeCash.getCurrent();
 
     if (_storeCash && _storeCash?.is_online) {
       setStoreCash(_storeCash);
     }
-
     document.getElementById("balanceInput")?.focus();
   };
 

@@ -1,15 +1,15 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import moment from 'moment';
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import moment from "moment";
 
-import { currencyFormater } from '../../helpers/currencyFormater';
-import { replaceSpecialChars } from '../../helpers/replaceSpecialChars';
-import { ReasonOutValue } from '../../models/enums/reasonSangria';
+import { currencyFormater } from "../../helpers/currencyFormater";
+import { replaceSpecialChars } from "../../helpers/replaceSpecialChars";
+import { ReasonOutValue } from "../../models/enums/reasonSangria";
 
-import MonetaryInput from '../../components/MonetaryInput';
+import MonetaryInput from "../../components/MonetaryInput";
 
-import { Form, notification } from 'antd';
+import { Form, notification } from "antd";
 
-import { useStore } from '../../hooks/useStore';
+import { useStore } from "../../hooks/useStore";
 
 import {
   Container,
@@ -22,7 +22,7 @@ import {
   Select,
   Option,
   Input,
-} from './styles';
+} from "./styles";
 
 type IProps = {
   modalState: boolean;
@@ -38,6 +38,7 @@ type ShopInfo = {
   discount_value?: number;
   quantity?: number;
   observation?: string;
+  observationFreeLancer?: string;
   name?: string;
 };
 
@@ -72,26 +73,26 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       return;
     }
     let sendToShop =
-      type !== 'entrada' &&
+      type !== "entrada" &&
       hasInternet &&
-      (reasontype === 'Pagamento fornecedor' ||
-        reasontype === 'Pagamento freelance');
+      (reasontype === "Pagamento fornecedor" ||
+        reasontype === "Pagamento freelance");
 
     let shopOrder = null;
 
-    if (type !== 'entrada' && sendToShop) {
-      if (reasontype === 'Pagamento fornecedor') {
+    if (type !== "entrada" && sendToShop) {
+      if (reasontype === "Pagamento fornecedor") {
         shopOrder = {
           store_id: store.company_id,
-          due_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-          pay_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+          due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+          pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
           total:
             +shopInfo.quantity * +shopInfo.unitary_value +
             (+shopInfo.additional_value || 0) -
             (+shopInfo.discount_value || 0),
           observation: shopInfo.observation,
-          name: 'Pagamento fornecedor',
+          name: "Pagamento fornecedor",
           additional_value: +shopInfo.additional_value,
           discount_value: +shopInfo.discount_value,
           purchasesItems: [
@@ -102,29 +103,31 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
               category_id: +shopInfo.category_id,
             },
           ],
+          purchase_date: new Date(),
+          auto_generated: true,
         };
       }
 
-      if (reasontype === 'Pagamento freelance') {
+      if (reasontype === "Pagamento freelance") {
         const category = productsCategory.find(
           (category) => category.id === 12
         );
         const product = category?.products?.find(
-          (product) => product.name === 'freelancer'
+          (product) => product.name === "freelancer"
         );
         if (!category || !product) {
           sendToShop = false;
         }
         shopOrder = {
           store_id: store.company_id,
-          due_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-          pay_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+          due_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+          pay_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           payment_method: 0,
           total:
             +shopInfo.quantity * +shopInfo.unitary_value +
             (+shopInfo.additional_value || 0) -
             (+shopInfo.discount_value || 0),
-          name: 'Salarios/Comissões',
+          name: "Salarios/Comissões",
           observation: shopInfo.observation,
           additional_value: +shopInfo.additional_value,
           discount_value: +shopInfo.discount_value,
@@ -134,14 +137,32 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
               quantity: +shopInfo.quantity,
               unitary_value: +shopInfo.unitary_value,
               category_id: +category.id,
-              observation: `Nome: ${shopInfo.observation}`,
+              observation: `${reasontype}: ${shopInfo?.observationFreeLancer}`,
             },
           ],
+          purchase_date: new Date(),
+          auto_generated: true,
         };
+
+        if (+shopOrder?.total >= 1000 && +shopOrder?.total <= 9999) {
+          notification.warning({
+            message: "Valor total elevado",
+            description:
+              "Por favor verifique se os valores foram inseridos corretamente através da tela de movimentações.",
+            duration: 10,
+          });
+        } else if (+shopOrder?.total > 9999) {
+          return notification.warning({
+            message: "Valor total muito elevado para pagamento de FreeLancer.",
+            description:
+              "Por favor verifique se os valores foram inseridos corretamente.",
+            duration: 10,
+          });
+        }
       }
       if (!shopIsValid(shopOrder)) {
         return notification.warning({
-          message: 'Preencha todos os campos corretamente.',
+          message: "Preencha todos os campos corretamente.",
           duration: 5,
         });
       }
@@ -149,13 +170,13 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
     if (!value && !shopOrder?.total) {
       return notification.warning({
-        message: 'Valor não informado',
+        message: "Valor não informado",
         description: `Informe um valor válido.`,
         duration: 5,
       });
     } else if (!reasson && !reasontype) {
       return notification.warning({
-        message: 'O motivo não foi informado',
+        message: "O motivo não foi informado",
         description: `Selecione um motivo para a movimentação.`,
         duration: 5,
       });
@@ -165,10 +186,10 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       handler: {
         type,
         reason:
-          reasontype === 'Outros'
+          reasontype === "Outros"
             ? reasson
-            : reasontype === 'Pagamento freelance'
-            ? reasontype + `: ${shopInfo.observation}`
+            : reasontype === "Pagamento freelance"
+            ? reasontype + `: ${shopInfo?.observationFreeLancer}`
             : reasontype,
         amount: +shopOrder?.total || value,
       },
@@ -194,7 +215,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
             duration: 5,
           })
         : notification.error({
-            message: 'Erro ao criar movimentação',
+            message: "Erro ao criar movimentação",
             duration: 5,
           });
     }
@@ -203,13 +224,13 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
     setReasson(null);
     setReasonType(null);
     notification.success({
-      message: 'Salva com sucesso!',
+      message: "Salva com sucesso!",
       description: `Movimentação cadastrada com sucesso.`,
       duration: 5,
     });
     setLoading(false);
     setModalState(false);
-    return document.getElementById('mainContainer').focus();
+    return document.getElementById("mainContainer").focus();
   };
 
   const handleSelect = (value) => {
@@ -218,7 +239,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
   };
 
   const handleClose = (): void => {
-    document.getElementById('mainContainer').focus();
+    document.getElementById("mainContainer").focus();
     setModalState(false);
     setValue(null);
     setReasson(null);
@@ -230,21 +251,21 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
   };
 
   const inValue = [
-    { id: 'Troco', value: 'Troco' },
-    { id: 'Outros', value: 'Outros' },
+    { id: "Troco", value: "Troco" },
+    { id: "Outros", value: "Outros" },
   ];
 
   const outValue = [
-    { id: 'Sangria', value: 'Sangria' },
-    { id: 'Pagamento fornecedor', value: 'Pagamento fornecedor' },
-    { id: 'Pagamento freelance', value: 'Pagamento freelance' },
-    { id: 'Troco', value: 'Troco' },
-    { id: 'Outros', value: 'Outros' },
+    { id: "Sangria", value: "Sangria" },
+    { id: "Pagamento fornecedor", value: "Pagamento fornecedor" },
+    { id: "Pagamento freelance", value: "Pagamento freelance" },
+    { id: "Troco", value: "Troco" },
+    { id: "Outros", value: "Outros" },
   ];
 
   useEffect(() => {
     setShopInfo(null);
-    setReasonType('');
+    setReasonType("");
     async function init() {
       const hasInternet = await window.Main.hasInternet();
       const {
@@ -253,7 +274,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
       } = await window.Main.product.getAllPurchaseProducts();
       if (errorOnPurchaseProducts) {
         notification.error({
-          message: 'Erro ao encontrar produtos para compra',
+          message: "Erro ao encontrar produtos para compra",
           duration: 5,
         });
       }
@@ -273,12 +294,12 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
 
   return (
     <Container
-      title={type === 'entrada' ? 'Entrada' : 'Saída'}
+      title={type === "entrada" ? "Entrada" : "Saída"}
       visible={modalState}
       destroyOnClose={true}
       closable={false}
       centered
-      afterClose={() => document.getElementById('balanceInput').focus()}
+      afterClose={() => document.getElementById("balanceInput").focus()}
       onCancel={() => handleClose()}
       footer={
         <Footer>
@@ -303,12 +324,12 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 rules={[
                   {
                     required: true,
-                    message: 'Motivo é obrigatório',
+                    message: "Motivo é obrigatório",
                   },
                 ]}
               >
                 <Select onChange={handleSelect} placeholder="Escolha a opção">
-                  {type === 'entrada'
+                  {type === "entrada"
                     ? inValue.map((item) => (
                         <Option key={item.id}>{item.value}</Option>
                       ))
@@ -326,11 +347,11 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                 rules={[
                   {
                     required: true,
-                    message: 'Valor é obrigatório',
+                    message: "Valor é obrigatório",
                   },
                 ]}
               >
-                {type !== 'entrada' &&
+                {type !== "entrada" &&
                 hasInternet &&
                 (reasontype === ReasonOutValue.PAG_FORNECEDOR ||
                   reasontype === ReasonOutValue.PAG_FREELA) ? (
@@ -359,7 +380,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
               </Form.Item>
             </Col>
 
-            {reasontype === 'Outros' && (
+            {reasontype === "Outros" && (
               <Col sm={24}>
                 <Form.Item label="Observação" name="observation">
                   <Input.TextArea
@@ -374,7 +395,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
               </Col>
             )}
 
-            {type !== 'entrada' && (
+            {type !== "entrada" && (
               <>
                 {reasontype === ReasonOutValue.PAG_FORNECEDOR &&
                   hasInternet && (
@@ -386,7 +407,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           rules={[
                             {
                               required: true,
-                              message: 'Categoria é obrigatório',
+                              message: "Categoria é obrigatório",
                             },
                           ]}
                         >
@@ -394,7 +415,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                             placeholder="Escolha a opção"
                             loading={fetchingProductsCategory}
                             onChange={(value) =>
-                              handleShopInfo('category_id', +value)
+                              handleShopInfo("category_id", +value)
                             }
                           >
                             {productsCategory?.map((productCategory) => (
@@ -416,7 +437,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           rules={[
                             {
                               required: true,
-                              message: 'Produto é obrigatório',
+                              message: "Produto é obrigatório",
                             },
                           ]}
                         >
@@ -424,7 +445,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                             placeholder="Escolha a opção"
                             disabled={!shopInfo?.category_id}
                             onChange={(value) =>
-                              handleShopInfo('product_id', +value)
+                              handleShopInfo("product_id", +value)
                             }
                           >
                             {productsCategory?.map(
@@ -446,18 +467,18 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                   <Col sm={24}>
                     <Form.Item
                       label="Nome Freelancer"
-                      name="observation"
+                      name="observationFreeLancer"
                       rules={[
                         {
                           required: true,
-                          message: 'Categoria é obrigatório',
+                          message: "Categoria é obrigatório",
                         },
                       ]}
                     >
                       <Input
                         placeholder="Nome Freelancer"
                         onChange={({ target: { value } }) =>
-                          handleShopInfo('observation', value)
+                          handleShopInfo("observationFreeLancer", value)
                         }
                       />
                     </Form.Item>
@@ -475,7 +496,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           rules={[
                             {
                               required: true,
-                              message: 'Quantidade é obrigatório',
+                              message: "Quantidade é obrigatório",
                             },
                             {
                               validator: (_, value) =>
@@ -483,7 +504,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                                   ? Promise.resolve()
                                   : Promise.reject(
                                       new Error(
-                                        'A quantidade deve ser maior que zero'
+                                        "A quantidade deve ser maior que zero"
                                       )
                                     ),
                             },
@@ -518,14 +539,14 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           rules={[
                             {
                               required: true,
-                              message: 'Campo é obrigatório',
+                              message: "Campo é obrigatório",
                             },
                           ]}
                         >
                           <MonetaryInput
                             autoFocus={false}
                             getValue={(value) =>
-                              handleShopInfo('unitary_value', value)
+                              handleShopInfo("unitary_value", value)
                             }
                           />
                         </Form.Item>
@@ -538,14 +559,14 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           rules={[
                             {
                               required: false,
-                              message: 'Campo é obrigatório',
+                              message: "Campo é obrigatório",
                             },
                           ]}
                         >
                           <MonetaryInput
                             autoFocus={false}
                             getValue={(value) =>
-                              handleShopInfo('additional_value', +value)
+                              handleShopInfo("additional_value", +value)
                             }
                           />
                         </Form.Item>
@@ -558,14 +579,14 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           rules={[
                             {
                               required: false,
-                              message: 'Campo é obrigatório',
+                              message: "Campo é obrigatório",
                             },
                           ]}
                         >
                           <MonetaryInput
                             autoFocus={false}
                             getValue={(value) =>
-                              handleShopInfo('discount_value', +value)
+                              handleShopInfo("discount_value", +value)
                             }
                           />
                         </Form.Item>
@@ -578,7 +599,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                           rules={[
                             {
                               required: false,
-                              message: 'Observação é obrigatório',
+                              message: "Observação é obrigatório",
                             },
                           ]}
                         >
@@ -588,7 +609,7 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                             showCount
                             maxLength={140}
                             onChange={({ target: { value } }) =>
-                              handleShopInfo('observation', value)
+                              handleShopInfo("observation", value)
                             }
                           />
                         </Form.Item>
@@ -596,10 +617,10 @@ const InOutForm: React.FC<IProps> = ({ modalState, setModalState, type }) => {
                     </>
                   )}
 
-                {(reasontype === 'Pagamento fornecedor' ||
-                  reasontype === 'Pagamento freelance') &&
+                {(reasontype === "Pagamento fornecedor" ||
+                  reasontype === "Pagamento freelance") &&
                   !hasInternet && (
-                    <Row style={{ textAlign: 'center', color: 'red' }}>
+                    <Row style={{ textAlign: "center", color: "red" }}>
                       📢 Sem conexão! Utilize o Dashboard para lançar a saída
                       como compra.
                     </Row>

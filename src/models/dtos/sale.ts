@@ -42,4 +42,5 @@ export type SaleDto = {
   ref?: string;
   cpf_used_club?: boolean;
   cpf_used_nfce?: boolean;
+  customer_voucher_id?: number;
 };
