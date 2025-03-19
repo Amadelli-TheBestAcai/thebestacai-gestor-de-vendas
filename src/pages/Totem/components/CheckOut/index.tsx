@@ -46,6 +46,7 @@ const CheckOut: React.FC<IProps> = ({
 }) => {
   const { sale, setSale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [visibleModalCupomChange, setVisibleModalCupomChange] = useState<boolean>(false);
   const [visibleModalOffer, setVisibleModalOffer] = useState<boolean>(false);
   const [totalPoints, setTotalPoints] = useState<number>(0);
 
@@ -155,7 +156,7 @@ const CheckOut: React.FC<IProps> = ({
           <OrderInfo style={{ height: "36rem", justifyContent: "flex-start" }}>
             <div className="info-header">
               <span>ITENS</span>
-              <ButtonCupom onClick={() => setStep(4.5)}>
+              <ButtonCupom onClick={() => sale.customerVoucher ? setVisibleModalCupomChange(true) : setStep(4.5)}>
                 <img src={cupom} /> Adicionar cupom
               </ButtonCupom>
             </div>
