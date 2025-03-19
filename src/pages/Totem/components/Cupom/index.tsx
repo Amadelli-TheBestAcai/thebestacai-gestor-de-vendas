@@ -8,6 +8,8 @@ import { useSale } from "../../../../hooks/useSale";
 import VirtualPinpad from "../VirtualPinpad";
 import ModalInvalidCupom from "../ModalInvalidCupom";
 
+import { CustomerVoucherDTO } from "../../../../../electron/src/models/dtos";
+
 import { notification } from "antd";
 
 import {
@@ -25,8 +27,10 @@ interface IProps {
 }
 const Cupom: React.FC<IProps> = ({ setStep }) => {
   const { sale, setSale } = useSale();
+  const [loading, setLoading] = useState<boolean>(false);
   const [cupomInput, setCupomInput] = useState<string>("");
   const [validCupom, setValidCupom] = useState<string>("Teste");
+  const [customerVoucher, setCustomerVoucher] = useState<CustomerVoucherDTO>();
   const [errorMessage, setErrorMesssage] = useState<string>("");
   const [visibleInvalidCupom, setVisibleInvalidCupom] =
     useState<boolean>(false);
@@ -37,13 +41,16 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
       return;
     }
     try {
+      setLoading(true);
       let { has_internal_error, response, error_message } =
         await window.Main.sale.getVoucher(cupomInput.toUpperCase());
 
       if (has_internal_error) {
         setErrorMesssage(error_message);
         setVisibleInvalidCupom(true);
+        return;
       }
+      setCustomerVoucher(response);
 
       const { response: products } = await window.Main.product.getProducts(
         true
@@ -60,6 +67,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
           "É necessário adicionar self-services para resgatar este cupom!"
         );
         setVisibleInvalidCupom(true);
+        return;
       }
 
       let totalOfSelfServiceDiscount = 0;
@@ -168,6 +176,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         className: "notification-totem",
       });
     } finally {
+      setLoading(false);
     }
   };
 
@@ -204,7 +213,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
             </div>
           </Body>
           <Footer>
-            <Button onClick={() => returnCheckOut()}>
+            <Button onClick={() => returnCheckOut()} disabled={loading}>
               <img src={arrow_left} />
               Voltar
             </Button>
@@ -213,7 +222,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
                 onAddCupom();
               }}
               step={stepCupomPage}
-              disabled={cupomInput.length != 8}
+              disabled={cupomInput.length != 8 || loading}
             >
               Confirmar
             </ButtonFinalize>
@@ -227,21 +236,18 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
           <Body style={{ padding: "6rem 0 0" }}>
             <span className="span-cupom-title">
               <img src={cupom} />
-              {validCupom || ""}
+              {customerVoucher?.voucher?.name || "Cupom"}
             </span>
-            <img src={cupom} className="cupom-img" />
+            {customerVoucher?.voucher?.url_image ? (
+              <img
+                src={customerVoucher?.voucher?.url_image}
+                className="cupom-img"
+              />
+            ) : (
+              <img src={cupom} className="cupom-icon" />
+            )}
             <div className="cupom-description">
-              Válido apenas na Black Friday, 29/11.
-              <br /> Promoção válida em todas as lojas da The Best Açaí. Cupons
-              ilimitados, resgate quantos quiser.
-              <br />
-              Cupons são específicos de cada loja.
-              <br /> Para cada pagamento no caixa, é necessário gerar um novo
-              cupom. <br />
-              Não é válido para potes que contenham apenas acompanhamentos,
-              Promoção não cumulativa com outras promoções.
-              <br /> A utilização desse cupom inviabiliza o acúmulo de pontos no
-              Clube The Best.
+              {customerVoucher?.voucher?.description}
             </div>
           </Body>
           <Footer>

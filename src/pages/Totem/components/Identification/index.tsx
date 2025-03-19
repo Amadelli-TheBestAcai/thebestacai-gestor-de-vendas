@@ -10,7 +10,7 @@ import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import { useSale } from "../../../../hooks/useSale";
 
-import ModalInfo from "../ModalInfo";
+import ModalSaleCancel from "../ModalSaleCancel";
 
 import {
   Container,
@@ -214,7 +214,7 @@ const Identification: React.FC<IProps> = ({
           </ButtonCancel>
         </div>
       </Container>
-      <ModalInfo
+      <ModalSaleCancel
         visible={visibleModal}
         setVisible={setVisibleModal}
         cancelSale={cancelSale}

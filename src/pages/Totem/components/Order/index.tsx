@@ -15,7 +15,7 @@ import { useSale } from "../../../../hooks/useSale";
 import { ItemDto } from "../../../../models/dtos/item";
 import { StoreProductDto } from "../../../../models/dtos/storeProduct";
 
-import ModalInfo from "../ModalInfo";
+import ModalSaleCancel from "../ModalSaleCancel";
 import ProductCard from "../ProductCard";
 import OrderProductList from "../OrderProductList";
 
@@ -159,6 +159,10 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
     onAddItem(findProduct, 1, +findProduct.price_unit);
   };
 
+ const onDecressItemList = async (item: ItemDto, totemNotification: boolean) =>{
+    await onDecressItem(item.id, totemNotification);
+  }
+
   const removeAllItems = async (item: ItemDto): Promise<void> => {
     for (let i = 0; i < item.quantity; i++) {
       await onDecressItem(item.id, true);
@@ -259,7 +263,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
           </div>
           <OrderProductList
             addItemList={addItemList}
-            onDecressItem={onDecressItem}
+            onDecressItemList={onDecressItemList}
             removeAllItems={removeAllItems}
           />
         </div>
@@ -285,7 +289,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
           <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
         </div>
       </Footer>
-      <ModalInfo
+      <ModalSaleCancel
         visible={visibleModal}
         setVisible={setVisibleModal}
         cancelSale={cancelSale}

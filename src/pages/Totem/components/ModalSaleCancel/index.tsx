@@ -8,7 +8,7 @@ interface IProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
   cancelSale: () => void;
 }
-const ModalInfo: React.FC<IProps> = ({
+const ModalSaleCancel: React.FC<IProps> = ({
   visible,
   setVisible,
   cancelSale,
@@ -48,4 +48,4 @@ const ModalInfo: React.FC<IProps> = ({
   );
 };
 
-export default ModalInfo;
+export default ModalSaleCancel;

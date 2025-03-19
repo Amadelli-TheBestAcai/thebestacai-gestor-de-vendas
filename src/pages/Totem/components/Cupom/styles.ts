@@ -90,12 +90,17 @@ export const Body = styled.div`
     }
   }
 
-  .cupom-img {
+  .cupom-icon {
     width: 37.5rem;
     height: 37.5rem;
-    object-fit: cover;
+    object-fit: fit-content;
     margin: 0.5rem 0;
-    background: red
+  }
+  .cupom-img {
+    max-width: 37.5rem;
+    max-height: 37.5rem;
+    object-fit: fit-content;
+    margin: 0.5rem 0;
   }
 
   .cupom-description {

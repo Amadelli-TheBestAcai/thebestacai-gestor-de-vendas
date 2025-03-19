@@ -17,7 +17,7 @@ import { PaymentType } from "../../../../models/enums/paymentType";
 import { useSale } from "../../../../hooks/useSale";
 import { useSettings } from "../../../../hooks/useSettings";
 
-import ModalInfo from "../ModalInfo";
+import ModalSaleCancel from "../ModalSaleCancel";
 
 import { notification } from "antd";
 
@@ -197,7 +197,7 @@ const Payment: React.FC<IProps> = ({
           </Footer>
         </Container>
       )}
-      <ModalInfo
+      <ModalSaleCancel
         visible={visibleModal}
         setVisible={setVisibleModal}
         cancelSale={cancelSale}

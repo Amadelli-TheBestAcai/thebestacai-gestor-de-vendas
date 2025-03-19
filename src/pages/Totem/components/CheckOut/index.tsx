@@ -7,12 +7,14 @@ import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import { useSale } from "../../../../hooks/useSale";
 
+import { ItemDto } from "../../../../models/dtos/item";
 import { CampaignDto } from "../../../../models/dtos/campaign";
 import { StoreProductDto } from "../../../../models/dtos/storeProduct";
-import { ItemDto } from "../../../../models/dtos/item";
 
-import ModalInfo from "../ModalInfo";
+import ModalCupomInfo from "../ModalCupomInfo";
+import ModalSaleCancel from "../ModalSaleCancel";
 import ModalItensOffer from "../ModalItensOffer";
+import ModalRemoveCupom from "../ModalRemoveCupom";
 import OrderProductList from "../OrderProductList";
 
 import {
@@ -46,8 +48,11 @@ const CheckOut: React.FC<IProps> = ({
 }) => {
   const { sale, setSale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
-  const [visibleModalCupomChange, setVisibleModalCupomChange] = useState<boolean>(false);
   const [visibleModalOffer, setVisibleModalOffer] = useState<boolean>(false);
+  const [visibleModalInfoCupom, setVisibleModalInfoCupom] =
+    useState<boolean>(false);
+  const [visibleModalRemoveCupom, setVisibleModalRemoveCupom] =
+    useState<boolean>(false);
   const [totalPoints, setTotalPoints] = useState<number>(0);
 
   useEffect(() => {
@@ -69,13 +74,32 @@ const CheckOut: React.FC<IProps> = ({
   };
 
   const addItemList = async (item: ItemDto) => {
+    if (sale.customerVoucher) {
+      setVisibleModalInfoCupom(true);
+      return;
+    }
     const findProduct = storeProducts.find(
       (_product) => +_product.id === +item.store_product_id
     );
     onAddItem(findProduct, 1, +findProduct.price_unit);
   };
 
+  const onDecressItemList = async (
+    item: ItemDto,
+    totemNotification: boolean
+  ) => {
+    if (sale.customerVoucher) {
+      setVisibleModalInfoCupom(true);
+      return;
+    }
+    await onDecressItem(item.id, totemNotification);
+  };
+
   const removeAllItems = async (item: ItemDto): Promise<void> => {
+    if (sale.customerVoucher) {
+      setVisibleModalInfoCupom(true);
+      return;
+    }
     for (let i = 0; i < item.quantity; i++) {
       await onDecressItem(item.id, true);
     }
@@ -156,18 +180,23 @@ const CheckOut: React.FC<IProps> = ({
           <OrderInfo style={{ height: "36rem", justifyContent: "flex-start" }}>
             <div className="info-header">
               <span>ITENS</span>
-              <ButtonCupom onClick={() => sale.customerVoucher ? setVisibleModalCupomChange(true) : setStep(4.5)}>
+              <ButtonCupom
+                onClick={() => setStep(4.5)}
+                disabled={!!sale.customerVoucher}
+              >
                 <img src={cupom} /> Adicionar cupom
               </ButtonCupom>
             </div>
             <OrderProductList
+              useCupom={sale.customerVoucher ? true : false}
               addItemList={addItemList}
-              onDecressItem={onDecressItem}
+              onDecressItemList={onDecressItemList}
               removeAllItems={removeAllItems}
+              setVisibleModalRemoveCupom={setVisibleModalRemoveCupom}
             />
           </OrderInfo>
           <OrderInfo>
-            <div >
+            <div>
               <span>TOTAL DO PEDIDO</span>
             </div>
             <div className="info-footer">
@@ -180,9 +209,19 @@ const CheckOut: React.FC<IProps> = ({
         </Body>
         <Footer>
           <div style={{ justifyContent: "space-between" }}>
-            <Button onClick={() => setStep(3)}> <img src={arrow_left} />Voltar</Button>
+            <Button
+              onClick={() =>
+                sale.customerVoucher
+                  ? setVisibleModalInfoCupom(true)
+                  : setStep(3)
+              }
+            >
+              {" "}
+              <img src={arrow_left} />
+              Voltar
+            </Button>
             <ButtonFinalize
-              onClick={() => offerItem()}
+              onClick={() => !sale.customerVoucher ? offerItem() : stepChange(5)}
               disabled={!sale?.items?.length}
             >
               Avançar
@@ -191,7 +230,7 @@ const CheckOut: React.FC<IProps> = ({
           <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
         </Footer>
       </Container>
-      <ModalInfo
+      <ModalSaleCancel
         visible={visibleModal}
         setVisible={setVisibleModal}
         cancelSale={cancelSale}
@@ -201,6 +240,14 @@ const CheckOut: React.FC<IProps> = ({
         setVisible={setVisibleModalOffer}
         stepChange={stepChange}
         storeProducts={storeProducts}
+      />
+      <ModalRemoveCupom
+        visible={visibleModalRemoveCupom}
+        setVisible={setVisibleModalRemoveCupom}
+      />
+      <ModalCupomInfo
+        visible={visibleModalInfoCupom}
+        setVisible={setVisibleModalInfoCupom}
       />
     </>
   );

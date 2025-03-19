@@ -21,7 +21,11 @@ export const Container = styled(RowAnt)`
   }
 `;
 
-export const OrderProduct = styled(ColAnt)`
+interface IProduct {
+  type?: string;
+}
+
+export const OrderProduct = styled(ColAnt)<IProduct>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -29,7 +33,8 @@ export const OrderProduct = styled(ColAnt)`
   height: 5rem;
   margin: 0.5rem 0;
   padding: 0.625rem;
-  background: var(--orange-190);
+  background: ${({ type }) =>
+    type === "cupom" ? "var(--green-100)" : "var(--orange-190)"};
   border-radius: 0.625rem;
 
   .order-item-content {
