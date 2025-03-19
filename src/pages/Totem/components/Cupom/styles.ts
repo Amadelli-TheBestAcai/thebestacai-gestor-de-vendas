@@ -64,6 +64,7 @@ export const Body = styled.div`
     width: 37.5rem;
     height: 5rem;
     input {
+      text-align: center;
       width: 100%;
       height: 100%;
       background: white !important;
@@ -77,7 +78,34 @@ export const Body = styled.div`
   .span-cupom {
     color: var(--black);
     font-size: 2rem;
-    margin-bottom: 0.5rem;
+  }
+  .span-cupom-title {
+    color: var(--black);
+    font-size: 2.5rem;
+
+    img {
+      height: 3rem;
+      width: 3rem;
+      margin: 0 0.5rem 0.5rem 0;
+    }
+  }
+
+  .cupom-img {
+    width: 37.5rem;
+    height: 37.5rem;
+    object-fit: cover;
+    margin: 0.5rem 0;
+    background: red
+  }
+
+  .cupom-description {
+    width: 59.4rem;
+    height: 19rem;
+    text-align: center;
+    font-size: 1.75rem;
+    color: var(--gray-300);
+    overflow-y: auto;
+    margin-bottom: 2rem;
   }
 
   .div-pinpad {
@@ -130,7 +158,7 @@ export const ButtonFinalize = styled(ButtonAnt)<IButton>`
   border: none;
   background: var(--orange-250);
 
-  width: ${({ step }) => (step === 2 ? '59rem' : 'auto')};
+  width: ${({ step }) => step === 2 && "59rem"};
 }
   :active,
   :hover,
