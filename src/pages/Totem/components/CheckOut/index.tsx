@@ -6,6 +6,7 @@ import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
 import { useSale } from "../../../../hooks/useSale";
+import { useSettings } from "../../../../hooks/useSettings";
 
 import { ItemDto } from "../../../../models/dtos/item";
 import { CampaignDto } from "../../../../models/dtos/campaign";
@@ -47,6 +48,7 @@ const CheckOut: React.FC<IProps> = ({
   storeProducts,
 }) => {
   const { sale, setSale, onAddItem, onDecressItem } = useSale();
+  const { settings } = useSettings();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [visibleModalOffer, setVisibleModalOffer] = useState<boolean>(false);
   const [visibleModalInfoCupom, setVisibleModalInfoCupom] =
@@ -223,15 +225,17 @@ const CheckOut: React.FC<IProps> = ({
               <span style={{ fontWeight: "800" }}>+{totalPoints}</span>
             </div>
           </ClubInfo>
-          <ClubInfo style={{ height: "6rem" }}>
-            <div className="info-header">
-              <Checkbox
-                checked={sale.discount ? true : false}
-                onChange={() => shopkeeperDiscountAdd()}
-              />
-              <span>Sou Lojista</span>
-            </div>
-          </ClubInfo>
+          {settings.should_active_discount_storekeeper && (
+            <ClubInfo style={{ height: "6rem" }}>
+              <div className="info-header">
+                <Checkbox
+                  checked={sale.discount ? true : false}
+                  onChange={() => shopkeeperDiscountAdd()}
+                />
+                <span>Sou Lojista</span>
+              </div>
+            </ClubInfo>
+          )}
 
           <OrderInfo style={{ height: "36rem", justifyContent: "flex-start" }}>
             <div className="info-header">
@@ -255,7 +259,7 @@ const CheckOut: React.FC<IProps> = ({
             <div>
               <span>TOTAL DO PEDIDO</span>
             </div>
-            {sale?.discount ? (
+            {sale?.discount && settings?.should_active_discount_storekeeper ? (
               <div className="info-footer">
                 <span> DESCONTO DE LOJISTA</span>
                 <span style={{ fontWeight: "800" }}>
