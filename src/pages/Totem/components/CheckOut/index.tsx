@@ -54,13 +54,57 @@ const CheckOut: React.FC<IProps> = ({
   const [visibleModalRemoveCupom, setVisibleModalRemoveCupom] =
     useState<boolean>(false);
   const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [discount, setDiscount] = useState<number>(0);
 
   useEffect(() => {
+    discountUpdate();
+  }, [sale]);
+
+  useEffect(() => {
+    const totalSale = sale?.items?.reduce(
+      (total, _item) => total + _item?.total,
+      0
+    );
+
     let points = campaign?.average_ticket
-      ? Math.floor(sale?.total_sold / campaign?.average_ticket)
+      ? Math.floor(totalSale / campaign?.average_ticket)
       : 0;
     setTotalPoints(points);
   }, [sale]);
+
+  useEffect(() => {
+    const discountSaleUpdate = async () => {
+      const { response: updatedSale } = await window.Main.sale.updateSale(
+        sale.id,
+        {
+          ...sale,
+          discount: sale.discount ? discount : sale.discount,
+        }
+      );
+      setSale(updatedSale);
+    };
+    discountSaleUpdate();
+  }, [discount]);
+
+  const discountUpdate = async () => {
+    const totalSale = sale?.items?.reduce(
+      (total, _item) => total + _item?.total,
+      0
+    );
+
+    setDiscount(+(totalSale * 0.1 || 0)?.toFixed(2));
+  };
+
+  const shopkeeperDiscountAdd = async () => {
+    const { response: updatedSale } = await window.Main.sale.updateSale(
+      sale.id,
+      {
+        ...sale,
+        discount: sale.discount ? 0 : discount,
+      }
+    );
+    setSale(updatedSale);
+  };
 
   const updateCheck = async (name: string, check: boolean) => {
     const { response: updatedSale } = await window.Main.sale.updateSale(
@@ -82,6 +126,7 @@ const CheckOut: React.FC<IProps> = ({
       (_product) => +_product.id === +item.store_product_id
     );
     onAddItem(findProduct, 1, +findProduct.price_unit);
+    discountUpdate();
   };
 
   const onDecressItemList = async (
@@ -93,6 +138,7 @@ const CheckOut: React.FC<IProps> = ({
       return;
     }
     await onDecressItem(item.id, totemNotification);
+    discountUpdate();
   };
 
   const removeAllItems = async (item: ItemDto): Promise<void> => {
@@ -103,6 +149,7 @@ const CheckOut: React.FC<IProps> = ({
     for (let i = 0; i < item.quantity; i++) {
       await onDecressItem(item.id, true);
     }
+    discountUpdate();
   };
 
   const offerItem = async () => {
@@ -139,7 +186,9 @@ const CheckOut: React.FC<IProps> = ({
             </div>
             <div className="info-footer">
               <span className="info-footer-cpf">
-                {applyCPFMask(sale.client_cpf, true)}
+                {sale.client_cpf
+                  ? applyCPFMask(sale.client_cpf, true)
+                  : "NENHUM CPF/CNPJ "}
               </span>
               <span
                 style={{ textDecoration: "underline", cursor: "pointer" }}
@@ -168,12 +217,19 @@ const CheckOut: React.FC<IProps> = ({
               {sale.client_cpf ? (
                 <span>PONTOS GANHOS NO CLUBE</span>
               ) : (
-                <span>Adicione seu CPF para ganhar pontos!</span>
+                <span>Você está deixando de pontuar no clube!</span>
               )}
 
-              {sale.client_cpf && (
-                <span style={{ fontWeight: "800" }}>+{totalPoints}</span>
-              )}
+              <span style={{ fontWeight: "800" }}>+{totalPoints}</span>
+            </div>
+          </ClubInfo>
+          <ClubInfo style={{ height: "6rem" }}>
+            <div className="info-header">
+              <Checkbox
+                checked={sale.discount ? true : false}
+                onChange={() => shopkeeperDiscountAdd()}
+              />
+              <span>Sou Lojista</span>
             </div>
           </ClubInfo>
 
@@ -199,10 +255,24 @@ const CheckOut: React.FC<IProps> = ({
             <div>
               <span>TOTAL DO PEDIDO</span>
             </div>
+            {sale?.discount ? (
+              <div className="info-footer">
+                <span> DESCONTO DE LOJISTA</span>
+                <span style={{ fontWeight: "800" }}>
+                  R$ - {discount?.toString()?.replace(".", ",")}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
+
             <div className="info-footer">
               <span>{sale.items.length} ITENS</span>
               <span style={{ fontWeight: "800" }}>
-                R${sale.total_sold.toFixed(2).replace(".", ",")}
+                R$
+                {(sale?.total_sold - sale?.discount)
+                  .toFixed(2)
+                  .replace(".", ",")}
               </span>
             </div>
           </OrderInfo>
@@ -221,7 +291,9 @@ const CheckOut: React.FC<IProps> = ({
               Voltar
             </Button>
             <ButtonFinalize
-              onClick={() => !sale.customerVoucher ? offerItem() : stepChange(5)}
+              onClick={() =>
+                !sale.customerVoucher ? offerItem() : stepChange(5)
+              }
               disabled={!sale?.items?.length}
             >
               Avançar
