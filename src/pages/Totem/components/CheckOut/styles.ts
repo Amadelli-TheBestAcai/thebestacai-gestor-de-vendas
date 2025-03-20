@@ -22,7 +22,7 @@ export const Header = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
 
   span {
     font-size: 4rem;
@@ -105,7 +105,7 @@ export const ClubInfo = styled.div`
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 12rem;
+  height: 10rem;
   margin-top: 0.5rem;
   border-bottom: 2px solid var(--brown-300);
 
@@ -142,7 +142,7 @@ export const ClubInfo = styled.div`
     margin: 1.5rem 0;
     font-size: 2.5rem;
   }
-  `;
+`;
 
 export const OrderInfo = styled.div`
   display: flex;
@@ -150,7 +150,7 @@ export const OrderInfo = styled.div`
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 12rem;
+  height: 7rem;
   margin-top: 0.5rem;
   font-size: 2.5rem;
 
@@ -162,13 +162,14 @@ export const OrderInfo = styled.div`
     width: 100%;
     margin: 1rem 0;
   }
-  
+
   .info-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin: 1.5rem 0 0;
+    margin: 0.2rem 0 0;
+    font-size: 2.25rem;
   }
 `;
 
