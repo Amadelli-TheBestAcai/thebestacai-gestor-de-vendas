@@ -7,7 +7,6 @@ import Welcome from "./components/Welcome";
 import Order from "./components/Order";
 import Cupom from "./components/Cupom";
 import Payment from "./components/Payment";
-import Invoice from "./components/Invoice";
 import CheckOut from "./components/CheckOut";
 import Evaluation from "./components/Evaluation";
 import Identification from "./components/Identification";
@@ -30,9 +29,6 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
 
   const [storeProducts, setStoreProducts] = useState<StoreProductDto[]>([]);
-  const [taggedStoreProducts, setTaggedStoreProducts] = useState<
-    StoreProductDto[]
-  >([]);
 
   const [step, setStep] = useState(1);
   const [redirectHomeCount, setRedirectHomeCount] = useState(0);
