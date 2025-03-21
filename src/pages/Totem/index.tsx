@@ -19,13 +19,7 @@ import { StoreProductDto } from "../../models/dtos/storeProduct";
 
 import { notification } from "antd";
 
-import {
-  Container,
-  Header,
-  Content,
-  Modal,
-  ButtonContinue,
-} from "./styles";
+import { Container, Header, Content, Modal, ButtonContinue } from "./styles";
 
 type IProps = RouteComponentProps;
 
@@ -314,6 +308,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
               stepChange={stepChange}
               storeProducts={storeProducts}
               cancelSale={cancelSale}
+              handleIncrement={handleIncrement}
             />
           ) : (
             <React.Fragment />
@@ -325,6 +320,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
               campaign={campaign}
               cancelSale={cancelSale}
               storeProducts={storeProducts}
+              handleIncrement={handleIncrement}
             />
           ) : (
             <React.Fragment />
@@ -336,6 +332,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
               cancelSale={cancelSale}
               setCancelTimer={setCancelTimer}
               setPrinter={setPrinter}
+              handleIncrement={handleIncrement}
             />
           ) : (
             <React.Fragment />
