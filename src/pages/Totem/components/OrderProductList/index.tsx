@@ -39,15 +39,11 @@ const OrderProductList: React.FC<IProps> = ({
         .map((item) => (
           <OrderProduct key={item.id} sm={24}>
             <div className="order-item-content">
-              <img
-                src={
-                  item?.product?.upload_url
-                    ? item?.product?.upload_url
-                    : getCategoryIcon(item?.product?.category)
-                }
-                className="order-item-image"
-              />
-              <span className="order-item-name">{item.product.name}</span>
+              <span className="order-item-name">
+                {item.product.id !== 1
+                  ? `${item.quantity}x ${item.product.name}`
+                  : item.product.name}
+              </span>
             </div>
 
             <div className="order-item-actions">
@@ -85,7 +81,6 @@ const OrderProductList: React.FC<IProps> = ({
         sale?.customerVoucher?.voucher?.products?.map((_product) => (
           <OrderProduct key={_product.id} sm={24} type={"cupom"}>
             <div className="order-item-content">
-              <img src={cupom} className="order-item-image" />
               <span className="order-item-name">
                 {"[CUPOM] " + _product.product_name}
               </span>
@@ -116,12 +111,16 @@ const OrderProductList: React.FC<IProps> = ({
         settings?.should_active_discount_storekeeper && (
           <OrderProduct type={"cupom"}>
             <div className="order-item-content">
-            <img src={discount} className="order-item-image" />
-              <span className="order-item-name">{"[-10%] Desconto de Lojista"}</span>
+              <span className="order-item-name">
+                {"[-10%] Desconto de Lojista"}
+              </span>
             </div>
 
             <div className="order-item-actions">
-              <span className="order-item-price" style={{marginRight:"2.5rem"}}>
+              <span
+                className="order-item-price"
+                style={{ marginRight: "2.5rem" }}
+              >
                 R$ {"- " + sale?.discount?.toString()?.replace(".", ",")}
               </span>
             </div>

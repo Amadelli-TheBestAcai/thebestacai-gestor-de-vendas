@@ -47,9 +47,10 @@ interface IProps {
   stepChange: (step: number) => void;
   storeProducts: StoreProductDto[];
   cancelSale: () => void;
+  handleIncrement: () => void;
 }
 
-const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
+const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale, handleIncrement }) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
@@ -174,7 +175,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
       <Container>
         <MenuCategory>
           <div className="body-menu">
-            <img src={totem_club_flag} />
+            <img src={totem_club_flag} onClick={handleIncrement}/>
             {categories.map((_category) => (
               <CardCategoryMenu
                 key={_category.id}

@@ -39,6 +39,7 @@ interface IProps {
   cancelSale: () => void;
   stepChange: (step: number) => void;
   storeProducts: StoreProductDto[];
+  handleIncrement: () => void;
 }
 
 const CheckOut: React.FC<IProps> = ({
@@ -47,6 +48,7 @@ const CheckOut: React.FC<IProps> = ({
   cancelSale,
   stepChange,
   storeProducts,
+  handleIncrement,
 }) => {
   const { sale, setSale, onAddItem, onDecressItem } = useSale();
   const { settings } = useSettings();
@@ -171,7 +173,7 @@ const CheckOut: React.FC<IProps> = ({
     <>
       <Header>
         <div className="div-img">
-          <img src={totem_club_flag} />
+          <img src={totem_club_flag} onClick={handleIncrement} />
         </div>
         <div className="div-title">
           <span>Resumo do Pedido</span>
@@ -254,12 +256,12 @@ const CheckOut: React.FC<IProps> = ({
               </ButtonCupom>
             </div>
             <OrderProductList
-              useCupom={sale.customerVoucher ? true : false}
+              useCupom={true}
+              useDiscount={!!sale.discount}
               addItemList={addItemList}
               onDecressItemList={onDecressItemList}
               removeAllItems={removeAllItems}
               setVisibleModalRemoveCupom={setVisibleModalRemoveCupom}
-              useDiscount={!!sale.discount}
             />
           </OrderInfo>
           <OrderInfo>

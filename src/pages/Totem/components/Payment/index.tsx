@@ -41,12 +41,14 @@ interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
   setPrinter: Dispatch<SetStateAction<boolean>>;
   cancelSale: () => void;
+  handleIncrement: () => void;
 }
 const Payment: React.FC<IProps> = ({
   setCancelTimer,
   setStep,
   cancelSale,
   setPrinter,
+  handleIncrement,
 }) => {
   const { sale, setSale } = useSale();
   const { settings } = useSettings();
@@ -129,7 +131,7 @@ const Payment: React.FC<IProps> = ({
         <>
           <HeaderBanner>
             <div className="div-img">
-              <img src={totem_club_flag} />
+              <img src={totem_club_flag} onClick={handleIncrement} />
             </div>
             <div className="div-title">
               <span>Forma de Pagamento</span>
@@ -183,7 +185,7 @@ const Payment: React.FC<IProps> = ({
         <>
           <HeaderBanner>
             <div className="div-img">
-              <img src={totem_club_flag} />
+              <img src={totem_club_flag} onClick={handleIncrement} />
             </div>
             <div className="div-title">
               <span>Pix</span>
@@ -215,7 +217,7 @@ const Payment: React.FC<IProps> = ({
         <>
           <HeaderBanner>
             <div className="div-img">
-              <img src={totem_club_flag} />
+              <img src={totem_club_flag} onClick={handleIncrement} />
             </div>
             <div className="div-title">
               <span>Crédito</span>
