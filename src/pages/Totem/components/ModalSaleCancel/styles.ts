@@ -60,7 +60,7 @@ const ButtonCSS = css`
   }
 `;
 
-export const ButtonContinue = styled(ButtonAnt)`
+export const ButtonCancel = styled(ButtonAnt)`
   ${ButtonCSS}
   background: var(--white);
   border: 3px solid var(--black);
@@ -74,7 +74,7 @@ export const ButtonContinue = styled(ButtonAnt)`
   }
 `;
 
-export const ButtonCancel = styled(ButtonAnt)`
+export const ButtonContinue = styled(ButtonAnt)`
   ${ButtonCSS}
   border: none;
   background: var(--orange-250);

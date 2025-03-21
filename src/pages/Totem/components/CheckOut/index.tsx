@@ -253,25 +253,16 @@ const CheckOut: React.FC<IProps> = ({
               onDecressItemList={onDecressItemList}
               removeAllItems={removeAllItems}
               setVisibleModalRemoveCupom={setVisibleModalRemoveCupom}
+              useDiscount={!!sale.discount}
             />
           </OrderInfo>
           <OrderInfo>
             <div>
               <span>TOTAL DO PEDIDO</span>
             </div>
-            {sale?.discount && settings?.should_active_discount_storekeeper ? (
-              <div className="info-footer">
-                <span> DESCONTO DE LOJISTA</span>
-                <span style={{ fontWeight: "800" }}>
-                  R$ - {discount?.toString()?.replace(".", ",")}
-                </span>
-              </div>
-            ) : (
-              <></>
-            )}
 
             <div className="info-footer">
-              <span>{sale.items.length} ITENS</span>
+              <span>{sale.items.length === 1 ? "ITEM" : "ITENS"}</span>
               <span style={{ fontWeight: "800" }}>
                 R$
                 {(sale?.total_sold - sale?.discount)

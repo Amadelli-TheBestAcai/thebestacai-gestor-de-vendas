@@ -26,6 +26,7 @@ export const Header = styled.div`
   }
 `;
 
+
 export const Body = styled.div`
   display: flex;
   flex-direction: column;
@@ -37,6 +38,35 @@ export const Body = styled.div`
   span {
     font-size: 2.5rem;
     font-weight: 600;
+  }
+`;
+
+export const OrderInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 7rem;
+  margin: 0.5rem 0;
+  font-size: 2.5rem;
+
+  .info-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 1rem 0;
+  }
+
+  .info-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 0.2rem 0 0;
+    font-size: 2.25rem;
   }
 `;
 

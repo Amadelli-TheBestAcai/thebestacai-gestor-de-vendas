@@ -31,6 +31,7 @@ import {
   Modal,
   ButtonModal,
   ButtonPrintModal,
+  OrderInfo,
 } from "./styles";
 
 interface IProps {
@@ -127,6 +128,21 @@ const Payment: React.FC<IProps> = ({
           <Header>
             <span>Forma de Pagamento</span>
           </Header>
+          <OrderInfo>
+            <div>
+              <span>TOTAL DO PEDIDO</span>
+            </div>
+
+            <div className="info-footer">
+              <span>{sale.items.length === 1 ? "ITEM" : "ITENS"}</span>
+              <span style={{ fontWeight: "800" }}>
+                R$
+                {(sale?.total_sold - sale?.discount)
+                  .toFixed(2)
+                  .replace(".", ",")}
+              </span>
+            </div>
+          </OrderInfo>
           <Body>
             <Button onClick={() => onFinish(PaymentType.PIX)}>
               <img src={pix} /> PIX

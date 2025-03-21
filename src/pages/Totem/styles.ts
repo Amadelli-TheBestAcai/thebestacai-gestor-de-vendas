@@ -124,14 +124,15 @@ const ButtonCSS = css`
 
 export const ButtonContinue = styled(ButtonAnt)`
   ${ButtonCSS}
-  background: var(--white);
-  border: 3px solid var(--black);
+  width: 100%;
+  border: none;
+  background: var(--orange-250);
 
   :active,
   :hover,
   :focus {
-    background: var(--white);
+    background: var(--orange-250);
     color: var(--black);
-    border: 3px solid var(--black);
+    border: none;
   }
 `;

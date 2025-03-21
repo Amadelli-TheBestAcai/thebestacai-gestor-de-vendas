@@ -4,18 +4,20 @@ import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
 import cupom from "../../../../assets/totem/svg/cupom.svg";
+import discount from "../../../../assets/totem/svg/discount.svg";
 
 import { getCategoryIcon } from "../../helpers/getCategoryIcon";
 
 import { useSale } from "../../../../hooks/useSale";
+import { useSettings } from "../../../../hooks/useSettings";
 
 import { ItemDto } from "../../../../models/dtos/item";
-import { ProductVoucher } from "../../../../models/dtos/voucher";
 
 import { AddSubItem, Container, OrderProduct } from "./styles";
 
 interface IProps {
   useCupom?: boolean;
+  useDiscount?: boolean;
   addItemList: (item: ItemDto) => void;
   onDecressItemList: (item: ItemDto, totemNotification: boolean) => void;
   removeAllItems: (item: ItemDto) => void;
@@ -23,44 +25,16 @@ interface IProps {
 }
 const OrderProductList: React.FC<IProps> = ({
   useCupom,
+  useDiscount,
   addItemList,
   onDecressItemList,
   removeAllItems,
   setVisibleModalRemoveCupom,
 }) => {
   const { sale } = useSale();
+  const { settings } = useSettings();
   return (
     <Container>
-      {useCupom &&
-        sale.customerVoucher &&
-        sale?.customerVoucher?.voucher?.products?.map((_product) => (
-          <OrderProduct key={_product.id} sm={24} type={"cupom"}>
-            <div className="order-item-content">
-              <img src={cupom} className="order-item-image" />
-              <span className="order-item-name">
-                {"[CUPOM] " + _product.product_name}
-              </span>
-            </div>
-
-            <div className="order-item-actions">
-              <span>
-                <img
-                  className="order-item-image"
-                  src={trash}
-                  onClick={() =>
-                    setVisibleModalRemoveCupom && setVisibleModalRemoveCupom(true)
-                  }
-                />
-              </span>
-              <span className="order-item-price">
-                R${" "}
-                {_product?.additional_value
-                  ? "+ "
-                  : "- " + _product?.price_sell?.replace(".", ",")}
-              </span>
-            </div>
-          </OrderProduct>
-        ))}
       {sale.items
         .map((item) => (
           <OrderProduct key={item.id} sm={24}>
@@ -106,6 +80,53 @@ const OrderProductList: React.FC<IProps> = ({
           </OrderProduct>
         ))
         .reverse()}
+      {useCupom &&
+        sale.customerVoucher &&
+        sale?.customerVoucher?.voucher?.products?.map((_product) => (
+          <OrderProduct key={_product.id} sm={24} type={"cupom"}>
+            <div className="order-item-content">
+              <img src={cupom} className="order-item-image" />
+              <span className="order-item-name">
+                {"[CUPOM] " + _product.product_name}
+              </span>
+            </div>
+
+            <div className="order-item-actions">
+              <span>
+                <img
+                  className="order-item-image"
+                  src={trash}
+                  onClick={() =>
+                    setVisibleModalRemoveCupom &&
+                    setVisibleModalRemoveCupom(true)
+                  }
+                />
+              </span>
+              <span className="order-item-price">
+                R${" "}
+                {_product?.additional_value
+                  ? "+ "
+                  : "- " + _product?.price_sell?.replace(".", ",")}
+              </span>
+            </div>
+          </OrderProduct>
+        ))}
+      {useDiscount &&
+        sale?.discount &&
+        settings?.should_active_discount_storekeeper && (
+          <OrderProduct type={"cupom"}>
+            <div className="order-item-content">
+            <img src={discount} className="order-item-image" />
+              <span className="order-item-name">{"[-10%] Desconto de Lojista"}</span>
+            </div>
+
+            <div className="order-item-actions">
+              <span className="order-item-price" style={{marginRight:"2.5rem"}}>
+                R$ {"- " + sale?.discount?.toString()?.replace(".", ",")}
+              </span>
+            </div>
+          </OrderProduct>
+        )}
     </Container>
   );
 };
