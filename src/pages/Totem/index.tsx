@@ -38,7 +38,8 @@ const Totem: React.FC<IProps> = ({ history }) => {
   const [redirectHomeCount, setRedirectHomeCount] = useState(0);
   const [redirectHomeCountTimer, setredirectHomeCountTimer] = useState(null);
 
-  const [printer, setPrinter] = useState<boolean>(false);
+  const [printerDanfe, setPrinterDanfe] = useState<boolean>(false);
+  const [printerTef, setPrinterTef] = useState<boolean>(false);
 
   const [cancelTimer, setCancelTimer] = useState<boolean>(false);
   const [inactive, setInactive] = useState<boolean>(false);
@@ -331,14 +332,21 @@ const Totem: React.FC<IProps> = ({ history }) => {
               setStep={setStep}
               cancelSale={cancelSale}
               setCancelTimer={setCancelTimer}
-              setPrinter={setPrinter}
               handleIncrement={handleIncrement}
+              printerTef={printerTef}
+              setPrinterTef={setPrinterTef}
+              printerDanfe={printerDanfe}
+              setPrinterDanfe={setPrinterDanfe}
             />
           ) : (
             <React.Fragment />
           )}
           {step === 6 ? (
-            <Evaluation setStep={setStep} printer={printer} />
+            <Evaluation
+              setStep={setStep}
+              printerTef={printerTef}
+              printerDanfe={printerDanfe}
+            />
           ) : (
             <React.Fragment />
           )}
