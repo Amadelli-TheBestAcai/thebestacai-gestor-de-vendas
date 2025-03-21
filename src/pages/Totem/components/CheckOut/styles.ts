@@ -19,10 +19,31 @@ export const Container = styled.div`
 
 export const Header = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
+  height: 15.6rem;
   margin-bottom: 2rem;
+
+  .div-img {
+    display: flex;
+    justify-content: center;
+    width: 27%;
+    height: 100%;
+    padding: 0 0.65rem;
+
+    img {
+      width: 12rem;
+      height: 15.6rem;
+    }
+  }
+
+  .div-title {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: start;
+    width: 73%;
+    height: 100%;
+    padding: 2.5rem;
+  }
 
   span {
     font-size: 4rem;

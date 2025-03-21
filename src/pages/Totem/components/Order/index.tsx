@@ -6,7 +6,7 @@ import check from "../../../../assets/totem/svg/check.svg";
 import bottle from "../../../../assets/totem/svg/bottle.svg";
 import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
 import self_service from "../../../../assets/totem/svg/self_service.svg";
-import totem_order_flag from "../../../../assets/totem/img/totem_order_flag.png";
+import totem_club_flag from "../../../../assets/totem/img/totem_club_flag.png";
 
 import { getCategoryIcon } from "../../helpers/getCategoryIcon";
 
@@ -174,7 +174,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale }) => {
       <Container>
         <MenuCategory>
           <div className="body-menu">
-            <img src={totem_order_flag} />
+            <img src={totem_club_flag} />
             {categories.map((_category) => (
               <CardCategoryMenu
                 key={_category.id}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
+import the_best_acai_logo from "../../assets/totem/svg/the_best_acai_logo.svg";
+
 import Welcome from "./components/Welcome";
 import Order from "./components/Order";
 import Cupom from "./components/Cupom";
@@ -10,15 +12,20 @@ import CheckOut from "./components/CheckOut";
 import Evaluation from "./components/Evaluation";
 import Identification from "./components/Identification";
 
+import { useSale } from "../../hooks/useSale";
+
+import { CampaignDto } from "../../models/dtos/campaign";
+import { StoreProductDto } from "../../models/dtos/storeProduct";
+
 import { notification } from "antd";
 
-import { Container, Header, Content, Modal, ButtonContinue } from "./styles";
-
-import the_best_acai_logo from "../../assets/totem/svg/the_best_acai_logo.svg";
-
-import { StoreProductDto } from "../../models/dtos/storeProduct";
-import { CampaignDto } from "../../models/dtos/campaign";
-import { useSale } from "../../hooks/useSale";
+import {
+  Container,
+  Header,
+  Content,
+  Modal,
+  ButtonContinue,
+} from "./styles";
 
 type IProps = RouteComponentProps;
 
@@ -257,10 +264,20 @@ const Totem: React.FC<IProps> = ({ history }) => {
     }
   };
 
+  const getHeader = () => {
+    if (step === 1 || (step >= 3 && step <= 5 && step !== 4.5)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <>
       <Container>
-        {step !== 1 && step !== 3 ? (
+        {getHeader() ? (
+          <></>
+        ) : (
           <Header>
             <div className="logo-content">
               <img
@@ -270,11 +287,9 @@ const Totem: React.FC<IProps> = ({ history }) => {
               />
             </div>
           </Header>
-        ) : (
-          <></>
         )}
         <Content
-          customHeight={step === 1 || step === 3 ? "100%" : "90%"}
+          customHeight={getHeader() ? "100%" : "90%"}
           customJustifyContent={"flex-start"}
         >
           {step === 1 ? (

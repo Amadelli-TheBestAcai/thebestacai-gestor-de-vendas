@@ -11,6 +11,7 @@ import ticket from "../../../../assets/totem/svg/ticket.svg";
 import debit_card from "../../../../assets/totem/svg/debit_card.svg";
 import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
 import credit_card from "../../../../assets/totem/svg/credit_card.svg";
+import totem_club_flag from "../../../../assets/totem/img/totem_club_flag.png";
 
 import { PaymentType } from "../../../../models/enums/paymentType";
 
@@ -26,6 +27,7 @@ import {
   Button,
   Body,
   Header,
+  HeaderBanner,
   Footer,
   ButtonCancel,
   Modal,
@@ -124,94 +126,122 @@ const Payment: React.FC<IProps> = ({
   return (
     <>
       {stepPayment === 1 && (
-        <Container>
-          <Header>
-            <span>Forma de Pagamento</span>
-          </Header>
-          <OrderInfo>
-            <div>
-              <span>TOTAL DO PEDIDO</span>
+        <>
+          <HeaderBanner>
+            <div className="div-img">
+              <img src={totem_club_flag} />
             </div>
+            <div className="div-title">
+              <span>Forma de Pagamento</span>
+              <span>Selecionar</span>
+            </div>
+          </HeaderBanner>
+          <Container>
+            <OrderInfo>
+              <div>
+                <span>TOTAL DO PEDIDO</span>
+              </div>
 
-            <div className="info-footer">
-              <span>{sale.items.length === 1 ? "ITEM" : "ITENS"}</span>
-              <span style={{ fontWeight: "800" }}>
-                R$
-                {(sale?.total_sold - sale?.discount)
-                  .toFixed(2)
-                  .replace(".", ",")}
-              </span>
-            </div>
-          </OrderInfo>
-          <Body>
-            <Button onClick={() => onFinish(PaymentType.PIX)}>
-              <img src={pix} /> PIX
-            </Button>
-            <Button onClick={() => onFinish(PaymentType.CREDITO)}>
-              <img src={credit_card} /> Cartão de Crédito
-            </Button>
-            <Button onClick={() => onFinish(PaymentType.DEBITO)}>
-              <img src={debit_card} /> Cartão de Débito
-            </Button>
-            <Button onClick={() => onFinish(PaymentType.TICKET)}>
-              <img src={ticket} /> Vale Refeição
-            </Button>
-          </Body>
-          <Footer>
-            <div>
-              <ButtonCancel onClick={() => setVisibleModal(true)}>
-                Cancelar Pedido
-              </ButtonCancel>
-              <ButtonCancel onClick={() => setStep(4)}>
-                <img src={arrow_left} /> Voltar
-              </ButtonCancel>
-            </div>
-          </Footer>
-        </Container>
+              <div className="info-footer">
+                <span>{sale.items.length === 1 ? "ITEM" : "ITENS"}</span>
+                <span style={{ fontWeight: "800" }}>
+                  R$
+                  {(sale?.total_sold - sale?.discount)
+                    .toFixed(2)
+                    .replace(".", ",")}
+                </span>
+              </div>
+            </OrderInfo>
+            <Body>
+              <Button onClick={() => onFinish(PaymentType.PIX)}>
+                <img src={pix} /> PIX
+              </Button>
+              <Button onClick={() => onFinish(PaymentType.CREDITO)}>
+                <img src={credit_card} /> Cartão de Crédito
+              </Button>
+              <Button onClick={() => onFinish(PaymentType.DEBITO)}>
+                <img src={debit_card} /> Cartão de Débito
+              </Button>
+              <Button onClick={() => onFinish(PaymentType.TICKET)}>
+                <img src={ticket} /> Vale Refeição
+              </Button>
+            </Body>
+            <Footer>
+              <div>
+                <ButtonCancel onClick={() => setVisibleModal(true)}>
+                  Cancelar Pedido
+                </ButtonCancel>
+                <ButtonCancel onClick={() => setStep(4)}>
+                  <img src={arrow_left} /> Voltar
+                </ButtonCancel>
+              </div>
+            </Footer>
+          </Container>
+        </>
       )}
       {stepPayment === 2 && (
-        <Container>
-          <Header>
-            <span>Abra o app do seu banco</span>
-          </Header>
-          <Body>
-            <span>Faça a leitura do QR Code no Pinpad.</span>
-          </Body>
-          <Footer>
-            <ButtonCancel
-              onClick={() => {
-                setStepPayment(1);
-                setCancelTimer(false);
-              }}
-              style={{ width: "36.5rem" }}
-              loading={loading}
-            >
-              Trocar Forma de Pagamento
-            </ButtonCancel>
-          </Footer>
-        </Container>
+        <>
+          <HeaderBanner>
+            <div className="div-img">
+              <img src={totem_club_flag} />
+            </div>
+            <div className="div-title">
+              <span>Pix</span>
+            </div>
+          </HeaderBanner>
+          <Container>
+            <Header>
+              <span>Abra o app do seu banco</span>
+            </Header>
+            <Body>
+              <span>Faça a leitura do QR Code no Pinpad.</span>
+            </Body>
+            <Footer>
+              <ButtonCancel
+                onClick={() => {
+                  setStepPayment(1);
+                  setCancelTimer(false);
+                }}
+                style={{ width: "36.5rem" }}
+                loading={loading}
+              >
+                Trocar Forma de Pagamento
+              </ButtonCancel>
+            </Footer>
+          </Container>
+        </>
       )}
       {stepPayment === 3 && (
-        <Container>
-          <Header>
-            <span>Veja a maquininha</span>
-          </Header>
-          <Body>
-            <span>Siga as instruções da máquina de cartões.</span>
-          </Body>
-          <Footer>
-            <ButtonCancel
-              onClick={() => {
-                setStepPayment(1);
-                setCancelTimer(false);
-              }}
-              style={{ width: "36.5rem" }}
-              loading={loading}
-            >
-              Trocar Forma de Pagamento
-            </ButtonCancel>
-          </Footer>
-        </Container>
+        <>
+          <HeaderBanner>
+            <div className="div-img">
+              <img src={totem_club_flag} />
+            </div>
+            <div className="div-title">
+              <span>Crédito</span>
+            </div>
+          </HeaderBanner>
+          <Container>
+            <Header>
+              <span>Veja a maquininha</span>
+            </Header>
+            <Body>
+              <span>Siga as instruções da máquina de cartões.</span>
+            </Body>
+            <Footer>
+              <ButtonCancel
+                onClick={() => {
+                  setStepPayment(1);
+                  setCancelTimer(false);
+                }}
+                style={{ width: "36.5rem" }}
+                loading={loading}
+              >
+                Trocar Forma de Pagamento
+              </ButtonCancel>
+            </Footer>
+          </Container>
+        </>
       )}
       <ModalSaleCancel
         visible={visibleModal}

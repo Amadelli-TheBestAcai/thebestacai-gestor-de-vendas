@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import cupom from "../../../../assets/totem/svg/cupom.svg";
 import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
+import totem_club_flag from "../../../../assets/totem/img/totem_club_flag.png";
 
 import { applyCPFMask } from "../../helpers/applyCPFMask";
 
@@ -168,10 +169,15 @@ const CheckOut: React.FC<IProps> = ({
 
   return (
     <>
-      <Container>
-        <Header>
+      <Header>
+        <div className="div-img">
+          <img src={totem_club_flag} />
+        </div>
+        <div className="div-title">
           <span>Resumo do Pedido</span>
-        </Header>
+        </div>
+      </Header>
+      <Container>
         <Body>
           <CpfInfo>
             <div className="info-header">

@@ -1,9 +1,10 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { notification } from "antd";
 
-import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
 import show_cpf from "../../../../assets/totem/svg/show_cpf.svg";
+import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
 import hidden_cpf from "../../../../assets/totem/svg/hidden_cpf.svg";
+import pinpad_erase from "../../../../assets/totem/svg/pinpad_erase.svg";
 
 import { validaCPF } from "../../helpers/validaCPF";
 import { applyCPFMask } from "../../helpers/applyCPFMask";
@@ -146,11 +147,21 @@ const Identification: React.FC<IProps> = ({
   return (
     <>
       <Container>
-        <span className="title">Gostaria de se Identificar?</span>
+        <span className="title">
+          {sale?.items?.length ? "CPF/CNPJ na Nota" : "Quer pontuar no Clube?"}
+        </span>
         <div className="user-info">
-          <span>INFORME SEU NÚMERO DE CPF</span>
+          <span>
+            {sale?.items?.length
+              ? "INFORME SEU CPF OU CNPJ"
+              : "INFORME SEU NÚMERO DE CPF"}
+          </span>
           <div className="inputContainer">
-            <Input value={applyCPFMask(cpf, showCPF)} disabled />
+            <Input
+              value={applyCPFMask(cpf, showCPF)}
+              placeholder={"Insira um CPF válido"}
+              disabled
+            />
             <button onClick={() => setShowCPF(!showCPF)}>
               {showCPF ? (
                 <ShowCPFIcon src={show_cpf} />
@@ -177,7 +188,13 @@ const Identification: React.FC<IProps> = ({
               onClick={() => onFinish(false)}
               style={{ width: "28.43rem", margin: "0 1rem" }}
             >
-              {cpf.length === 11 ? "Remover CPF" : "Não desejo Informar"}
+              {cpf.length === 11 ? (
+                "Remover CPF"
+              ) : (
+                <>
+                  <img src={arrow_left} /> Voltar
+                </>
+              )}
             </ButtonCancel>
             <ButtonSendCPF
               onClick={() => onFinish(true)}

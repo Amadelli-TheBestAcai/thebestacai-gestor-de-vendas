@@ -162,6 +162,7 @@ export const ButtonSendCPF = styled(ButtonAnt)`
 
 export const ButtonDontSendCPF = styled(ButtonAnt)`
   ${ButtonCSS}
+  text-decoration: underline;
 `;
 
 export const ButtonCancel = styled(ButtonAnt)`
