@@ -34,36 +34,43 @@ import {
   ButtonModal,
   ButtonPrintModal,
   OrderInfo,
+  Checkbox,
 } from "./styles";
 
 interface IProps {
   setCancelTimer: Dispatch<SetStateAction<boolean>>;
   setStep: Dispatch<SetStateAction<number>>;
-  setPrinter: Dispatch<SetStateAction<boolean>>;
   cancelSale: () => void;
   handleIncrement: () => void;
+  printerTef: boolean;
+  setPrinterTef: Dispatch<SetStateAction<boolean>>;
+  printerDanfe: boolean;
+  setPrinterDanfe: Dispatch<SetStateAction<boolean>>;
 }
 const Payment: React.FC<IProps> = ({
   setCancelTimer,
   setStep,
   cancelSale,
-  setPrinter,
+  setPrinterTef,
+  setPrinterDanfe,
   handleIncrement,
+  printerTef,
+  printerDanfe,
 }) => {
   const { sale, setSale } = useSale();
   const { settings } = useSettings();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
-  const [visiblePrintTefModal, setVisiblePrintTefModal] =
-    useState<boolean>(false);
+  const [visiblePrintModal, setVisiblePrintModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [stepPayment, setStepPayment] = useState<1 | 2 | 3>(1);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (visiblePrintTefModal) {
+    if (visiblePrintModal) {
       timeoutRef.current = setTimeout(() => {
-        setVisiblePrintTefModal(false);
-        setPrinter(false);
+        setVisiblePrintModal(false);
+        setPrinterTef(false);
+        setPrinterDanfe(false);
         setStep(6);
       }, 10000);
     }
@@ -72,7 +79,7 @@ const Payment: React.FC<IProps> = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [visiblePrintTefModal]);
+  }, [visiblePrintModal]);
 
   const onFinish = async (method: number) => {
     let hasInternet = await window.Main.hasInternet();
@@ -121,7 +128,7 @@ const Payment: React.FC<IProps> = ({
     });
 
     setSale(updatedSale);
-    setVisiblePrintTefModal(true);
+    setVisiblePrintModal(true);
     setLoading(false);
   };
 
@@ -252,37 +259,50 @@ const Payment: React.FC<IProps> = ({
       />
 
       <Modal
-        visible={visiblePrintTefModal}
+        visible={visiblePrintModal}
         confirmLoading={loading}
         cancelButtonProps={{ hidden: true }}
         closable={false}
         centered
         width={"62.5rem"}
-        style={{ height: "24rem" }}
+        style={{ height: "36rem" }}
         footer={false}
       >
         <>
-          <span className="modal-title">
-            Deseja realizar a impressão do cupom TEF e NFCe?
-          </span>
+          <span className="modal-title">Imprimir Cupons?</span>
+          <div className="div-body">
+            <Checkbox
+              checked={printerDanfe}
+              onClick={() => setPrinterDanfe(!printerDanfe)}
+            >
+              Cupom Fiscal
+            </Checkbox>
+            <Checkbox
+              checked={printerTef}
+              onClick={() => setPrinterTef(!printerTef)}
+            >
+              Comprovante TEF
+            </Checkbox>
+          </div>
           <div>
             <ButtonModal
               onClick={() => {
-                setVisiblePrintTefModal(false);
-                setPrinter(false);
+                setVisiblePrintModal(false);
+                setPrinterTef(false);
+                setPrinterDanfe(false);
                 setStep(6);
               }}
             >
-              Pular
+              Não Imprimir
             </ButtonModal>
             <ButtonPrintModal
               onClick={() => {
-                setVisiblePrintTefModal(false);
-                setPrinter(true);
+                setVisiblePrintModal(false);
                 setStep(6);
               }}
+              disabled={!printerDanfe && !printerTef}
             >
-              Desejo Imprimir
+              Imprimir
             </ButtonPrintModal>
           </div>
         </>

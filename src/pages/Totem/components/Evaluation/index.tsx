@@ -35,10 +35,15 @@ import {
 
 interface IProps {
   setStep: Dispatch<SetStateAction<number>>;
-  printer: boolean;
+  printerTef: boolean;
+  printerDanfe: boolean;
 }
 
-const Evaluation: React.FC<IProps> = ({ setStep, printer }) => {
+const Evaluation: React.FC<IProps> = ({
+  setStep,
+  printerTef,
+  printerDanfe,
+}) => {
   const { sale } = useSale();
   const { store } = useStore();
   const [openNps, setOpenNps] = useState<boolean>(true);
@@ -140,7 +145,7 @@ const Evaluation: React.FC<IProps> = ({ setStep, printer }) => {
     }
 
     if (!finalizaTef) {
-      if (printer) {
+      if (printerTef) {
         const {
           has_internal_error: errorOnPrintCupomTef,
           error_message: error_message_print_cupom_tef,
@@ -236,7 +241,7 @@ const Evaluation: React.FC<IProps> = ({ setStep, printer }) => {
         payload.nfce_focus_id = nfceResponse.id;
         payload.nfce_url = `https://api.focusnfe.com.br${nfceResponse.caminho_xml_nota_fiscal}`;
 
-        if (printer) {
+        if (printerDanfe) {
           const {
             response: _printDanfe,
             has_internal_error: errorOnPrintNfce,

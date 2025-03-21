@@ -1,6 +1,10 @@
 import styled, { css } from "styled-components";
 
-import { Button as ButtonAnt, Modal as ModalAnt } from "antd";
+import {
+  Button as ButtonAnt,
+  Modal as ModalAnt,
+  Checkbox as CheckboxAnt,
+} from "antd";
 
 export const Container = styled.div`
   display: flex;
@@ -46,7 +50,6 @@ export const HeaderBanner = styled.div`
     text-align: center;
   }
 `;
-
 
 export const Header = styled.div`
   display: flex;
@@ -172,7 +175,7 @@ export const ButtonCancel = styled(ButtonAnt)`
 export const Modal = styled(ModalAnt)`
   .modal-title {
     font-family: "VisbyCF";
-    font-size: 2.5rem;
+    font-size: 3.75rem;
     font-weight: 600;
     text-align: center;
   }
@@ -191,8 +194,37 @@ export const Modal = styled(ModalAnt)`
       width: 100%;
       padding: 0;
 
-      span {
-        font-family: "VisbyCF" !important;
+      .div-body {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        height: 10rem;
+        padding: 1rem;
+
+        .ant-checkbox-input,
+        .ant-checkbox-inner {
+          width: 3rem;
+          height: 3rem;
+          border: 1px solid var(--black);
+        }
+        .ant-checkbox-checked .ant-checkbox-inner {
+          position: relative;
+          background-color: var(--orange-250);
+          border: none;
+          :after {
+            position: absolute;
+            top: 45%;
+            filter: brightness(0) saturate(100%) invert(0%) sepia(0%)
+              saturate(7500%) hue-rotate(313deg) brightness(93%) contrast(107%);
+            zoom: 3.5;
+          }
+        }
+        span {
+          font-family: "VisbyCF";
+          font-size: 2rem;
+          font-weight: 600;
+        }
       }
     }
   }
@@ -202,6 +234,10 @@ export const Modal = styled(ModalAnt)`
     justify-content: space-between;
     width: 100%;
   }
+`;
+
+export const Checkbox = styled(CheckboxAnt)`
+  margin: 0 0.625rem;
 `;
 
 export const ButtonModal = styled(ButtonAnt)`
