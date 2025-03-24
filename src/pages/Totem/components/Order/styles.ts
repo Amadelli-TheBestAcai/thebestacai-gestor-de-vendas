@@ -164,6 +164,16 @@ export const Footer = styled.div`
     width: 73.15%;
     height: 100%;
     margin-right: 1.8rem;
+
+    .empty-bag {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: 2rem;
+      font-weight: 600;
+    }
   }
 
   .action-footer {
@@ -322,10 +332,14 @@ export const ButtonFinalize = styled(ButtonAnt)`
 
   :active,
   :hover,
-  :focus {
+  :focus,
+  :disabled {
     background: var(--orange-250);
     color: var(--black);
     border: none;
+  }
+  :disabled {
+    opacity: 80%;
   }
 `;
 

@@ -50,7 +50,12 @@ interface IProps {
   handleIncrement: () => void;
 }
 
-const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale, handleIncrement }) => {
+const Order: React.FC<IProps> = ({
+  stepChange,
+  storeProducts,
+  cancelSale,
+  handleIncrement,
+}) => {
   const { sale, onAddItem, onDecressItem } = useSale();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
@@ -160,9 +165,12 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale, handle
     onAddItem(findProduct, 1, +findProduct.price_unit);
   };
 
- const onDecressItemList = async (item: ItemDto, totemNotification: boolean) =>{
+  const onDecressItemList = async (
+    item: ItemDto,
+    totemNotification: boolean
+  ) => {
     await onDecressItem(item.id, totemNotification);
-  }
+  };
 
   const removeAllItems = async (item: ItemDto): Promise<void> => {
     for (let i = 0; i < item.quantity; i++) {
@@ -175,7 +183,7 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale, handle
       <Container>
         <MenuCategory>
           <div className="body-menu">
-            <img src={totem_club_flag} onClick={handleIncrement}/>
+            <img src={totem_club_flag} onClick={handleIncrement} />
             {categories.map((_category) => (
               <CardCategoryMenu
                 key={_category.id}
@@ -262,11 +270,15 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale, handle
           <div className="order-title-footer">
             <img src={bag} /> Sua sacola
           </div>
-          <OrderProductList
-            addItemList={addItemList}
-            onDecressItemList={onDecressItemList}
-            removeAllItems={removeAllItems}
-          />
+          {sale.items.length ? (
+            <OrderProductList
+              addItemList={addItemList}
+              onDecressItemList={onDecressItemList}
+              removeAllItems={removeAllItems}
+            />
+          ) : (
+            <div className="empty-bag">Sua sacola está vazia!</div>
+          )}
         </div>
         <div className="action-footer">
           <div className="order-title-footer">
@@ -277,16 +289,13 @@ const Order: React.FC<IProps> = ({ stepChange, storeProducts, cancelSale, handle
                 .toFixed(2)}
             </span>
           </div>
-          {sale.items.length ? (
-            <ButtonFinalize
-              onClick={() => stepChange(4)}
-              loading={fetchingBalanceWeight}
-            >
-              Finalizar Pedido
-            </ButtonFinalize>
-          ) : (
-            <></>
-          )}
+          <ButtonFinalize
+            onClick={() => stepChange(4)}
+            loading={fetchingBalanceWeight}
+            disabled={!sale.items.length}
+          >
+            Finalizar Pedido
+          </ButtonFinalize>
           <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
         </div>
       </Footer>
