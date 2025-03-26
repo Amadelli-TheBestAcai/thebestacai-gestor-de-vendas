@@ -239,6 +239,7 @@ const CheckOut: React.FC<IProps> = ({
                 <Checkbox
                   checked={sale.discount ? true : false}
                   onChange={() => shopkeeperDiscountAdd()}
+                  disabled={!!sale.customerVoucher}
                 />
                 <span>Sou Lojista</span>
               </div>
@@ -250,7 +251,7 @@ const CheckOut: React.FC<IProps> = ({
               <span>ITENS</span>
               <ButtonCupom
                 onClick={() => setStep(4.5)}
-                disabled={!!sale.customerVoucher}
+                disabled={!!sale.customerVoucher || !!sale.discount}
               >
                 <img src={cupom} /> Adicionar cupom
               </ButtonCupom>

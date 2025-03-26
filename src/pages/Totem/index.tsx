@@ -52,16 +52,14 @@ const Totem: React.FC<IProps> = ({ history }) => {
     setOpenInactive(false);
     setVisibleModal(false);
 
-    const time = step === 5 || step === 4.5 ? 30000 : 15000;
-
     if (!cancelTimer) {
       timeoutRef.current = setTimeout(() => {
         setOpenInactive(true);
-        setTimeLeft(time / 1000);
+        setTimeLeft(15);
         timeoutRef.current = setTimeout(() => {
           setInactive(true);
-        }, time);
-      }, time);
+        }, 15000);
+      }, 90000);
     }
   };
 
