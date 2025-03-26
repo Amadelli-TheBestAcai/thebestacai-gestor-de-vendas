@@ -58,7 +58,7 @@ const ModalItensOffer: React.FC<IProps> = ({
               setVisible(false);
             }}
           >
-            Pula
+            Pular
           </ButtonContinue>
         </div>
       </>
