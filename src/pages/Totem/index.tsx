@@ -181,7 +181,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
       const {
         response: taggedProducts,
         has_internal_error: errorOnTaggedProducts,
-      } = await window.Main.product.getProductsByTags(["Totem"]);
+      } = await window.Main.product.getProductsByTags(["totem"]);
 
       if (errorOnTaggedProducts) console.log({ errorOnTaggedProducts });
 
