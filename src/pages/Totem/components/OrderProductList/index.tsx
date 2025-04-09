@@ -101,7 +101,8 @@ const OrderProductList: React.FC<IProps> = ({
                 R${" "}
                 {_product?.additional_value
                   ? "+ "
-                  : "- " + _product?.price_sell?.replace(".", ",")}
+                  : "- " +
+                    (+_product?.price_sell || 0)?.toFixed(2)?.replace(".", ",")}
               </span>
             </div>
           </OrderProduct>
@@ -121,7 +122,7 @@ const OrderProductList: React.FC<IProps> = ({
                 className="order-item-price"
                 style={{ marginRight: "2.5rem" }}
               >
-                R$ {"- " + sale?.discount?.toString()?.replace(".", ",")}
+                R$ {"- " + (sale?.discount || 0)?.toFixed(2)?.replace(".", ",")}
               </span>
             </div>
           </OrderProduct>

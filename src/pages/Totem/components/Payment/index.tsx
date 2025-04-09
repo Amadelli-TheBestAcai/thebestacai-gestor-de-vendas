@@ -104,11 +104,13 @@ const Payment: React.FC<IProps> = ({
     setCancelTimer(true);
     setStepPayment(method === PaymentType.PIX ? 2 : 3);
 
+    const total = sale.total_sold - (sale.discount || 0);
+
     const {
       response: updatedSale,
       has_internal_error: errorOnAddPayment,
       error_message: error_message_payment,
-    } = await window.Main.sale.addPayment(sale.total_sold, method);
+    } = await window.Main.sale.addPayment(total, method);
 
     if (errorOnAddPayment) {
       setLoading(false);
