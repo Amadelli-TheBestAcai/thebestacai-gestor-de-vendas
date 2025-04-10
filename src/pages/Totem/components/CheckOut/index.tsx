@@ -71,8 +71,17 @@ const CheckOut: React.FC<IProps> = ({
       0
     );
 
+    const voucherDiscount =
+      sale?.customerVoucher?.voucher?.products?.reduce(
+        (sum, product) => sum + +product?.price_sell,
+        0
+      ) || 0;
+
     let points = campaign?.average_ticket
-      ? Math.floor(totalSale / campaign?.average_ticket)
+      ? Math.floor(
+          (totalSale - voucherDiscount - (+sale.discount || 0)) /
+            campaign?.average_ticket
+        )
       : 0;
     setTotalPoints(points);
   }, [sale]);
