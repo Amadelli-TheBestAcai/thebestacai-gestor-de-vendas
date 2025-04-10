@@ -189,8 +189,8 @@ const Evaluation: React.FC<IProps> = ({
         cpf: payload.cpf_used_nfce ? payload.client_cpf : null,
         store_id: store.company_id,
         total: payload.total_sold,
-        discount: 0,
-        change_amount: 0,
+        discount: payload.discount,
+        change_amount: payload.change_amount,
         items: payload.items.map((product) => ({
           product_store_id: product.store_product_id,
           price_sell: product.total,
