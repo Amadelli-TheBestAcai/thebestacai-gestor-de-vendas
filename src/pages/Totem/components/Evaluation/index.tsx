@@ -184,12 +184,20 @@ const Evaluation: React.FC<IProps> = ({
       }
     }
 
+    const voucherDiscount =
+      payload?.customerVoucher?.voucher?.products?.reduce(
+        (sum, product) => sum + +product?.price_sell,
+        0
+      ) || 0;
+
+    const total = payload?.items?.reduce((total, item) => +item.total + total, 0) || 0;
+
     if (!emitNfce) {
       const nfcePayload = {
         cpf: payload.cpf_used_nfce ? payload.client_cpf : null,
         store_id: store.company_id,
-        total: payload.total_sold,
-        discount: payload.discount,
+        total: total,
+        discount: voucherDiscount ? voucherDiscount : payload.discount || 0,
         change_amount: payload.change_amount,
         items: payload.items.map((product) => ({
           product_store_id: product.store_product_id,
