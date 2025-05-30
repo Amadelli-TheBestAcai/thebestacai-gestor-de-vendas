@@ -18,6 +18,36 @@ export const Footer = styled.div`
   width: 100%;
 `;
 
+export const CpfTefContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 3rem;
+`;
+
+export const ButtonCpfTef = styled.button`
+  width: 29%;
+  height: 100%;
+  padding: 3px 7px;
+  background: var(--orange-200);
+  font-weight: 500;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  color: white;
+  transition: 0.5s;
+
+  :hover {
+    background: var(--orange-200);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
+`;
+
 export const MaskInput = styled(_MaskInput)`
   width: 100%;
   border: 1px solid var(--gray-50);
@@ -77,7 +107,7 @@ export const ContentCheck = styled.div`
   margin-top: 1rem;
 
   span {
-    margin-right: .3rem;
+    margin-right: 0.3rem;
   }
 `;
 
@@ -111,7 +141,7 @@ export const InfoClientReward = styled.div`
   .totalPoints {
     margin-top: 1rem;
     font-weight: 400;
-    font-size: .9rem;
+    font-size: 0.9rem;
   }
 `;
 

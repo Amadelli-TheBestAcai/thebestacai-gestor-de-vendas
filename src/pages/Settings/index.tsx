@@ -369,6 +369,28 @@ const Settings: React.FC<IProps> = ({ history }) => {
           </CardSettings>
         )}
         {settings.should_use_tef && (
+          <CardSettings title="Habilitar CPF Tef">
+            <span style={{ padding: "2%" }}>
+              Habilita a solicitação de CPF via PinPad
+            </span>
+            <ActionContainer>
+              <Switch
+                checked={settings.should_request_cpf_in_tef}
+                onChange={() =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    should_request_cpf_in_tef:
+                      !settings.should_request_cpf_in_tef,
+                  }))
+                }
+              />
+              <span>
+                {!settings.should_use_tef ? "DESABILITADO" : "HABILITADO"}
+              </span>
+            </ActionContainer>
+          </CardSettings>
+        )}
+        {settings.should_use_tef && (
           <CardSettings title="CNPJ Credenciadora">
             <span style={{ padding: "2%" }}>
               Para efetuar uma venda por PIX via TEF, é imprescindível

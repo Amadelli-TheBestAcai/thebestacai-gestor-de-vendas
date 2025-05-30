@@ -18,9 +18,12 @@ import {
   InfoClientReward,
   TitleReward,
   ContentCheck,
+  CpfTefContainer,
+  ButtonCpfTef,
 } from "./styles";
 import { message, notification, Checkbox } from "antd";
 import { CampaignDto } from "../../models/dtos/campaign";
+import { useSettings } from "../../hooks/useSettings";
 
 interface IProps {
   campaign?: CampaignDto;
@@ -29,6 +32,7 @@ interface IProps {
 
 const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
   const { sale, setSale, isSavingSale } = useSale();
+  const { settings } = useSettings();
   const [loading, setLoading] = useState(false);
   const { shouldOpenClientInfo, setShouldOpenClientInfo } = useSale();
   const [pressedKey, setPressedKey] = useState<string | null>(null);
@@ -115,7 +119,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_email: info.email,
         cpf_used_club: info.cpf_used_club,
         cpf_used_nfce: info.cpf_used_nfce,
-        client_id: sale.customerVoucher?.customer_id
+        client_id: sale.customerVoucher?.customer_id,
       }
     );
 
@@ -162,12 +166,23 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_email: null,
         cpf_used_club: null,
         cpf_used_nfce: null,
-        client_id: null
+        client_id: null,
       }
     );
     setSale(updatedSale);
     document.getElementById("balanceInput").focus();
     setShouldOpenClientInfo(false);
+  };
+
+  const tefCpfInsert = async () => {
+    if (loading) return;
+    setLoading(true);
+    const { response } = await window.Main.tefFactory.getCpf();
+    setInfo((oldValues) => ({
+      ...oldValues,
+      cpf: response,
+    }));
+    setLoading(false);
   };
 
   return (
@@ -201,16 +216,33 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     >
       <InfoWrapper>
         <Info>CPF:</Info>
-        <MaskInput
-          id="user-cpf"
-          mask={"999.999.999.99"}
-          maskChar={"_"}
-          onKeyPress={onPressEnter}
-          autoFocus
-          value={info.cpf}
-          onChange={(event) => onChange("cpf", event)}
-          onKeyDown={onKeyDown}
-        />
+        {settings.should_request_cpf_in_tef ? (
+          <CpfTefContainer>
+            <MaskInput
+              id="user-cpf"
+              mask={"999.999.999.99"}
+              maskChar={"_"}
+              autoFocus
+              value={info.cpf}
+              disabled
+              style={{ width: "70%" }}
+            />
+            <ButtonCpfTef onClick={() => tefCpfInsert()} disabled={loading}>
+              Solicitar CPF Tef
+            </ButtonCpfTef>
+          </CpfTefContainer>
+        ) : (
+          <MaskInput
+            id="user-cpf"
+            mask={"999.999.999.99"}
+            maskChar={"_"}
+            onKeyPress={onPressEnter}
+            autoFocus
+            value={info.cpf}
+            onChange={(event) => onChange("cpf", event)}
+            onKeyDown={onKeyDown}
+          />
+        )}
         <ContentCheck>
           <div>
             <Checkbox
