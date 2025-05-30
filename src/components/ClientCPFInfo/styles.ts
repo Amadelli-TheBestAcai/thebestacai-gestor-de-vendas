@@ -31,7 +31,7 @@ export const ButtonCpfTef = styled.button`
   width: 29%;
   height: 100%;
   padding: 3px 7px;
-  background: var(--orange-200);
+  background: var(--orange-250);
   font-weight: 500;
   border-radius: 0.5rem;
   font-size: 0.9rem;
@@ -39,7 +39,7 @@ export const ButtonCpfTef = styled.button`
   transition: 0.5s;
 
   :hover {
-    background: var(--orange-200);
+    background: var(--orange-250);
   }
 
   /*Responsive 1366px*/
