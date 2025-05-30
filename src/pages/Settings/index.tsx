@@ -359,6 +359,7 @@ const Settings: React.FC<IProps> = ({ history }) => {
                   setSettings((oldValues) => ({
                     ...oldValues,
                     should_use_tef: !settings.should_use_tef,
+                    should_request_cpf_in_tef: false,
                   }))
                 }
               />

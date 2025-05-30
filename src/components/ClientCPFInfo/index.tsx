@@ -177,11 +177,21 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
   const tefCpfInsert = async () => {
     if (loading) return;
     setLoading(true);
-    const { response } = await window.Main.tefFactory.getCpf();
-    setInfo((oldValues) => ({
-      ...oldValues,
-      cpf: response,
-    }));
+    const { response, has_internal_error, error_message } =
+      await window.Main.tefFactory.getCpf();
+    if (response) {
+      setInfo((oldValues) => ({
+        ...oldValues,
+        cpf: response,
+        cpf_used_club: true,
+      }));
+    }
+    if (has_internal_error) {
+      return notification.error({
+        message: error_message || "Erro ao adicionar CPF Tef",
+        duration: 5,
+      });
+    }
     setLoading(false);
   };
 
