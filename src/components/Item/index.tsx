@@ -44,6 +44,8 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [form] = Form.useForm();
   const [count, setCount] = useState(Number);
 
+  console.log(productVoucher)
+
   const removeItem = async (): Promise<void> => {
     await form.validateFields();
     if (item.product.id === 1 && sale?.customerVoucher?.voucher?.self_service) {
@@ -102,7 +104,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
     setdisabled(false);
   };
 
-  const hasPayment = sale.payments.some(payment => payment)
+  const hasPayment = sale.payments.some((payment) => payment);
 
   return (
     <>
@@ -111,10 +113,14 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           <Column span={10}>{item.product.name}</Column>
           <Column span={4}>{item.quantity}</Column>
           <Column span={4}>
-            R$ {(+item.storeProduct.price_unit).toFixed(2).replace(".", ",")}
+            R$ {(+item.storeProduct.price_unit).toFixed(2).replace(".", ",")}{" "}
           </Column>
           <Column span={4}>
-            R$ {item.total?.toFixed(2).replace(".", ",")}
+            R$ {item.total?.toFixed(2).replace(".", ",")}{" "}
+            <span style={{ color: "red", marginLeft: "5px" }}>
+             ( - {productVoucher?.discount_type === 1 ? "%" : "R$"}{" "}
+              {productVoucher?.price_sell})
+            </span>
           </Column>
           <Column span={2}>
             {!item.customer_reward_id && !hasPayment && (
@@ -198,7 +204,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           </Modal>
         </Container>
       )}
-      {productVoucher && (
+      {productVoucher?.in_sale && (
         <Container>
           <Column
             span={10}
@@ -217,10 +223,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           </Column>
           <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
           <Column span={4}></Column>
-          <Column span={4}>
-            R$ {productVoucher.additional_value ? "+" : "-"}
-            {(+productVoucher.price_sell).toFixed(2)}
-          </Column>
+          <Column span={4}>R$ - {+productVoucher.price_sell}</Column>
           <Column span={2}></Column>
         </Container>
       )}

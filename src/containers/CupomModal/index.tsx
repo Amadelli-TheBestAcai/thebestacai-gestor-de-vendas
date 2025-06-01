@@ -71,7 +71,6 @@ const CupomModal: React.FC<ICupomProps> = ({
     }
     if (key === "Enter") onFinish();
   };
-
   const onFinish = async (): Promise<void> => {
     if (cupom.some((value) => value.length != 2)) {
       return notification.warn({
@@ -80,9 +79,17 @@ const CupomModal: React.FC<ICupomProps> = ({
         duration: 5,
       });
     }
+
+    if (sale.items.length === 0) {
+      return notification.warn({
+        message:
+          "É necessário adicionar pelo menos um item ao carrinho para usar um cupom.",
+        duration: 5,
+      });
+    }
+
     try {
       setLoading(true);
-
       let { has_internal_error, response, error_message } =
         await window.Main.sale.getVoucher(cupom.join("").toUpperCase());
 
@@ -96,13 +103,11 @@ const CupomModal: React.FC<ICupomProps> = ({
       const { response: products } = await window.Main.product.getProducts(
         true
       );
-
       delete response.voucher.companies;
 
       const totalSoldInSelfService = sale.items
         .filter((item) => item.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
-
       if (response.voucher?.self_service && totalSoldInSelfService <= 0) {
         return notification.warn({
           message:
@@ -112,7 +117,6 @@ const CupomModal: React.FC<ICupomProps> = ({
       }
 
       let totalOfSelfServiceDiscount = 0;
-
       if (response.voucher.self_service) {
         if (response.voucher.self_service_discount_type === 1) {
           const percentOfDiscount =
@@ -147,8 +151,21 @@ const CupomModal: React.FC<ICupomProps> = ({
         }
       }
 
-      let totalOfCupomProducs = 0;
+      response.voucher.products = response.voucher.products.filter(
+        (productVoucher) =>
+          sale.items.some(
+            (item) => item.product.id === productVoucher.product_id
+          )
+      );
+      if (!response.voucher.products.length) {
+        return notification.warn({
+          message:
+            "Os produtos vinculados a este cupom não estão presentes no carrinho.",
+          duration: 5,
+        });
+      }
 
+      let totalOfCupomProducs = 0;
       response.voucher.products.forEach((productVoucher, index) => {
         const product = products.find(
           (product) => product.product_id === productVoucher.product_id
@@ -157,24 +174,25 @@ const CupomModal: React.FC<ICupomProps> = ({
           (item) => item.product.id === productVoucher.product_id
         );
 
-        if (product) {
-          let price_sell = 0;
+        if (product && item) {
           response.voucher.products[index].is_registred = true;
-          if (productVoucher.product_id !== 1) {
-            if (item)
-              price_sell = +product.price_unit - +productVoucher.price_sell;
-            response.voucher.products[index].price_sell = price_sell.toFixed(2);
+          response.voucher.products[index].in_sale = true;
+
+          let discountAmount = 0;
+          if (productVoucher.discount_type === 1) {
+            const percent = +productVoucher.price_sell / 100;
+            discountAmount = +product.price_unit * percent;
+          } else {
+            discountAmount = +productVoucher.price_sell;
           }
-          totalOfCupomProducs += price_sell;
+
+          const discounted = +product.price_unit - discountAmount;
+          response.voucher.products[index].price_sell = discounted.toFixed(2);
+          totalOfCupomProducs += discountAmount;
         } else {
           response.voucher.products[index].is_registred = false;
-          response.voucher.products[index].price_sell = "0.00";
-        }
-
-        if (item) {
-          response.voucher.products[index].in_sale = true;
-        } else {
           response.voucher.products[index].in_sale = false;
+          response.voucher.products[index].price_sell = "0.00";
         }
 
         if (response.voucher.products[index].additional_value) {
@@ -186,7 +204,6 @@ const CupomModal: React.FC<ICupomProps> = ({
       });
 
       totalOfSelfServiceDiscount = Math.abs(totalOfSelfServiceDiscount);
-
       totalOfSelfServiceDiscount += totalOfCupomProducs;
 
       const payload = {
@@ -197,7 +214,6 @@ const CupomModal: React.FC<ICupomProps> = ({
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
         await window.Main.sale.updateSale(sale.id, payload);
-
       if (errorOnUpdateSale) {
         return notification.error({
           message:
@@ -207,18 +223,13 @@ const CupomModal: React.FC<ICupomProps> = ({
       }
 
       setSale(updatedSale);
-
       notification.success({
         message: "Cupom aplicado com sucesso",
         duration: 5,
       });
-
       setCupomModalState(false);
     } catch (e) {
-      notification.error({
-        message: "Oops! Ocorreu um erro",
-        duration: 5,
-      });
+      notification.error({ message: "Oops! Ocorreu um erro", duration: 5 });
     } finally {
       setLoading(false);
     }
