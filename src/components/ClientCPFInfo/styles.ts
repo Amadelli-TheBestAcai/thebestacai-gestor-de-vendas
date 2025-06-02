@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import _MaskInput from "react-input-mask";
 import { Modal, Button as ButtonAnt } from "antd";
+import { Trash } from "styled-icons/bootstrap";
 
 export const Container = styled(Modal)``;
 
@@ -29,6 +30,27 @@ export const CpfTefContainer = styled.div`
 
 export const ButtonCpfTef = styled.button`
   width: 29%;
+  height: 100%;
+  padding: 3px 7px;
+  background: var(--orange-250);
+  font-weight: 500;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  color: white;
+  transition: 0.5s;
+
+  :hover {
+    background: var(--orange-250);
+  }
+
+  /*Responsive 1366px*/
+  @media (max-width: 1366px) {
+    font-size: 0.7rem;
+  }
+`;
+
+export const ButtonDeleteCpf = styled.button`
+  width: 10%;
   height: 100%;
   padding: 3px 7px;
   background: var(--orange-250);
@@ -149,4 +171,10 @@ export const TitleReward = styled.h3`
   font-size: 1.2rem;
   font-weight: 500;
   margin: 0;
+`;
+
+export const DeleteCpfIcon = styled(Trash)`
+  width: 1rem;
+  height: 1rem;
+  color: var(--white);
 `;

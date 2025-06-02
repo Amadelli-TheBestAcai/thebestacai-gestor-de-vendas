@@ -20,6 +20,8 @@ import {
   ContentCheck,
   CpfTefContainer,
   ButtonCpfTef,
+  ButtonDeleteCpf,
+  DeleteCpfIcon,
 } from "./styles";
 import { message, notification, Checkbox } from "antd";
 import { CampaignDto } from "../../models/dtos/campaign";
@@ -75,8 +77,8 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
 
   const validateCPF = (cpfResponse?: string) => {
     const cpfValue = cpfResponse
-      ? cpfResponse.replace(/\D/g, "")
-      : info.cpf.replace(/\D/g, "");
+      ? cpfResponse?.replace(/\D/g, "")
+      : info?.cpf?.replace(/\D/g, "");
     if (cpfValue && !cpfValidator.isValid(cpfValue)) {
       message.error("Digite um CPF válido.");
       return false;
@@ -176,6 +178,30 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     setShouldOpenClientInfo(false);
   };
 
+  const onDeleteCPF = async () => {
+    setInfo((oldValues) => ({
+      ...oldValues,
+      cpf: "",
+      cpf_used_club: false,
+      cpf_used_nfce: false,
+    }));
+    if (sale.client_cpf) {
+      const { response: updatedSale } = await window.Main.sale.updateSale(
+        sale.id,
+        {
+          ...sale,
+          client_cpf: null,
+          client_phone: null,
+          client_email: null,
+          cpf_used_club: null,
+          cpf_used_nfce: null,
+          client_id: null,
+        }
+      );
+      setSale(updatedSale);
+    }
+  };
+
   const tefCpfInsert = async () => {
     if (loading) return;
     setLoading(true);
@@ -246,8 +272,11 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
               autoFocus
               value={info.cpf}
               disabled
-              style={{ width: "70%" }}
+              style={{ width: "58%" }}
             />
+            <ButtonDeleteCpf onClick={() => onDeleteCPF()} disabled={loading}>
+              <DeleteCpfIcon />
+            </ButtonDeleteCpf>
             <ButtonCpfTef onClick={() => tefCpfInsert()} disabled={loading}>
               Solicitar CPF Tef
             </ButtonCpfTef>
