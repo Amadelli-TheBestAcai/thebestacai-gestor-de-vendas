@@ -71,6 +71,7 @@ const CupomModal: React.FC<ICupomProps> = ({
     }
     if (key === "Enter") onFinish();
   };
+
   const onFinish = async (): Promise<void> => {
     if (cupom.some((value) => value.length != 2)) {
       return notification.warn({
@@ -108,6 +109,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       const totalSoldInSelfService = sale.items
         .filter((item) => item.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
+
       if (response.voucher?.self_service && totalSoldInSelfService <= 0) {
         return notification.warn({
           message:
@@ -117,6 +119,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       }
 
       let totalOfSelfServiceDiscount = 0;
+
       if (response.voucher.self_service) {
         if (response.voucher.self_service_discount_type === 1) {
           const percentOfDiscount =
@@ -157,6 +160,7 @@ const CupomModal: React.FC<ICupomProps> = ({
             (item) => item.product.id === productVoucher.product_id
           )
       );
+
       if (!response.voucher.products.length) {
         return notification.warn({
           message:
@@ -166,7 +170,8 @@ const CupomModal: React.FC<ICupomProps> = ({
       }
 
       let totalOfCupomProducs = 0;
-      response.voucher.products.forEach((productVoucher, index) => {
+
+      response.voucher.products.forEach((productVoucher) => {
         const product = products.find(
           (product) => product.product_id === productVoucher.product_id
         );
@@ -175,8 +180,8 @@ const CupomModal: React.FC<ICupomProps> = ({
         );
 
         if (product && item) {
-          response.voucher.products[index].is_registred = true;
-          response.voucher.products[index].in_sale = true;
+          productVoucher.is_registred = true;
+          productVoucher.in_sale = true;
 
           let discountAmount = 0;
           if (productVoucher.discount_type === 1) {
@@ -186,34 +191,30 @@ const CupomModal: React.FC<ICupomProps> = ({
             discountAmount = +productVoucher.price_sell;
           }
 
-          const discounted = +product.price_unit - discountAmount;
-          response.voucher.products[index].price_sell = discounted.toFixed(2);
           totalOfCupomProducs += discountAmount;
         } else {
-          response.voucher.products[index].is_registred = false;
-          response.voucher.products[index].in_sale = false;
-          response.voucher.products[index].price_sell = "0.00";
+          productVoucher.is_registred = false;
+          productVoucher.in_sale = false;
         }
 
-        if (response.voucher.products[index].additional_value) {
-          response.voucher.products[index].price_sell =
-            response.voucher.products[index].additional_value;
-          totalOfCupomProducs -=
-            +response.voucher.products[index].additional_value;
+        if (productVoucher.additional_value) {
+          totalOfCupomProducs -= +productVoucher.additional_value;
         }
       });
 
-      totalOfSelfServiceDiscount = Math.abs(totalOfSelfServiceDiscount);
-      totalOfSelfServiceDiscount += totalOfCupomProducs;
+      const totalDiscount = Math.abs(
+        totalOfSelfServiceDiscount + totalOfCupomProducs
+      );
 
       const payload = {
         ...sale,
         customerVoucher: response,
-        total_sold: sale.total_sold - totalOfSelfServiceDiscount,
+        total_sold: sale.total_sold - totalDiscount,
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
         await window.Main.sale.updateSale(sale.id, payload);
+
       if (errorOnUpdateSale) {
         return notification.error({
           message:

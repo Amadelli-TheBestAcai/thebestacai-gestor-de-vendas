@@ -4,6 +4,7 @@ import { ItemDto } from "../../models/dtos/item";
 import { ProductVoucher } from "../../models/dtos/voucher";
 
 import { useSale } from "../../hooks/useSale";
+import { currencyFormater } from "../../helpers/currencyFormater";
 
 import { Col, Row, Tooltip, notification } from "antd";
 
@@ -44,7 +45,11 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [form] = Form.useForm();
   const [count, setCount] = useState(Number);
 
-  console.log(productVoucher)
+  const relatedItem = item
+    ? item
+    : productVoucher
+    ? sale.items.find((item) => item.product.id === productVoucher.product_id)
+    : undefined;
 
   const removeItem = async (): Promise<void> => {
     await form.validateFields();
@@ -106,6 +111,27 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
 
   const hasPayment = sale.payments.some((payment) => payment);
 
+  const renderDiscountInfo = () => {
+    if (!item || !sale.customerVoucher?.voucher?.products) return null;
+
+    const voucher = sale.customerVoucher.voucher.products.find(
+      (product) => product.product_id === item.product.id
+    );
+
+    if (!voucher) return null;
+
+    const discountText =
+      voucher.discount_type === 1 && item.storeProduct?.price_unit
+        ? `${voucher.price_sell}%`
+        : `R$ ${currencyFormater(+voucher.price_sell)}`;
+
+    return (
+      <span style={{ fontSize: 12, color: "red", marginLeft: 4 }}>
+        (-{discountText})
+      </span>
+    );
+  };
+
   return (
     <>
       {item && (
@@ -113,15 +139,12 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           <Column span={10}>{item.product.name}</Column>
           <Column span={4}>{item.quantity}</Column>
           <Column span={4}>
-            R$ {(+item.storeProduct.price_unit).toFixed(2).replace(".", ",")}{" "}
+            R$ {currencyFormater(+item.storeProduct.price_unit || 0)}
           </Column>
           <Column span={4}>
-            R$ {item.total?.toFixed(2).replace(".", ",")}{" "}
-            <span style={{ color: "red", marginLeft: "5px" }}>
-             ( - {productVoucher?.discount_type === 1 ? "%" : "R$"}{" "}
-              {productVoucher?.price_sell})
-            </span>
+            R$ {currencyFormater(+item.total || 0)} {renderDiscountInfo()}
           </Column>
+
           <Column span={2}>
             {!item.customer_reward_id && !hasPayment && (
               <Tooltip title="Remover" placement="bottom">
@@ -223,7 +246,19 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           </Column>
           <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
           <Column span={4}></Column>
-          <Column span={4}>R$ - {+productVoucher.price_sell}</Column>
+          <Column span={4}>
+            R$ -{" "}
+            {productVoucher.discount_type === 1
+              ? currencyFormater(
+                  (productVoucher.price_sell &&
+                    relatedItem?.storeProduct?.price_unit &&
+                    +productVoucher.price_sell *
+                      (+relatedItem.storeProduct.price_unit / 100)) ||
+                    0
+                )
+              : currencyFormater(+productVoucher.price_sell || 0)}
+          </Column>
+
           <Column span={2}></Column>
         </Container>
       )}

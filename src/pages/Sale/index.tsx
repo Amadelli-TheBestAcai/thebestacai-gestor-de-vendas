@@ -222,6 +222,28 @@ const Sale: React.FC<IProps> = () => {
     }
   };
 
+  const voucherData = selectedSale?.cupom
+    ? JSON.parse(selectedSale.cupom)
+    : null;
+
+  const voucherDiscount =
+    voucherData?.voucher?.products?.reduce((sum, product) => {
+      const matchingItem = selectedSale.items.find(
+        (item) => item.product.id === product.product_id
+      );
+
+      if (!matchingItem || !matchingItem.storeProduct) return sum;
+
+      const priceUnit = +matchingItem.storeProduct.price_unit;
+
+      const discount =
+        product.discount_type === 1
+          ? (priceUnit * +product.price_sell) / 100
+          : +product.price_sell;
+
+      return sum + discount;
+    }, 0) || 0;
+
   const handleEmit = async () => {
     if (!selectedSale.items.length) {
       return notification.warning({
@@ -230,12 +252,6 @@ const Sale: React.FC<IProps> = () => {
         duration: 5,
       });
     }
-
-    const voucherDiscount =
-      JSON.parse(selectedSale.cupom)?.voucher?.products?.reduce(
-        (sum, product) => sum + +product?.price_sell,
-        0
-      ) || 0;
 
     const nfcePayload = {
       cpf: "",
@@ -690,16 +706,6 @@ const Sale: React.FC<IProps> = () => {
       resend: <NfceLabel tab_id={2}>Reenviar</NfceLabel>,
     };
   };
-
-  const voucherData = selectedSale?.cupom
-    ? JSON.parse(selectedSale.cupom)
-    : null;
-
-  const voucherDiscount =
-    voucherData?.voucher?.products?.reduce(
-      (sum, product) => sum + +product?.price_sell,
-      0
-    ) || 0;
 
   const voucherName = voucherData?.voucher?.name || "";
 
