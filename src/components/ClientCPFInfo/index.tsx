@@ -73,8 +73,10 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     }
   };
 
-  const validateCPF = () => {
-    const cpfValue = info.cpf.replace(/\D/g, "");
+  const validateCPF = (cpfResponse?: string) => {
+    const cpfValue = cpfResponse
+      ? cpfResponse.replace(/\D/g, "")
+      : info.cpf.replace(/\D/g, "");
     if (cpfValue && !cpfValidator.isValid(cpfValue)) {
       message.error("Digite um CPF válido.");
       return false;
@@ -179,7 +181,16 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     setLoading(true);
     const { response, has_internal_error, error_message } =
       await window.Main.tefFactory.getCpf();
+
     if (response) {
+      const isValidCPF = validateCPF(response);
+      if (!isValidCPF) {
+        setLoading(false);
+        return notification.error({
+          message: "O CPF inserido não é válido",
+          duration: 5,
+        });
+      }
       setInfo((oldValues) => ({
         ...oldValues,
         cpf: response,
