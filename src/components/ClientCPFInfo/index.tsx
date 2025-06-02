@@ -187,7 +187,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       }));
     }
     if (has_internal_error) {
-      return notification.error({
+      notification.error({
         message: error_message || "Erro ao adicionar CPF Tef",
         duration: 5,
       });
