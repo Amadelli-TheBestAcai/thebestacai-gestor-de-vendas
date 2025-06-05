@@ -369,7 +369,10 @@ export function GlobalProvider({ children }) {
         duration: 5,
       });
 
-      if (successOnSefaz && settings.should_print_nfce_per_sale) {
+      if (
+        (successOnSefaz && settings.should_print_nfce_per_sale) ||
+        (successOnSefaz && currentSale.cpf_used_nfce)
+      ) {
         const { response: _printDanfe, has_internal_error: errorOnDanfe } =
           await window.Main.common.printDanfe(response);
 

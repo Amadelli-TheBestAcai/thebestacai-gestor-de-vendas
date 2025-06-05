@@ -13,4 +13,5 @@ export interface SettingsDto {
   created_at?: Date;
   should_use_tef?: boolean
   cnpj_credenciadora?: string;
+  should_request_cpf_in_tef?: boolean;
 }
