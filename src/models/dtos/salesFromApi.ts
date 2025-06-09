@@ -2,8 +2,9 @@ export interface SaleFromApi {
   id: number;
   gv_id?: number;
   client_id?: number;
+  client_cpf?: string;
   abstract_sale: boolean;
-  
+  cpf_used_nfce?: boolean;
   quantity: number;
   total_sold: number;
   customer_reward_id?: number;
