@@ -1,5 +1,4 @@
 import { app, BrowserWindow, screen, ipcMain, dialog } from "electron";
-import { autoUpdater } from "electron-updater";
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
 import axios from "axios";
@@ -8,7 +7,7 @@ import { finalizeServerTef } from "./src/helpers/finalizeServerTef";
 
 let win: Electron.BrowserWindow | null;
 
-let isUpdating = false; // Variável para controlar se o fechamento é devido ao autoUpdater
+let isUpdating = false;
 
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -24,22 +23,14 @@ function createWindow() {
     },
   });
 
-  autoUpdater.setFeedURL({
-    provider: "github",
-    repo: "thebestacai-gestor-de-vendas",
-    owner: "Amadelli-TheBestAcai",
-    releaseType: "release",
-    private: false,
-  });
-
-  win.setTitle("Gestor de Vendas");
+  win.setTitle("Gestor de Vendas [TREINAMENTO]");
 
   win.on("page-title-updated", function (e) {
     e.preventDefault();
   });
 
   win.on("close", (e) => {
-    if (isUpdating) return; 
+    if (isUpdating) return;
 
     const choice = dialog.showMessageBoxSync(win as any, {
       type: "question",
@@ -86,32 +77,6 @@ app.on("second-instance", () => {
   }
 });
 
-autoUpdater.on("download-progress", (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + " - Downloaded " + progressObj.percent + "%";
-  log_message =
-    log_message +
-    " (" +
-    progressObj.transferred +
-    "/" +
-    progressObj.total +
-    ")";
-  console.log(log_message);
-  win?.webContents.send(
-    "download-progress",
-    progressObj.transferred.toString()
-  );
-});
-
-autoUpdater.on("update-downloaded", () => {
-  isUpdating = true;
-  autoUpdater.quitAndInstall();
-});
-
-ipcMain.on("check_for_update", function () {
-  autoUpdater.checkForUpdates();
-});
-
 app.whenReady().then(async () => {
   createWindow();
   inicializeControllers();
@@ -125,7 +90,7 @@ app.whenReady().then(async () => {
 
   app.on("window-all-closed", async () => {
     if (process.platform !== "darwin") {
-      await finalizeServerTef()
+      await finalizeServerTef();
       app.quit();
     }
   });
