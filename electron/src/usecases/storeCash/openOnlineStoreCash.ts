@@ -20,7 +20,9 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
   async execute(): Promise<StoreCashDto | undefined> {
     const hasConnection = await checkInternet();
     if (!hasConnection) {
-      throw new Error("Sem conexão com a internet. Por favor, verifique sua conexão.");
+      throw new Error(
+        "Sem conexão com a internet. Por favor, verifique sua conexão."
+      );
     }
 
     const storeCash = (await this.storeCashRepository.getOne()) as StoreCashDto;
@@ -43,7 +45,7 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
 
     if (!cashes.length) {
       throw new Error(
-        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+        "Você atingiu o limite de 5 caixas abertos ao mesmo tempo. Feche um caixa pelo Dashboard."
       );
     }
 
@@ -61,7 +63,7 @@ class OpenOnlineStoreCash implements IUseCaseFactory {
     console.log({
       amount_on_open: storeCash.amount_on_open.toString() || "0",
       local_opened_at: storeCash.local_opened_at,
-    })
+    });
 
     storeCash.code = code;
     storeCash.cash_id = cash_id;
