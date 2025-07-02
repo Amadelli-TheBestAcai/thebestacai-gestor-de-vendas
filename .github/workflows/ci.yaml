@@ -15,16 +15,8 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: 16.2.0
-      - name: install node tools
-        run: npm install --global --production windows-build-tools@4.0.0
-      - name: Install Build Tools
-        run: |
-          choco install visualstudio2022buildtools `
-            --params "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional" `
-            --limit-output `
-            --no-progress `
-            --yes `
-            --ignore-checksums
+      - name: Set up VS environment
+        uses: ilammy/msvc-dev-cmd@v1
       - name: install node-gyp
         run: npm install --global node-gyp@latest
       - name: Set node config to use python2.7
