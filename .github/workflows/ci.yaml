@@ -26,6 +26,9 @@ jobs:
       - name: Install Build Tools
         run: |
           choco install visualstudio2022buildtools --params "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional" --yes
+      - name: Refresh Environment
+        run: |
+          refreshenv
       - uses: microsoft/setup-msbuild@v1.1
         with:
           msbuild-architecture: x64
