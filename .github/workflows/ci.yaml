@@ -14,7 +14,7 @@ jobs:
           echo SKIP_PREFLIGHT_CHECK=true > .env
       - uses: actions/setup-node@master
         with:
-          node-version: 16.2.0
+          node-version: 16.2.2
       - name: Set up VS environment
         uses: ilammy/msvc-dev-cmd@v1
       - name: install node-gyp
