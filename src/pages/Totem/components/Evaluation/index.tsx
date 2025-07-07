@@ -116,9 +116,8 @@ const Evaluation: React.FC<IProps> = ({
     }
     if (openNps && verifyFinishSale) {
       timeoutRef.current = setTimeout(() => {
-        setNpsScore(0);
         setVerifyFinishSale(false);
-        onFinish(sale);
+        onHandleNps(0);
       }, 30000);
     }
 
@@ -190,7 +189,8 @@ const Evaluation: React.FC<IProps> = ({
         0
       ) || 0;
 
-    const total = payload?.items?.reduce((total, item) => +item.total + total, 0) || 0;
+    const total =
+      payload?.items?.reduce((total, item) => +item.total + total, 0) || 0;
 
     if (!emitNfce) {
       const nfcePayload = {
@@ -303,7 +303,7 @@ const Evaluation: React.FC<IProps> = ({
     setNpsScore(score);
     let _sale = sale;
 
-    if (score) {
+    if (typeof score === "number") {
       const { response: updatedSale } = await window.Main.sale.updateSale(
         sale.id,
         {
