@@ -1,12 +1,16 @@
 const zipFolder = require("zip-folder");
-const { BlobServiceClient } = require("@azure/storage-blob");
-const fs = require("fs");
-const moment = require("moment");
-const azureConnection = require("./azure-credentials.json");
+const FormData = require("form-data");
 
-const buildName =
-  moment(new Date()).subtract(3, "hours").format("DD-MM-YYYYTHH-mm-ss") +
-  ".zip";
+const fs = require("fs");
+const axios = require("axios");
+const moment = require("moment");
+
+const pkg = require("./package.json");
+const env = require("./electron/src/providers/env.json");
+
+const buildName = `gestor-v1-${env.ENV}-${moment(new Date())
+  .subtract(3, "hours")
+  .format("DD-MM-YYYYTHH-mm")}-v${pkg.version}.zip`;
 
 async function zipBuildFiles() {
   return new Promise((resolve, reject) => {
@@ -22,29 +26,26 @@ async function zipBuildFiles() {
 }
 
 async function pushFilesToAzure() {
-  const blobServiceClient = BlobServiceClient.fromConnectionString(
-    azureConnection.AZURE_CONNECTION
-  );
-  const containerClient = blobServiceClient.getContainerClient(
-    azureConnection.AZURE_BUCKET
-  );
+  const formData = new FormData();
 
-  const contents = fs.readFileSync(`./${buildName}`, { encoding: "base64" });
-  const data = Buffer.from(contents, "base64");
+  const filePath = `./${buildName}`;
 
-  const blockBlobClient = containerClient.getBlockBlobClient(buildName);
-  const response = await blockBlobClient.uploadData(data, {
-    blobHTTPHeaders: {
-      blobContentType: "application/zip",
+  formData.append("file", fs.createReadStream(filePath), {
+    filename: buildName,
+  });
+  formData.append("owner", "ti");
+  formData.append("folder", "gestor-de-vendas");
+  formData.append("action", "create");
+
+  await axios({
+    method: "POST",
+    url: `${env.API_AUTH}/files-management`,
+    data: formData,
+    headers: {
+      Authorization: `Bearer ${env.API_TOKEN}`,
+      ...formData.getHeaders(),
     },
   });
-  if (response._response.status !== 201) {
-    console.log(
-      `Error uploading document ${blockBlobClient.name} to container ${blockBlobClient.containerName}`
-    );
-  }
-  console.log("Click in the link below to download the new version:");
-  console.log(blockBlobClient.url);
 }
 
 async function boostrap() {

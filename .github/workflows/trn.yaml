@@ -1,0 +1,37 @@
+name: TRN
+on:
+  push:
+    branches: [treinamento]
+jobs:
+  build_on_win:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - name: create env-config
+        run: |
+          echo '{"API_TEF":"${{ secrets.HML_API_TEF }}","ENV":"${{ secrets.TRN_ENV }}", "API_DASH":"${{ secrets.HML_API_DASH }}","API_LOG":"${{ secrets.HML_API_LOG }}","API_TOKEN":"${{ secrets.HML_API_TOKEN }}", "TOKEN_SECRET_NPS":"${{ secrets.TOKEN_SECRET_NPS }}","API_AUTH":"${{ secrets.HML_API_AUTH }}","CHAT_DASH":"${{ secrets.HML_CHAT_DASH }}","API_SALES_HANDLER":"${{ secrets.HML_API_SALES_HANDLER }}","API_MERCURY":"${{ secrets.HML_API_MERCURY }}", "API_S3":"${{ secrets.API_S3 }}", "API_THOR":"${{ secrets.HML_API_THOR }}", "NPS_URL":"${{ secrets.HML_NPS_URL }}"}' > electron/src/providers/env.json
+          echo '{"AZURE_BUCKET":"${{ secrets.AZURE_BUCKET }}","AZURE_CONNECTION":"${{ secrets.AZURE_CONNECTION }}"}' > azure-credentials.json
+          echo SKIP_PREFLIGHT_CHECK=true > .env
+      - uses: actions/setup-node@master
+        with:
+          node-version: 16.2.0
+      - name: install node tools
+        run: npm install --global --production windows-build-tools@4.0.0
+      - name: install node-gyp
+        run: npm install --global node-gyp@latest
+      - name: Set node config to use python2.7
+        run: npm config set python python2.7
+      - name: Set node config to set msvs_version to 2019
+        run: npm config set msvs_version 2019
+      - uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x64
+      - name: Install dependencies
+        run: yarn install --network-timeout 600000
+      - name: Build Electron
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        run: yarn electron:build:never
+      - name: Push to Azure
+        run: node pushToAzure.js
