@@ -44,6 +44,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     email: "",
     cpf_used_club: false,
     cpf_used_nfce: false,
+    client_id: null,
   });
 
   useEffect(() => {
@@ -54,6 +55,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         email: sale.client_email || "",
         cpf_used_club: sale.cpf_used_club ? sale.cpf_used_club : false,
         cpf_used_nfce: sale.cpf_used_nfce ? sale.cpf_used_nfce : false,
+        client_id: sale.client_id,
       });
     }
   }, [shouldOpenClientInfo]);
@@ -95,7 +97,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     }
 
     const { has_internal_error, response, error_message } =
-      await window.Main.user.getCustomerByCpf(info.cpf);
+      await window.Main.user.getCustomerByCpf(info.cpf.replace(/\D/g, ""));
 
     if (has_internal_error) {
       setLoading(false);
@@ -105,27 +107,42 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       });
     }
 
+    console.log(response, "Response front");
+    console.log(response?.id, "Response id");
+
+    const newCpfUsedNfce =
+      pressedKey === "q" ? !info.cpf_used_nfce : info.cpf_used_nfce;
+    const updatedInfo = {
+      cpf: info.cpf.replace(/\D/g, ""),
+      phone:
+        response?.cell_number?.replace(/\D/g, "") ||
+        info.phone?.replace(/\D/g, ""),
+      email: response?.email || info.email,
+      cpf_used_club: true,
+      cpf_used_nfce: newCpfUsedNfce,
+      client_id: response?.id,
+    };
+
+    // Atualizar o estado com os novos valores
     setInfo((oldValues) => ({
       ...oldValues,
-      email: response?.email,
-      phone: response?.cell_number,
-      cpf_used_club: true,
-      cpf_used_nfce:
-        pressedKey === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
+      ...updatedInfo,
     }));
 
     const { response: updatedSale } = await window.Main.sale.updateSale(
       sale.id,
       {
         ...sale,
-        client_cpf: info.cpf.replace(/\D/g, ""),
-        client_phone: info.phone?.replace(/\D/g, ""),
-        client_email: info.email,
-        cpf_used_club: info.cpf_used_club,
-        cpf_used_nfce: info.cpf_used_nfce,
-        client_id: sale.customerVoucher?.customer_id,
+        client_cpf: updatedInfo.cpf,
+        client_phone: updatedInfo.phone,
+        client_email: updatedInfo.email,
+        cpf_used_club: updatedInfo.cpf_used_club,
+        cpf_used_nfce: updatedInfo.cpf_used_nfce,
+        client_id: updatedInfo.client_id,
       }
     );
+    console.log(updatedInfo, "Updated Info");
+    console.log(updatedSale, "Updated sale");
 
     setSale(updatedSale);
     setLoading(false);

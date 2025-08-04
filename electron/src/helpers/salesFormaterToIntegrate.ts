@@ -28,15 +28,25 @@ export const salesFormaterToIntegrate = (
         amount: +_payment.amount,
         type: +_payment.type,
         flag_card:
-          _payment.type === PaymentType.CREDITO || _payment.type === PaymentType.DEBITO || _payment.type === PaymentType.TICKET
+          _payment.type === PaymentType.CREDITO ||
+          _payment.type === PaymentType.DEBITO ||
+          _payment.type === PaymentType.TICKET
             ? _payment.flag_card
             : null,
         code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
-        cnpj_credenciadora: _payment.cnpj_credenciadora ? _payment.cnpj_credenciadora : null,
-        numero_autorizacao: _payment.numero_autorizacao ? _payment.numero_autorizacao : null,
+        cnpj_credenciadora: _payment.cnpj_credenciadora
+          ? _payment.cnpj_credenciadora
+          : null,
+        numero_autorizacao: _payment.numero_autorizacao
+          ? _payment.numero_autorizacao
+          : null,
         tef_status_payment: _payment.tef_status_payment,
-        cnpj_beneficiario: _payment.cnpj_beneficiario ? _payment.cnpj_beneficiario : null,
-        id_terminal_pagamento: _payment.id_terminal_pagamento ? _payment.id_terminal_pagamento : null
+        cnpj_beneficiario: _payment.cnpj_beneficiario
+          ? _payment.cnpj_beneficiario
+          : null,
+        id_terminal_pagamento: _payment.id_terminal_pagamento
+          ? _payment.id_terminal_pagamento
+          : null,
       })),
       items: _payload.items.map((_item) => ({
         name: _item.product.name,
@@ -116,7 +126,7 @@ export const salesFormaterToIntegrate = (
       cpf_used_club: _payload.cpf_used_club,
       cpf_used_nfce: _payload.cpf_used_nfce,
       customer_voucher_id: _payload.customerVoucher?.id,
-      client_id: _payload.customerVoucher?.customer_id,
+      client_id: _payload.client_id || _payload.customerVoucher?.customer_id,
     }));
   } else {
     const response = {
@@ -141,15 +151,25 @@ export const salesFormaterToIntegrate = (
         amount: +_payment.amount,
         type: +_payment.type,
         flag_card:
-          _payment.type === PaymentType.DEBITO || _payment.type === PaymentType.CREDITO || _payment.type === PaymentType.TICKET
+          _payment.type === PaymentType.DEBITO ||
+          _payment.type === PaymentType.CREDITO ||
+          _payment.type === PaymentType.TICKET
             ? _payment.flag_card
             : null,
         code_nsu: _payment.code_nsu ? _payment.code_nsu : null,
-        cnpj_credenciadora: _payment.cnpj_credenciadora ? _payment.cnpj_credenciadora : null,
-        numero_autorizacao: _payment.numero_autorizacao ? _payment.numero_autorizacao : null,
+        cnpj_credenciadora: _payment.cnpj_credenciadora
+          ? _payment.cnpj_credenciadora
+          : null,
+        numero_autorizacao: _payment.numero_autorizacao
+          ? _payment.numero_autorizacao
+          : null,
         tef_status_payment: _payment.tef_status_payment,
-        cnpj_beneficiario: _payment.cnpj_beneficiario ? _payment.cnpj_beneficiario : null,
-        id_terminal_pagamento: _payment.id_terminal_pagamento ? _payment.id_terminal_pagamento : null
+        cnpj_beneficiario: _payment.cnpj_beneficiario
+          ? _payment.cnpj_beneficiario
+          : null,
+        id_terminal_pagamento: _payment.id_terminal_pagamento
+          ? _payment.id_terminal_pagamento
+          : null,
       })),
       items: payload.items.map((_item) => ({
         name: _item.product.name,
@@ -228,7 +248,7 @@ export const salesFormaterToIntegrate = (
       cpf_used_club: payload.cpf_used_club,
       cpf_used_nfce: payload.cpf_used_nfce,
       customer_voucher_id: payload.customerVoucher?.id,
-      client_id: payload.customerVoucher?.customer_id,
+      client_id: payload.client_id || payload.customerVoucher?.customer_id,
     };
     return [response];
   }
