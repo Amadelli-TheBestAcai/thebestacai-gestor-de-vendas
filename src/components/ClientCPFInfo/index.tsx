@@ -123,7 +123,6 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       client_id: response?.id,
     };
 
-    // Atualizar o estado com os novos valores
     setInfo((oldValues) => ({
       ...oldValues,
       ...updatedInfo,
