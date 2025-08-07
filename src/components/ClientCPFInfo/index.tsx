@@ -137,8 +137,6 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_id: updatedInfo.client_id,
       }
     );
-    console.log(updatedInfo, "Updated Info");
-    console.log(updatedSale, "Updated sale");
 
     setSale(updatedSale);
     setLoading(false);
