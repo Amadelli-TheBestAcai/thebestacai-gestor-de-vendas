@@ -107,9 +107,6 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       });
     }
 
-    console.log(response, "Response front");
-    console.log(response?.id, "Response id");
-
     const newCpfUsedNfce =
       pressedKey === "q" ? !info.cpf_used_nfce : info.cpf_used_nfce;
     const updatedInfo = {
@@ -140,8 +137,6 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_id: updatedInfo.client_id,
       }
     );
-    console.log(updatedInfo, "Updated Info");
-    console.log(updatedSale, "Updated sale");
 
     setSale(updatedSale);
     setLoading(false);
