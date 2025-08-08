@@ -7,6 +7,7 @@ export const salesFormaterToIntegrate = (
 ) => {
   if (Array.isArray(payload)) {
     return payload.map((_payload) => ({
+      store_id: storeCash.store_id,
       quantity: _payload.quantity,
       gv_id: _payload.gv_id,
       client_cpf: _payload.client_cpf,
@@ -130,6 +131,7 @@ export const salesFormaterToIntegrate = (
     }));
   } else {
     const response = {
+      store_id: storeCash.store_id,
       quantity: payload.quantity,
       gv_id: payload.gv_id,
       client_cpf: payload.client_cpf,
