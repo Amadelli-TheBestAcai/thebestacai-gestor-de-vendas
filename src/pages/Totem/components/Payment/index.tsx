@@ -1,0 +1,316 @@
+import React, {
+  useState,
+  Dispatch,
+  SetStateAction,
+  useRef,
+  useEffect,
+} from "react";
+
+import pix from "../../../../assets/totem/svg/pix.svg";
+import ticket from "../../../../assets/totem/svg/ticket.svg";
+import debit_card from "../../../../assets/totem/svg/debit_card.svg";
+import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
+import credit_card from "../../../../assets/totem/svg/credit_card.svg";
+import totem_club_flag from "../../../../assets/totem/img/totem_club_flag.png";
+
+import { PaymentType } from "../../../../models/enums/paymentType";
+
+import { useSale } from "../../../../hooks/useSale";
+import { useSettings } from "../../../../hooks/useSettings";
+
+import ModalSaleCancel from "../ModalSaleCancel";
+
+import { notification } from "antd";
+
+import {
+  Container,
+  Button,
+  Body,
+  Header,
+  HeaderBanner,
+  Footer,
+  ButtonCancel,
+  Modal,
+  ButtonModal,
+  ButtonPrintModal,
+  OrderInfo,
+  Checkbox,
+} from "./styles";
+
+interface IProps {
+  setCancelTimer: Dispatch<SetStateAction<boolean>>;
+  setStep: Dispatch<SetStateAction<number>>;
+  cancelSale: () => void;
+  handleIncrement: () => void;
+  printerTef: boolean;
+  setPrinterTef: Dispatch<SetStateAction<boolean>>;
+  printerDanfe: boolean;
+  setPrinterDanfe: Dispatch<SetStateAction<boolean>>;
+}
+const Payment: React.FC<IProps> = ({
+  setCancelTimer,
+  setStep,
+  cancelSale,
+  setPrinterTef,
+  setPrinterDanfe,
+  handleIncrement,
+  printerTef,
+  printerDanfe,
+}) => {
+  const { sale, setSale } = useSale();
+  const { settings } = useSettings();
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [visiblePrintModal, setVisiblePrintModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [stepPayment, setStepPayment] = useState<1 | 2 | 3>(1);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (visiblePrintModal) {
+      timeoutRef.current = setTimeout(() => {
+        setVisiblePrintModal(false);
+        setPrinterTef(false);
+        setPrinterDanfe(false);
+        setStep(6);
+      }, 10000);
+    }
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [visiblePrintModal]);
+
+  const onFinish = async (method: number) => {
+    let hasInternet = await window.Main.hasInternet();
+    if (!hasInternet) {
+      return notification.info({
+        message: "Problema de conexão",
+        description:
+          "Espere um momento e tente novamente, caso o problema persista informe o atendente.",
+        duration: 5,
+        className: "notification-totem",
+      });
+    }
+
+    if (!settings?.should_use_tef)
+      return notification.info({
+        message: "Tef desativado",
+        description: "Chame o atendente para realizar a ativação do Tef",
+        duration: 5,
+        className: "notification-totem",
+      });
+    setLoading(true);
+    setCancelTimer(true);
+    setStepPayment(method === PaymentType.PIX ? 2 : 3);
+
+    const total = sale.total_sold - (sale.discount || 0);
+
+    const {
+      response: updatedSale,
+      has_internal_error: errorOnAddPayment,
+      error_message: error_message_payment,
+    } = await window.Main.sale.addPayment(total, method);
+
+    if (errorOnAddPayment) {
+      setLoading(false);
+      return notification.error({
+        message: error_message_payment || "Erro ao adicionar pagamento",
+        description: "Por favor contate o atendente",
+        duration: 5,
+        className: "notification-totem",
+      });
+    }
+
+    notification.success({
+      message: `Pagamento adicionado com sucesso`,
+      description: "Agradecemos por utilizar nosso serviço",
+      duration: 5,
+      className: "notification-totem",
+    });
+
+    setSale(updatedSale);
+    setVisiblePrintModal(true);
+    setLoading(false);
+  };
+
+  return (
+    <>
+      {stepPayment === 1 && (
+        <>
+          <HeaderBanner>
+            <div className="div-img">
+              <img src={totem_club_flag} onClick={handleIncrement} />
+            </div>
+            <div className="div-title">
+              <span>Forma de Pagamento</span>
+              <span>Selecionar</span>
+            </div>
+          </HeaderBanner>
+          <Container>
+            <OrderInfo>
+              <div>
+                <span>TOTAL DO PEDIDO</span>
+              </div>
+
+              <div className="info-footer">
+                <span>{sale.items.length === 1 ? "ITEM" : "ITENS"}</span>
+                <span style={{ fontWeight: "800" }}>
+                  R$
+                  {(sale?.total_sold - sale?.discount)
+                    .toFixed(2)
+                    .replace(".", ",")}
+                </span>
+              </div>
+            </OrderInfo>
+            <Body>
+              <Button onClick={() => onFinish(PaymentType.PIX)}>
+                <img src={pix} /> PIX
+              </Button>
+              <Button onClick={() => onFinish(PaymentType.CREDITO)}>
+                <img src={credit_card} /> Cartão de Crédito
+              </Button>
+              <Button onClick={() => onFinish(PaymentType.DEBITO)}>
+                <img src={debit_card} /> Cartão de Débito
+              </Button>
+              <Button onClick={() => onFinish(PaymentType.TICKET)}>
+                <img src={ticket} /> Vale Refeição
+              </Button>
+            </Body>
+            <Footer>
+              <div>
+                <ButtonCancel onClick={() => setVisibleModal(true)}>
+                  Cancelar Pedido
+                </ButtonCancel>
+                <ButtonCancel onClick={() => setStep(4)}>
+                  <img src={arrow_left} /> Voltar
+                </ButtonCancel>
+              </div>
+            </Footer>
+          </Container>
+        </>
+      )}
+      {stepPayment === 2 && (
+        <>
+          <HeaderBanner>
+            <div className="div-img">
+              <img src={totem_club_flag} onClick={handleIncrement} />
+            </div>
+            <div className="div-title">
+              <span>Pix</span>
+            </div>
+          </HeaderBanner>
+          <Container>
+            <Header>
+              <span>Abra o app do seu banco</span>
+            </Header>
+            <Body>
+              <span>Faça a leitura do QR Code no Pinpad.</span>
+            </Body>
+            <Footer>
+              <ButtonCancel
+                onClick={() => {
+                  setStepPayment(1);
+                  setCancelTimer(false);
+                }}
+                style={{ width: "36.5rem" }}
+                loading={loading}
+              >
+                Trocar Forma de Pagamento
+              </ButtonCancel>
+            </Footer>
+          </Container>
+        </>
+      )}
+      {stepPayment === 3 && (
+        <>
+          <HeaderBanner>
+            <div className="div-img">
+              <img src={totem_club_flag} onClick={handleIncrement} />
+            </div>
+            <div className="div-title">
+              <span>Crédito</span>
+            </div>
+          </HeaderBanner>
+          <Container>
+            <Header>
+              <span>Veja a maquininha</span>
+            </Header>
+            <Body>
+              <span>Siga as instruções da máquina de cartões.</span>
+            </Body>
+            <Footer>
+              <ButtonCancel
+                onClick={() => {
+                  setStepPayment(1);
+                  setCancelTimer(false);
+                }}
+                style={{ width: "36.5rem" }}
+                loading={loading}
+              >
+                Trocar Forma de Pagamento
+              </ButtonCancel>
+            </Footer>
+          </Container>
+        </>
+      )}
+      <ModalSaleCancel
+        visible={visibleModal}
+        setVisible={setVisibleModal}
+        cancelSale={cancelSale}
+      />
+
+      <Modal
+        visible={visiblePrintModal}
+        confirmLoading={loading}
+        cancelButtonProps={{ hidden: true }}
+        closable={false}
+        centered
+        width={"62.5rem"}
+        style={{ height: "36rem" }}
+        footer={false}
+      >
+        <>
+          <span className="modal-title">Imprimir Cupons?</span>
+          <div className="div-body">
+            <Checkbox
+              checked={printerDanfe}
+              onClick={() => setPrinterDanfe(!printerDanfe)}
+            >
+              Cupom Fiscal
+            </Checkbox>
+            <Checkbox
+              checked={printerTef}
+              onClick={() => setPrinterTef(!printerTef)}
+            >
+              Comprovante TEF
+            </Checkbox>
+          </div>
+          <div>
+            <ButtonModal
+              onClick={() => {
+                setVisiblePrintModal(false);
+                setPrinterTef(false);
+                setPrinterDanfe(false);
+                setStep(6);
+              }}
+            >
+              Não Imprimir
+            </ButtonModal>
+            <ButtonPrintModal
+              onClick={() => {
+                setVisiblePrintModal(false);
+                setStep(6);
+              }}
+              disabled={!printerDanfe && !printerTef}
+            >
+              Imprimir
+            </ButtonPrintModal>
+          </div>
+        </>
+      </Modal>
+    </>
+  );
+};
+
+export default Payment;

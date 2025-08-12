@@ -10,32 +10,40 @@ export const GlobalStyle = createGlobalStyle`
    --white-80: #f6f6f6;
    --white-90: #ececec;
    
+   --black: #000000;
+   --black-opacity-30: #00000030;
    --black-opaco: #1C1E23;
    --gray-25: #e3e3e3;
    --gray-50: #e0e0e0;
    --grey-60: #c4c4c4;
    --grey-70: #bebebe;
+   --grey-75: #a7a5a6;
    --grey-80: #acacac;
    --grey-90: #a2a2a2;
    --grey-100: #666666;
    --grey-200: #4D4D4D;
    --gray-250: #3C4043;
+   --gray-300: #242729;
 
    --warning: #f8f2d1;
    --success: #f6ffed;
    --error: #fff2f0;
-
+   
+   --orange-190: #FFCF8B;
    --orange-200: #FFB956;
    --orange-250: #FF9D0A;
    --orange-450: #f0ad4e;
    --orange-400: #E98E4E;
    --orange-700: #DD610A;
+   --brown-300: #B35E42;
    --brown-500: #aa6600;
    --soft-orange: #FFFAF2;
 
    
+   --green-100: #AFE0A7;
    --green-200: #29ff6f;
    --green-400: #47BC47;
+   --green-500: #60C251;
    --green-600: #3A7538;
    --teal-400: #4BB8A9;
    --blue-300: #5BC0DE;
@@ -44,6 +52,7 @@ export const GlobalStyle = createGlobalStyle`
    --blue-500: #2D5AAC;
    --blue-700: #174275;
    --purple-450: #7E3AFC;
+   --red-500: #B35E42;
    --red-600: #A43C3F;
 
   }
@@ -66,6 +75,37 @@ export const GlobalStyle = createGlobalStyle`
     ::-webkit-scrollbar-thumb {
       background: var(--grey-80);
       border-radius: 5px;
+    }
+
+    .notification-totem{
+      display: flex;
+      align-items: center;
+      max-width: 100% !important;
+      width: 65rem !important;
+      height: 15rem !important;
+      svg{
+        display: flex;
+        align-items: center;
+        width: 3rem;
+        height: 2.5rem;
+      }
+      .ant-notification-notice-message, .ant-notification-notice-description{
+        display: flex;
+        align-items: center;
+        width: 100% !important;
+        height: 2.5rem !important;
+        line-height: 1 !important;
+      }
+      .ant-notification-notice-content{
+        .ant-notification-notice-message, .ant-notification-notice-message-single-line-auto-margin{
+          font-size: 2rem !important;
+          margin-left: 4rem !important;
+        }
+        .ant-notification-notice-description{
+          margin-top: 1rem !important;
+          font-size: 1.5rem !important;
+        }
+      }
     }
   }
 

@@ -1,0 +1,130 @@
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-ThinOblique.otf") format("opentype");
+  font-weight: 100;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-LightOblique.otf") format("opentype");
+  font-weight: 300;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-RegularOblique.otf") format("opentype");
+  font-weight: 400;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-MediumOblique.otf") format("opentype");
+  font-weight: 500;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-DemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-DemiBoldOblique.otf") format("opentype");
+  font-weight: 600;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-BoldOblique.otf") format("opentype");
+  font-weight: 700;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-ExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-ExtraBoldOblique.otf") format("opentype");
+  font-weight: 800;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-Heavy.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VisbyCF";
+  src: url("../assets/fonts/VisbyCF-HeavyOblique.otf") format("opentype");
+  font-weight: 900;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "Heavitas";
+  src: url("../assets/fonts/Heavitas.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../assets/fonts/AtkinsonHyperlegible-Regular.ttf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../assets/fonts/AtkinsonHyperlegible-Bold.ttf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}

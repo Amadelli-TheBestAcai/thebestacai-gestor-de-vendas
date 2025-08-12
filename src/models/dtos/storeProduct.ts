@@ -32,4 +32,5 @@ export interface StoreProductDto {
   cest?: string;
   created_at: string;
   deleted_at?: string;
+  upload_url?: string;
 }

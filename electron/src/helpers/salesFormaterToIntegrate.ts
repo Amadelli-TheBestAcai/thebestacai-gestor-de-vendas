@@ -126,6 +126,7 @@ export const salesFormaterToIntegrate = (
       created_at: _payload.created_at,
       cpf_used_club: _payload.cpf_used_club,
       cpf_used_nfce: _payload.cpf_used_nfce,
+      nps_score: _payload.nps_score,
       customer_voucher_id: _payload.customerVoucher?.id,
       client_id: _payload.client_id || _payload.customerVoucher?.customer_id,
     }));
@@ -249,6 +250,7 @@ export const salesFormaterToIntegrate = (
       created_at: payload.created_at,
       cpf_used_club: payload.cpf_used_club,
       cpf_used_nfce: payload.cpf_used_nfce,
+      nps_score: payload.nps_score,
       customer_voucher_id: payload.customerVoucher?.id,
       client_id: payload.client_id || payload.customerVoucher?.customer_id,
     };

@@ -17,6 +17,7 @@ export {
 } from "@styled-icons/fa-solid";
 
 export { Printer as PrinterNFCe } from "@styled-icons/typicons/";
+export { Computer as Totem } from "@styled-icons/remix-line";
 
 export {
   Offer,

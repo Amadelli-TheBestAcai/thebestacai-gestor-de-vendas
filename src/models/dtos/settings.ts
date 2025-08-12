@@ -14,4 +14,5 @@ export interface SettingsDto {
   should_use_tef?: boolean
   created_at?: Date;
   cnpj_credenciadora?: string;
+  should_active_discount_storekeeper?: boolean
 }
