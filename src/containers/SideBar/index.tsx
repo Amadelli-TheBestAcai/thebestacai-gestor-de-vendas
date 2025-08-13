@@ -3,6 +3,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { useUser } from "../../hooks/useUser";
 import { useSale } from "../../hooks/useSale";
+import { useSettings } from "../../hooks/useSettings";
 
 import LogoImg from "../../assets/img/logo-login.png";
 
@@ -25,18 +26,21 @@ import {
   SettingsIcon,
   LogOutIcon,
   TrashIcon,
+  TotemIcon,
 } from "./styles";
 
 type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history }) => {
   const { hasPermission } = useUser();
+  const { sale } = useSale();
+  const { settings } = useSettings();
 
   const handleClick = async (id: number, route: string) => {
     const isConnected = await window.Main.hasInternet();
 
+    const { response: storeCash } = await window.Main.storeCash.getCurrent();
     if (route === "/handler" || route === "/sale") {
-      const { response: storeCash } = await window.Main.storeCash.getCurrent();
       if (!storeCash?.is_online) {
         notification.info({
           message: "Caixa offline",
@@ -58,6 +62,90 @@ const SideBar: React.FC<IProps> = ({ history }) => {
       }
     } else {
       history.push(route);
+    }
+
+    if (id === 12) {
+      if (!storeCash?.is_opened) {
+        return notification.info({
+          message: "Caixa fechado",
+          description: `O caixa deve estar ABERTO para entrar no modo Totem`,
+          duration: 3,
+        });
+      }
+      if (!storeCash?.is_online) {
+        return notification.info({
+          message: "Caixa offline",
+          description: `O caixa deve estar ONLINE para entrar no modo Totem`,
+          duration: 3,
+        });
+      }
+      if (
+        sale.items.some(
+          (item) =>
+            item.product.category.id !== 1 && item.product.category.id !== 2
+        )
+      ) {
+        return notification.info({
+          message: "Itens de categorias inválidas",
+          description: `Por favor remova os itens que não sejam SelfService ou Bebidas para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (sale.payments.length) {
+        return notification.info({
+          message: "Pagamentos pendentes",
+          description: `Existem pagamentos pendentes, por favor remova os pagamentos para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.should_use_printer) {
+        return notification.info({
+          message: "Impressora desabilitada",
+          description: `Por favor ative a impressora em settings para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.should_use_balance) {
+        return notification.info({
+          message: "Balança desabilitada",
+          description: `Por favor ative a balança em settings para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.should_use_tef) {
+        return notification.info({
+          message: "TEF desabilitado",
+          description: `Por favor ative o TEF em settings para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      if (!settings.cnpj_credenciadora) {
+        return notification.info({
+          message: "CNPJ da credenciadora não selecionado",
+          description: `Por favor seçecione o CNPJ da credenciadora em settings para entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      const { response: _stepSales } = await window.Main.sale.getAllStepSales();
+      if (_stepSales.length) {
+        return notification.info({
+          message: "Comandas encontradas",
+          description: `Por favor remova todas as comandas antes de entrar no modo totem`,
+          duration: 3,
+        });
+      }
+      Modal.confirm({
+        title: `Modo Totem`,
+        content: `Tem certeza que gostaria de iniciar o modo Totem`,
+        visible: true,
+        okText: "Sim",
+        okType: "default",
+        cancelText: "Não",
+        centered: true,
+        async onOk() {
+          history.push("/totem");
+        },
+      });
     }
 
     if (id === 10) {
@@ -149,6 +237,14 @@ const SideBar: React.FC<IProps> = ({ history }) => {
         router: "/settings",
       });
     }
+
+    if (hasPermission("totem.totem_access")) {
+    response.push({
+      id: 12,
+      icon: <TotemIcon />,
+      label: "Totem",
+    });
+  }
 
     response.push({
       id: 10,

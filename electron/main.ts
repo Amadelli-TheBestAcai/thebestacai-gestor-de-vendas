@@ -15,6 +15,7 @@ function createWindow() {
   win = new BrowserWindow({
     width,
     height,
+    autoHideMenuBar: true,
     resizable: false,
     backgroundColor: "#191622",
     webPreferences: {
@@ -124,10 +125,22 @@ app.whenReady().then(async () => {
 
   app.on("window-all-closed", async () => {
     if (process.platform !== "darwin") {
-      await finalizeServerTef()
+      await finalizeServerTef();
       app.quit();
     }
   });
+});
+
+ipcMain.on("enter-fullscreen", () => {
+  if (win) {
+    win.setFullScreen(true);
+  }
+});
+
+ipcMain.on("exit-fullscreen", () => {
+  if (win) {
+    win.setFullScreen(false); 
+  }
 });
 
 ipcMain.on("app_version", (event) => {

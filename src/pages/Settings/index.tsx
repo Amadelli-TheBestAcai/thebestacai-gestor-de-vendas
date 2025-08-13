@@ -346,6 +346,31 @@ const Settings: React.FC<IProps> = ({ history }) => {
           )}
         </CardSettings>
 
+        <CardSettings title="Desconto de lojista no totem">
+          <span style={{ padding: "2%" }}>
+            Ao habilitar, a opção de aplicar o desconto de Lojista do totem será
+            habilitada.
+          </span>
+
+          <ActionContainer>
+            <Switch
+              checked={settings.should_active_discount_storekeeper}
+              onChange={() =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  should_active_discount_storekeeper:
+                    !settings.should_active_discount_storekeeper,
+                }))
+              }
+            />
+            <span>
+              {!settings.should_active_discount_storekeeper
+                ? "DESABILITADO"
+                : "HABILITADO"}
+            </span>
+          </ActionContainer>
+        </CardSettings>
+
         {hasPermission("config.activeTef") && (
           <CardSettings title="Integração de TEF">
             <span style={{ padding: "2%" }}>

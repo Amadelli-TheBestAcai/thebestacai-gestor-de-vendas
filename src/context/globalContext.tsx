@@ -27,7 +27,7 @@ type GlobalContextType = {
     quantity: number,
     price?: number
   ) => Promise<void>;
-  onDecressItem: (id: string) => Promise<void>;
+  onDecressItem: (id: string, totemNotification?: boolean) => Promise<void>;
   onAddDiscount: (value: number) => Promise<void>;
   onRemoveDiscount: (id: string) => Promise<void>;
   onAddToQueue: (name: string) => Promise<void>;
@@ -169,7 +169,10 @@ export function GlobalProvider({ children }) {
     document.getElementById("balanceInput")?.focus();
   };
 
-  const onDecressItem = async (id: string): Promise<void> => {
+  const onDecressItem = async (
+    id: string,
+    totemNotification?: boolean
+  ): Promise<void> => {
     if (sale.customerVoucher) {
       return notification.error({
         message: "Remova o cupom antes de retirar o item do carrinho",
@@ -185,13 +188,15 @@ export function GlobalProvider({ children }) {
       });
     }
 
-    notification.success({
-      message: "Item removido com sucesso!",
-      description: `O item selecionado foi retirado do carrinho.`,
-      duration: 3,
-    });
+    if (!totemNotification) {
+      notification.success({
+        message: "Item removido com sucesso!",
+        description: `O item selecionado foi retirado do carrinho.`,
+        duration: 3,
+      });
+      document.getElementById("balanceInput")?.focus();
+    }
     setSale(updatedSale);
-    document.getElementById("balanceInput")?.focus();
   };
   const onRegisterSale = async (): Promise<void> => {
     if (savingSale) {
