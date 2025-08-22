@@ -225,16 +225,42 @@ export function GlobalProvider({ children }) {
     const manualDiscount = currentSale.discount || 0;
 
     let toleranceDiscount = 0;
-    if (
-      totalSold > totalPaid + manualDiscount &&
-      totalSold - totalPaid - manualDiscount <= 0.5
-    ) {
-      toleranceDiscount = totalSold - totalPaid - manualDiscount;
+
+    if (totalSold > totalPaid + manualDiscount) {
+      const difference = totalSold - totalPaid - manualDiscount;
+      if (difference <= 0.5) {
+        toleranceDiscount = difference;
+        console.log("Tolerância aplicada:", toleranceDiscount);
+      } else {
+        console.log("Diferença muito grande para tolerância:", difference);
+      }
+    } else {
+      console.log("Tolerância NÃO aplicada - pagamento em excesso ou igual");
     }
+
+    // Adicionando log para debug
+    console.log("=== TOLERÂNCIA DE DESCONTO ===");
+    console.log("totalSold:", totalSold);
+    console.log("totalPaid:", totalPaid);
+    console.log("manualDiscount:", manualDiscount);
+    console.log("toleranceDiscount calculado:", toleranceDiscount);
+    console.log("Diferença:", totalSold - totalPaid - manualDiscount);
 
     const combinedDiscount = manualDiscount + toleranceDiscount;
 
-    currentSale.discount = combinedDiscount;
+    console.log("=== RESUMO DO DESCONTO ===");
+    console.log("manualDiscount:", manualDiscount);
+    console.log("toleranceDiscount:", toleranceDiscount);
+    console.log("combinedDiscount:", combinedDiscount);
+    console.log("Desconto ANTES da atribuição:", currentSale.discount);
+
+    // CORREÇÃO: Só força o desconto se for diferente de 0
+    if (combinedDiscount > 0) {
+      currentSale.discount = combinedDiscount;
+      console.log("Desconto aplicado:", currentSale.discount);
+    } else {
+      console.log("Nenhum desconto aplicado - mantendo valor original");
+    }
 
     let changeAmount = +(totalPaid - (totalSold - combinedDiscount)).toFixed(2);
 
