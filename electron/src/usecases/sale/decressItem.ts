@@ -34,13 +34,42 @@ class DecressItem implements IUseCaseFactory {
       sale.items = sale.items.filter((_item) => _item.id !== id);
     } else {
       sale.items[itemIndex].quantity = newQuantity;
-      sale.items[itemIndex].total =
-        newQuantity * +(sale.items[itemIndex].storeProduct.price_unit || 0);
+      const calculatedTotal = +(
+        newQuantity * +(sale.items[itemIndex].storeProduct.price_unit || 0)
+      ).toFixed(2);
+
+      console.log("=== DECRESSITEM ===");
+      console.log("newQuantity:", newQuantity);
+      console.log("price_unit:", sale.items[itemIndex].storeProduct.price_unit);
+      console.log(
+        "price_unit convertido:",
+        +(sale.items[itemIndex].storeProduct.price_unit || 0)
+      );
+      console.log(
+        "multiplicação bruta:",
+        newQuantity * +(sale.items[itemIndex].storeProduct.price_unit || 0)
+      );
+      console.log("total calculado com toFixed(2):", calculatedTotal);
+
+      sale.items[itemIndex].total = calculatedTotal;
     }
+
+    console.log("=== DECRESSITEM - RESUMO ===");
+    console.log(
+      "Items após modificação:",
+      sale.items.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+        total: item.total,
+        price_unit: item.storeProduct.price_unit,
+      }))
+    );
 
     sale.total_sold = +sale.items
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
+
+    console.log("total_sold calculado:", sale.total_sold);
 
     if (sale.customerVoucher?.voucher?.products?.length)
       sale.customerVoucher?.voucher?.products.forEach(

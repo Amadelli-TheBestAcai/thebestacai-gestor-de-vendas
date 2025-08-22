@@ -38,11 +38,37 @@ class AddItem implements IUseCaseFactory {
     if (itemIndex >= 0 && sale.items[itemIndex].product?.category.id !== 1) {
       const newQuantity = +sale.items[itemIndex].quantity + quantity;
       sale.items[itemIndex].quantity = newQuantity;
-      sale.items[itemIndex].total = +(
+      const calculatedTotal = +(
         newQuantity * +(productToAdd?.price_unit || 0)
       ).toFixed(2);
+
+      console.log("=== ADDITEM - ITEM EXISTENTE ===");
+      console.log("newQuantity:", newQuantity);
+      console.log("price_unit:", productToAdd?.price_unit);
+      console.log("price_unit convertido:", +(productToAdd?.price_unit || 0));
+      console.log(
+        "multiplicação bruta:",
+        newQuantity * +(productToAdd?.price_unit || 0)
+      );
+      console.log("total calculado com toFixed(2):", calculatedTotal);
+
+      sale.items[itemIndex].total = calculatedTotal;
     } else {
       const { product, ...storeProduct } = productToAdd;
+      const calculatedTotal = price
+        ? +price.toFixed(2)
+        : +(+(productToAdd.price_unit || 0) * quantity).toFixed(2);
+
+      console.log("=== ADDITEM - NOVO ITEM ===");
+      console.log("price fornecido:", price);
+      console.log("price_unit:", productToAdd.price_unit);
+      console.log("quantity:", quantity);
+      console.log(
+        "multiplicação bruta:",
+        +(productToAdd.price_unit || 0) * quantity
+      );
+      console.log("total calculado com toFixed(2):", calculatedTotal);
+
       sale.items.push({
         id: v4(),
         store_product_id: storeProduct.id,
@@ -50,15 +76,28 @@ class AddItem implements IUseCaseFactory {
         update_stock: product?.category.id !== 1 ? true : false,
         product,
         storeProduct,
-        total: price ? price : +(productToAdd.price_unit || 0) * quantity,
+        total: calculatedTotal,
         customer_reward_id: productToAdd.customer_reward_id,
         created_at: moment(new Date()).format("DD/MM/YYYY HH:mm:ss"),
       });
     }
 
+    console.log("=== ADDITEM - RESUMO ===");
+    console.log(
+      "Items após modificação:",
+      sale.items.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+        total: item.total,
+        price_unit: item.storeProduct.price_unit,
+      }))
+    );
+
     sale.total_sold = +sale.items
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
+
+    console.log("total_sold calculado:", sale.total_sold);
 
     if (sale.customerVoucher?.voucher?.products?.length)
       sale.customerVoucher?.voucher?.products.forEach(

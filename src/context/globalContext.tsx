@@ -321,6 +321,20 @@ export function GlobalProvider({ children }) {
         0
       );
 
+      console.log("=== NFCE PAYLOAD - ANTES ===");
+      console.log(
+        "Items da venda:",
+        currentSale.items.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+          total: item.total,
+          price_unit: item.storeProduct.price_unit,
+          calculated: +(item.storeProduct.price_unit || 0) * item.quantity,
+        }))
+      );
+      console.log("Total calculado:", total);
+      console.log("Total da venda (total_sold):", currentSale.total_sold);
+
       const nfePayload = {
         cpf: currentSale?.cpf_used_nfce ? currentSale?.client_cpf : null,
         discount: voucherDiscount
@@ -354,6 +368,15 @@ export function GlobalProvider({ children }) {
         })),
         ref: currentSale.ref,
       };
+
+      console.log("=== NFCE PAYLOAD - DEPOIS ===");
+      console.log("Payload completo:", nfePayload);
+      console.log("Items do payload:", nfePayload.items);
+      console.log("Total do payload:", nfePayload.total);
+      console.log(
+        "Soma dos price_sell dos items:",
+        nfePayload.items.reduce((sum, item) => sum + item.price_sell, 0)
+      );
 
       const {
         response,
