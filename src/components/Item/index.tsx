@@ -227,7 +227,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
           </Modal>
         </Container>
       )}
-      {productVoucher?.in_sale && (
+      {/* {productVoucher?.in_sale && (
         <Container>
           <Column
             span={10}
@@ -259,6 +259,22 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
               : currencyFormater(+productVoucher.price_sell || 0)}
           </Column>
 
+          <Column span={2}></Column>
+        </Container>
+      )} */}
+      {productVoucher && (
+        <Container>
+          <Column
+            span={10}
+          >
+            [CUPOM] {productVoucher.product_name}
+          </Column>
+          <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
+          <Column span={4}></Column>
+          <Column span={4}>
+            R$ {productVoucher.additional_value ? "+" : "-"}
+            {(+productVoucher.price_sell).toFixed(2)}
+          </Column>
           <Column span={2}></Column>
         </Container>
       )}

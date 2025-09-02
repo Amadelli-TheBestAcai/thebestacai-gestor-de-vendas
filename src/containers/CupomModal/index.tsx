@@ -154,22 +154,12 @@ const CupomModal: React.FC<ICupomProps> = ({
         }
       }
 
-      response.voucher.products = response.voucher.products.filter(
-        (productVoucher) =>
-          sale.items.some(
-            (item) => item.product.id === productVoucher.product_id
-          )
-      );
-
-      if(response.additional_items_descriptions && response.additional_items_descriptions.length) {
-        response.additional_items_descriptions.forEach(additional_items_description => {
-          response.voucher.products.push({
-              product_id: null,
-              product_name: additional_items_description,
-              price_sell: "0.00",
-           })
-        })
-      }
+      // response.voucher.products = response.voucher.products.filter(
+      //   (productVoucher) =>
+      //     sale.items.some(
+      //       (item) => item.product.id === productVoucher.product_id
+      //     )
+      // );
 
       // if (!response.voucher.products.length) {
       //   return notification.warn({
