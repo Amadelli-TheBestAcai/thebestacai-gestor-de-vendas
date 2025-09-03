@@ -26,6 +26,7 @@ import {
 type IProps = {
   item?: ItemDto;
   productVoucher?: ProductVoucher;
+  additional_item_description?: string,
 };
 
 const options = [
@@ -36,7 +37,7 @@ const options = [
   "Outros",
 ];
 
-const Item: React.FC<IProps> = ({ item, productVoucher }) => {
+const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_description }) => {
   const { onDecressItem, sale } = useSale();
   const [modalState, setModalState] = useState(false);
   const [disabled, setdisabled] = useState(false);
@@ -44,7 +45,6 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [form] = Form.useForm();
   const [count, setCount] = useState(Number);
-
   const relatedItem = item
     ? item
     : productVoucher
@@ -227,7 +227,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
           </Modal>
         </Container>
       )}
-      {productVoucher?.in_sale && (
+      {/* {productVoucher?.in_sale && (
         <Container>
           <Column
             span={10}
@@ -261,6 +261,33 @@ const Item: React.FC<IProps> = ({ item, productVoucher }) => {
 
           <Column span={2}></Column>
         </Container>
+      )} */}
+      {productVoucher && (
+        <Container>
+          <Column
+            span={10}
+          >
+            [CUPOM] {productVoucher.product_name}
+          </Column>
+          <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
+          <Column span={4}></Column>
+          <Column span={4}>
+            R$ {productVoucher.additional_value ? "+" : "-"}
+            {(+productVoucher.price_sell).toFixed(2)}
+          </Column>
+          <Column span={2}></Column>
+        </Container>
+      )}
+      {additional_item_description && (
+        <>
+          <Container>
+            <Column
+              span={10}
+            >
+            [CUPOM]{" "}{additional_item_description}
+            </Column>
+          </Container>
+        </>
       )}
     </>
   );

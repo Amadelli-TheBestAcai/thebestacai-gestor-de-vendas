@@ -29,14 +29,22 @@ const Items: React.FC = () => {
       </Header>
 
       {sale?.items?.length ||
-      sale?.customerVoucher?.voucher?.products?.length ? (
+      sale?.customerVoucher?.voucher?.products?.length || 
+      sale?.customerVoucher?.additional_items_descriptions ? (
         <>
           <ItemContainer>
             <ItemContent>
-              {sale?.customerVoucher?.voucher?.products?.length && (
+              {sale?.customerVoucher?.voucher?.products?.length ? (
                 <>
                   {sale?.customerVoucher.voucher.products.map((product) => (
-                    <Item key={product.id} productVoucher={product} />
+                    <Item key={product.id||product.product_name} productVoucher={product} />
+                  ))}
+                </>
+              ) : <></>}
+              {sale?.customerVoucher?.additional_items_descriptions?.length && (
+                <>
+                  {sale?.customerVoucher?.additional_items_descriptions.map((additional_item_description) => (
+                    <Item key={additional_item_description} additional_item_description={additional_item_description} />
                   ))}
                 </>
               )}

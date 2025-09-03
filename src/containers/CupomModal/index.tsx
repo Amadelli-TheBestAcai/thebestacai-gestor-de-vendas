@@ -81,13 +81,13 @@ const CupomModal: React.FC<ICupomProps> = ({
       });
     }
 
-    if (sale.items.length === 0) {
-      return notification.warn({
-        message:
-          "É necessário adicionar pelo menos um item ao carrinho para usar um cupom.",
-        duration: 5,
-      });
-    }
+    // if (sale.items.length === 0) {
+    //   return notification.warn({
+    //     message:
+    //       "É necessário adicionar pelo menos um item ao carrinho para usar um cupom.",
+    //     duration: 5,
+    //   });
+    // }
 
     try {
       setLoading(true);
@@ -154,20 +154,20 @@ const CupomModal: React.FC<ICupomProps> = ({
         }
       }
 
-      response.voucher.products = response.voucher.products.filter(
-        (productVoucher) =>
-          sale.items.some(
-            (item) => item.product.id === productVoucher.product_id
-          )
-      );
+      // response.voucher.products = response.voucher.products.filter(
+      //   (productVoucher) =>
+      //     sale.items.some(
+      //       (item) => item.product.id === productVoucher.product_id
+      //     )
+      // );
 
-      if (!response.voucher.products.length) {
-        return notification.warn({
-          message:
-            "Os produtos vinculados a este cupom não estão presentes no carrinho.",
-          duration: 5,
-        });
-      }
+      // if (!response.voucher.products.length) {
+      //   return notification.warn({
+      //     message:
+      //       "Os produtos vinculados a este cupom não estão presentes no carrinho.",
+      //     duration: 5,
+      //   });
+      // }
 
       let totalOfCupomProducs = 0;
 
