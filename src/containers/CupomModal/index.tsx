@@ -106,6 +106,8 @@ const CupomModal: React.FC<ICupomProps> = ({
       );
       delete response.voucher.companies;
 
+      response.voucher.products = [...(response.voucher.products || [])];
+
       const totalSoldInSelfService = sale.items
         .filter((item) => item.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
