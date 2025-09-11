@@ -15,6 +15,7 @@ import {
 import { PaymentType } from "../../models/enums/paymentType";
 
 import { useSale } from "../../hooks/useSale";
+
 interface IProps {
   openDiscoundModal: () => void;
   handleOpenPayment: (type: number, title: string) => void;
@@ -33,6 +34,9 @@ const BalanceContainer: React.FC<IProps> = ({
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
     useState<boolean>(false);
   const [balanceAmount, setBalanceAmount] = useState<number>();
+  const [inputKey, setInputKey] = useState<number>(0);
+  const [lastErrorTime, setLastErrorTime] = useState<number>(0);
+  const MAX_VALUE = 10000;
 
   useEffect(() => {
     async function init() {
@@ -178,9 +182,26 @@ const BalanceContainer: React.FC<IProps> = ({
               </Tooltip>
             ) : (
               <InputPrice
+                key={inputKey}
                 autoFocus={true}
                 id="balanceInput"
-                getValue={(value) => setBalanceAmount(value)}
+                getValue={(value) => {
+                  if (value > MAX_VALUE) {
+                    const currentTime = Date.now();
+                    if (currentTime - lastErrorTime > 2000) {
+                      notification.error({
+                        message:
+                          "Valor excede o limite máximo permitido de R$ 10.000,00",
+                        duration: 2,
+                      });
+                      setLastErrorTime(currentTime);
+                    }
+                    setBalanceAmount(0);
+                    setInputKey((prev) => prev + 1);
+                    return;
+                  }
+                  setBalanceAmount(value);
+                }}
                 onEnterPress={handleEnterToSubmit}
                 onPressKey={handlerEventKey}
                 readOnly={isSavingSale}
