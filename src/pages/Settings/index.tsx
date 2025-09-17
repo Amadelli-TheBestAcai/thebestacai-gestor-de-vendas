@@ -346,6 +346,31 @@ const Settings: React.FC<IProps> = ({ history }) => {
           )}
         </CardSettings>
 
+        <CardSettings title="Desconto de lojista no totem">
+          <span style={{ padding: "2%" }}>
+            Ao habilitar, a opção de aplicar o desconto de Lojista do totem será
+            habilitada.
+          </span>
+
+          <ActionContainer>
+            <Switch
+              checked={settings.should_active_discount_storekeeper}
+              onChange={() =>
+                setSettings((oldValues) => ({
+                  ...oldValues,
+                  should_active_discount_storekeeper:
+                    !settings.should_active_discount_storekeeper,
+                }))
+              }
+            />
+            <span>
+              {!settings.should_active_discount_storekeeper
+                ? "DESABILITADO"
+                : "HABILITADO"}
+            </span>
+          </ActionContainer>
+        </CardSettings>
+
         {hasPermission("config.activeTef") && (
           <CardSettings title="Integração de TEF">
             <span style={{ padding: "2%" }}>
@@ -359,6 +384,29 @@ const Settings: React.FC<IProps> = ({ history }) => {
                   setSettings((oldValues) => ({
                     ...oldValues,
                     should_use_tef: !settings.should_use_tef,
+                    should_request_cpf_in_tef: false,
+                  }))
+                }
+              />
+              <span>
+                {!settings.should_use_tef ? "DESABILITADO" : "HABILITADO"}
+              </span>
+            </ActionContainer>
+          </CardSettings>
+        )}
+        {settings.should_use_tef && (
+          <CardSettings title="Habilitar CPF Tef">
+            <span style={{ padding: "2%" }}>
+              Habilita a solicitação de CPF via PinPad
+            </span>
+            <ActionContainer>
+              <Switch
+                checked={settings.should_request_cpf_in_tef}
+                onChange={() =>
+                  setSettings((oldValues) => ({
+                    ...oldValues,
+                    should_request_cpf_in_tef:
+                      !settings.should_request_cpf_in_tef,
                   }))
                 }
               />

@@ -2,6 +2,7 @@ export interface SettingsDto {
   id: string;
   should_print_nfce_per_sale?: boolean;
   should_emit_nfce_per_sale?: boolean;
+  should_request_cpf_in_tef?: boolean;
   should_print_sale?: boolean;
   should_use_balance?: boolean;
   should_use_printer?: boolean;
@@ -13,4 +14,5 @@ export interface SettingsDto {
   should_use_tef?: boolean
   created_at?: Date;
   cnpj_credenciadora?: string;
+  should_active_discount_storekeeper?: boolean
 }

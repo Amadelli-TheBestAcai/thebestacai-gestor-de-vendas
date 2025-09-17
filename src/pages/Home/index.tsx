@@ -49,7 +49,7 @@ const Home: React.FC = () => {
     useSale();
   const { settings, setSettings } = useSettings();
   const [formRemoveTef] = Form.useForm();
-
+  
   const [loading, setLoading] = useState(true);
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [loadingPaymentModalOpenOnline, setLoadingPaymentModalOpenOnline] =

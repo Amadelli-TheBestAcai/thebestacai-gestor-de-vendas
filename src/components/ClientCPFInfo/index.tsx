@@ -18,9 +18,14 @@ import {
   InfoClientReward,
   TitleReward,
   ContentCheck,
+  CpfTefContainer,
+  ButtonCpfTef,
+  ButtonDeleteCpf,
+  DeleteCpfIcon,
 } from "./styles";
 import { message, notification, Checkbox } from "antd";
 import { CampaignDto } from "../../models/dtos/campaign";
+import { useSettings } from "../../hooks/useSettings";
 
 interface IProps {
   campaign?: CampaignDto;
@@ -29,6 +34,7 @@ interface IProps {
 
 const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
   const { sale, setSale, isSavingSale } = useSale();
+  const { settings } = useSettings();
   const [loading, setLoading] = useState(false);
   const { shouldOpenClientInfo, setShouldOpenClientInfo } = useSale();
   const [pressedKey, setPressedKey] = useState<string | null>(null);
@@ -38,6 +44,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     email: "",
     cpf_used_club: false,
     cpf_used_nfce: false,
+    client_id: null,
   });
 
   useEffect(() => {
@@ -48,6 +55,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         email: sale.client_email || "",
         cpf_used_club: sale.cpf_used_club ? sale.cpf_used_club : false,
         cpf_used_nfce: sale.cpf_used_nfce ? sale.cpf_used_nfce : false,
+        client_id: sale.client_id,
       });
     }
   }, [shouldOpenClientInfo]);
@@ -69,8 +77,10 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     }
   };
 
-  const validateCPF = () => {
-    const cpfValue = info.cpf.replace(/\D/g, "");
+  const validateCPF = (cpfResponse?: string) => {
+    const cpfValue = cpfResponse
+      ? cpfResponse?.replace(/\D/g, "")
+      : info?.cpf?.replace(/\D/g, "");
     if (cpfValue && !cpfValidator.isValid(cpfValue)) {
       message.error("Digite um CPF válido.");
       return false;
@@ -87,7 +97,7 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     }
 
     const { has_internal_error, response, error_message } =
-      await window.Main.user.getCustomerByCpf(info.cpf);
+      await window.Main.user.getCustomerByCpf(info.cpf.replace(/\D/g, ""));
 
     if (has_internal_error) {
       setLoading(false);
@@ -97,25 +107,34 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
       });
     }
 
+    const newCpfUsedNfce =
+      pressedKey === "q" ? !info.cpf_used_nfce : info.cpf_used_nfce;
+    const updatedInfo = {
+      cpf: info.cpf.replace(/\D/g, ""),
+      phone:
+        response?.cell_number?.replace(/\D/g, "") ||
+        info.phone?.replace(/\D/g, ""),
+      email: response?.email || info.email,
+      cpf_used_club: true,
+      cpf_used_nfce: newCpfUsedNfce,
+      client_id: response?.id,
+    };
+
     setInfo((oldValues) => ({
       ...oldValues,
-      email: response?.email,
-      phone: response?.cell_number,
-      cpf_used_club: true,
-      cpf_used_nfce:
-        pressedKey === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
+      ...updatedInfo,
     }));
 
     const { response: updatedSale } = await window.Main.sale.updateSale(
       sale.id,
       {
         ...sale,
-        client_cpf: info.cpf.replace(/\D/g, ""),
-        client_phone: info.phone?.replace(/\D/g, ""),
-        client_email: info.email,
-        cpf_used_club: info.cpf_used_club,
-        cpf_used_nfce: info.cpf_used_nfce,
-        client_id: sale.customerVoucher?.customer_id
+        client_cpf: updatedInfo.cpf,
+        client_phone: updatedInfo.phone,
+        client_email: updatedInfo.email,
+        cpf_used_club: updatedInfo.cpf_used_club,
+        cpf_used_nfce: updatedInfo.cpf_used_nfce,
+        client_id: updatedInfo.client_id,
       }
     );
 
@@ -162,12 +181,66 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         client_email: null,
         cpf_used_club: null,
         cpf_used_nfce: null,
-        client_id: null
+        client_id: null,
       }
     );
     setSale(updatedSale);
     document.getElementById("balanceInput").focus();
     setShouldOpenClientInfo(false);
+  };
+
+  const onDeleteCPF = async () => {
+    setInfo((oldValues) => ({
+      ...oldValues,
+      cpf: "",
+      cpf_used_club: false,
+      cpf_used_nfce: false,
+    }));
+    if (sale.client_cpf) {
+      const { response: updatedSale } = await window.Main.sale.updateSale(
+        sale.id,
+        {
+          ...sale,
+          client_cpf: null,
+          client_phone: null,
+          client_email: null,
+          cpf_used_club: null,
+          cpf_used_nfce: null,
+          client_id: null,
+        }
+      );
+      setSale(updatedSale);
+    }
+  };
+
+  const tefCpfInsert = async () => {
+    if (loading) return;
+    setLoading(true);
+    const { response, has_internal_error, error_message } =
+      await window.Main.tefFactory.getCpf();
+
+    if (response) {
+      const isValidCPF = validateCPF(response);
+      if (!isValidCPF) {
+        setLoading(false);
+        return notification.error({
+          message: "O CPF inserido não é válido",
+          duration: 5,
+        });
+      }
+      setInfo((oldValues) => ({
+        ...oldValues,
+        cpf: response,
+        cpf_used_club: true,
+      }));
+    }
+    if (has_internal_error) {
+      notification.error({
+        message: error_message || "Erro ao adicionar CPF Tef",
+        duration: 5,
+      });
+    }
+    setLoading(false);
   };
 
   return (
@@ -201,16 +274,36 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     >
       <InfoWrapper>
         <Info>CPF:</Info>
-        <MaskInput
-          id="user-cpf"
-          mask={"999.999.999.99"}
-          maskChar={"_"}
-          onKeyPress={onPressEnter}
-          autoFocus
-          value={info.cpf}
-          onChange={(event) => onChange("cpf", event)}
-          onKeyDown={onKeyDown}
-        />
+        {settings.should_request_cpf_in_tef ? (
+          <CpfTefContainer>
+            <MaskInput
+              id="user-cpf"
+              mask={"999.999.999.99"}
+              maskChar={"_"}
+              autoFocus
+              value={info.cpf}
+              disabled
+              style={{ width: "58%" }}
+            />
+            <ButtonDeleteCpf onClick={() => onDeleteCPF()} disabled={loading}>
+              <DeleteCpfIcon />
+            </ButtonDeleteCpf>
+            <ButtonCpfTef onClick={() => tefCpfInsert()} disabled={loading}>
+              Solicitar CPF Tef
+            </ButtonCpfTef>
+          </CpfTefContainer>
+        ) : (
+          <MaskInput
+            id="user-cpf"
+            mask={"999.999.999.99"}
+            maskChar={"_"}
+            onKeyPress={onPressEnter}
+            autoFocus
+            value={info.cpf}
+            onChange={(event) => onChange("cpf", event)}
+            onKeyDown={onKeyDown}
+          />
+        )}
         <ContentCheck>
           <div>
             <Checkbox

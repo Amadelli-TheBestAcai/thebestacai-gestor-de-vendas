@@ -6,14 +6,15 @@ import { inicializeServerTef } from "./src/helpers/inicializeServerTef";
 import { finalizeServerTef } from "./src/helpers/finalizeServerTef";
 
 let win: Electron.BrowserWindow | null;
-
-let isUpdating = false;
+let isUpdating = false; // Variável para controlar se o fechamento é devido à atualização
+let isDownloadingUpdate = false; // Variável para verificar se o download da atualização está em andamento
 
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   win = new BrowserWindow({
     width,
     height,
+    autoHideMenuBar: true,
     resizable: false,
     backgroundColor: "#191622",
     webPreferences: {
@@ -30,7 +31,7 @@ function createWindow() {
   });
 
   win.on("close", (e) => {
-    if (isUpdating) return;
+    if (isUpdating || isDownloadingUpdate) return; // Se estiver atualizando, não exibir confirmação
 
     const choice = dialog.showMessageBoxSync(win as any, {
       type: "question",
@@ -38,18 +39,16 @@ function createWindow() {
       title: "Confirmar",
       message: "Você tem certeza que deseja fechar o Gestor de Vendas?",
     });
+
     if (choice === 1) {
       e.preventDefault();
     }
   });
 
   if (app.isPackaged) {
-    // 'build/index.html'
     win.loadURL(`file://${__dirname}/../index.html`);
   } else {
     win.loadURL("http://localhost:3000/index.html");
-
-    // Hot Reloading on 'node_modules/.bin/electronPath'
     require("electron-reload")(__dirname, {
       electron: path.join(
         __dirname,
@@ -77,6 +76,33 @@ app.on("second-instance", () => {
   }
 });
 
+autoUpdater.on("download-progress", (progressObj) => {
+  isDownloadingUpdate = true; // Marcar que o download está acontecendo
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + " - Downloaded " + progressObj.percent + "%";
+  log_message =
+    log_message +
+    " (" +
+    progressObj.transferred +
+    "/" +
+    progressObj.total +
+    ")";
+  console.log(log_message);
+  win?.webContents.send(
+    "download-progress",
+    progressObj.transferred.toString()
+  );
+});
+
+autoUpdater.on("update-downloaded", () => {
+  isUpdating = true; // Marcar que a atualização será instalada
+  autoUpdater.quitAndInstall();
+});
+
+ipcMain.on("check_for_update", function () {
+  autoUpdater.checkForUpdates();
+});
+
 app.whenReady().then(async () => {
   createWindow();
   inicializeControllers();
@@ -94,6 +120,18 @@ app.whenReady().then(async () => {
       app.quit();
     }
   });
+});
+
+ipcMain.on("enter-fullscreen", () => {
+  if (win) {
+    win.setFullScreen(true);
+  }
+});
+
+ipcMain.on("exit-fullscreen", () => {
+  if (win) {
+    win.setFullScreen(false);
+  }
 });
 
 ipcMain.on("app_version", (event) => {

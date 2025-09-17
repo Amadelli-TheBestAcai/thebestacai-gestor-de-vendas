@@ -26,6 +26,7 @@ export interface ProductDto {
     description?: string;
     created_at?: string;
     deleted_at?: string;
+    upload_url?: string;
   };
   store_id?: number;
   price_unit?: string;

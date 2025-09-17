@@ -3,6 +3,7 @@ export interface SaleDto {
   id: string;
   gv_id?: number;
   name?: string;
+  nps_score?: number;
   enabled?: boolean;
   customer_reward_id?: number;
   client_cpf?: string;
@@ -60,6 +61,7 @@ export interface SaleDto {
       description?: string;
       created_at?: string;
       deleted_at?: string;
+      upload_url?: string;
       category: {
         id: number;
         name: string;

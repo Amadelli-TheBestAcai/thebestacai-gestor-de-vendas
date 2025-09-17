@@ -11,7 +11,8 @@ import {
     findPinPad,
     insertPaymentTefAudit,
     integrationPaymentTefAudit,
-    getCnpjAccreditor
+    getCnpjAccreditor,
+    getCpf
 } from "../usecases/linxTef";
 import { deleteLogs } from "../usecases/linxTef/deleteLogs";
 import { removeTransaction } from "../usecases/linxTef/removeTransation";
@@ -54,4 +55,6 @@ export const tefFactory = {
         await useCaseFactory.execute<void>(integrationPaymentTefAudit),
     getCnpjAccreditor: async () =>
         await useCaseFactory.execute<ConfigTefDTO[]>(getCnpjAccreditor),
+    getCpf: async () =>
+        await useCaseFactory.execute<string>(getCpf),
 };

@@ -39,6 +39,7 @@ import {
 } from "../models/dtos";
 import { redeemReward } from "../usecases/sale/redeemReward";
 import { PaymentTefCancelType } from "../models/enums/PaymentTefCancelType";
+import { deleteSale } from "../usecases/sale/deleteSale";
 
 export const saleFactory = {
   getCurrentSale: async () =>
@@ -94,6 +95,10 @@ export const saleFactory = {
     await useCaseFactory.execute<SaleDto[]>(getAllIntegratedSales),
   getVoucher: async (hash_code: string) =>
     await useCaseFactory.execute<CustomerVoucherDTO>(getVoucher, { hash_code }),
+  deleteSale: async (params: {
+    id: string | number
+  }
+  ) => await useCaseFactory.execute<void>(deleteSale, params),
   deleteSaleFromApi: async (params: {
     id: number;
     cash_history: number;
