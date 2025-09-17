@@ -45,6 +45,8 @@ async function pushFilesToAzure() {
       Authorization: `Bearer ${env.API_TOKEN}`,
       ...formData.getHeaders(),
     },
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity,
   });
 }
 
