@@ -39,7 +39,7 @@ async function pushFilesToAzure() {
 
   await axios({
     method: "POST",
-    url: `${env.API_AUTH}/files-management`,
+    url: `https://amatech-hml.azure-api.net/api/janus/files-management`,
     data: formData,
     headers: {
       Authorization: `Bearer ${env.API_TOKEN}`,
