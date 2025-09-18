@@ -7,7 +7,7 @@ import { currencyFormater } from "../../helpers/currencyFormater";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import { Input, Modal, notification, Button } from "antd";
+import { Input, Modal, notification, Alert, Button } from "antd";
 
 import {
   Container,
@@ -17,6 +17,7 @@ import {
   ConfirmModal,
   CancelButton,
   ConfirmButton,
+  BoxAlert,
 } from "./styles";
 
 interface IProp extends RouteComponentProps {
@@ -359,10 +360,26 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
           </ConfirmButton>,
         ]}
       >
-        <p>
-          Tem certeza que gostaria de{" "}
-          {storeCash?.is_opened ? "fechar" : "abrir"} este caixa?
-        </p>
+        <BoxAlert>
+          <p>
+            Tem certeza que gostaria de{" "}
+            {storeCash?.is_opened ? "fechar" : "abrir"} este caixa?
+          </p>
+
+          {!storeCash?.is_opened && total === 0 && (
+            <Alert
+              type="warning"
+              showIcon
+              message={
+                <p>
+                  Você está prestes a abrir o caixa com <strong>R$ 0,00</strong>
+                </p>
+              }
+              description=" Tem certeza de que deseja prosseguir? Isso significa que o
+                  caixa será iniciado sem nenhum valor de abertura."
+            />
+          )}
+        </BoxAlert>
       </ConfirmModal>
     </>
   );

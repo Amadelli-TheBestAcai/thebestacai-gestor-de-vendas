@@ -129,7 +129,6 @@ export const ConfirmModal = styled(Modal)`
 
     p {
       font-size: 1rem;
-      text-align: center;
       margin: 0;
     }
   }
@@ -268,4 +267,10 @@ export const ConfirmButton = styled(Button)`
     font-size: 0.7rem;
     padding: 0.3rem 1rem;
   }
+`;
+
+export const BoxAlert = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
