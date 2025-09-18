@@ -62,7 +62,7 @@ class UpdateBalanceHistory implements IUseCaseFactory {
 
     const response = getBalanceHistory(sales)
 
-    const { data: balance_history } = await odinApi.get(`/balance_history?cash_history_id=${storeCash.history_id}`)
+    const { data: balance_history } = await odinApi.get(`/balance_history/cash_history_id=${storeCash.history_id}`)
 
     await this.syncBalanceHistory(response, balance_history)
   }
