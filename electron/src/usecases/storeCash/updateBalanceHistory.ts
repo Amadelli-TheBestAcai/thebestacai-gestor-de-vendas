@@ -6,6 +6,7 @@ import { getCurrentStoreCash } from "./getCurrentStoreCash";
 import { useCaseFactory } from "../useCaseFactory";
 import { getBalanceHistory } from '../../helpers/GetBalanceHistory'
 import odinApi from '../../providers/odinApi'
+import { Response } from "../../helpers/GetBalanceHistory";
 
 class UpdateBalanceHistory implements IUseCaseFactory {
   constructor(
@@ -17,6 +18,24 @@ class UpdateBalanceHistory implements IUseCaseFactory {
     ),
     private getCurrentSaleUseCase = getCurrentStoreCash
   ) { }
+
+  public async syncBalanceHistory(
+    response: Response,
+    balance_history: Response & { id: number }
+  ) {
+    const divergents: Partial<Response> = {};
+
+    for (const key in response) {
+      if (response[key as keyof Response] !== balance_history[key as keyof Response]) {
+        divergents[key as keyof Response] = response[key as keyof Response];
+      }
+    }
+
+    if (Object.keys(divergents).length > 0) {
+      await odinApi.put(`/balance_history/${balance_history.id}/update_only`, divergents);
+    }
+  }
+
   async execute(): Promise<void> {
     const { response: storeCash, has_internal_error: errorOnGetCurrentStoreCash } =
       await useCaseFactory.execute<StoreCashDto>(this.getCurrentSaleUseCase)
@@ -43,7 +62,9 @@ class UpdateBalanceHistory implements IUseCaseFactory {
 
     const response = getBalanceHistory(sales)
 
-    await odinApi.post('/balance_history', { ...response, cash_history_id: storeCash.history_id })
+    const { data: balance_history } = await odinApi.get(`/balance_history?cash_history_id=${storeCash.history_id}`)
+
+    await this.syncBalanceHistory(response, balance_history)
   }
 }
 
