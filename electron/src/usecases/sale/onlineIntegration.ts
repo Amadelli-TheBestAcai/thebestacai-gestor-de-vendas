@@ -55,6 +55,7 @@ class OnlineIntegration implements IUseCaseFactory {
 
     try {
       const sales: SaleDto[] = await this.notIntegratedSaleRepository.getAll();
+      console.log(sales, 'sales')
 
       if (sales.length) {
         await Promise.all(
