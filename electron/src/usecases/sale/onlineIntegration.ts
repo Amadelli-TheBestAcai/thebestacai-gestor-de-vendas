@@ -80,6 +80,8 @@ class OnlineIntegration implements IUseCaseFactory {
               }));
               await midasApi.post("/sales", payload);
               await this.notIntegratedSaleRepository.deleteById(salePayload.id);
+              console.log(salePayload.cash_history_id, 'salePayload.cash_history_id');
+              console.log(storeCash.history_id, 'storeCash.history_id');
               await this.integrateSaleRepository.create({
                 ...salePayload,
                 cash_history_id:
