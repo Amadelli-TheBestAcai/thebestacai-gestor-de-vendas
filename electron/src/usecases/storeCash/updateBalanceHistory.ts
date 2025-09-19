@@ -76,6 +76,8 @@ class UpdateBalanceHistory implements IUseCaseFactory {
 
     if (balance_history) {
       await this.syncBalanceHistory(response, balance_history)
+    } else {
+      await odinApi.post('/balance_history', { ...response, cash_history_id: storeCash.history_id })
     }
   }
 }
