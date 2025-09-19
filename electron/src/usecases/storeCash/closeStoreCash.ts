@@ -12,6 +12,7 @@ import {
 } from "../../models/gestor";
 import { updateBalanceHistory } from "./updateBalanceHistory";
 import { integrateProductWaste } from "../productWaste/integrateProductWaste";
+import { getSaleFromApi } from "../sale/getSaleFromApi";
 import moment from "moment";
 
 interface Request {
@@ -32,17 +33,24 @@ class CloseStoreCash implements IUseCaseFactory {
     private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(
       StorageNames.Old_Cash_History
     ),
+    private integratedSaleRepository = new BaseRepository<SaleDto>(
+      StorageNames.Integrated_Sale
+    ),
+    private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
+      StorageNames.Not_Integrated_Sale
+    ),
     private _updateBalanceHistory = updateBalanceHistory,
     private deliverySaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Delivery_Sale
     ),
-    private integrateProductWasteUseCase = integrateProductWaste
-  ) {}
+    private integrateProductWasteUseCase = integrateProductWaste,
+    private getSaleFromApiUseCase = getSaleFromApi
+  ) { }
 
   private async closeCashLocal(
-    company_id: number
+    company_id: number,
+    storeCash: StoreCashDto | undefined
   ): Promise<StoreCashDto | undefined> {
-    const storeCash = await this.storeCashRepository.getOne();
     const updatedStoreCash = await this.storeCashRepository.update(
       storeCash?.id,
       {
@@ -83,8 +91,16 @@ class CloseStoreCash implements IUseCaseFactory {
       );
     }
 
+    const storeCash = await this.storeCashRepository.getOne();
+
+    if (!storeCash) {
+      throw new Error(
+        "Não foi possível obter os dados do caixa. Por favor, tente novamente."
+      );
+    }
+
     if (closeCashLocal) {
-      return this.closeCashLocal(currentStore.company_id);
+      return this.closeCashLocal(currentStore.company_id, storeCash);
     }
 
     const isConnected = await checkInternet();
@@ -105,6 +121,31 @@ class CloseStoreCash implements IUseCaseFactory {
     if (deliverySales.length > 0) {
       throw new Error("Você ainda possui vendas pendentes no delivery");
     }
+
+    const { has_internal_error: errorOnGetSalesFromApi, response: salesResponseApi } = await useCaseFactory.execute<SaleDto[]>(this.getSaleFromApiUseCase);
+
+    if (errorOnGetSalesFromApi) {
+      throw new Error("Falha ao buscar vendas do servidor. Fechamento de caixa cancelado.");
+    }
+
+    const notIntegratedSales = await this.notIntegratedSaleRepository.getAll({
+      cash_history_id: storeCash.history_id
+    })
+
+    const integratedSales = await this.integratedSaleRepository.getAll({
+      cash_history_id: storeCash.history_id
+    })
+
+    const localSales = [...notIntegratedSales, ...integratedSales];
+
+    const apiSaleRefs = new Set((salesResponseApi ?? []).map(sale => sale.ref));
+
+    const salesNotInApi: SaleDto[] = localSales.filter(
+      (sale) => !apiSaleRefs.has(sale.ref)
+    );
+
+    console.log(salesNotInApi, 'salesNotInApi')
+
     const { has_internal_error: errorOnUpdateBalanceHistory } =
       await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 
@@ -114,12 +155,13 @@ class CloseStoreCash implements IUseCaseFactory {
 
     await odinApi.put(
       `/store_cashes/${currentStore.company_id}-${code}/close`,
-      { amount_on_close: +amount_on_close?.toString() || 0,
+      {
+        amount_on_close: +amount_on_close?.toString() || 0,
         local_closed_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-       }
+      }
     );
 
-    return this.closeCashLocal(currentStore.company_id);
+    return this.closeCashLocal(currentStore.company_id, storeCash);
   }
 }
 
