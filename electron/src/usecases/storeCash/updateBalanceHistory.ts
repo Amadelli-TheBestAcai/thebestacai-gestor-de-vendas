@@ -27,7 +27,7 @@ class UpdateBalanceHistory implements IUseCaseFactory {
 
     for (const key in response) {
       const responseValue = response[key as keyof Response];
-      const balanceValue = balance_history?.[key as keyof Response]; 
+      const balanceValue = balance_history?.[key as keyof Response];
 
       if (responseValue !== balanceValue) {
         divergents[key as keyof Response] = responseValue;
@@ -74,7 +74,9 @@ class UpdateBalanceHistory implements IUseCaseFactory {
 
     const { data: { data: balance_history } } = await odinApi.get(`/balance_history/${storeCash.history_id}`)
 
-    await this.syncBalanceHistory(response, balance_history)
+    if (balance_history) {
+      await this.syncBalanceHistory(response, balance_history)
+    }
   }
 }
 
