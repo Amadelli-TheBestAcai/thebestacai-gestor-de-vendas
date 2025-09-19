@@ -33,12 +33,6 @@ class CloseStoreCash implements IUseCaseFactory {
     private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(
       StorageNames.Old_Cash_History
     ),
-    private integratedSaleRepository = new BaseRepository<SaleDto>(
-      StorageNames.Integrated_Sale
-    ),
-    private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
-      StorageNames.Not_Integrated_Sale
-    ),
     private _updateBalanceHistory = updateBalanceHistory,
     private deliverySaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Delivery_Sale
