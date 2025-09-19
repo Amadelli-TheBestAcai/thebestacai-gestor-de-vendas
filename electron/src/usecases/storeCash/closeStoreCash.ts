@@ -12,7 +12,7 @@ import {
 } from "../../models/gestor";
 import { updateBalanceHistory } from "./updateBalanceHistory";
 import { integrateProductWaste } from "../productWaste/integrateProductWaste";
-import { getSaleFromApi } from "../sale/getSaleFromApi";
+import { synchronizeSales } from "../sale/synchronizeSales";
 import moment from "moment";
 
 interface Request {
@@ -44,7 +44,7 @@ class CloseStoreCash implements IUseCaseFactory {
       StorageNames.Delivery_Sale
     ),
     private integrateProductWasteUseCase = integrateProductWaste,
-    private getSaleFromApiUseCase = getSaleFromApi
+    private synchronizeSalesUseCase = synchronizeSales
   ) { }
 
   private async closeCashLocal(
@@ -118,6 +118,13 @@ class CloseStoreCash implements IUseCaseFactory {
     const deliverySales = await this.deliverySaleRepository.getAll();
     if (deliverySales.length > 0) {
       throw new Error("Você ainda possui vendas pendentes no delivery");
+    }
+
+    const { has_internal_error: errorOnUpdateSynchronizeSalesUseCase } =
+      await useCaseFactory.execute<void>(this.synchronizeSalesUseCase);
+
+    if (errorOnUpdateSynchronizeSalesUseCase) {
+      throw new Error("Falha ao sincronizar vendas");
     }
 
     const { has_internal_error: errorOnUpdateBalanceHistory } =

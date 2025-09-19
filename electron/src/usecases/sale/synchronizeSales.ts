@@ -51,7 +51,7 @@ class SynchronizeSales implements IUseCaseFactory {
             (sale) => !apiSaleRefs.has(sale.ref)
         );
 
-        console.log(salesNotInApi)
+        console.log(salesNotInApi, 'salesNotInApi')
 
     }
 }
