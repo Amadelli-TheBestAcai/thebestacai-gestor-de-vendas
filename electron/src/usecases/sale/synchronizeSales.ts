@@ -3,11 +3,11 @@ import { SaleDto, StoreCashDto, StoreDto } from "../../models/gestor";
 import { BaseRepository } from "../../repository/baseRepository";
 import { StorageNames } from "../../repository/storageNames";
 import { useCaseFactory } from "../useCaseFactory";
-import { getSaleFromApi } from "./getSaleFromApi";
 import midasApi from "../../providers/midasApi";
 import { salesFormaterToIntegrate } from "../../helpers/salesFormaterToIntegrate";
 import { redeemReward } from "./redeemReward";
 import { getUser } from "../user";
+import { getSalesByCashHistories } from "./getSaleByCashHistory";
 
 class SynchronizeSales implements IUseCaseFactory {
     constructor(
@@ -21,7 +21,7 @@ class SynchronizeSales implements IUseCaseFactory {
             StorageNames.Not_Integrated_Sale
         ),
         private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
-        private getSaleFromApiUseCase = getSaleFromApi,
+        private getSalesByCashHistoriesUseCase = getSalesByCashHistories,
         private redeemRewardUseCase = redeemReward,
         private getUserUseCase = getUser
     ) { }
@@ -41,13 +41,6 @@ class SynchronizeSales implements IUseCaseFactory {
             );
         }
 
-        const { has_internal_error: errorOnGetSalesFromApi, response: salesResponseApi } =
-            await useCaseFactory.execute<SaleDto[]>(this.getSaleFromApiUseCase, { withClosedCash: true });
-
-        if (errorOnGetSalesFromApi) {
-            throw new Error("Falha ao buscar vendas do servidor. Fechamento de caixa cancelado.");
-        }
-
         const notIntegratedSales = await this.notIntegratedSaleRepository.getAll({
             cash_history_id: storeCash.history_id
         })
@@ -57,6 +50,15 @@ class SynchronizeSales implements IUseCaseFactory {
         })
 
         const localSales = [...notIntegratedSales, ...integratedSales];
+
+        const cashHistories = Array.from(new Set(localSales.map(sale => sale.cash_history_id)));
+
+        const { has_internal_error: errorOnGetSalesFromApi, response: salesResponseApi } =
+            await useCaseFactory.execute<SaleDto[]>(this.getSalesByCashHistoriesUseCase, cashHistories);
+
+        if (errorOnGetSalesFromApi) {
+            throw new Error("Falha ao buscar vendas do servidor. Fechamento de caixa cancelado.");
+        }
 
         const apiSaleRefs = new Set((salesResponseApi ?? []).map(sale => sale.ref));
 
