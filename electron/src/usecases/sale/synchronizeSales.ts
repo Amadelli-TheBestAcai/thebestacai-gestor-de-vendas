@@ -89,7 +89,7 @@ class SynchronizeSales implements IUseCaseFactory {
                                 ...sale,
                                 store_id: storeCash.store_id,
                             }));
-                            await midasApi.post("/sales", payload);
+                            await midasApi.post("/sales2", payload);
                         } catch (error) {
                             console.log(error);
                         }
