@@ -21,26 +21,30 @@ class UpdateBalanceHistory implements IUseCaseFactory {
 
   public async syncBalanceHistory(
     response: Response,
-    balance_history: Partial<Response> & { id: number }
+    balance_history: { id: number } & Partial<Response>
   ) {
     const divergents: Partial<Response> = {};
 
     for (const key in response) {
       const responseValue = response[key as keyof Response];
-      const balanceValue = balance_history[key as keyof Response];
+      const balanceValue = balance_history?.[key as keyof Response]; 
 
-      if (balanceValue !== undefined && responseValue !== balanceValue) {
+      if (responseValue !== balanceValue) {
         divergents[key as keyof Response] = responseValue;
       }
     }
 
     if (Object.keys(divergents).length > 0) {
+      console.log("Campos divergentes:", divergents);
+      console.log("Balance history recebido:", balance_history);
+
       await odinApi.put(
         `/balance_history/${balance_history.id}/update_only`,
         divergents
       );
     }
   }
+
 
   async execute(): Promise<void> {
     const { response: storeCash, has_internal_error: errorOnGetCurrentStoreCash } =
