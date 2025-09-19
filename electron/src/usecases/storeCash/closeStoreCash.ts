@@ -49,8 +49,15 @@ class CloseStoreCash implements IUseCaseFactory {
 
   private async closeCashLocal(
     company_id: number,
-    storeCash: StoreCashDto | undefined
   ): Promise<StoreCashDto | undefined> {
+    const storeCash = await this.storeCashRepository.getOne();
+
+    if (!storeCash) {
+      throw new Error(
+        "Não foi possível obter os dados do caixa. Por favor, tente novamente."
+      );
+    }
+
     const updatedStoreCash = await this.storeCashRepository.update(
       storeCash?.id,
       {
@@ -58,7 +65,6 @@ class CloseStoreCash implements IUseCaseFactory {
       }
     );
 
-    
     const {
       data: { history },
     } = await odinApi.get(
@@ -91,16 +97,8 @@ class CloseStoreCash implements IUseCaseFactory {
       );
     }
 
-    const storeCash = await this.storeCashRepository.getOne();
-
-    if (!storeCash) {
-      throw new Error(
-        "Não foi possível obter os dados do caixa. Por favor, tente novamente."
-      );
-    }
-
     if (closeCashLocal) {
-      return this.closeCashLocal(currentStore.company_id, storeCash);
+      return this.closeCashLocal(currentStore.company_id);
     }
 
     const isConnected = await checkInternet();
@@ -122,31 +120,6 @@ class CloseStoreCash implements IUseCaseFactory {
       throw new Error("Você ainda possui vendas pendentes no delivery");
     }
 
-    const { has_internal_error: errorOnGetSalesFromApi, response: salesResponseApi } = 
-    await useCaseFactory.execute<SaleDto[]>(this.getSaleFromApiUseCase , { withClosedCash: true });
-
-    if (errorOnGetSalesFromApi) {
-      throw new Error("Falha ao buscar vendas do servidor. Fechamento de caixa cancelado.");
-    }
-
-    const notIntegratedSales = await this.notIntegratedSaleRepository.getAll({
-      cash_history_id: storeCash.history_id
-    })
-
-    const integratedSales = await this.integratedSaleRepository.getAll({
-      cash_history_id: storeCash.history_id
-    })
-
-    const localSales = [...notIntegratedSales, ...integratedSales];
-
-    const apiSaleRefs = new Set((salesResponseApi ?? []).map(sale => sale.ref));
-
-    const salesNotInApi: SaleDto[] = localSales.filter(
-      (sale) => !apiSaleRefs.has(sale.ref)
-    );
-
-    console.log(salesNotInApi, 'salesNotInApi')
-
     const { has_internal_error: errorOnUpdateBalanceHistory } =
       await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 
@@ -162,7 +135,7 @@ class CloseStoreCash implements IUseCaseFactory {
       }
     );
 
-    return this.closeCashLocal(currentStore.company_id, storeCash);
+    return this.closeCashLocal(currentStore.company_id);
   }
 }
 
