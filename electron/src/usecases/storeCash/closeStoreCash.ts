@@ -122,7 +122,8 @@ class CloseStoreCash implements IUseCaseFactory {
       throw new Error("Você ainda possui vendas pendentes no delivery");
     }
 
-    const { has_internal_error: errorOnGetSalesFromApi, response: salesResponseApi } = await useCaseFactory.execute<SaleDto[]>(this.getSaleFromApiUseCase);
+    const { has_internal_error: errorOnGetSalesFromApi, response: salesResponseApi } = 
+    await useCaseFactory.execute<SaleDto[]>(this.getSaleFromApiUseCase , { withClosedCash: true });
 
     if (errorOnGetSalesFromApi) {
       throw new Error("Falha ao buscar vendas do servidor. Fechamento de caixa cancelado.");
