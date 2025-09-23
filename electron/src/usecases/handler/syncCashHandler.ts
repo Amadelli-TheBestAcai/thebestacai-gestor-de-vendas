@@ -74,7 +74,12 @@ class SynchronizeCashHandler implements IUseCaseFactory {
                     handlerToIntegrate.cashHandler.to_integrate = false
 
                     await this.handlerRepository.deleteById(handlerToIntegrate.id)
-                    await this.integratedHandlerRepository.create(handlerToIntegrate)
+
+                    await this.integratedHandlerRepository.upsert(
+                        { id: handlerToIntegrate.id }, 
+                        handlerToIntegrate            
+                    );
+
 
                 })
             )

@@ -5,8 +5,7 @@ import moment from "moment";
 import { v4 } from "uuid";
 
 export class BaseRepository<T extends { id?: string | number }>
-  implements IBaseRepository<T>
-{
+  implements IBaseRepository<T> {
   private storageName: string;
   private dataStore: Datastore<T>;
   constructor(storageName: string) {
@@ -65,6 +64,28 @@ export class BaseRepository<T extends { id?: string | number }>
     await this.dataStore.asyncUpdate({ id }, updatedEntity);
     return await this.dataStore.asyncFindOne({ id });
   }
+
+  async upsert(
+    criteria: Partial<T>,
+    payload: Partial<T>
+  ): Promise<T> {
+    const entity = await this.dataStore.asyncFindOne(criteria);
+
+    if (entity) {
+      const updatedEntity = { ...entity, ...payload };
+      await this.dataStore.asyncUpdate(criteria, updatedEntity);
+      return (await this.dataStore.asyncFindOne(criteria)) as T;
+    } else {
+      const newEntity: T = {
+        ...(payload as T),
+        id: payload?.id || v4(),
+        created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
+      };
+      await this.dataStore.asyncInsert(newEntity);
+      return newEntity;
+    }
+  }
+
 
   async getAll(payload?: Partial<T> | any): Promise<T[]> {
     if (payload) {
