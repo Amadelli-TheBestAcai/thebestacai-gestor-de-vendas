@@ -14,6 +14,7 @@ import { updateBalanceHistory } from "./updateBalanceHistory";
 import { integrateProductWaste } from "../productWaste/integrateProductWaste";
 import { synchronizeSales } from "../sale/synchronizeSales";
 import moment from "moment";
+import { synchronizeCashHandler } from "../handler/syncCashHandler";
 
 interface Request {
   code: string;
@@ -38,7 +39,8 @@ class CloseStoreCash implements IUseCaseFactory {
       StorageNames.Delivery_Sale
     ),
     private integrateProductWasteUseCase = integrateProductWaste,
-    private synchronizeSalesUseCase = synchronizeSales
+    private synchronizeSalesUseCase = synchronizeSales,
+    private synchronizeCashHandlerUseCase = synchronizeCashHandler
   ) { }
 
   private async closeCashLocal(
@@ -114,13 +116,20 @@ class CloseStoreCash implements IUseCaseFactory {
       throw new Error("Você ainda possui vendas pendentes no delivery");
     }
 
-    const { has_internal_error: errorOnUpdateSynchronizeSalesUseCase } =
+    const { has_internal_error: errorOnSynchronizeSalesUseCase } =
       await useCaseFactory.execute<void>(this.synchronizeSalesUseCase);
 
-    if (errorOnUpdateSynchronizeSalesUseCase) {
+    if (errorOnSynchronizeSalesUseCase) {
       throw new Error("Falha ao sincronizar vendas");
     }
 
+    const { has_internal_error: errorOnSynchronizeCashHandlerUseCase } =
+      await useCaseFactory.execute<void>(this.synchronizeCashHandlerUseCase);
+
+    if (errorOnSynchronizeCashHandlerUseCase) {
+      throw new Error("Falha ao sincronizar movimentações de caixa");
+    }
+    
     const { has_internal_error: errorOnUpdateBalanceHistory } =
       await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 

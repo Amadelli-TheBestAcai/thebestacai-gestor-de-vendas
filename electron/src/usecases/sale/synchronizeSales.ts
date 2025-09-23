@@ -20,6 +20,9 @@ class SynchronizeSales implements IUseCaseFactory {
         private notIntegratedSaleRepository = new BaseRepository<SaleDto>(
             StorageNames.Not_Integrated_Sale
         ),
+        private integrateSaleRepository = new BaseRepository<SaleDto>(
+            StorageNames.Integrated_Sale
+        ),
         private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
         private getSalesByCashHistoriesUseCase = getSalesByCashHistories,
         private redeemRewardUseCase = redeemReward,
@@ -66,8 +69,6 @@ class SynchronizeSales implements IUseCaseFactory {
             (sale) => !apiSaleRefs.has(sale.ref)
         );
 
-        console.log(salesNotInApi, 'salesNotInApi')
-
         try {
             if (salesNotInApi.length) {
                 await Promise.all(
@@ -92,6 +93,15 @@ class SynchronizeSales implements IUseCaseFactory {
                                 store_id: storeCash.store_id,
                             }));
                             await midasApi.post("/sales", payload);
+
+                            await this.notIntegratedSaleRepository.deleteById(salePayload.id);
+
+                            await this.integrateSaleRepository.create({
+                                ...salePayload,
+                                cash_history_id:
+                                    salePayload.cash_history_id || storeCash.history_id,
+                                cash_id: salePayload.cash_id || storeCash.cash_id,
+                            });
                         } catch (error) {
                             console.log(error);
                         }

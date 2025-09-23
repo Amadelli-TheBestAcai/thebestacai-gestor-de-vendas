@@ -8,6 +8,7 @@ import {
 } from "../usecases/handler";
 import { HandlerDto } from "../models/gestor";
 import { CashHandlerDTO } from "../models/dtos";
+import { synchronizeCashHandler } from "../usecases/handler/syncCashHandler";
 
 export const handlerFactory = {
   create: async (payload: any) =>
@@ -21,5 +22,7 @@ export const handlerFactory = {
   getLocalCashHandlers: async () =>
     await useCaseFactory.execute<HandlerDto[]>(getLocalCashHandlers),
   integrateHandler: async () =>
-    await useCaseFactory.execute<void>(integrateHandler)
+    await useCaseFactory.execute<void>(integrateHandler),
+  synchronizeCashHandler: async () =>
+    await useCaseFactory.execute<void>(synchronizeCashHandler)
 };
