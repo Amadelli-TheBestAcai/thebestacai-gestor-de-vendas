@@ -14,7 +14,7 @@ import { updateBalanceHistory } from "./updateBalanceHistory";
 import { integrateProductWaste } from "../productWaste/integrateProductWaste";
 import { synchronizeSales } from "../sale/synchronizeSales";
 import moment from "moment";
-import { synchronizeCashHandler } from "../handler/syncCashHandler";
+import { synchronizeCashHandler } from "../handler/synchronizeCashHandler";
 
 interface Request {
   code: string;

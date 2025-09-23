@@ -1,16 +1,13 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { getLocalCashHandlers } from "../handler";
-
+import { getLocalCashHandlers } from ".";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
 import { HandlerDto, StoreCashDto } from "../../models/gestor";
-
 import { useCaseFactory } from "../useCaseFactory";
 import mercuryApi from "../../providers/mercuryApi";
 import { formatHandlesToIntegrate } from "../../helpers/handlersFormaterToIntegrate";
-import moment from "moment";
 
 class SynchronizeCashHandler implements IUseCaseFactory {
     constructor(

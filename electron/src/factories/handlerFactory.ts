@@ -8,7 +8,7 @@ import {
 } from "../usecases/handler";
 import { HandlerDto } from "../models/gestor";
 import { CashHandlerDTO } from "../models/dtos";
-import { synchronizeCashHandler } from "../usecases/handler/syncCashHandler";
+import { synchronizeCashHandler } from "../usecases/handler/synchronizeCashHandler";
 
 export const handlerFactory = {
   create: async (payload: any) =>
