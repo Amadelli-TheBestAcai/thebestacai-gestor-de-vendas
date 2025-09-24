@@ -1,7 +1,7 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { getLocalCashHandlers } from ".";
+import { getLocalCashHandlers } from "./getLocalCashHandlers";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
 import { HandlerDto, StoreCashDto } from "../../models/gestor";
