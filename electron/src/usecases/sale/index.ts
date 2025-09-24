@@ -29,3 +29,4 @@ export * from "./removeStepSale";
 export * from './updateStatusPaymentTef'
 export * from "./synchronizeSales"
 export * from "./getSaleByCashHistory"
+export * from './markAsUsedVoucher'
