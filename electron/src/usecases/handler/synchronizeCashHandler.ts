@@ -1,11 +1,9 @@
 import { BaseRepository } from "../../repository/baseRepository";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
-import { getLocalCashHandlers } from "./getLocalCashHandlers";
 import odinApi from "../../providers/odinApi";
 import { checkInternet } from "../../providers/internetConnection";
 import { HandlerDto, StoreCashDto } from "../../models/gestor";
-import { useCaseFactory } from "../useCaseFactory";
 import mercuryApi from "../../providers/mercuryApi";
 import { formatHandlesToIntegrate } from "../../helpers/handlersFormaterToIntegrate";
 
@@ -14,7 +12,6 @@ class SynchronizeCashHandler implements IUseCaseFactory {
         private storeCashRepository = new BaseRepository<StoreCashDto>(
             StorageNames.StoreCash
         ),
-        private getLocalCashHandlersUseCase = getLocalCashHandlers,
         private handlerRepository = new BaseRepository<HandlerDto>(
             StorageNames.Handler
         ),
@@ -31,14 +28,7 @@ class SynchronizeCashHandler implements IUseCaseFactory {
 
         const storeCash = await this.storeCashRepository.getOne();
 
-        const { response: cashHandlers, has_internal_error: errorOnCashHandler, error_message: errorMessageOnCashHandler } =
-            await useCaseFactory.execute<HandlerDto[] | undefined>(
-                this.getLocalCashHandlersUseCase
-            );
-
-        if (errorOnCashHandler) {
-            throw new Error(errorMessageOnCashHandler || "Não foi possivel obter os dados da movimentação de caixa");
-        }
+        const cashHandlers = await this.handlerRepository.getAll();
 
         const { data: { data } } = await odinApi.get(
             `/cash_handler?history_id=${storeCash?.history_id}`
@@ -73,8 +63,8 @@ class SynchronizeCashHandler implements IUseCaseFactory {
                     await this.handlerRepository.deleteById(handlerToIntegrate.id)
 
                     await this.integratedHandlerRepository.upsert(
-                        { id: handlerToIntegrate.id }, 
-                        handlerToIntegrate            
+                        { id: handlerToIntegrate.id },
+                        handlerToIntegrate
                     );
 
 
