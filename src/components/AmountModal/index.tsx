@@ -372,7 +372,8 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
               showIcon
               message={
                 <p>
-                  Você está prestes a abrir o caixa com <strong>R$ 0,00</strong>
+                  Você está prestes a abrir o caixa com{" "}
+                  <strong>R$ 0,00.</strong>
                 </p>
               }
               description=" Tem certeza de que deseja prosseguir? Isso significa que o
