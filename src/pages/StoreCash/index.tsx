@@ -78,7 +78,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       } = await window.Main.storeCash.getCurrent();
       if (errorOnGetCurrentStoreCash) {
         notification.error({
-          message: "Erro ao encontrar caixa atual",
+          message: "Erro ao encontrar caixa atual.",
           duration: 5,
         });
         return;
