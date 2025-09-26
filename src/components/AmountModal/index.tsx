@@ -7,9 +7,18 @@ import { currencyFormater } from "../../helpers/currencyFormater";
 
 import MonetaryInput from "../../components/MonetaryInput";
 
-import { Input, Modal, notification } from "antd";
+import { Input, Modal, notification, Alert, Button } from "antd";
 
-import { Container, Row, Col, ButtonRegister } from "./styles";
+import {
+  Container,
+  Row,
+  Col,
+  ButtonRegister,
+  ConfirmModal,
+  CancelButton,
+  ConfirmButton,
+  BoxAlert,
+} from "./styles";
 
 interface IProp extends RouteComponentProps {
   visible: boolean;
@@ -19,6 +28,8 @@ interface IProp extends RouteComponentProps {
 const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   const { storeCash, setStoreCash } = useSale();
   const [loading, setLoading] = useState(true);
+  const [operationLoading, setOperationLoading] = useState(false);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [total, setTotal] = useState(0);
   const [amount, setAmount] = useState({
     twoHundred: null,
@@ -97,130 +108,129 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
   }, [amount]);
 
   const onFinish = () => {
-    Modal.confirm({
-      title: `${storeCash?.is_opened ? "Fechamento" : "Abertura"} de caixa`,
-      content: `Tem certeza que gostaria de ${
-        storeCash?.is_opened ? "fechar" : "abrir"
-      } este caixa?`,
-      okText: "Sim",
-      okType: "default",
-      cancelText: "Não",
-      centered: true,
-      async onOk() {
-        if (storeCash?.is_opened) {
-          if (!storeCash?.is_online) {
-            notification.error({
-              message: "Para fechar o caixa, o mesmo deverá estar Online",
+    setConfirmModalVisible(true);
+  };
+
+  const handleConfirmOperation = async () => {
+    setOperationLoading(true);
+
+    if (storeCash?.is_opened) {
+      if (!storeCash?.is_online) {
+        notification.error({
+          message: "Para fechar o caixa, o mesmo deverá estar Online",
+          duration: 5,
+        });
+        setOperationLoading(false);
+        return;
+      }
+
+      const {
+        has_internal_error: errorOnIntegrateItemOutCart,
+        error_message: errorMessageOnIntegrateItemOutCart,
+      } = await window.Main.itemOutCart.integrationItemOutCart();
+
+      if (errorOnIntegrateItemOutCart) {
+        errorMessageOnIntegrateItemOutCart
+          ? notification.warning({
+              message: errorMessageOnIntegrateItemOutCart,
+              duration: 5,
+            })
+          : notification.error({
+              message:
+                errorMessageOnIntegrateItemOutCart ||
+                "Erro ao integrar itens fora do carrinho",
               duration: 5,
             });
-            return;
-          }
+      }
 
-          const {
-            has_internal_error: errorOnIntegrateItemOutCart,
-            error_message: errorMessageOnIntegrateItemOutCart,
-          } = await window.Main.itemOutCart.integrationItemOutCart();
+      let _closedLocalStoreCash;
 
-          if (errorOnIntegrateItemOutCart) {
-            errorMessageOnIntegrateItemOutCart
-              ? notification.warning({
-                  message: errorMessageOnIntegrateItemOutCart,
-                  duration: 5,
-                })
-              : notification.error({
-                  message:
-                    errorMessageOnIntegrateItemOutCart ||
-                    "Erro ao integrar itens fora do carrinho",
-                  duration: 5,
-                });
-          }
+      const {
+        response: _storeCash,
+        has_internal_error: errorOnStoreCash,
+        error_message: errorMessageCloseStoreCash,
+      } = await window.Main.storeCash.closeStoreCash(storeCash?.code, total);
+      if (
+        errorMessageCloseStoreCash === "Você ainda possui comandas pendentes"
+      ) {
+        notification.warning({
+          message: "Você ainda possui comandas pendentes",
+          duration: 5,
+        });
+        setOperationLoading(false);
+        return;
+      }
 
-          let _closedLocalStoreCash;
+      if (errorMessageCloseStoreCash === "Caixa já esta fechado") {
+        const closeCashLocal = true;
 
-          const {
-            response: _storeCash,
-            has_internal_error: errorOnStoreCash,
-            error_message: errorMessageCloseStoreCash,
-          } = await window.Main.storeCash.closeStoreCash(
-            storeCash?.code,
-            total
-          );
-          if (
-            errorMessageCloseStoreCash ===
-            "Você ainda possui comandas pendentes"
-          ) {
-            notification.warning({
-              message: "Você ainda possui comandas pendentes",
-              duration: 5,
-            });
-            return;
-          }
+        const {
+          response: _storeCashClose,
+          has_internal_error: errorOnStoreCash,
+          error_message: errorMessageCloseStoreCash,
+        } = await window.Main.storeCash.closeStoreCash(
+          storeCash?.code,
+          total,
+          closeCashLocal
+        );
 
-          if (errorMessageCloseStoreCash === "Caixa já esta fechado") {
-            const closeCashLocal = true;
-
-            const {
-              response: _storeCashClose,
-              has_internal_error: errorOnStoreCash,
-              error_message: errorMessageCloseStoreCash,
-            } = await window.Main.storeCash.closeStoreCash(
-              storeCash?.code,
-              total,
-              closeCashLocal
-            );
-
-            if (errorOnStoreCash) {
-              notification.error({
-                message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
-                duration: 5,
-              });
-              return;
-            }
-            _closedLocalStoreCash = _storeCashClose;
-          } else if (errorOnStoreCash) {
-            notification.error({
-              message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
-              duration: 5,
-            });
-            return;
-          }
-
-          setStoreCash(_storeCash || _closedLocalStoreCash);
-
-          notification.success({
-            message: `Caixa ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso!`,
-            description: `O caixa foi ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso.`,
+        if (errorOnStoreCash) {
+          notification.error({
+            message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
             duration: 5,
           });
-          return history.push("/home");
-        } else {
-          const { response: _storeCash, has_internal_error: errorOnStoreCash } =
-            await window.Main.storeCash.openStoreCash(total);
-          if (errorOnStoreCash) {
-            notification.error({
-              message: "Erro ao abrir o caixa",
-              duration: 5,
-            });
-            return;
-          }
-          setStoreCash(_storeCash);
-          notification.success({
-            message: `Caixa ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso!`,
-            description: `O caixa foi ${
-              storeCash?.is_opened ? "fechado" : "aberto"
-            } com sucesso.`,
-            duration: 5,
-          });
-          return history.push("/home");
+          setOperationLoading(false);
+          return;
         }
-      },
-    });
+        _closedLocalStoreCash = _storeCashClose;
+      } else if (errorOnStoreCash) {
+        notification.error({
+          message: errorMessageCloseStoreCash || "Erro ao fechar o caixa",
+          duration: 5,
+        });
+        setOperationLoading(false);
+        return;
+      }
+
+      setStoreCash(_storeCash || _closedLocalStoreCash);
+
+      notification.success({
+        message: `Caixa ${
+          storeCash?.is_opened ? "fechado" : "aberto"
+        } com sucesso!`,
+        description: `O caixa foi ${
+          storeCash?.is_opened ? "fechado" : "aberto"
+        } com sucesso.`,
+        duration: 5,
+      });
+      setOperationLoading(false);
+      setConfirmModalVisible(false);
+      return history.push("/home");
+    } else {
+      const { response: _storeCash, has_internal_error: errorOnStoreCash } =
+        await window.Main.storeCash.openStoreCash(total);
+      if (errorOnStoreCash) {
+        notification.error({
+          message: "Erro ao abrir o caixa",
+          duration: 5,
+        });
+        setOperationLoading(false);
+        return;
+      }
+      setStoreCash(_storeCash);
+      notification.success({
+        message: `Caixa ${
+          storeCash?.is_opened ? "fechado" : "aberto"
+        } com sucesso!`,
+        description: `O caixa foi ${
+          storeCash?.is_opened ? "fechado" : "aberto"
+        } com sucesso.`,
+        duration: 5,
+      });
+      setOperationLoading(false);
+      setConfirmModalVisible(false);
+      return history.push("/home");
+    }
   };
 
   return (
@@ -232,7 +242,9 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
           visible={visible}
           centered
           width={800}
-          onCancel={() => setVisible(false)}
+          onCancel={() => !operationLoading && setVisible(false)}
+          closable={!operationLoading}
+          maskClosable={!operationLoading}
           footer={
             <span>
               Valor Total de {storeCash?.is_opened ? "Fechamento" : "Abertura"}:{" "}
@@ -274,12 +286,64 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
           </Row>
 
           <Row>
-            <ButtonRegister onClick={onFinish} isOpened={storeCash?.is_opened}>
+            <ButtonRegister
+              onClick={onFinish}
+              isOpened={storeCash?.is_opened}
+              disabled={operationLoading}
+            >
               {storeCash?.is_opened ? "REGISTRAR" : "ABRIR CAIXA"}
             </ButtonRegister>
           </Row>
         </Container>
       )}
+
+      <ConfirmModal
+        title={`${storeCash?.is_opened ? "Fechamento" : "Abertura"} de caixa`}
+        visible={confirmModalVisible}
+        onCancel={() => !operationLoading && setConfirmModalVisible(false)}
+        closable={!operationLoading}
+        maskClosable={!operationLoading}
+        centered
+        footer={[
+          <CancelButton
+            key="cancel"
+            onClick={() => setConfirmModalVisible(false)}
+            disabled={operationLoading}
+          >
+            Não
+          </CancelButton>,
+          <ConfirmButton
+            key="confirm"
+            onClick={handleConfirmOperation}
+            disabled={operationLoading}
+            loading={operationLoading}
+          >
+            Sim
+          </ConfirmButton>,
+        ]}
+      >
+        <BoxAlert>
+          <p>
+            Tem certeza que gostaria de{" "}
+            {storeCash?.is_opened ? "fechar" : "abrir"} este caixa?
+          </p>
+
+          {!storeCash?.is_opened && total === 0 && (
+            <Alert
+              type="warning"
+              showIcon
+              message={
+                <p>
+                  Você está prestes a abrir o caixa com{" "}
+                  <strong>R$ 0,00.</strong>
+                </p>
+              }
+              description=" Tem certeza de que deseja prosseguir? Isso significa que o
+                  caixa será iniciado sem nenhum valor de abertura."
+            />
+          )}
+        </BoxAlert>
+      </ConfirmModal>
     </>
   );
 };

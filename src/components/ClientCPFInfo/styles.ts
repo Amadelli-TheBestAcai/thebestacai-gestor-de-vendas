@@ -26,25 +26,32 @@ export const CpfTefContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 3rem;
+  gap: 0.5rem;
 `;
 
-export const ButtonCpfTef = styled.button`
-  width: 29%;
-  height: 100%;
+export const ButtonCpfTef = styled(ButtonAnt)`
+  height: 2.9rem;
+  width: 12rem;
   padding: 3px 7px;
   background: var(--orange-250);
   font-weight: 500;
   border-radius: 0.5rem;
   font-size: 0.9rem;
   color: white;
+  border: none;
   transition: 0.5s;
+  cursor: pointer;
 
-  :hover {
-    background: var(--orange-250);
+  &&&:hover,
+  &&&:active,
+  &&&:focus {
+    opacity: 80%;
+    background: var(--orange-200);
+    border: none;
+    color: var(--white);
   }
 
-  /*Responsive 1366px*/
-  @media (max-width: 1366px) {
+  @media only screen and (max-width: 1366px) {
     font-size: 0.7rem;
   }
 `;
@@ -138,10 +145,10 @@ export const ContentReward = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
-
+  flex-direction: column;
+  gap: 0.2rem;
   border: 1px solid var(--gray-50);
   border-radius: 5px;
-  padding: 0.7rem;
 `;
 
 export const InfoClientReward = styled.div`
@@ -149,6 +156,7 @@ export const InfoClientReward = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: 0.5rem;
 
   span {
     font-weight: 700;
@@ -177,4 +185,19 @@ export const DeleteCpfIcon = styled(Trash)`
   width: 1rem;
   height: 1rem;
   color: var(--white);
+`;
+
+export const FooterExpiredDate = styled.div`
+  display: flex;
+  padding: 0.2rem 0.8rem;
+  background-color: #ffd07b;
+  border: 1px solid #ffd07b;
+  width: 100%;
+  span {
+    font-size: 0.9rem;
+    color: #a95103;
+  }
+  strong {
+    font-weight: 700;
+  }
 `;
