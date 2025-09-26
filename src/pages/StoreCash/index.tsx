@@ -9,7 +9,7 @@ import Spinner from "../../components/Spinner";
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
 import { Balance as BalanceModel } from "../../models/dtos/balance";
 
-import { Modal, notification } from "antd";
+import { Modal, notification, Spin } from "antd";
 
 import {
   Container,
@@ -67,6 +67,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [modalJustify, setModalJustify] = useState(false);
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
+  const [openingOnlineCash, setOpeningOnlineCash] = useState(false);
   const { settings, setSettings } = useSettings();
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
       } = await window.Main.storeCash.getCurrent();
       if (errorOnGetCurrentStoreCash) {
         notification.error({
-          message: "Erro ao encontrar caixa atual",
+          message: "Erro ao encontrar caixa atual.",
           duration: 5,
         });
         return;
@@ -219,6 +220,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   };
 
   const openOnlineStoreCash = async () => {
+    setOpeningOnlineCash(true);
+
     if (settings.should_open_casher === false) {
       const { response: updatedSettings, has_internal_error: errorOnSettings } =
         await window.Main.settings.update(settings.id, {
@@ -227,6 +230,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         });
 
       if (errorOnSettings) {
+        setOpeningOnlineCash(false);
         return notification.error({
           message: "Erro ao atualizar as configurações",
           duration: 5,
@@ -244,6 +248,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         error_message ===
         "Sem conexão com a internet. Por favor, verifique sua conexão."
       ) {
+        setOpeningOnlineCash(false);
         return notification.warning({
           message:
             "Não é possivel abrir um caixa online, pois você está sem conexão com a internet. Por favor verifique a conexão e tente novamente",
@@ -251,6 +256,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         });
       }
 
+      setOpeningOnlineCash(false);
       error_message
         ? notification.warning({
             message: error_message,
@@ -343,6 +349,8 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
             duration: 5,
           });
     }
+
+    setOpeningOnlineCash(false);
   };
 
   return (
@@ -387,12 +395,18 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                           ? openOnlineStoreCash()
                           : setAmountModal(true)
                       }
+                      disabled={openingOnlineCash}
                       _type={
                         storeCash?.is_opened && storeCash?.is_online
                           ? "close"
                           : "open"
                       }
                     >
+                      {openingOnlineCash &&
+                        storeCash?.is_opened &&
+                        !storeCash?.is_online && (
+                          <Spin size="small" style={{ marginRight: "8px" }} />
+                        )}
                       {storeCash?.is_opened && storeCash?.is_online
                         ? "Fechar Caixa"
                         : storeCash?.is_opened && !storeCash?.is_online
