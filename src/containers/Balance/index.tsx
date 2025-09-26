@@ -191,7 +191,7 @@ const BalanceContainer: React.FC<IProps> = ({
                     if (currentTime - lastErrorTime > 2000) {
                       notification.error({
                         message:
-                          "Valor excede o limite máximo permitido de R$ 10.000,00",
+                          "Valor excede o limite máximo permitido de R$ 10.000,00.",
                         duration: 2,
                       });
                       setLastErrorTime(currentTime);
