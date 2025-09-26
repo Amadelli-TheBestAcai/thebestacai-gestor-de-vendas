@@ -96,7 +96,7 @@ const CupomModal: React.FC<ICupomProps> = ({
 
       if (has_internal_error) {
         return notification.error({
-          message: error_message || "Erro ao obter voucher",
+          message: error_message || "Erro ao obter voucher.",
           duration: 5,
         });
       }
