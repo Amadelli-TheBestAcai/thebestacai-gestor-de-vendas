@@ -4,8 +4,8 @@ import { StorageNames } from "../../repository/storageNames";
 import { SaleDto, StoreCashDto } from "../../models/gestor";
 import { getCurrentStoreCash } from "./getCurrentStoreCash";
 import { useCaseFactory } from "../useCaseFactory";
-import { getBalanceHistory } from '../../helpers/GetBalanceHistory'
-import odinApi from '../../providers/odinApi'
+import { getBalanceHistory } from "../../helpers/GetBalanceHistory";
+import odinApi from "../../providers/odinApi";
 import { Response } from "../../helpers/GetBalanceHistory";
 
 class UpdateBalanceHistory implements IUseCaseFactory {
@@ -17,7 +17,7 @@ class UpdateBalanceHistory implements IUseCaseFactory {
       StorageNames.Not_Integrated_Sale
     ),
     private getCurrentSaleUseCase = getCurrentStoreCash
-  ) { }
+  ) {}
 
   public async syncBalanceHistory(
     response: Response,
@@ -35,9 +35,6 @@ class UpdateBalanceHistory implements IUseCaseFactory {
     }
 
     if (Object.keys(divergents).length > 0) {
-      console.log("Campos divergentes:", divergents);
-      console.log("Balance history recebido:", balance_history);
-
       await odinApi.put(
         `/balance_history/${balance_history.id}/update_only`,
         divergents
@@ -45,10 +42,11 @@ class UpdateBalanceHistory implements IUseCaseFactory {
     }
   }
 
-
   async execute(): Promise<void> {
-    const { response: storeCash, has_internal_error: errorOnGetCurrentStoreCash } =
-      await useCaseFactory.execute<StoreCashDto>(this.getCurrentSaleUseCase)
+    const {
+      response: storeCash,
+      has_internal_error: errorOnGetCurrentStoreCash,
+    } = await useCaseFactory.execute<StoreCashDto>(this.getCurrentSaleUseCase);
 
     if (errorOnGetCurrentStoreCash) {
       throw new Error("Erro ao obter caixa atual");
@@ -58,26 +56,33 @@ class UpdateBalanceHistory implements IUseCaseFactory {
     }
 
     const notIntegratedSales = await this.notIntegratedSaleRepository.getAll({
-      cash_history_id: storeCash.history_id
-    })
+      cash_history_id: storeCash.history_id,
+    });
 
     const integratedSales = await this.integratedSaleRepository.getAll({
-      cash_history_id: storeCash.history_id
-    })
+      cash_history_id: storeCash.history_id,
+    });
 
-    const sales = [
-      ...notIntegratedSales,
-      ...integratedSales
-    ].filter(sale => !sale.deleted_at && (sale.cash_history_id === storeCash.history_id) && !sale.abstract_sale);
+    const sales = [...notIntegratedSales, ...integratedSales].filter(
+      (sale) =>
+        !sale.deleted_at &&
+        sale.cash_history_id === storeCash.history_id &&
+        !sale.abstract_sale
+    );
 
-    const response = getBalanceHistory(sales)
+    const response = getBalanceHistory(sales);
 
-    const { data: { data: balance_history } } = await odinApi.get(`/balance_history/${storeCash.history_id}`)
+    const {
+      data: { data: balance_history },
+    } = await odinApi.get(`/balance_history/${storeCash.history_id}`);
 
     if (balance_history) {
-      await this.syncBalanceHistory(response, balance_history)
+      await this.syncBalanceHistory(response, balance_history);
     } else {
-      await odinApi.post('/balance_history', { ...response, cash_history_id: storeCash.history_id })
+      await odinApi.post("/balance_history", {
+        ...response,
+        cash_history_id: storeCash.history_id,
+      });
     }
   }
 }
