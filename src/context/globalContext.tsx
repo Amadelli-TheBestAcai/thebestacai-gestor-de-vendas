@@ -312,6 +312,47 @@ export function GlobalProvider({ children }) {
         0
       ) || 0;
 
+    if (currentSale.customerVoucher?.id) {
+      const { has_internal_error: errorOnMarkAsUsedVoucher, error_message } =
+        await window.Main.sale.markAsUsedVoucher(
+          currentSale.customerVoucher.id
+        );
+
+      if (errorOnMarkAsUsedVoucher) {
+        notification.error({
+          message: error_message || "Erro ao marcar cupom como usado",
+          duration: 5,
+        });
+        setSavingSale(false);
+
+        return;
+      }
+    }
+
+    if (currentSale.customer_reward_id) {
+      const payload = {
+        store_id: store.id,
+        user_name: user.name,
+        user_id: user.id,
+        company_name: store.company.company_name,
+      };
+      const { has_internal_error: errorOnMarkAsUsedReward, error_message } =
+        await window.Main.sale.redeemReward(
+          currentSale.customer_reward_id,
+          payload
+        );
+
+      if (errorOnMarkAsUsedReward) {
+        notification.error({
+          message: error_message || "Erro ao marcar recompensa como resgatada",
+          duration: 5,
+        });
+        setSavingSale(false);
+
+        return;
+      }
+    }
+
     if (
       (currentSale.items.length && settings.should_emit_nfce_per_sale) ||
       (currentSale.items.length && currentSale.cpf_used_nfce)
