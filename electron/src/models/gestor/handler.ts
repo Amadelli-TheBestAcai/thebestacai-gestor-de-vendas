@@ -11,6 +11,7 @@ export interface HandlerDto {
     amount: number;
     to_integrate?: boolean;
     order_id?: number;
+    ref: string;
   };
   sendToShop: boolean;
   shopOrder: {

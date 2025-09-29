@@ -277,24 +277,6 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     });
 
     const {
-      has_internal_error: internalErrorOnOnlineIntegrate,
-      error_message: errorMessageOnOnlineTntegrate,
-    } = await window.Main.sale.onlineIntegration();
-
-    if (internalErrorOnOnlineIntegrate) {
-      errorMessageOnOnlineTntegrate
-        ? notification.warning({
-            message: errorMessageOnOnlineTntegrate,
-            duration: 5,
-          })
-        : notification.error({
-            message:
-              errorMessageOnOnlineTntegrate || "Erro ao integrar venda online",
-            duration: 5,
-          });
-    }
-
-    const {
       has_internal_error: errorOnIntegrateHandler,
       error_message: errorMessageOnIntegrateHandler,
     } = await window.Main.handler.integrateHandler();

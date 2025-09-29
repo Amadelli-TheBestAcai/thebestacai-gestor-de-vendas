@@ -2,7 +2,7 @@ import { SaleDto } from "../models/gestor";
 import { PaymentType } from "../models/enums/paymentType";
 import { SalesTypes } from "../models/enums/salesTypes";
 
-interface Response {
+export interface Response {
   store_sale: number,
   delivery_sale: number,
   total: number,
