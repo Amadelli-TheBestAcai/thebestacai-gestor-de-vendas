@@ -12,7 +12,7 @@ class GetPdfTheBestGamesFiles implements IUseCaseFactory {
     }
 
     const { data } = await janusApi.get(
-      `/files-management/ti/files-the-best-games/teste-the-best-game.pdf/beautify`,
+      `/files-management/ti/files-the-best-games/Teste.pdf/beautify`,
       {
         responseType: "arraybuffer",
       }
