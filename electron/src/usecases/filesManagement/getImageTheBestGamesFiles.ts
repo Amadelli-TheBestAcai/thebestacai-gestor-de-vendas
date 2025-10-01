@@ -2,8 +2,8 @@ import { checkInternet } from "../../providers/internetConnection";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import janusApi from "../../providers/janusApi";
 
-class GetTheBestGamesFiles implements IUseCaseFactory {
-  async execute(): Promise<any> {
+class GetImageTheBestGamesFiles implements IUseCaseFactory {
+  async execute(): Promise<Buffer> {
     const isConnectInternet = await checkInternet();
     if (!isConnectInternet) {
       throw new Error(
@@ -12,11 +12,14 @@ class GetTheBestGamesFiles implements IUseCaseFactory {
     }
 
     const { data } = await janusApi.get(
-      `/files-management/ti/files-the-best-games/teste-the-best-game.png/beautify`
+      `/files-management/ti/files-the-best-games/teste-the-best-game.png/beautify`,
+      {
+        responseType: "arraybuffer",
+      }
     );
 
-    return data;
+    return Buffer.from(data, "binary");
   }
 }
 
-export const getTheBestGamesFiles = new GetTheBestGamesFiles();
+export const getImageTheBestGamesFiles = new GetImageTheBestGamesFiles();

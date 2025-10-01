@@ -1,1 +1,1 @@
-export * from './getTheBestGamesFiles'
+export * from './getImageTheBestGamesFiles'
