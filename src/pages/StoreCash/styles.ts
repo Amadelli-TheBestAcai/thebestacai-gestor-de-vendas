@@ -308,7 +308,7 @@ export const CloseCashContatiner = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
-  width: 30%;
+  width: 40%;
   height: 100%;
 `;
 
@@ -322,6 +322,9 @@ export const OpenCloseButton = styled.button<IOpenCloseButton>`
   color: white;
   font-size: 0.9rem;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 500;
   border-radius: 4px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,

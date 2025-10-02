@@ -5,11 +5,12 @@ import moment from "moment";
 
 import AmountModal from "../../components/AmountModal";
 import Spinner from "../../components/Spinner";
+import TheBestGameModal from "../../components/TheBestGameModal";
 
 import { StoreCashHistoryDTO } from "../../models/dtos/storeCashHistory";
 import { Balance as BalanceModel } from "../../models/dtos/balance";
 
-import { Modal, notification } from "antd";
+import { Modal, notification, Spin } from "antd";
 
 import {
   Container,
@@ -62,11 +63,15 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   const [storeCashHistory, setStoreCashHistory] =
     useState<StoreCashHistoryDTO | null>(null);
   const [amountModal, setAmountModal] = useState<boolean>(false);
+  const [theBestGameModal, setTheBestGameModal] = useState<boolean>(false);
   const [balance, setBalance] = useState<BalanceModel>();
   const [loading, setLoading] = useState(true);
   const [modalJustify, setModalJustify] = useState(false);
   const [updatingCashObservation, setUpdatingCashObservation] = useState(false);
   const [justify, setJustify] = useState<string>("");
+  const [openingOnlineCash, setOpeningOnlineCash] = useState(false);
+  const [checkingStatus, setCheckingStatus] = useState(false);
+  const [gameData, setGameData] = useState<any>(null);
   const { settings, setSettings } = useSettings();
 
   useEffect(() => {
@@ -216,6 +221,47 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
     }
     setUpdatingCashObservation(false);
     setModalJustify(false);
+  };
+
+  const handleOpenAmountModal = async () => {
+    if (checkingStatus) return;
+
+    setCheckingStatus(true);
+
+    try {
+      const {
+        has_internal_error: errorOnGetFiles,
+        error_message,
+        response,
+      } = await window.Main.filesManagement.getFilesTheBestGames();
+
+      if (errorOnGetFiles) {
+        console.error("Erro ao verificar status:", error_message);
+        setAmountModal(true);
+        return;
+      }
+
+      const gameData =
+        typeof response === "string" ? JSON.parse(response) : response;
+
+      setGameData(gameData);
+
+      if (gameData?.status === true) {
+        setTheBestGameModal(true);
+      } else {
+        setAmountModal(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar status:", error);
+      setAmountModal(true);
+    } finally {
+      setCheckingStatus(false);
+    }
+  };
+
+  const handleCloseTheBestGameModal = () => {
+    setTheBestGameModal(false);
+    setAmountModal(true);
   };
 
   const openOnlineStoreCash = async () => {
@@ -385,14 +431,21 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
                       onClick={() =>
                         storeCash?.is_opened && !storeCash?.is_online
                           ? openOnlineStoreCash()
-                          : setAmountModal(true)
+                          : handleOpenAmountModal()
                       }
+                      disabled={openingOnlineCash || checkingStatus}
                       _type={
                         storeCash?.is_opened && storeCash?.is_online
                           ? "close"
                           : "open"
                       }
                     >
+                      {(openingOnlineCash &&
+                        storeCash?.is_opened &&
+                        !storeCash?.is_online) ||
+                      (checkingStatus && !storeCash?.is_opened) ? (
+                        <Spin size="small" style={{ marginRight: "8px" }} />
+                      ) : null}
                       {storeCash?.is_opened && storeCash?.is_online
                         ? "Fechar Caixa"
                         : storeCash?.is_opened && !storeCash?.is_online
@@ -423,6 +476,11 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         )}
       </PageContent>
       <AmountModal visible={amountModal} setVisible={setAmountModal} />
+      <TheBestGameModal
+        visible={theBestGameModal}
+        onClose={handleCloseTheBestGameModal}
+        gameData={gameData}
+      />
       <Modal
         title={`Caixa anterior fechado com um valor incorreto. [${currencyFormater(
           +storeCashHistory?.result_cash

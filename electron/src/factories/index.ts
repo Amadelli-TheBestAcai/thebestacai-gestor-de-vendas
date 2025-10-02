@@ -8,4 +8,5 @@ export * from "./storeCashFactory";
 export * from "./storeFactory";
 export * from "./commonFactory";
 export * from "./productWasteFactory";
-export * from './linxFactory'
+export * from "./linxFactory";
+export * from "./filesManagementFactory";
