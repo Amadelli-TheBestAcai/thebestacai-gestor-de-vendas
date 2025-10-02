@@ -13,7 +13,7 @@ export const ImageContainer = styled.div`
 
 export const ImagePlaceholder = styled.div`
   width: 100%;
-  background-color: #f0f0f0;
+  height: 20rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,11 +21,6 @@ export const ImagePlaceholder = styled.div`
   border-radius: 8px;
   margin-bottom: 20px;
   gap: 12px;
-
-  span {
-    color: #666;
-    font-size: 14px;
-  }
 `;
 
 export const ButtonContainer = styled.div`

@@ -1,5 +1,5 @@
-import React from "react";
-import { Modal } from "antd";
+import React, { useState, useEffect } from "react";
+import { Modal, Spin } from "antd";
 import {
   Container,
   ImageContainer,
@@ -9,10 +9,17 @@ import {
   ImagePlaceholder,
 } from "./styles";
 
+interface TheBestGameData {
+  status: boolean;
+  image_url: string;
+  action_button_url: string;
+  action_button_text: string;
+}
+
 interface TheBestGameModalProps {
   visible: boolean;
   onClose: () => void;
-  gameData: any;
+  gameData: TheBestGameData | null;
 }
 
 const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
@@ -20,6 +27,25 @@ const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
   onClose,
   gameData,
 }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    if (visible && gameData?.image_url) {
+      setImageLoaded(false);
+
+      const img = new Image();
+      img.onload = () => setImageLoaded(true);
+      img.onerror = () => setImageLoaded(true);
+      img.src = gameData.image_url;
+
+      const timeout = setTimeout(() => {
+        setImageLoaded(true);
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [visible, gameData?.image_url]);
+
   const handleClose = () => {
     onClose();
   };
@@ -27,8 +53,11 @@ const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
   const handleCheckDetails = () => {
     if (!gameData?.action_button_url) return;
 
-    // eslint-disable-next-line
-    window.Main.shell.openExternal(gameData.action_button_url);
+    window.open(gameData.action_button_url, "_blank");
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
 
   return (
@@ -44,15 +73,24 @@ const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
       <Container>
         <ImageContainer>
           {gameData?.image_url ? (
-            <img
-              src={gameData.image_url}
-              alt="The Best Game Campaign"
-              style={{
-                width: "100%",
-                objectFit: "cover",
-                borderRadius: "8px",
-              }}
-            />
+            <>
+              {!imageLoaded && (
+                <ImagePlaceholder>
+                  <Spin size="default" />
+                </ImagePlaceholder>
+              )}
+              <img
+                src={gameData.image_url}
+                alt="The Best Game Campaign"
+                onLoad={handleImageLoad}
+                style={{
+                  width: "100%",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  display: imageLoaded ? "block" : "none",
+                }}
+              />
+            </>
           ) : (
             <ImagePlaceholder>
               <span>Dados não disponíveis</span>
@@ -61,7 +99,7 @@ const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
         </ImageContainer>
 
         <ButtonContainer>
-          <CloseButton onClick={handleClose}>Fechar</CloseButton>
+          <CloseButton onClick={handleClose}>Cancelar</CloseButton>
           <Button
             onClick={handleCheckDetails}
             disabled={!gameData?.action_button_url}
