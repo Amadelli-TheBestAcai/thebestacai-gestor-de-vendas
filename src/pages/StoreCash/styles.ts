@@ -343,6 +343,12 @@ export const OpenCloseButton = styled.button<IOpenCloseButton>`
     }
   }}
 
+  &&&:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     height: 60%;

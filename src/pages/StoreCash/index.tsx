@@ -265,6 +265,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
   };
 
   const openOnlineStoreCash = async () => {
+    setOpeningOnlineCash(true);
     if (settings.should_open_casher === false) {
       const { response: updatedSettings, has_internal_error: errorOnSettings } =
         await window.Main.settings.update(settings.id, {
@@ -273,6 +274,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
         });
 
       if (errorOnSettings) {
+        setOpeningOnlineCash(false);
         return notification.error({
           message: "Erro ao atualizar as configurações",
           duration: 5,
@@ -296,7 +298,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
           duration: 5,
         });
       }
-
+      setOpeningOnlineCash(false);
       error_message
         ? notification.warning({
             message: error_message,
@@ -370,7 +372,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
             duration: 5,
           });
     }
-
+    setOpeningOnlineCash(false);
     const {
       has_internal_error: errorOnIntegrationPaymentTefAudit,
       error_message: errorMessageOnIntegrationPaymentTefAudit,
@@ -389,6 +391,7 @@ const StoreCash: React.FC<IProp> = ({ history }) => {
             duration: 5,
           });
     }
+    setOpeningOnlineCash(false);
   };
 
   return (
