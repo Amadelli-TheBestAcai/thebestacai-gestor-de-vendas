@@ -4,7 +4,7 @@ on:
     branches: [main]
 jobs:
   build_on_win:
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - name: create env-config
@@ -13,7 +13,7 @@ jobs:
           echo SKIP_PREFLIGHT_CHECK=true > .env
       - uses: actions/setup-node@master
         with:
-          node-version: 16.20.0
+          node-version: 16.20.1
       - name: install node tools
         run: npm install --global --production windows-build-tools@4.0.0
       - name: install node-gyp

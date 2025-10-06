@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, shell } from "electron";
 import { checkInternet } from "./src/providers/internetConnection";
 import env from "./src/providers/env.json";
 import {
@@ -12,7 +12,8 @@ import {
   storeCashFactory,
   storeFactory,
   productWasteFactory,
-  tefFactory
+  tefFactory,
+  filesManagementFactory,
 } from "./src/factories";
 
 export const api = {
@@ -26,6 +27,9 @@ export const api = {
   once: (channel: string, callback: Function) =>
     ipcRenderer.once(channel, (_, data) => callback(data)),
   hasInternet: async (): Promise<boolean> => await checkInternet(),
+  shell: {
+    openExternal: (url: string) => shell.openExternal(url),
+  },
   env,
   user: userFactory,
   store: storeFactory,
@@ -37,6 +41,7 @@ export const api = {
   settings: settingsFactory,
   common: commonFactory,
   productWaste: productWasteFactory,
-  tefFactory: tefFactory
+  tefFactory: tefFactory,
+  filesManagement: filesManagementFactory,
 };
 contextBridge.exposeInMainWorld("Main", { ...api });
