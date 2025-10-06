@@ -6,13 +6,13 @@ import { HandlerDto } from "../../models/gestor";
 
 class GetLocalCashHandlers implements IUseCaseFactory {
   constructor(
-    private storeCashRepository = new BaseRepository<HandlerDto>(
+    private cashHandlerRepository = new BaseRepository<HandlerDto>(
       StorageNames.Integrated_Handler
     )
   ) { }
 
   async execute(): Promise<HandlerDto[]> {
-    return await this.storeCashRepository.getAll();
+    return await this.cashHandlerRepository.getAll();
   }
 }
 

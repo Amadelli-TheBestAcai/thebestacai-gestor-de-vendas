@@ -12,7 +12,9 @@ import {
 } from "../../models/gestor";
 import { updateBalanceHistory } from "./updateBalanceHistory";
 import { integrateProductWaste } from "../productWaste/integrateProductWaste";
+import { synchronizeSales } from "../sale/synchronizeSales";
 import moment from "moment";
+import { synchronizeCashHandler } from "../handler/synchronizeCashHandler";
 
 interface Request {
   code: string;
@@ -36,13 +38,22 @@ class CloseStoreCash implements IUseCaseFactory {
     private deliverySaleRepository = new BaseRepository<SaleDto>(
       StorageNames.Delivery_Sale
     ),
-    private integrateProductWasteUseCase = integrateProductWaste
-  ) {}
+    private integrateProductWasteUseCase = integrateProductWaste,
+    private synchronizeSalesUseCase = synchronizeSales,
+    private synchronizeCashHandlerUseCase = synchronizeCashHandler
+  ) { }
 
   private async closeCashLocal(
-    company_id: number
+    company_id: number,
   ): Promise<StoreCashDto | undefined> {
     const storeCash = await this.storeCashRepository.getOne();
+
+    if (!storeCash) {
+      throw new Error(
+        "Não foi possível obter os dados do caixa. Por favor, tente novamente."
+      );
+    }
+
     const updatedStoreCash = await this.storeCashRepository.update(
       storeCash?.id,
       {
@@ -50,7 +61,6 @@ class CloseStoreCash implements IUseCaseFactory {
       }
     );
 
-    
     const {
       data: { history },
     } = await odinApi.get(
@@ -105,6 +115,21 @@ class CloseStoreCash implements IUseCaseFactory {
     if (deliverySales.length > 0) {
       throw new Error("Você ainda possui vendas pendentes no delivery");
     }
+
+    const { has_internal_error: errorOnSynchronizeSalesUseCase } =
+      await useCaseFactory.execute<void>(this.synchronizeSalesUseCase);
+
+    if (errorOnSynchronizeSalesUseCase) {
+      throw new Error("Falha ao sincronizar vendas");
+    }
+
+    const { has_internal_error: errorOnSynchronizeCashHandlerUseCase } =
+      await useCaseFactory.execute<void>(this.synchronizeCashHandlerUseCase);
+
+    if (errorOnSynchronizeCashHandlerUseCase) {
+      throw new Error("Falha ao sincronizar movimentações de caixa");
+    }
+    
     const { has_internal_error: errorOnUpdateBalanceHistory } =
       await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 
@@ -114,9 +139,10 @@ class CloseStoreCash implements IUseCaseFactory {
 
     await odinApi.put(
       `/store_cashes/${currentStore.company_id}-${code}/close`,
-      { amount_on_close: +amount_on_close?.toString() || 0,
+      {
+        amount_on_close: +amount_on_close?.toString() || 0,
         local_closed_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-       }
+      }
     );
 
     return this.closeCashLocal(currentStore.company_id);
