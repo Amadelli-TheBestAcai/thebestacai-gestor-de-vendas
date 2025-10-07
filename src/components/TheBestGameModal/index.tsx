@@ -7,6 +7,8 @@ import {
   Button,
   CloseButton,
   ImagePlaceholder,
+  BoxButtons,
+  ButtonHighlight,
 } from "./styles";
 
 interface TheBestGameData {
@@ -14,6 +16,9 @@ interface TheBestGameData {
   image_url: string;
   action_button_url: string;
   action_button_text: string;
+  highlight_button_enabled: boolean;
+  highlight_button_text: string;
+  highlight_button_url: string;
 }
 
 interface TheBestGameModalProps {
@@ -53,7 +58,15 @@ const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
   const handleCheckDetails = () => {
     if (!gameData?.action_button_url) return;
 
-    window.open(gameData.action_button_url, "_blank");
+    // @typescript-eslint/no-unsafe-assignment
+    window.Main.shell.openExternal(gameData.action_button_url);
+  };
+
+  const handleHighlightButton = () => {
+    if (!gameData?.highlight_button_url) return;
+
+    //@typescript-eslint/no-unsafe-assignment
+    window.Main.shell.openExternal(gameData.highlight_button_url);
   };
 
   const handleImageLoad = () => {
@@ -100,12 +113,22 @@ const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
 
         <ButtonContainer>
           <CloseButton onClick={handleClose}>Cancelar</CloseButton>
-          <Button
-            onClick={handleCheckDetails}
-            disabled={!gameData?.action_button_url}
-          >
-            {gameData?.action_button_text || "Conferir Detalhes da Campanha"}
-          </Button>
+          <BoxButtons>
+            {gameData?.highlight_button_enabled && (
+              <ButtonHighlight
+                onClick={handleHighlightButton}
+                disabled={!gameData?.highlight_button_url}
+              >
+                {gameData?.highlight_button_text || "Ver mais"}
+              </ButtonHighlight>
+            )}
+            <Button
+              onClick={handleCheckDetails}
+              disabled={!gameData?.action_button_url}
+            >
+              {gameData?.action_button_text || "Conferir Detalhes da Campanha"}
+            </Button>
+          </BoxButtons>
         </ButtonContainer>
       </Container>
     </Modal>
