@@ -10,6 +10,7 @@ import moment from "moment";
 import { transactionsTef } from "../linxTef";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
 import { checkInternet } from "../../providers/internetConnection";
+import { writeGestorTefLog } from "../../helpers/writeGestorTefLog";
 
 interface Request {
   amount: number;
@@ -29,6 +30,7 @@ class AddPayment implements IUseCaseFactory {
   ) { }
 
   async execute({ amount, type, flag_card, turnOffTef }: Request): Promise<SaleDto> {
+    const start = Date.now();
     const isConnectInternet = await checkInternet();
 
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
@@ -109,6 +111,19 @@ class AddPayment implements IUseCaseFactory {
     }
 
     await this.saleRepository.update(sale.id, sale);
+
+    const tempoTotalMs = Date.now() - start;
+
+    writeGestorTefLog("Função addPayment", {
+      Payload: { amount, type, flag_card },
+      Response: { code_nsu, numero_autorizacao, tef_status_payment },
+      Sale: sale,
+      Settings: settings,
+      IsConnectInternet: isConnectInternet,
+      TurnOffTef: turnOffTef,
+      tempoTotalMs,
+    });
+
     return sale;
   }
 }
