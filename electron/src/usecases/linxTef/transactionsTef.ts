@@ -6,6 +6,7 @@ import { verifyConnectionTEF } from "../../providers/verifyConnectionTEF";
 import { useCaseFactory } from "../useCaseFactory";
 import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { findPinPad } from "./findPinPad";
+import { writeGestorTefLog } from "../../helpers/writeGestorTefLog"; // 👈 novo import
 
 interface Request {
     type: PaymentType;
@@ -13,55 +14,77 @@ interface Request {
 }
 
 class TransactionsTef implements IUseCaseFactory {
-    constructor(
-        private findPinPadUseCase = findPinPad,
-    ) { }
+    constructor(private findPinPadUseCase = findPinPad) { }
 
     async execute({ type, amount }: Request): Promise<any> {
+        const start = Date.now();
+        let idPinPad: string | null = null;
+        let endpoint = "";
+        let MessageError: string | null = null;
+
         const isConnectInternet = await checkInternet();
         if (!isConnectInternet) {
-            throw new Error("Sem conexão com a internet. Verifique sua conexão para usar o serviço TEF e tente novamente.")
+            MessageError =
+                "Sem conexão com a internet. Verifique sua conexão para usar o serviço TEF e tente novamente.";
+            throw new Error(MessageError);
         }
 
-        const isConnect = await verifyConnectionTEF()
+        const isConnect = await verifyConnectionTEF();
         if (!isConnect) {
-            throw new Error("O servidor TEF não está em execução. Por favor, feche e abra novamente o gestor de vendas ou verifique se o executável ServerTEF.exe está instalado corretamente.")
+            MessageError =
+                "O servidor TEF não está em execução. Por favor, feche e abra novamente o gestor de vendas ou verifique se o executável ServerTEF.exe está instalado corretamente.";
+            throw new Error(MessageError);
         }
 
         const { response, has_internal_error } =
             await useCaseFactory.execute<string>(this.findPinPadUseCase);
 
         if (has_internal_error) {
-            throw new Error('Erro ao tentar identificar PIN PAD')
+            MessageError = "Erro ao tentar identificar PIN PAD";
+            throw new Error(MessageError);
         }
 
         if (!response) {
-            throw new Error("Não foi possível encontrar as informações da maquininha (PIN PAD). Verifique se ela está conectada ao computador.")
+            MessageError =
+                "Não foi possível encontrar as informações da maquininha (PIN PAD). Verifique se ela está conectada ao computador.";
+            throw new Error(MessageError);
         }
-
-        let endpoint = '';
 
         switch (type) {
             case PaymentType.CREDITO:
-                endpoint = '/transacao-credito';
+                endpoint = "/transacao-credito";
                 break;
             case PaymentType.DEBITO:
-                endpoint = '/transacao-debito';
+                endpoint = "/transacao-debito";
                 break;
             case PaymentType.TICKET:
-                endpoint = '/transacao-voucher';
+                endpoint = "/transacao-voucher";
                 break;
             case PaymentType.PIX:
-                endpoint = '/transacao-qrcode';
+                endpoint = "/transacao-qrcode";
                 break;
             default:
-                return null
+                throw new Error("Tipo de pagamento inválido");
         }
 
         const { data: { data } } = await tefApi.post(endpoint, { amount });
-        const idPinPad = readIdPinPad(response)
-        data.id_terminal_pagamento = idPinPad
-        return data
+
+        idPinPad = readIdPinPad(response) ?? null;
+        data.id_terminal_pagamento = idPinPad;
+
+        const tempoTotalMs = Date.now() - start;
+
+        writeGestorTefLog("Função de transações Tef", {
+            Payload: { type, amount, endpoint },
+            Response: data,
+            Settings: null,
+            Sale: null,
+            IsConnectInternet: isConnectInternet,
+            tempoTotalMs,
+        });
+
+        return data;
+
     }
 }
 
