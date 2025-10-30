@@ -343,7 +343,7 @@ const Login: React.FC<IProps> = ({ history }) => {
             </FormContainer>
 
             <Footer>
-              <span>Developed by The Best Açai Company v {version}</span>
+              <span>Developed by The Best Açai Company v {version} - (TESTE LOG TEF)</span>
             </Footer>
           </RightContent>
         </>
