@@ -51,6 +51,7 @@ class AddPayment implements IUseCaseFactory {
     let tef_status_payment;
     let cnpj_beneficiario
     let id_terminal_pagamento
+    let flag_card_linx_tef
 
     if (settings?.should_use_tef && type !== PaymentType.DINHEIRO && isConnectInternet && !turnOffTef) {
       const { response, has_internal_error: errorOnGetCurrentSale, error_message } =
@@ -65,6 +66,7 @@ class AddPayment implements IUseCaseFactory {
       code_nsu = response?.code_nsu
       cnpj_credenciadora = type === PaymentType.PIX ? settings.cnpj_credenciadora : response?.cnpj_credenciadora
       flag_card = parseInt(response?.flag_card, 10);
+      flag_card_linx_tef = response?.flag_card
       numero_autorizacao = response?.code_autorization
       tef_status_payment = TefPaymentType.APROVADO
       cnpj_beneficiario = store?.company?.cnpj
@@ -120,7 +122,7 @@ class AddPayment implements IUseCaseFactory {
     const tempoTotalMs = Date.now() - start;
 
     writeGestorTefLog("Função addPayment", {
-      Payload: { amount, type, flag_card },
+      Payload: { amount, type, flag_card, flag_card_linx_tef },
       Response: { code_nsu, numero_autorizacao, tef_status_payment },
       Sale: sale,
       Settings: settings,
