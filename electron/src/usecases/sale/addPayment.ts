@@ -32,12 +32,15 @@ class AddPayment implements IUseCaseFactory {
   async execute({ amount, type, flag_card, turnOffTef }: Request): Promise<SaleDto> {
     const start = Date.now();
     const isConnectInternet = await checkInternet();
+    let MessageError: string | null = null;
+
 
     const { response: sale, has_internal_error: errorOnGetCurrentSale } =
       await useCaseFactory.execute<SaleDto>(this.getCurrentSaleUseCase);
 
     if (errorOnGetCurrentSale) {
-      throw new Error("Erro ao integrar venda");
+      MessageError = "Erro ao integrar venda"
+      throw new Error(MessageError);
     }
 
     const settings = await this.settingsRepository.getOne({})
@@ -54,7 +57,8 @@ class AddPayment implements IUseCaseFactory {
         await useCaseFactory.execute<any>(this.transactionsTefUseCase, { type, amount });
 
       if (errorOnGetCurrentSale) {
-        throw new Error(error_message || "Erro ao integrar pagamento ao tef");
+        MessageError = error_message || "Erro ao integrar pagamento ao tef"
+        throw new Error(MessageError);
       }
       const store = await this.storeRepository.getOne({})
 
@@ -68,7 +72,8 @@ class AddPayment implements IUseCaseFactory {
     }
 
     if (!sale) {
-      throw new Error("Nenhuma venda encontrada");
+      MessageError = "Nenhuma venda encontrada"
+      throw new Error(MessageError);
     }
 
     if (type === PaymentType.CREDITO || type === PaymentType.DEBITO
@@ -121,7 +126,8 @@ class AddPayment implements IUseCaseFactory {
       Settings: settings,
       IsConnectInternet: isConnectInternet,
       TurnOffTef: turnOffTef,
-      tempoTotalMs,
+      MessageError: MessageError,
+        tempoTotalMs,
     });
 
     return sale;
