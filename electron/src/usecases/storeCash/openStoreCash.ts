@@ -9,7 +9,6 @@ import {
 } from "../../models/gestor";
 import { backupDatabase } from "../common/backupDatabase";
 import { v4 } from "uuid";
-import { deleteLogs } from "../linxTef/deleteLogs";
 import { useCaseFactory } from "../useCaseFactory";
 import moment from "moment";
 
@@ -32,8 +31,7 @@ class OpenStoreCash implements IUseCaseFactory {
     ),
     private oldCashHistoryRepository = new BaseRepository<OldCashHistoryDto>(
       StorageNames.Old_Cash_History
-    ),
-    private deleteLogsTefUseCase = deleteLogs
+    )
   ) {}
 
   async execute({
@@ -61,8 +59,6 @@ class OpenStoreCash implements IUseCaseFactory {
     await this.storeCashRepository.clear();
     await this.storeCashRepository.create(payload);
     await this.oldCashHistoryRepository.clear();
-
-    await useCaseFactory.execute<void>(this.deleteLogsTefUseCase);
 
     return payload;
   }
