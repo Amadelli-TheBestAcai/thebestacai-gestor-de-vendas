@@ -215,15 +215,9 @@ export const ButtonCommands = styled.button`
 
   :disabled {
     cursor: not-allowed;
-    background-color: var(--grey-70);
+    background-color: var(--white-90);
 
-    :hover {
-      border-color: var(--grey-70);
-      color: black;
-      svg {
-        color: black;
-      }
-    }
+   
   }
 
   .badge {
