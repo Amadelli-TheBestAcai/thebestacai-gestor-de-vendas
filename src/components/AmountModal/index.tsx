@@ -257,15 +257,21 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
               <Col sm={12} key={_amount.key}>
                 <span>R$ {_amount.label}</span>{" "}
                 <Input
-                  type="number"
+                  type="number" 
                   min={0}
                   placeholder={"0"}
-                  onChange={({ target: { value } }) =>
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Delete" && e.key !== "Tab") {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={({ target: { value } }) => {
+                    const numericValue = value.replace(/[^0-9]/g, "");
                     setAmount((oldValue) => ({
                       ...oldValue,
-                      [_amount.key]: +value,
-                    }))
-                  }
+                      [_amount.key]: numericValue === "" ? null : +numericValue,
+                    }));
+                  }}
                 />
               </Col>
             ))}
