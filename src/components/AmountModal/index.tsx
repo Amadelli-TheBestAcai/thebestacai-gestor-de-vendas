@@ -265,6 +265,9 @@ const AmountModal: React.FC<IProp> = ({ visible, setVisible, history }) => {
                       e.preventDefault();
                     }
                   }}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                  }}
                   onChange={({ target: { value } }) => {
                     const numericValue = value.replace(/[^0-9]/g, "");
                     setAmount((oldValue) => ({
