@@ -174,6 +174,17 @@ const CupomModal: React.FC<ICupomProps> = ({
       let totalOfCupomProducs = 0;
 
       response.voucher.products.forEach((productVoucher) => {
+
+        if (
+          response.voucher.self_service &&
+          productVoucher.product_id === 1 &&
+          productVoucher.product_name?.includes("Desconto de") &&
+          productVoucher.product_name?.includes("Self-service")
+        ) {
+          productVoucher.is_registred = true;
+          productVoucher.in_sale = true;
+          return;
+        }
         const product = products.find(
           (product) => product.product_id === productVoucher.product_id
         );
