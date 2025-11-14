@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { cpf as cpfValidator } from "cpf-cnpj-validator";
+import moment from "moment";
 
 import { useSale } from "../../hooks/useSale";
 import { monetaryFormat } from "../../helpers/monetaryFormat";
@@ -22,6 +23,7 @@ import {
   ButtonCpfTef,
   ButtonDeleteCpf,
   DeleteCpfIcon,
+  FooterExpiredDate,
 } from "./styles";
 import { message, notification, Checkbox } from "antd";
 import { CampaignDto } from "../../models/dtos/campaign";
@@ -60,6 +62,28 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
     }
   }, [shouldOpenClientInfo]);
 
+  useEffect(() => {
+    const handleGlobalKeyDown = (event: KeyboardEvent) => {
+      if (!shouldOpenClientInfo) return;
+
+      const key = event.key.toLowerCase();
+
+      if (key === "f" && settings.should_request_cpf_in_tef && !loading) {
+        event.preventDefault();
+        event.stopPropagation();
+        tefCpfInsert();
+      }
+    };
+
+    if (shouldOpenClientInfo) {
+      document.addEventListener("keydown", handleGlobalKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleGlobalKeyDown);
+    };
+  }, [shouldOpenClientInfo, settings.should_request_cpf_in_tef, loading]);
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const key = event.key.toLowerCase();
     setPressedKey(key);
@@ -74,6 +98,11 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
         cpf_used_nfce:
           key === "q" ? !oldValues.cpf_used_nfce : oldValues.cpf_used_nfce,
       }));
+    }
+
+    if (key === "f" && settings.should_request_cpf_in_tef && !loading) {
+      event.preventDefault();
+      tefCpfInsert();
     }
   };
 
@@ -285,12 +314,18 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
               disabled
               style={{ width: "58%" }}
             />
-            <ButtonDeleteCpf onClick={() => onDeleteCPF()} disabled={loading}>
-              <DeleteCpfIcon />
-            </ButtonDeleteCpf>
-            <ButtonCpfTef onClick={() => tefCpfInsert()} disabled={loading}>
-              Solicitar CPF Tef
+            <ButtonCpfTef
+              loading={loading}
+              onClick={() => tefCpfInsert()}
+              disabled={loading}
+            >
+              Solicitar CPF Tef [F]
             </ButtonCpfTef>
+            {info.cpf && (
+              <ButtonDeleteCpf onClick={() => onDeleteCPF()} disabled={loading}>
+                <DeleteCpfIcon />
+              </ButtonDeleteCpf>
+            )}
           </CpfTefContainer>
         ) : (
           <MaskInput
@@ -349,6 +384,15 @@ const ClientInfo: React.FC<IProps> = ({ campaign, getCampaignPointsPlus }) => {
                 {Math.floor(sale.total_sold / campaign.average_ticket)}
               </div>
             </InfoClientReward>
+            <FooterExpiredDate>
+              <span>
+                Lembre-se:{" "}
+                <strong>
+                  A campanha atual acaba em{" "}
+                  {moment(campaign?.expirated_at).format("DD/MM/YYYY")}
+                </strong>
+              </span>
+            </FooterExpiredDate>
           </ContentReward>
         )}
       </CampaignInfoWrapper>

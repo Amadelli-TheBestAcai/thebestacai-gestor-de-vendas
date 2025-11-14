@@ -7,8 +7,8 @@ import { inicializeServerTef } from "./src/helpers/inicializeServerTef";
 import { finalizeServerTef } from "./src/helpers/finalizeServerTef";
 
 let win: Electron.BrowserWindow | null;
-let isUpdating = false; // Variável para controlar se o fechamento é devido à atualização
-let isDownloadingUpdate = false; // Variável para verificar se o download da atualização está em andamento
+let isUpdating = false; 
+let isDownloadingUpdate = false; 
 
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -40,7 +40,7 @@ function createWindow() {
   });
 
   win.on("close", (e) => {
-    if (isUpdating || isDownloadingUpdate) return; // Se estiver atualizando, não exibir confirmação
+    if (isUpdating || isDownloadingUpdate) return; 
 
     const choice = dialog.showMessageBoxSync(win as any, {
       type: "question",
@@ -86,7 +86,7 @@ app.on("second-instance", () => {
 });
 
 autoUpdater.on("download-progress", (progressObj) => {
-  isDownloadingUpdate = true; // Marcar que o download está acontecendo
+  isDownloadingUpdate = true; 
   let log_message = "Download speed: " + progressObj.bytesPerSecond;
   log_message = log_message + " - Downloaded " + progressObj.percent + "%";
   log_message =
@@ -104,7 +104,7 @@ autoUpdater.on("download-progress", (progressObj) => {
 });
 
 autoUpdater.on("update-downloaded", () => {
-  isUpdating = true; // Marcar que a atualização será instalada
+  isUpdating = true; 
   autoUpdater.quitAndInstall();
 });
 
