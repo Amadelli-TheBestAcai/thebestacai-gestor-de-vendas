@@ -96,7 +96,7 @@ const CupomModal: React.FC<ICupomProps> = ({
 
       if (has_internal_error) {
         return notification.error({
-          message: error_message || "Erro ao obter voucher",
+          message: error_message || "Erro ao obter voucher.",
           duration: 5,
         });
       }
@@ -105,6 +105,8 @@ const CupomModal: React.FC<ICupomProps> = ({
         true
       );
       delete response.voucher.companies;
+
+      response.voucher.products = [...(response.voucher.products || [])];
 
       const totalSoldInSelfService = sale.items
         .filter((item) => item.product.id === 1)
@@ -172,6 +174,17 @@ const CupomModal: React.FC<ICupomProps> = ({
       let totalOfCupomProducs = 0;
 
       response.voucher.products.forEach((productVoucher) => {
+
+        if (
+          response.voucher.self_service &&
+          productVoucher.product_id === 1 &&
+          productVoucher.product_name?.includes("Desconto de") &&
+          productVoucher.product_name?.includes("Self-service")
+        ) {
+          productVoucher.is_registred = true;
+          productVoucher.in_sale = true;
+          return;
+        }
         const product = products.find(
           (product) => product.product_id === productVoucher.product_id
         );

@@ -59,7 +59,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
   const [handlerOutState, setHandlerOutState] = useState(false);
   const [rewardModal, setRewardModal] = useState(false);
   const [openChat, setOpenChat] = useState(false);
-  const { openedStepSale } = useSale();
+  const { openedStepSale, isSavingSale } = useSale();
 
   useEffect(() => {
     async function init() {
@@ -120,7 +120,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
       <ContentGeneral>
         <ActionButtons>
           <CpfContetGeneral>
-            <Button onClick={() => setShouldOpenClientInfo(true)}>
+            <Button onClick={() => setShouldOpenClientInfo(true)} disabled={isSavingSale}>
               <IdIcon />
               Inserir CPF [i]
             </Button>
@@ -143,6 +143,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
                     })
                   }
                   disabled={
+                    isSavingSale ||
                     sale?.payments?.reduce(
                       (total, payment) => total + payment.amount,
                       0
@@ -155,17 +156,17 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               </div>
             </Tooltip>
 
-            <Button onClick={() => discountModalHandler.openDiscoundModal()}>
+            <Button onClick={() => discountModalHandler.openDiscoundModal()} disabled={isSavingSale}>
               <OfferIcon />
               Desconto [R]
             </Button>
 
-            <Button onClick={() => setHandlerInState(true)}>
+            <Button onClick={() => setHandlerInState(true)} disabled={isSavingSale}>
               <InputIcon />
               Entrada
             </Button>
 
-            <Button onClick={() => setHandlerOutState(true)}>
+            <Button onClick={() => setHandlerOutState(true)} disabled={isSavingSale}>
               <OutputIcon />
               Saída
             </Button>
@@ -179,7 +180,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
                 >
                   <span>
                     <ButtonCommands
-                      disabled={sale?.customer_reward_id ? true : false}
+                      disabled={isSavingSale || !!sale?.customer_reward_id}
                       onClick={() => setCommandState(true)}
                     >
                       <ListIcon />
@@ -192,16 +193,39 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
                 </Tooltip>
               </>
             ) : (
-              <ButtonCommands onClick={() => setCommandState(true)}>
-                <ListIcon />
-                Comanda{" "}
-                {openedStepSale > 0 && (
-                  <span className="badge">{openedStepSale}</span>
-                )}
-              </ButtonCommands>
+              <Tooltip
+                title={
+                  sale?.customer_reward_id
+                    ? "Não é possível abrir comanda quando há recompensa aplicada."
+                    : sale?.client_cpf
+                    ? "Não é possível abrir comanda quando há CPF inserido na venda."
+                    : sale?.payments && sale.payments.length > 0
+                    ? "Não é possível abrir comanda quando há formas de pagamento cadastradas."
+                    : ""
+                }
+                destroyTooltipOnHide
+              >
+                <span>
+                  <ButtonCommands
+                    onClick={() => setCommandState(true)}
+                    disabled={
+                      isSavingSale ||
+                      !!sale?.customer_reward_id ||
+                      !!sale?.client_cpf ||
+                      (sale?.payments && sale.payments.length > 0)
+                    }
+                  >
+                    <ListIcon />
+                    Comanda{" "}
+                    {openedStepSale > 0 && (
+                      <span className="badge">{openedStepSale}</span>
+                    )}
+                  </ButtonCommands>
+                </span>
+              </Tooltip>
             )}
 
-            <Button onClick={() => modalReward()}>
+            <Button onClick={() => modalReward()} disabled={isSavingSale}>
               <TrophyIcon />
               Recompensas
             </Button>
