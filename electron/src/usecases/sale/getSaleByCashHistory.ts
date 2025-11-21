@@ -6,7 +6,7 @@ class GetSalesByCashHistories implements IUseCaseFactory {
     async execute(histories_ids: number[]): Promise<SaleDto[]> {
         const {
             data: { content },
-        } = await midasApi.get(`/sales/history?history_ids=${histories_ids.join(",")}&all_sales=true`);
+        } = await midasApi.get(`/sales/history?history_ids=${histories_ids.join(",")}&all_sales=true&withDeleted=true`);
         return content;
     }
 }
