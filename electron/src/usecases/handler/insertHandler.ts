@@ -62,6 +62,7 @@ class InsertHandler implements IUseCaseFactory {
       reason: !payload.cashHandler.reason
         ? "Outros"
         : payload.cashHandler.reason,
+        ref: v4(),
     };
 
     if (currentCash.is_opened && currentCash.is_online) {

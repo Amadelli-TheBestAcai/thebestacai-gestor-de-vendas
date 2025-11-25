@@ -28,7 +28,6 @@ export const Column = styled(Col)`
 `;
 
 export const AddIcon = styled(AddCircle)`
-  cursor: pointer;
   height: 1.5rem;
   width: 1.5rem;
   fill: var(--green-600);
@@ -37,5 +36,12 @@ export const AddIcon = styled(AddCircle)`
   @media (max-width: 1600px) {
     height: 1.2rem;
     width: 1.2rem;
+  }
+`;
+
+export const Button = styled.button`
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed ;
   }
 `;

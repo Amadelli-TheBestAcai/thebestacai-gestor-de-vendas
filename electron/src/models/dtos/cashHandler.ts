@@ -9,5 +9,6 @@ export type CashHandlerDTO = {
     order_id?: number;
     created_at: string;
     deleted_at: string;
+    ref: string;
   }[];
 };

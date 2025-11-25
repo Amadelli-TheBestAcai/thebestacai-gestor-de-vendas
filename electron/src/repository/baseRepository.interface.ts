@@ -11,4 +11,8 @@ export interface IBaseRepository<T> {
   getAll(payload?: Partial<T>): Promise<T[]>;
   getOne(criteria?: Partial<T>): Promise<T | undefined>;
   clear(): Promise<void>;
+  upsert(
+    criteria: Partial<T>,
+    payload: Partial<T>
+  ): Promise<T> 
 }

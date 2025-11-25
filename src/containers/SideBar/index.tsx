@@ -33,7 +33,7 @@ type IProps = RouteComponentProps;
 
 const SideBar: React.FC<IProps> = ({ history }) => {
   const { hasPermission } = useUser();
-  const { sale } = useSale();
+  const { sale, isSavingSale } = useSale();
   const { settings } = useSettings();
 
   const handleClick = async (id: number, route: string) => {
@@ -269,6 +269,7 @@ const SideBar: React.FC<IProps> = ({ history }) => {
             color={"var(--orange-250)"}
           >
             <CardIcon
+              disabled={isSavingSale}
               onClick={() => {
                 handleClick(menu.id, menu.router);
               }}

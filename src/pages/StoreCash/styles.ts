@@ -308,12 +308,13 @@ export const CloseCashContatiner = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
-  width: 30%;
+  width: 40%;
   height: 100%;
 `;
 
 type IOpenCloseButton = {
   _type: "open" | "close";
+  disabled?: boolean;
 };
 
 export const OpenCloseButton = styled.button<IOpenCloseButton>`
@@ -322,23 +323,41 @@ export const OpenCloseButton = styled.button<IOpenCloseButton>`
   color: white;
   font-size: 0.9rem;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 500;
   border-radius: 4px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 
-  ${({ _type }) => {
+  ${({ _type, disabled }) => {
+    if (disabled) {
+      return css`
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+      `;
+    }
     if (_type === "open") {
       return css`
         background: var(--green-400);
+        cursor: pointer;
       `;
     }
     if (_type === "close") {
       return css`
         background: #c53030;
+        cursor: pointer;
       `;
     }
   }}
+
+  &&&:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {

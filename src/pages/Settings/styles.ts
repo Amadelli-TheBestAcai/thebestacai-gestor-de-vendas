@@ -46,13 +46,11 @@ export const Header = styled.header`
 `;
 
 export const Footer = styled.footer`
-  position: absolute;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding: 1rem;
   width: 100%;
-  height: 10%;
   bottom: 0;
   left: 0;
   right: 0;
@@ -68,7 +66,7 @@ export const DisabledButtonStyle = css`
 export const Button = styled(ButtonAnt)`
   height: 50px;
   padding: 0 1rem;
-  background: var(--orange-250);;
+  background: var(--orange-250);
   color: white;
   border: 1px solid var(--orange-250);
   display: flex;
@@ -77,9 +75,9 @@ export const Button = styled(ButtonAnt)`
   border-radius: 10px;
   z-index: 10;
   &&&:hover,
-  &&&:active, 
+  &&&:active,
   &&&:focus {
-    background: var(--orange-250);;
+    background: var(--orange-250);
     color: white;
     border: 1px solid var(--orange-250);
     opacity: 80;
@@ -120,14 +118,12 @@ export const ButtonSave = styled(ButtonAnt)`
   @media (max-width: 1600px) {
     @media (max-height: 900px) {
       width: 105px;
-      height: 40px;
     }
   }
 
   /*Responsive 1366px*/
   @media (max-width: 1366px) {
     width: 100px;
-    height: 35px;
     font-size: 0.8rem;
   }
 `;
@@ -205,7 +201,7 @@ export const StoreChange = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  
+
   .storeObservation {
     border-left: 1px solid;
     margin-left: 1rem;

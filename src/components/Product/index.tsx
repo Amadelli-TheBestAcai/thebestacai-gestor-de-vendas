@@ -5,13 +5,13 @@ import { StoreProductDto } from "../../models/dtos/storeProduct";
 
 import { Tooltip } from "antd";
 
-import { Container, Column, AddIcon } from "./styles";
+import { Container, Column, AddIcon, Button } from "./styles";
 
 interface IProps {
   product: StoreProductDto;
 }
 const Product: React.FC<IProps> = ({ product }) => {
-  const { onAddItem } = useSale();
+  const { onAddItem, isSavingSale } = useSale();
   const handleItem = async () => {
     await onAddItem(product, 1);
   };
@@ -24,7 +24,9 @@ const Product: React.FC<IProps> = ({ product }) => {
       </Column>
       <Column span={5}>
         <Tooltip title="Adicionar" placement="right">
-          <AddIcon onClick={handleItem} />
+          <Button disabled={isSavingSale} onClick={handleItem}>
+            <AddIcon/>
+          </Button>
         </Tooltip>
       </Column>
     </Container>
