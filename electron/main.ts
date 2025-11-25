@@ -1,5 +1,4 @@
 import { app, BrowserWindow, screen, ipcMain, dialog } from "electron";
-import { autoUpdater } from "electron-updater";
 import * as path from "path";
 import { inicializeControllers } from "./src/controllers";
 import axios from "axios";
@@ -7,15 +6,14 @@ import { inicializeServerTef } from "./src/helpers/inicializeServerTef";
 import { finalizeServerTef } from "./src/helpers/finalizeServerTef";
 
 let win: Electron.BrowserWindow | null;
-let isUpdating = false; 
-let isDownloadingUpdate = false; 
+
+let isUpdating = false;
 
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   win = new BrowserWindow({
     width,
     height,
-    autoHideMenuBar: true,
     resizable: false,
     backgroundColor: "#191622",
     webPreferences: {
@@ -25,22 +23,14 @@ function createWindow() {
     },
   });
 
-  autoUpdater.setFeedURL({
-    provider: "github",
-    repo: "thebestacai-gestor-de-vendas",
-    owner: "Amadelli-TheBestAcai",
-    releaseType: "release",
-    private: false,
-  });
-
-  win.setTitle("Gestor de Vendas");
+  win.setTitle("Gestor de Vendas [TREINAMENTO]");
 
   win.on("page-title-updated", function (e) {
     e.preventDefault();
   });
 
   win.on("close", (e) => {
-    if (isUpdating || isDownloadingUpdate) return; 
+    if (isUpdating) return;
 
     const choice = dialog.showMessageBoxSync(win as any, {
       type: "question",
@@ -48,16 +38,18 @@ function createWindow() {
       title: "Confirmar",
       message: "Você tem certeza que deseja fechar o Gestor de Vendas?",
     });
-
     if (choice === 1) {
       e.preventDefault();
     }
   });
 
   if (app.isPackaged) {
+    // 'build/index.html'
     win.loadURL(`file://${__dirname}/../index.html`);
   } else {
     win.loadURL("http://localhost:3000/index.html");
+
+    // Hot Reloading on 'node_modules/.bin/electronPath'
     require("electron-reload")(__dirname, {
       electron: path.join(
         __dirname,
@@ -85,33 +77,6 @@ app.on("second-instance", () => {
   }
 });
 
-autoUpdater.on("download-progress", (progressObj) => {
-  isDownloadingUpdate = true; 
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + " - Downloaded " + progressObj.percent + "%";
-  log_message =
-    log_message +
-    " (" +
-    progressObj.transferred +
-    "/" +
-    progressObj.total +
-    ")";
-  console.log(log_message);
-  win?.webContents.send(
-    "download-progress",
-    progressObj.transferred.toString()
-  );
-});
-
-autoUpdater.on("update-downloaded", () => {
-  isUpdating = true; 
-  autoUpdater.quitAndInstall();
-});
-
-ipcMain.on("check_for_update", function () {
-  autoUpdater.checkForUpdates();
-});
-
 app.whenReady().then(async () => {
   createWindow();
   inicializeControllers();
@@ -129,18 +94,6 @@ app.whenReady().then(async () => {
       app.quit();
     }
   });
-});
-
-ipcMain.on("enter-fullscreen", () => {
-  if (win) {
-    win.setFullScreen(true);
-  }
-});
-
-ipcMain.on("exit-fullscreen", () => {
-  if (win) {
-    win.setFullScreen(false); 
-  }
 });
 
 ipcMain.on("app_version", (event) => {
