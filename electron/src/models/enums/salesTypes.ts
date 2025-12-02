@@ -7,5 +7,6 @@ export enum SalesTypes {
   APP = 5,
   OTHERS = 6,
   TOTEM = 7,
-  PEDIDOS_YA = 8
+  PEDIDOS_YA = 8,
+  PEDIDOS_99 = 9
 }
