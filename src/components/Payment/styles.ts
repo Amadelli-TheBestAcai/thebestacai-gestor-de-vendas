@@ -53,6 +53,11 @@ export const Column = styled(ColAnt)`
 
 export const Button = styled.button`
   padding: 3%;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const DeleteIcon = styled(TrashRestoreAlt)`

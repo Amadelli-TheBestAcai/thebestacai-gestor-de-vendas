@@ -29,7 +29,9 @@ class OnlineIntegration implements IUseCaseFactory {
   async execute(): Promise<void> {
     const is_online = await checkInternet();
     if (!is_online) {
-      throw new Error("Não foi possível detectar uma conexão com a internet. Por favor, verifique sua conexão.");
+      throw new Error(
+        "Não foi possível detectar uma conexão com a internet. Por favor, verifique sua conexão."
+      );
     }
 
     let storeCash = (await this.storeCashRepository.getOne()) as StoreCashDto;
@@ -51,6 +53,30 @@ class OnlineIntegration implements IUseCaseFactory {
         throw new Error(error_message || "Falha ao abrir caixa online");
       }
       storeCash = openedOnlineStoreCash as StoreCashDto;
+
+      const salesWithoutCashHistory =
+        await this.notIntegratedSaleRepository.getAll({
+          $and: [
+            {
+              $or: [
+                { cash_history_id: { $exists: false } },
+                { cash_history_id: null },
+              ],
+            },
+            { $or: [{ history_id: { $exists: false } }, { history_id: null }] },
+          ],
+        });
+
+      if (salesWithoutCashHistory.length > 0) {
+        await Promise.all(
+          salesWithoutCashHistory.map(async (sale) => {
+            await this.notIntegratedSaleRepository.update(sale.id, {
+              cash_history_id: storeCash?.history_id,
+              cash_id: storeCash?.cash_id,
+            });
+          })
+        );
+      }
     }
 
     try {
@@ -80,6 +106,7 @@ class OnlineIntegration implements IUseCaseFactory {
               }));
               await midasApi.post("/sales", payload);
               await this.notIntegratedSaleRepository.deleteById(salePayload.id);
+
               await this.integrateSaleRepository.create({
                 ...salePayload,
                 cash_history_id:

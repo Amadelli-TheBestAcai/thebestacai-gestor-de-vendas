@@ -28,6 +28,9 @@ import {
   updateStepSale,
   removeStepSale,
   updateStatusPaymentTef,
+  synchronizeSales,
+  getSalesByCashHistories,
+  markAsUsedVoucher
 } from "../usecases/sale";
 
 import { SaleDto, ProductDto, CampaignDto } from "../models/gestor";
@@ -164,4 +167,10 @@ export const saleFactory = {
     await useCaseFactory.execute<CampaignDto>(getCurrentCampaign),
   updateStatusPaymentTef: async (payment_id: number, code_nsu: string, justify: string, payment_tef_cancel_type: PaymentTefCancelType) =>
     await useCaseFactory.execute<CampaignDto>(updateStatusPaymentTef, { payment_id, code_nsu, justify, payment_tef_cancel_type }),
+  synchronizeSales: async () =>
+    await useCaseFactory.execute<void>(synchronizeSales),
+  getSalesByCashHistories: async (history_ids: number[]) =>
+    await useCaseFactory.execute<SaleDto[]>(getSalesByCashHistories, { history_ids }),
+  markAsUsedVoucher: async (customerVoucherId: number) =>
+    await useCaseFactory.execute<void>(markAsUsedVoucher, { customerVoucherId })
 };

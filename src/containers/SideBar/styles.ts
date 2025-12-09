@@ -71,6 +71,11 @@ export const CardIcon = styled.button`
   transition: 0.3s;
   margin-bottom: 1.5rem;
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   :hover {
     background: var(--orange-250);
     color: var(--black-opaco);

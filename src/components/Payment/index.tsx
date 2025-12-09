@@ -4,6 +4,8 @@ import { PaymentDto } from "../../models/dtos/payment";
 import { PaymentType } from "../../models/enums/paymentType";
 import { FlagCard } from "../../models/enums/flagCard";
 
+import { useSale } from "../../hooks/useSale";
+
 import Spinner from "../Spinner";
 
 import { Tooltip, Modal, notification, Form } from "antd";
@@ -35,7 +37,7 @@ const Payment: React.FC<IProps> = ({
   setLoadingPayment,
 }) => {
   const [formRemoveTef] = Form.useForm();
-
+  const { isSavingSale } = useSale();
   const deletePaymentConfirm = () => {
     Modal.confirm({
       title: "Excluir Pagamento",
@@ -204,6 +206,7 @@ const Payment: React.FC<IProps> = ({
             <Column sm={6}>
               <Tooltip title="Remover" placement="bottom">
                 <Button
+                  disabled={isSavingSale}
                   onClick={() => {
                     payment.code_nsu
                       ? deletePaymentConfirm()
