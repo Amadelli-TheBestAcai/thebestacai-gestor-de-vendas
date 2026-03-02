@@ -8,6 +8,14 @@ export const Container = styled(ModalAnt)`
     width: 100%;
     border-radius: 6.25rem;
     padding: 5rem;
+    border-color: var(--brown-easter);
+    color: var(--brown-easter) !important;
+
+    p, span, button{
+    border-color: var(--brown-easter);
+    color: var(--brown-easter) !important;
+    }
+
     .ant-modal-body {
       display: flex;
       flex-direction: column;

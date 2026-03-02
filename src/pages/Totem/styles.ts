@@ -10,9 +10,19 @@ export const Container = styled.div`
   width: 100%;
   height: 100%;
 
-  p, span, h1, h2, h3, h4, h5, b, div, img, button{
+  p,
+  span,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  b,
+  div,
+  img,
+  button {
     color: var(--brown-easter) !important;
-    border-color: var(--brown-easter) !important;
+    border-color: var(--brown-easter);
   }
 
   * {

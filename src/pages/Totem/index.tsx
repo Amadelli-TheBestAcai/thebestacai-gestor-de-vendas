@@ -281,7 +281,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
           customHeight={getHeader() ? "100%" : "90%"}
           customJustifyContent={"flex-start"}
         >
-          {step === 1 ? (
+          {step === 6 ? (
             <Welcome
               stepChange={stepChange}
               is_loading={fetchingSale || fetchingProducts}
@@ -335,7 +335,7 @@ const Totem: React.FC<IProps> = ({ history }) => {
           ) : (
             <React.Fragment />
           )}
-          {step === 6 ? (
+          {step === 1 ? (
             <Evaluation
               setStep={setStep}
               printerTef={printerTef}

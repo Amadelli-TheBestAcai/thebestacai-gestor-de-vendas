@@ -70,7 +70,7 @@ export const Body = styled.div`
       font-weight: 500;
       font-size: 1.75rem;
       color: var(--gray-300) !important;
-      border: 1px solid var(--grey-75) !important;
+      border: 1px solid var(--brown-easter) !important;
       border-right: none !important;
       border-radius: 0.5rem 0 0 0.5rem !important;
     }
