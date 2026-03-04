@@ -30,7 +30,7 @@ const Welcome: React.FC<IProps> = ({ stepChange, is_loading }) => {
     <Container urlImage={images[currentImage].url}>
       <Footer>
         <Button onClick={() => stepChange(2)} loading={is_loading}>
-          Iniciar Checkout
+          Iniciar Pedido
         </Button>
       </Footer>
     </Container>
