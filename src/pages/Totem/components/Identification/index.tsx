@@ -213,7 +213,7 @@ const Identification: React.FC<IProps> = ({
               Confirmar
             </ButtonSendCPF>
             <ButtonDontSendCPF onClick={() => onFinish(false)}>
-              Não desejo Informar
+              Não Quero Pontuar
             </ButtonDontSendCPF>
           </div>
         )}

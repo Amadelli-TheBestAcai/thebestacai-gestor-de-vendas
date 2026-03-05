@@ -9,6 +9,22 @@ export const Container = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
+
+  p,
+  span,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  b,
+  div,
+  img,
+  button {
+    color: var(--brown-easter) !important;
+    border-color: var(--brown-easter);
+  }
+
   * {
     font-family: "VisbyCF";
   }
@@ -24,7 +40,7 @@ export const Header = styled.div`
   align-items: center;
   width: 100%;
   height: 17.81rem;
-  background-color: black;
+  background-color: var(--brown-easter);
 
   .logo-content {
     display: flex;
