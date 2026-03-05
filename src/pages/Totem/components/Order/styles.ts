@@ -50,7 +50,7 @@ export const CardCategoryMenu = styled.div<IMenu>`
   padding: 0.125rem;
   border-radius: 0.31rem;
   box-shadow: 0.2rem 0.2rem 0.5rem var(--black-opacity-30);
-  border-right: 0.625rem solid var(--white);
+  border-right: 0.625rem solid var(--white) !important;
   background: var(--white);
 
   span {
@@ -69,7 +69,7 @@ export const CardCategoryMenu = styled.div<IMenu>`
   ${({ active }) => {
     if (active) {
       return css`
-        border-right: 0.625rem solid var(--orange-250);
+        border-right: 0.625rem solid var(--orange-250) !important;
       `;
     }
   }}

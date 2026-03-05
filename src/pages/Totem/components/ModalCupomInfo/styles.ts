@@ -8,6 +8,15 @@ export const Container = styled(ModalAnt)`
     width: 100%;
     border-radius: 6.25rem;
     padding: 5rem;
+    border-color: var(--brown-easter);
+    color: var(--brown-easter) !important;
+
+    p,
+    span,
+    button {
+      border-color: var(--brown-easter);
+      color: var(--brown-easter) !important;
+    }
     .ant-modal-body {
       display: flex;
       flex-direction: column;
@@ -31,7 +40,7 @@ export const Container = styled(ModalAnt)`
     justify-content: center;
     text-align: center;
   }
-  
+
   .modal-body {
     font-family: "VisbyCF";
     font-size: 2.5rem;

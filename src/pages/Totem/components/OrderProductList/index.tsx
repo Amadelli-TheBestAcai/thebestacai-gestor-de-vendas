@@ -3,8 +3,6 @@ import React, { Dispatch, SetStateAction } from "react";
 import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
-import cupom from "../../../../assets/totem/svg/cupom.svg";
-import discount from "../../../../assets/totem/svg/discount.svg";
 
 import { getCategoryIcon } from "../../helpers/getCategoryIcon";
 
@@ -39,11 +37,15 @@ const OrderProductList: React.FC<IProps> = ({
         .map((item) => (
           <OrderProduct key={item.id} sm={24}>
             <div className="order-item-content">
-              <span className="order-item-name">
-                {item.product.id !== 1
-                  ? `${item.quantity}x ${item.product.name}`
-                  : item.product.name}
-              </span>
+              <img             
+                src={
+                  item?.product?.upload_url
+                    ? item?.product?.upload_url?.toString()
+                    : getCategoryIcon(item.product.category)
+                }
+                alt="Imagem dos produtos"
+              />
+              <span className="order-item-name">{item.product.name}</span>
             </div>
 
             <div className="order-item-actions">
