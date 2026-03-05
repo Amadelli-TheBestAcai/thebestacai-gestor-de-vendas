@@ -43,6 +43,7 @@ const OrderProductList: React.FC<IProps> = ({
                     ? item?.product?.upload_url?.toString()
                     : getCategoryIcon(item.product.category)
                 }
+                alt="Imagem dos produtos"
               />
               <span className="order-item-name">{item.product.name}</span>
             </div>
