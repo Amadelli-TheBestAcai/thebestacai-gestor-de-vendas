@@ -240,7 +240,7 @@ const Order: React.FC<IProps> = ({
                 }
               </span>
             </div>
-            <ExtraProductList gutter={[6, 40]} size={sale?.items?.length}>
+            <ExtraProductList gutter={[6, 40]}>
               {storeProducts
                 .filter(
                   (storeProduct) =>
