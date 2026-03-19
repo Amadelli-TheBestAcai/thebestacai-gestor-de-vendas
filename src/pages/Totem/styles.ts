@@ -73,6 +73,7 @@ export const Content = styled.div<IContent>`
 `;
 
 export const Modal = styled(ModalAnt)`
+  z-index: 1000;
   .ant-modal-content {
     height: 100%;
     width: 100%;

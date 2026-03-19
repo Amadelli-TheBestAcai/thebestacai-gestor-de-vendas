@@ -15,8 +15,9 @@ import { useSale } from "../../../../hooks/useSale";
 import { ItemDto } from "../../../../models/dtos/item";
 import { StoreProductDto } from "../../../../models/dtos/storeProduct";
 
-import ModalSaleCancel from "../ModalSaleCancel";
+import ModalWeight from "../ModalWeight";
 import ProductCard from "../ProductCard";
+import ModalSaleCancel from "../ModalSaleCancel";
 import OrderProductList from "../OrderProductList";
 
 import { notification } from "antd";
@@ -57,7 +58,8 @@ const Order: React.FC<IProps> = ({
   handleIncrement,
 }) => {
   const { sale, onAddItem, onDecressItem } = useSale();
-  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [visibleModalCancel, setVisibleModalCancel] = useState<boolean>(false);
+  const [visibleModalWeight, setVisibleModalWeight] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [categories, setCategories] = useState<Category[]>([]);
   const [fetchingBalanceWeight, setFetchingBalanceWeight] =
@@ -76,10 +78,10 @@ const Order: React.FC<IProps> = ({
       setCategories(_categories);
       setSelectedCategory(
         _categories.find((_category) =>
-          _category?.name?.toLowerCase()?.includes("bebida")
+          _category?.name?.toLowerCase()?.includes("bebida"),
         )?.id ||
           _categories[0]?.id ||
-          0
+          0,
       );
     }
   }, []);
@@ -107,7 +109,7 @@ const Order: React.FC<IProps> = ({
     await sleep(1500);
 
     const selfService = storeProducts.find(
-      (_product) => _product?.product?.id === 1
+      (_product) => _product?.product?.id === 1,
     );
 
     if (!selfService) {
@@ -121,7 +123,6 @@ const Order: React.FC<IProps> = ({
       setFetchingBalanceWeight(false);
       return;
     }
-
     window.Main.send("balance:get", ({ weight, error }) => {
       setFetchingBalanceWeight(false);
       if (error) {
@@ -148,26 +149,20 @@ const Order: React.FC<IProps> = ({
       const amount = +weight * +selfService?.price_unit;
       onAddItem(selfService, +weight, +amount);
 
-      colorChange();
+      setVisibleModalWeight(false);
     });
-  };
-
-  const colorChange = async () => {
-    setLoadingButtonRegister(() => true);
-    await sleep(2000);
-    setLoadingButtonRegister(() => false);
   };
 
   const addItemList = async (item: ItemDto) => {
     const findProduct = storeProducts.find(
-      (_product) => +_product.id === +item.store_product_id
+      (_product) => +_product.id === +item.store_product_id,
     );
     onAddItem(findProduct, 1, +findProduct.price_unit);
   };
 
   const onDecressItemList = async (
     item: ItemDto,
-    totemNotification: boolean
+    totemNotification: boolean,
   ) => {
     await onDecressItem(item.id, totemNotification);
   };
@@ -214,7 +209,7 @@ const Order: React.FC<IProps> = ({
             </div>
 
             <ButtonRegister
-              onClick={getWeightByBalance}
+              onClick={() => setVisibleModalWeight(true)}
               loading={fetchingBalanceWeight}
               loadingRegister={loadingButtonRegister}
             >
@@ -226,11 +221,11 @@ const Order: React.FC<IProps> = ({
               {fetchingBalanceWeight
                 ? "Registrando Pesagem"
                 : sale?.items?.length &&
-                  sale?.items?.some((item) => item?.product?.id === 1)
-                ? !loadingButtonRegister
-                  ? "Adicionar Nova Pesagem"
-                  : "Pesagem concluída"
-                : "Registrar Pesagem"}
+                    sale?.items?.some((item) => item?.product?.id === 1)
+                  ? !loadingButtonRegister
+                    ? "Adicionar Nova Pesagem"
+                    : "Pesagem concluída"
+                  : "Registrar Pesagem"}
             </ButtonRegister>
           </div>
 
@@ -240,7 +235,7 @@ const Order: React.FC<IProps> = ({
               <span>
                 {
                   categories.find(
-                    (_category) => _category.id === selectedCategory
+                    (_category) => _category.id === selectedCategory,
                   )?.name
                 }
               </span>
@@ -250,7 +245,7 @@ const Order: React.FC<IProps> = ({
                 .filter(
                   (storeProduct) =>
                     storeProduct.product.category_id === selectedCategory &&
-                    storeProduct.product.category_id !== 1
+                    storeProduct.product.category_id !== 1,
                 )
                 .sort((a, b) => a.product.name.localeCompare(b.product.name))
                 .map((storeProduct) => (
@@ -296,13 +291,21 @@ const Order: React.FC<IProps> = ({
           >
             Finalizar Pedido
           </ButtonFinalize>
-          <Button onClick={() => setVisibleModal(true)}>Cancelar Pedido</Button>
+          <Button onClick={() => setVisibleModalCancel(true)}>
+            Cancelar Pedido
+          </Button>
         </div>
       </Footer>
       <ModalSaleCancel
-        visible={visibleModal}
-        setVisible={setVisibleModal}
+        visible={visibleModalCancel}
+        setVisible={setVisibleModalCancel}
         cancelSale={cancelSale}
+      />
+      <ModalWeight
+        visible={visibleModalWeight}
+        setVisible={setVisibleModalWeight}
+        onRegisterWeight={getWeightByBalance}
+        loading={fetchingBalanceWeight}
       />
     </>
   );

@@ -21,6 +21,9 @@ export const MenuCategory = styled.div`
   width: 27%;
   height: 100%;
   padding: 0 0.65rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 
   img {
     width: 12rem;
@@ -45,8 +48,8 @@ export const CardCategoryMenu = styled.div<IMenu>`
   display: flex;
   align-items: center;
   width: 100%;
-  height: 3.75rem;
-  margin: 1rem 0;
+  height: 4.5rem;
+  margin: 0.5rem 0;
   padding: 0.125rem;
   border-radius: 0.31rem;
   box-shadow: 0.2rem 0.2rem 0.5rem var(--black-opacity-30);
