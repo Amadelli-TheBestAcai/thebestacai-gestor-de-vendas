@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Items from "../../containers/Items";
 import Actions from "../../containers/Actions";
@@ -11,7 +11,6 @@ import Centralizer from "../../containers/Centralizer";
 import Spinner from "../../components/Spinner";
 import Register from "../../components/Register";
 import CashNotFound from "../../components/CashNotFound";
-import RemoveTefModal from "../../components/RemoveTefModal";
 
 import { useSale } from "../../hooks/useSale";
 import { useSettings } from "../../hooks/useSettings";
@@ -20,7 +19,6 @@ import { PaymentDto } from "../../models/dtos/payment";
 import { FlagCard } from "../../models/enums/flagCard";
 import { StoreCashDto } from "../../models/dtos/storeCash";
 import { PaymentType } from "../../models/enums/paymentType";
-import { PaymentTefCancelType } from "../../models/enums/paymentTefCancelType";
 
 import { notification, Modal, Form } from "antd";
 import {
@@ -42,11 +40,14 @@ import {
   Textarea,
 } from "./styles";
 
-const DESFEITO = PaymentTefCancelType.DESFEITO;
-
 const Home: React.FC = () => {
-  const { sale, setSale, discountModalHandler, setShouldOpenClientInfo } =
-    useSale();
+  const {
+    sale,
+    setSale,
+    discountModalHandler,
+    setShouldOpenClientInfo,
+    onRegisterSale,
+  } = useSale();
   const { settings, setSettings } = useSettings();
   const [formRemoveTef] = Form.useForm();
   
@@ -63,6 +64,8 @@ const Home: React.FC = () => {
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [storeCash, setStoreCash] = useState<StoreCashDto | null>(null);
   const [selectTef, setSelectTef] = useState<string>("Sim");
+  const [shouldCheckAutoFinalize, setShouldCheckAutoFinalize] = useState(false);
+  const autoFinalizeInProgressRef = useRef(false);
 
   useEffect(() => {
     async function init() {
@@ -248,6 +251,41 @@ const Home: React.FC = () => {
     init();
   }, []);
 
+  useEffect(() => {
+    if (
+      !shouldCheckAutoFinalize ||
+      !sale ||
+      autoFinalizeInProgressRef.current
+    ) {
+      return;
+    }
+
+    const hasTefPayment = sale?.payments?.some((payment) => !!payment?.code_nsu);
+    if (!hasTefPayment) {
+      setShouldCheckAutoFinalize(false);
+      return;
+    }
+
+    const expectedTotal = +(
+      sale?.total_sold -
+      sale?.discount -
+      (sale?.customer_nps_reward_discount || 0)
+    ).toFixed(2);
+    const totalPaid = +(sale?.total_paid || 0).toFixed(2);
+    const shouldFinalize = totalPaid === expectedTotal;
+
+    if (!shouldFinalize) {
+      setShouldCheckAutoFinalize(false);
+      return;
+    }
+
+    autoFinalizeInProgressRef.current = true;
+    onRegisterSale().finally(() => {
+      autoFinalizeInProgressRef.current = false;
+      setShouldCheckAutoFinalize(false);
+    });
+  }, [onRegisterSale, sale, shouldCheckAutoFinalize]);
+
   const addPayment = async () => {
     if (loadingPayment) return;
     setLoadingPayment(true);
@@ -311,7 +349,7 @@ const Home: React.FC = () => {
       }
     }
 
-    if (
+    const isManualPaymentFlow =
       (!settings.should_use_tef && flagCard) ||
       !isConnected ||
       !paymentModalConnect ||
@@ -319,8 +357,9 @@ const Home: React.FC = () => {
       (settings.should_use_tef &&
         selectTef === "Sim" &&
         paymentType === PaymentType.PIX &&
-        !settings.cnpj_credenciadora)
-    ) {
+        !settings.cnpj_credenciadora);
+
+    if (isManualPaymentFlow) {
       const turnOffTef =
         (settings.should_use_tef &&
           selectTef === "Sim" &&
@@ -358,6 +397,7 @@ const Home: React.FC = () => {
       setCurrentPayment(0);
       setFlagCard(99);
       setPaymentModal(false);
+      setShouldCheckAutoFinalize(true);
     } else {
       const {
         response: updatedSale,
@@ -390,75 +430,29 @@ const Home: React.FC = () => {
       setCurrentPayment(0);
       setFlagCard(99);
       setPaymentModal(false);
+      setShouldCheckAutoFinalize(true);
     }
     setLoadingPayment(false);
   };
 
-  const deletePayment = async (payment: PaymentDto, justify?: string) => {
+  const removePaymentFromSale = async (payment: PaymentDto) => {
     const { response: updatedSale, has_internal_error: errorOnDeletePayment } =
       await window.Main.sale.deletePayment(payment.id);
 
-    if (justify) {
-      await window.Main.tefFactory.insertPaymentTefAudit(
-        payment.type,
-        DESFEITO,
-        storeCash?.history_id,
-        justify,
-        payment.code_nsu,
-        payment.amount?.toFixed(2)?.toString()
-      );
-    }
     return {
       updatedSale: updatedSale,
       has_error_payment: errorOnDeletePayment,
     };
   };
 
-  const deletePaymentTEF = async (payment: PaymentDto, justify?: string) => {
-    const { updatedSale, has_error_payment } = await deletePayment(
-      payment,
-      justify
-    );
-
-    const isConnected = await window.Main.hasInternet();
-
-    const hasTefPaymentInSale = sale?.payments?.some(
-      (payment) => payment?.code_nsu
-    );
-
-    const hasNoTefPaymentInUpdatedSale = updatedSale?.payments?.every(
-      (payment) => !payment?.code_nsu
-    );
-
-    if (hasTefPaymentInSale && hasNoTefPaymentInUpdatedSale && isConnected) {
-      const { has_internal_error: errorOnFinalizeTransaction, error_message } =
-        await window.Main.tefFactory.finalizeTransaction([]);
-
-      return {
-        updatedSale: updatedSale,
-        has_error_payment: has_error_payment,
-        has_error_finalize_tef: errorOnFinalizeTransaction,
-        error_finalize_message: error_message,
-      };
-    }
-
-    return {
-      updatedSale: updatedSale,
-      has_error_payment: has_error_payment,
-      has_error_finalize_tef: false,
-      error_finalize_message: "",
-    };
-  };
-
-  const removePayment = async (payment: PaymentDto, justify?: string) => {
-    const paymentsMetodsRemove = async (tefError: boolean) => {
+  const removePayment = async (payment: PaymentDto, _justify?: string) => {
+    const processPaymentRemoval = async (tefError: boolean) => {
       setLoadingPayment(true);
       let _updatedSale;
 
       if (tefError) {
-        const { updatedSale, has_error_payment } = await deletePayment(
-          payment,
-          justify
+        const { updatedSale, has_error_payment } = await removePaymentFromSale(
+          payment
         );
         _updatedSale = updatedSale;
         if (has_error_payment) {
@@ -469,15 +463,10 @@ const Home: React.FC = () => {
           });
         }
       } else {
-        const {
-          updatedSale,
-          has_error_payment,
-          has_error_finalize_tef,
-          error_finalize_message,
-        } = await deletePaymentTEF(payment, justify);
-
+        const { updatedSale, has_error_payment } = await removePaymentFromSale(
+          payment
+        );
         _updatedSale = updatedSale;
-
         if (has_error_payment) {
           setLoadingPayment(false);
           return notification.error({
@@ -485,19 +474,10 @@ const Home: React.FC = () => {
             duration: 5,
           });
         }
-        if (has_error_finalize_tef) {
-          setLoadingPayment(false);
-          notification.error({
-            message: error_finalize_message || "Erro ao finalizar transação",
-            description: "Verique o pagamento na D-TEF Web se foi efetivado",
-            duration: 5,
-          });
-        } else {
-          notification.success({
-            message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
-            duration: 5,
-          });
-        }
+        notification.success({
+          message: `O pagamento TEF de numero: ${payment.code_nsu} e valor: ${payment.amount} foi desfeito com sucesso`,
+          duration: 5,
+        });
       }
 
       setSale(_updatedSale);
@@ -568,15 +548,15 @@ const Home: React.FC = () => {
 
           width: "50%",
           async onOk() {
-            await paymentsMetodsRemove(true);
+            await processPaymentRemoval(true);
             return;
           },
         });
       } else {
-        await paymentsMetodsRemove(false);
+        await processPaymentRemoval(false);
       }
     } else {
-      await paymentsMetodsRemove(true);
+      await processPaymentRemoval(true);
     }
   };
 
@@ -863,7 +843,6 @@ const Home: React.FC = () => {
                             flagCard={flagCard}
                             setFlagCard={setFlagCard}
                             loadingPayment={loadingPayment}
-                            setLoadingPayment={setLoadingPayment}
                             paymentModalConnect={paymentModalConnect}
                             selectTef={selectTef}
                             setSelectTef={setSelectTef}
@@ -887,7 +866,6 @@ const Home: React.FC = () => {
           </>
         )}
       </>
-      <RemoveTefModal />
       <Modal
         visible={loadingPaymentModalOpenOnline}
         footer={false}

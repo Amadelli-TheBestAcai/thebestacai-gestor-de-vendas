@@ -44,7 +44,6 @@ import {
   CancelIcon,
   Form,
   PrinterNFCeIcon,
-  PrinterTefIcon,
   IconOfferDiscount,
 } from "./styles";
 
@@ -109,10 +108,6 @@ const Sale: React.FC<IProps> = () => {
       init();
     }
   }, [shouldSearch]);
-
-  const hasPaymentWithTef = selectedSale?.payments?.filter(
-    (payment) => payment?.code_nsu
-  );
 
   const onDelete = (params): void => {
     const hasNfce = selectedSale.nfce;
@@ -518,30 +513,6 @@ const Sale: React.FC<IProps> = () => {
     }
   };
 
-  const reprintCouponTef = async () => {
-    const { has_internal_error: errorReprintCoupon, error_message } =
-      await window.Main.tefFactory.reprintCoupon();
-
-    if (errorReprintCoupon) {
-      return notification.error({
-        message: error_message || "Operação cancelada",
-        duration: 5,
-      });
-    }
-
-    const {
-      has_internal_error: errorOnPrintCupomTef,
-      error_message: error_message_print_cupom_tef,
-    } = await window.Main.common.printCouponTef();
-
-    if (errorOnPrintCupomTef) {
-      return notification.error({
-        message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
-        duration: 5,
-      });
-    }
-  };
-
   const cancelPaymentTefConfirm = async (payment) => {
     Modal.confirm({
       title: `Deseja cancelar este pagamento TEF?`,
@@ -607,7 +578,6 @@ const Sale: React.FC<IProps> = () => {
   const cancelTefPayment = async (payment: PaymentDto, justify: string) => {
     setLoadingCancel(true);
     const {
-      response,
       has_internal_error: errorCancelPaymentTef,
       error_message,
     } = await window.Main.tefFactory.cancelPaymentTef();
@@ -620,34 +590,7 @@ const Sale: React.FC<IProps> = () => {
       });
     }
 
-    const {
-      has_internal_error: errorOnPrintCupomTef,
-      error_message: error_message_print_cupom_tef,
-    } = await window.Main.common.printCouponTef();
-
-    if (errorOnPrintCupomTef) {
-      notification.error({
-        message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
-        duration: 5,
-      });
-    }
-
     setIsLoading(true);
-
-    const {
-      has_internal_error: errorFinalizeTransaction,
-      error_message: error_message_finalize_transaction,
-    } = await window.Main.tefFactory.finalizeTransaction([response]);
-
-    if (errorFinalizeTransaction) {
-      setLoadingCancel(false);
-      setIsLoading(false);
-      return notification.error({
-        message:
-          error_message_finalize_transaction || "Erro ao finalizar transação",
-        duration: 5,
-      });
-    }
 
     const {
       has_internal_error: errorUpdateStatusPaymentTef,
@@ -898,17 +841,6 @@ const Sale: React.FC<IProps> = () => {
                                     />
                                   </Tooltip>
                                 )}
-                              {hasPaymentWithTef && (
-                                <Tooltip
-                                  title="Reimprimir cupom fiscal TEF"
-                                  placement="bottom"
-                                >
-                                  <PrinterTefIcon
-                                    onClick={() => reprintCouponTef()}
-                                    style={{ width: "9%" }}
-                                  />
-                                </Tooltip>
-                              )}
                             </Col>
                           </>
                         }
