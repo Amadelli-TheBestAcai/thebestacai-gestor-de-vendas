@@ -71,47 +71,46 @@ class PrintFileContent implements IUseCaseFactory {
                 return bStats.mtime.getTime() - aStats.mtime.getTime();
             });
 
-            for (const file of files) {
-                const filePath = path.join(folderPath, file);
-                console.log(`Lendo o arquivo: ${filePath}`);
-                const fileContent = await readFileContent(filePath);
+            const file = files[0];
+            const filePath = path.join(folderPath, file);
+            console.log(`Lendo o arquivo mais recente: ${filePath}`);
+            const fileContent = await readFileContent(filePath);
 
-                this.printerFormater.clear();
-                this.printerFormater.println(fileContent);
+            this.printerFormater.clear();
+            this.printerFormater.println(fileContent);
 
-                const lines = fileContent.split('\n');
+            const lines = fileContent.split('\n');
 
-                this.printerFormater.clear();
+            this.printerFormater.clear();
 
-                for (const line of lines) {
-                    this.printerFormater.println(line.trim());
+            for (const line of lines) {
+                this.printerFormater.println(line.trim());
 
-                    if (line.trim().startsWith("(NSU D-TEF")) {
-                        this.printerFormater.cut();
-                    }
+                if (line.trim().startsWith("(NSU D-TEF")) {
+                    this.printerFormater.cut();
                 }
-
-                files.forEach(file => {
-                    if (file.toLowerCase().startsWith('ultimo')) {
-                        const filePath = path.join(folderPath, file);
-                        fs.unlinkSync(filePath);
-                        console.log(`Arquivo excluído: ${filePath}`);
-                    }
-                });
-
-                Printer.printDirect({
-                    data: this.printerFormater.getBuffer(),
-                    options: termalPrinter.options,
-                    printer,
-                    type: 'RAW',
-                    success: function () {
-                        console.log('Impressão realizada com sucesso');
-                    },
-                    error: function (err) {
-                        console.error('Erro na impressão:', err);
-                    },
-                });
             }
+
+            files.forEach((f) => {
+                if (f.toLowerCase().startsWith('ultimo')) {
+                    const ultimoPath = path.join(folderPath, f);
+                    fs.unlinkSync(ultimoPath);
+                    console.log(`Arquivo excluído: ${ultimoPath}`);
+                }
+            });
+
+            Printer.printDirect({
+                data: this.printerFormater.getBuffer(),
+                options: termalPrinter.options,
+                printer,
+                type: 'RAW',
+                success: function () {
+                    console.log('Impressão realizada com sucesso');
+                },
+                error: function (err) {
+                    console.error('Erro na impressão:', err);
+                },
+            });
         } catch (error) {
             console.error('Erro ao imprimir os arquivos:', error);
         }
