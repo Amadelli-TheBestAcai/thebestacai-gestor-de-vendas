@@ -13,7 +13,6 @@ import {
     getCpf
 } from "../usecases/linxTef";
 import { deleteLogs } from "../usecases/linxTef/deleteLogs";
-import { removeTransaction } from "../usecases/linxTef/removeTransation";
 import { reprintCoupon } from "../usecases/linxTef/reprintCoupon";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 
@@ -27,8 +26,6 @@ export const tefFactory = {
         await useCaseFactory.execute<void>(configurationTEF),
     deleteLogs: async () =>
         await useCaseFactory.execute<void>(deleteLogs),
-    removeTransaction: async (code_nsu: string) =>
-        await useCaseFactory.execute<string>(removeTransaction, { code_nsu }),
     getPathCupom: async () =>
         await useCaseFactory.execute<string>(getPathCupom),
     reprintCoupon: async () =>
