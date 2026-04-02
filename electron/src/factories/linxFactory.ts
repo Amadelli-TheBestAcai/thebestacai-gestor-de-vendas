@@ -4,7 +4,6 @@ import { PaymentType } from "../models/enums/paymentType";
 import { PaymentTefAuditDto } from "../models/gestor/paymentTefAudit";
 import {
     configurationTEF,
-    finalizeTransaction,
     getPathCupom,
     transactionsTef,
     cancelPaymentTef,
@@ -31,8 +30,6 @@ export const tefFactory = {
         await useCaseFactory.execute<void>(deleteLogs),
     removeTransaction: async (code_nsu: string) =>
         await useCaseFactory.execute<string>(removeTransaction, { code_nsu }),
-    finalizeTransaction: async (codes_nsu: string[]) =>
-        await useCaseFactory.execute<void>(finalizeTransaction, { codes_nsu }),
     getPathCupom: async () =>
         await useCaseFactory.execute<string>(getPathCupom),
     reprintCoupon: async () =>
