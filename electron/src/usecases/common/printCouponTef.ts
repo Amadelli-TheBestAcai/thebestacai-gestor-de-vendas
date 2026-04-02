@@ -40,6 +40,11 @@ class PrintFileContent implements IUseCaseFactory {
             return;
         }
 
+        if (!printer) {
+            console.error('Impressora não configurada nas definições.');
+            return;
+        }
+
         const termalPrinter = Printer.getPrinter(printer);
 
         try {

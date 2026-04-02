@@ -7,7 +7,6 @@ import {
     getPathCupom,
     transactionsTef,
     cancelPaymentTef,
-    findPinPad,
     insertPaymentTefAudit,
     integrationPaymentTefAudit,
     getCnpjAccreditor,
@@ -36,8 +35,6 @@ export const tefFactory = {
         await useCaseFactory.execute<void>(reprintCoupon),
     cancelPaymentTef: async () =>
         await useCaseFactory.execute<string>(cancelPaymentTef),
-    findPinPad: async () =>
-        await useCaseFactory.execute<string>(findPinPad),
     insertPaymentTefAudit: async (
         type: PaymentType,
         payment_tef_cancel_type: PaymentTefCancelType,
