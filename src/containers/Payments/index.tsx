@@ -39,7 +39,7 @@ import { PaymentDto } from "../../models/dtos/payment";
 
 interface IProps {
   sale: SaleDto;
-  removePayment: (payment: PaymentDto, justify?: string) => Promise<void>;
+  removePayment: (payment: PaymentDto) => Promise<void>;
   addPayment: () => Promise<void>;
   handleOpenPayment: (type: number, title: string, flag_card?: number) => void;
   setCurrentPayment: Dispatch<SetStateAction<number>>;
@@ -52,7 +52,6 @@ interface IProps {
   shouldDisableButtons?: boolean;
   usingDelivery?: boolean;
   loadingPayment?: boolean;
-  setLoadingPayment?: Dispatch<SetStateAction<boolean>>;
   paymentModalConnect?: boolean;
   selectTef?: string;
   setSelectTef?: Dispatch<SetStateAction<string>>;
@@ -73,7 +72,6 @@ const PaymentsContainer: React.FC<IProps> = ({
   setFlagCard,
   flagCard,
   loadingPayment,
-  setLoadingPayment,
   paymentModalConnect,
   selectTef,
   setSelectTef,
@@ -173,7 +171,6 @@ const PaymentsContainer: React.FC<IProps> = ({
             payment={payment}
             removePayment={removePayment}
             loadingPayment={loadingPayment}
-            setLoadingPayment={setLoadingPayment}
           />
         ))}
       </PaymentsInfoContainer>
