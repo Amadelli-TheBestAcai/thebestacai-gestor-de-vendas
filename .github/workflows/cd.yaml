@@ -20,7 +20,7 @@ jobs:
         run: npm install --global node-gyp@latest
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
       - name: Set node config to set msvs_version to 2019
         run: npm config set msvs_version 2019
       - uses: microsoft/setup-msbuild@v1.1
