@@ -38,7 +38,7 @@ export const Container = styled.div`
       font-weight: 500;
       font-size: 1.75rem;
       color: var(--gray-300) !important;
-      border: 1px solid var(--brown-easter) !important;
+      border: 1px solid var(--black) !important;
       border-right: none !important;
       border-radius: 0.5rem 0 0 0.5rem !important;
     }
@@ -48,7 +48,7 @@ export const Container = styled.div`
       background: white;
       box-shadow: none;
       color: var(--gray-300);
-      border: 1px solid var(--brown-easter);
+      border: 1px solid var(--black);
       border-left: none;
       border-radius: 0 0.5rem 0.5rem 0;
       padding: 0;
@@ -123,7 +123,7 @@ export const PinPadOption = styled.div<IPinpad>`
 `;
 
 export const Input = styled(InputAnt)`
-  border: 1px solid var(--brown-easter);
+  border: 1px solid var(--black);
 `;
 
 const ButtonCSS = css`
@@ -142,14 +142,14 @@ const ButtonCSS = css`
   :hover,
   :focus {
     background: var(--white);
-    color: var(--brown-easter);
+    color: var(--black);
   }
 `;
 
 export const ButtonSendCPF = styled(ButtonAnt)`
   ${ButtonCSS}
   background: var(--orange-250);
-  color: var(--brown-easter);
+  color: var(--black);
   margin-bottom: 0.5rem;
   box-shadow: #00000040 1.95px 1.95px 2.6px;
 

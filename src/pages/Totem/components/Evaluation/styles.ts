@@ -54,15 +54,15 @@ export const Modal = styled(ModalAnt)`
   p,
   span,
   button {
-    border-color: var(--brown-easter);
-    color: var(--brown-easter) !important;
+    border-color: var(--black);
+    color: var(--black) !important;
   }
   .modal-title {
     font-family: "VisbyCF";
     font-size: 3.75rem;
     font-weight: 600;
-    border-color: var(--brown-easter);
-    color: var(--brown-easter) !important;
+    border-color: var(--black);
+    color: var(--black) !important;
   }
 
   .ant-modal-content {
