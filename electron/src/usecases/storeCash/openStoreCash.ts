@@ -8,6 +8,7 @@ import {
   OldCashHistoryDto,
 } from "../../models/gestor";
 import { backupDatabase } from "../common/backupDatabase";
+import { limparCuponsTef } from "../linxTef/limparCuponsTef";
 import { v4 } from "uuid";
 import { useCaseFactory } from "../useCaseFactory";
 import moment from "moment";
@@ -37,6 +38,8 @@ class OpenStoreCash implements IUseCaseFactory {
   async execute({
     amount_on_open,
   }: Request): Promise<StoreCashDto | undefined> {
+    await limparCuponsTef();
+
     const store = await this.storeRepository.getOne();
 
     const payload: StoreCashDto = {

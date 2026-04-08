@@ -254,8 +254,9 @@ export function GlobalProvider({ children }) {
     ) {
       setSavingSale(false);
       return notification.warning({
-        message: "Pagamento inválido!",
-        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
+        message: "Valor pago insuficiente",
+        description:
+          "O total dos pagamentos é menor que o valor da venda. Registre mais pagamentos até cobrir o total antes de finalizar.",
         duration: 5,
       });
     }
@@ -290,20 +291,12 @@ export function GlobalProvider({ children }) {
             message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
             duration: 5,
           });
+          setSavingSale(false);
+          return;
         }
       }
 
-      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
-        await window.Main.tefFactory.finalizeTransaction(codes_nsu);
-
-      if (errorOnFinalizaTransacao) {
-        notification.error({
-          message: error_message || "Erro ao finalizar transação TEF",
-          duration: 5,
-        });
-        setSavingSale(false);
-        return;
-      }
+    
     }
 
     const voucherDiscount =

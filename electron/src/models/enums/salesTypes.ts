@@ -5,6 +5,8 @@ export enum SalesTypes {
   WHATSAPP = 3,
   TELEFONE = 4,
   APP = 5,
-  OUTROS = 6,
+  OTHERS = 6,
   TOTEM = 7,
+  PEDIDOS_YA = 8,
+  PEDIDOS_99 = 9
 }
