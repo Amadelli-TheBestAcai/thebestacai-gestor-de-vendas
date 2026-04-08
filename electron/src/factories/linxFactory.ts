@@ -1,4 +1,4 @@
-import { ConfigTefDTO } from "../models/dtos";
+import { CheckServerTefUpdateDto, ConfigTefDTO } from "../models/dtos";
 import { PaymentTefCancelType } from "../models/enums/PaymentTefCancelType";
 import { PaymentType } from "../models/enums/paymentType";
 import { PaymentTefAuditDto } from "../models/gestor/paymentTefAudit";
@@ -10,7 +10,8 @@ import {
     insertPaymentTefAudit,
     integrationPaymentTefAudit,
     getCnpjAccreditor,
-    getCpf
+    getCpf,
+    checkServerTefUpdate,
 } from "../usecases/linxTef";
 import { deleteLogs } from "../usecases/linxTef/deleteLogs";
 import { reprintCoupon } from "../usecases/linxTef/reprintCoupon";
@@ -48,4 +49,6 @@ export const tefFactory = {
         await useCaseFactory.execute<ConfigTefDTO[]>(getCnpjAccreditor),
     getCpf: async () =>
         await useCaseFactory.execute<string>(getCpf),
+    checkServerTefUpdate: async () =>
+        await useCaseFactory.execute<CheckServerTefUpdateDto>(checkServerTefUpdate),
 };
