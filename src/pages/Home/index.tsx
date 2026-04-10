@@ -49,8 +49,7 @@ const Home: React.FC = () => {
     onRegisterSale,
   } = useSale();
   const { settings, setSettings } = useSettings();
-  const [formRemoveTef] = Form.useForm();
-  
+
   const [loading, setLoading] = useState(true);
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [loadingPaymentModalOpenOnline, setLoadingPaymentModalOpenOnline] =
@@ -596,6 +595,7 @@ const Home: React.FC = () => {
                             paymentModalConnect={paymentModalConnect}
                             selectTef={selectTef}
                             setSelectTef={setSelectTef}
+                            activePaymentType={paymentType}
                           />
                         </PaymentsContent>
                         <CupomModal
