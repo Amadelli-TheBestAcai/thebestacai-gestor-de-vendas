@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Container, Footer, Button } from "./styles";
 
-import totem_welcome_image_easter from "../../../../assets/totem/img/totem_welcome_image_easter.png";
+import totem_welcome_image_wordcup from "../../../../assets/totem/img/totem_welcome_image_wordcup.png";
 
 interface IProps {
   stepChange: (step: number) => void;
@@ -14,7 +14,7 @@ const Welcome: React.FC<IProps> = ({ stepChange, is_loading }) => {
 
   const images = [
     {
-      url: totem_welcome_image_easter,
+      url: totem_welcome_image_wordcup,
     },
   ];
 
