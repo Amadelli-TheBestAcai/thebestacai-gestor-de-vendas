@@ -8,7 +8,7 @@ import React, {
 
 import totem_bad from "../../../../assets/totem/svg/totem_bad.svg";
 import totem_good from "../../../../assets/totem/svg/totem_good.svg";
-import finish_image_easter from "../../../../assets/totem/svg/finish_image_easter.svg";
+import finish_image from "../../../../assets/totem/svg/finish_image.svg";
 import totem_normal from "../../../../assets/totem/svg/totem_normal.svg";
 import totem_very_bad from "../../../../assets/totem/svg/totem_very_bad.svg";
 import totem_very_good from "../../../../assets/totem/svg/totem_very_good.svg";
@@ -321,7 +321,7 @@ const Evaluation: React.FC<IProps> = ({
           </span>
         </Header>
         <Body>
-          <img src={finish_image_easter} />
+          <img src={finish_image} />
         </Body>
         <Footer>
           <ButtonNewOrder
