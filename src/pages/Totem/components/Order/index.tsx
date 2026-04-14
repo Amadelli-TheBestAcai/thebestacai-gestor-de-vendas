@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import bag_easter from "../../../../assets/totem/svg/bag_easter.svg";
+import bag from "../../../../assets/totem/svg/bag.svg";
 import plus from "../../../../assets/totem/svg/plus.svg";
 import check from "../../../../assets/totem/svg/check.svg";
-import bottle_easter from "../../../../assets/totem/svg/bottle_easter.svg";
+import bottle from "../../../../assets/totem/svg/bottle.svg";
 import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
-import self_service_easter from "../../../../assets/totem/svg/self_service_easter.svg";
+import self_service from "../../../../assets/totem/svg/self_service.svg";
 import totem_club_flag from "../../../../assets/totem/img/totem_club_flag.png";
 
 import { getCategoryIcon } from "../../helpers/getCategoryIcon";
@@ -205,7 +205,7 @@ const Order: React.FC<IProps> = ({
           <div className="self-service-content">
             <div className="title">
               {" "}
-              <Icon src={self_service_easter} /> Self-Service
+              <Icon src={self_service} /> Self-Service
             </div>
 
             <ButtonRegister
@@ -231,7 +231,7 @@ const Order: React.FC<IProps> = ({
 
           <div className="extra-products-content">
             <div className="extra-products-title">
-              <Icon src={bottle_easter} />{" "}
+              <Icon src={bottle} />{" "}
               <span>
                 {
                   categories.find(
@@ -263,7 +263,7 @@ const Order: React.FC<IProps> = ({
       <Footer>
         <div className="order-list-footer">
           <div className="order-title-footer">
-            <img src={bag_easter} /> Sua sacola
+            <img src={bag} /> Sua sacola
           </div>
           {sale.items.length ? (
             <OrderProductList

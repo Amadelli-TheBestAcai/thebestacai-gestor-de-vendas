@@ -8,7 +8,7 @@ import React, {
 
 import totem_bad from "../../../../assets/totem/svg/totem_bad.svg";
 import totem_good from "../../../../assets/totem/svg/totem_good.svg";
-import finish_image_easter from "../../../../assets/totem/svg/finish_image_easter.svg";
+import finish_image from "../../../../assets/totem/svg/finish_image.svg";
 import totem_normal from "../../../../assets/totem/svg/totem_normal.svg";
 import totem_very_bad from "../../../../assets/totem/svg/totem_very_bad.svg";
 import totem_very_good from "../../../../assets/totem/svg/totem_very_good.svg";
@@ -49,7 +49,6 @@ const Evaluation: React.FC<IProps> = ({
   const [openNps, setOpenNps] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [verifyFinishSale, setVerifyFinishSale] = useState<boolean>(true);
-  const [finalizaTef, setFinalizaTef] = useState<boolean>(false);
   const [emitNfce, setEmitNfce] = useState<boolean>(false);
   const [npsScore, setNpsScore] = useState<number>(null);
   const [userName, setUserName] = useState<string>("");
@@ -143,7 +142,6 @@ const Evaluation: React.FC<IProps> = ({
       });
     }
 
-    if (!finalizaTef) {
       if (printerTef) {
         const {
           has_internal_error: errorOnPrintCupomTef,
@@ -158,30 +156,7 @@ const Evaluation: React.FC<IProps> = ({
           });
         }
       }
-
-      const codes_nsu = payload.payments
-        .map((payment) => payment.code_nsu)
-        .filter((code_nsu) => code_nsu !== undefined && code_nsu !== null);
-
-      const {
-        has_internal_error: errorOnFinalizaTransacao,
-        error_message: error_message_finalize_tef,
-      } = await window.Main.tefFactory.finalizeTransaction(codes_nsu);
-
-      if (errorOnFinalizaTransacao) {
-        setVerifyFinishSale(true);
-        setLoading(false);
-        return notification.error({
-          message:
-            error_message_finalize_tef || "Erro ao finalizar transação TEF",
-          description: "Por favor informe o atendente",
-          duration: 5,
-          className: "notification-totem",
-        });
-      } else {
-        setFinalizaTef(true);
-      }
-    }
+   
 
     const voucherDiscount =
       payload?.customerVoucher?.voucher?.products?.reduce(
@@ -293,7 +268,6 @@ const Evaluation: React.FC<IProps> = ({
     setLoading(false);
     setOpenNps(false);
     setVerifyFinishSale(false);
-    setFinalizaTef(false);
   };
 
   const onHandleNps = async (score: number) => {
@@ -347,7 +321,7 @@ const Evaluation: React.FC<IProps> = ({
           </span>
         </Header>
         <Body>
-          <img src={finish_image_easter} />
+          <img src={finish_image} />
         </Body>
         <Footer>
           <ButtonNewOrder

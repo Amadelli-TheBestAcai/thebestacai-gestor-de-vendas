@@ -1,5 +1,6 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createContext } from "use-context-selector";
+import { useLocation } from "react-router-dom";
 
 import { notification } from "antd";
 
@@ -12,6 +13,7 @@ import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
 import { CampaignDto } from "../models/dtos/campaign";
 import { CashHandlerDTO } from "../../electron/src/models/dtos";
+import { TefVersionStatus } from "../models/dtos/tefVersionStatus";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -52,11 +54,13 @@ type GlobalContextType = {
   openedStepSale: number;
   setOpenedStepSale: Dispatch<SetStateAction<number>>;
   hasPermission: (_permission: string) => boolean;
+  tefVersionStatus: TefVersionStatus | null;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(null);
 
 export function GlobalProvider({ children }) {
+  const location = useLocation();
   const [sale, setSale] = useState<SaleDto>();
   const [storeCash, setStoreCash] = useState<StoreCashDto>();
   const [settings, setSettings] = useState<SettingsDto>();
@@ -71,6 +75,54 @@ export function GlobalProvider({ children }) {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
   const [openedStepSale, setOpenedStepSale] = useState(0);
   const [cashHandler, setCashHandler] = useState<CashHandlerDTO | null>(null);
+  const [tefVersionStatus, setTefVersionStatus] =
+    useState<TefVersionStatus | null>(null);
+
+  /* TEMP_TEF_VERSION_GUARD_REMOVE_ME — consulta versão ServerTEF na navegação (não no modal) */
+  useEffect(() => {
+    if (!user?.id) {
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { response, has_internal_error, error_message } =
+          await window.Main.tefFactory.checkServerTefUpdate();
+        if (cancelled) {
+          return;
+        }
+        if (has_internal_error || !response) {
+          if (error_message) {
+            console.warn("[checkServerTefUpdate]", error_message);
+          }
+          setTefVersionStatus(null);
+          return;
+        }
+        if (
+          typeof response.requiredVersion !== "string" ||
+          !String(response.requiredVersion).trim()
+        ) {
+          setTefVersionStatus(null);
+          return;
+        }
+        setTefVersionStatus({
+          isRequired: response.needsUpdate,
+          currentVersion: response.currentVersion,
+          requiredVersion: String(response.requiredVersion).trim(),
+          downloadUrl: response.downloadUrl ?? "",
+          message: response.message ?? "",
+        });
+      } catch (e) {
+        console.warn("[checkServerTefUpdate]", e);
+        if (!cancelled) {
+          setTefVersionStatus(null);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname, user?.id]);
 
   useEffect(() => {
     async function init() {
@@ -254,8 +306,9 @@ export function GlobalProvider({ children }) {
     ) {
       setSavingSale(false);
       return notification.warning({
-        message: "Pagamento inválido!",
-        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
+        message: "Valor pago insuficiente",
+        description:
+          "O total dos pagamentos é menor que o valor da venda. Registre mais pagamentos até cobrir o total antes de finalizar.",
         duration: 5,
       });
     }
@@ -290,20 +343,12 @@ export function GlobalProvider({ children }) {
             message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
             duration: 5,
           });
+          setSavingSale(false);
+          return;
         }
       }
 
-      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
-        await window.Main.tefFactory.finalizeTransaction(codes_nsu);
-
-      if (errorOnFinalizaTransacao) {
-        notification.error({
-          message: error_message || "Erro ao finalizar transação TEF",
-          duration: 5,
-        });
-        setSavingSale(false);
-        return;
-      }
+    
     }
 
     const voucherDiscount =
@@ -666,6 +711,7 @@ export function GlobalProvider({ children }) {
         setCampaign,
         openedStepSale,
         setOpenedStepSale,
+        tefVersionStatus,
       }}
     >
       {children}

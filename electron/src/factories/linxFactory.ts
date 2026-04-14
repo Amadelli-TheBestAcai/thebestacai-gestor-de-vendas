@@ -1,21 +1,19 @@
-import { ConfigTefDTO } from "../models/dtos";
+import { CheckServerTefUpdateDto, ConfigTefDTO } from "../models/dtos";
 import { PaymentTefCancelType } from "../models/enums/PaymentTefCancelType";
 import { PaymentType } from "../models/enums/paymentType";
 import { PaymentTefAuditDto } from "../models/gestor/paymentTefAudit";
 import {
     configurationTEF,
-    finalizeTransaction,
     getPathCupom,
     transactionsTef,
     cancelPaymentTef,
-    findPinPad,
     insertPaymentTefAudit,
     integrationPaymentTefAudit,
     getCnpjAccreditor,
-    getCpf
+    getCpf,
+    checkServerTefUpdate,
 } from "../usecases/linxTef";
 import { deleteLogs } from "../usecases/linxTef/deleteLogs";
-import { removeTransaction } from "../usecases/linxTef/removeTransation";
 import { reprintCoupon } from "../usecases/linxTef/reprintCoupon";
 import { useCaseFactory } from "../usecases/useCaseFactory";
 
@@ -29,18 +27,12 @@ export const tefFactory = {
         await useCaseFactory.execute<void>(configurationTEF),
     deleteLogs: async () =>
         await useCaseFactory.execute<void>(deleteLogs),
-    removeTransaction: async (code_nsu: string) =>
-        await useCaseFactory.execute<string>(removeTransaction, { code_nsu }),
-    finalizeTransaction: async (codes_nsu: string[]) =>
-        await useCaseFactory.execute<void>(finalizeTransaction, { codes_nsu }),
     getPathCupom: async () =>
         await useCaseFactory.execute<string>(getPathCupom),
     reprintCoupon: async () =>
         await useCaseFactory.execute<void>(reprintCoupon),
     cancelPaymentTef: async () =>
         await useCaseFactory.execute<string>(cancelPaymentTef),
-    findPinPad: async () =>
-        await useCaseFactory.execute<string>(findPinPad),
     insertPaymentTefAudit: async (
         type: PaymentType,
         payment_tef_cancel_type: PaymentTefCancelType,
@@ -57,4 +49,6 @@ export const tefFactory = {
         await useCaseFactory.execute<ConfigTefDTO[]>(getCnpjAccreditor),
     getCpf: async () =>
         await useCaseFactory.execute<string>(getCpf),
+    checkServerTefUpdate: async () =>
+        await useCaseFactory.execute<CheckServerTefUpdateDto>(checkServerTefUpdate),
 };

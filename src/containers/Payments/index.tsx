@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, Fragment, SetStateAction } from "react";
 
 import { PaymentType } from "../../models/enums/paymentType";
 import { SaleDto } from "../../models/dtos/sale";
@@ -10,7 +10,7 @@ import PixLogo from "../../assets/svg/pix.svg";
 import {
   Container,
   TypesPaymentsContainer,
-  Button,
+  PaymentMethodButton,
   MoneyIcon,
   CreditIcon,
   DebitIcon,
@@ -30,16 +30,29 @@ import {
   Select,
   Option,
   RemoveIcon,
+  TefVersionAlertBox,
+  TefDownloadLinkIcon,
+  TefAlertParagraph,
+  TefDownloadLinkButton,
+  PixTefEnableSection,
+  ValueAmountNegative,
+  ValueAmountPositive,
+  ValueAmountMuted,
 } from "./styles";
 import { FlagCard } from "../../models/enums/flagCard";
-import { Form } from "antd";
+import { Form, Alert } from "antd";
 import { useSale } from "../../hooks/useSale";
 import { useSettings } from "../../hooks/useSettings";
+import { useTef } from "../../hooks/useTef";
+import {
+  paymentTypeFromModalTitle,
+  wouldUseTefForPaymentAttempt,
+} from "../../helpers/tefVersionGuard";
 import { PaymentDto } from "../../models/dtos/payment";
 
 interface IProps {
   sale: SaleDto;
-  removePayment: (payment: PaymentDto, justify?: string) => Promise<void>;
+  removePayment: (payment: PaymentDto) => Promise<void>;
   addPayment: () => Promise<void>;
   handleOpenPayment: (type: number, title: string, flag_card?: number) => void;
   setCurrentPayment: Dispatch<SetStateAction<number>>;
@@ -52,10 +65,10 @@ interface IProps {
   shouldDisableButtons?: boolean;
   usingDelivery?: boolean;
   loadingPayment?: boolean;
-  setLoadingPayment?: Dispatch<SetStateAction<boolean>>;
   paymentModalConnect?: boolean;
   selectTef?: string;
   setSelectTef?: Dispatch<SetStateAction<string>>;
+  activePaymentType?: number;
 }
 
 const PaymentsContainer: React.FC<IProps> = ({
@@ -73,18 +86,19 @@ const PaymentsContainer: React.FC<IProps> = ({
   setFlagCard,
   flagCard,
   loadingPayment,
-  setLoadingPayment,
   paymentModalConnect,
   selectTef,
   setSelectTef,
+  activePaymentType,
 }) => {
   const { onRemoveDiscount } = useSale();
   const { settings } = useSettings();
+  const { tefVersionStatus } = useTef();
 
   const onModalCancel = (): void => {
-    setSelectTef("Sim");
+    setSelectTef?.("Sim");
     setModalState(false);
-    setFlagCard(99);
+    setFlagCard?.(99);
   };
 
   const getAmount = (amount: number): void => {
@@ -145,18 +159,59 @@ const PaymentsContainer: React.FC<IProps> = ({
     }
   };
 
+  const paymentTypeResolved =
+    activePaymentType ?? paymentTypeFromModalTitle(modalTitle);
+
+  const wouldRequestTefElectronic = wouldUseTefForPaymentAttempt(
+    settings,
+    paymentTypeResolved,
+    selectTef,
+    paymentModalConnect ?? false
+  );
+
+  const recommendedMismatch = Boolean(
+    tefVersionStatus &&
+      !tefVersionStatus.isRequired &&
+      tefVersionStatus.currentVersion?.trim() &&
+      tefVersionStatus.requiredVersion?.trim() &&
+      tefVersionStatus.currentVersion !== tefVersionStatus.requiredVersion
+  );
+
+  /* TEMP_TEF_VERSION_GUARD_REMOVE_ME */
+  const showRequiredTefAlert =
+    modalState &&
+    settings?.should_use_tef &&
+    tefVersionStatus?.isRequired &&
+    wouldRequestTefElectronic;
+
+  const showRecommendedTefAlert =
+    modalState &&
+    settings?.should_use_tef &&
+    recommendedMismatch &&
+    modalTitle !== "Dinheiro";
+
+  const blockTefAction =
+    Boolean(tefVersionStatus?.isRequired) && wouldRequestTefElectronic;
+
+  const openTefDownload = (): void => {
+    const url = tefVersionStatus?.downloadUrl?.trim();
+    if (url) {
+      window.Main.shell.openExternal(url);
+    }
+  };
+
   return (
     <Container>
       <TypesPaymentsContainer>
         {buttonsPaymentsStyle.map((buttonStyle, index) => (
-          <Button
+          <PaymentMethodButton
             key={index}
-            style={{ background: buttonStyle.background }}
+            $background={buttonStyle.background}
             onClick={buttonStyle.action}
             disabled={shouldDisableButtons && !sale?.items?.length}
           >
             {buttonStyle.icon} {buttonStyle.label}
-          </Button>
+          </PaymentMethodButton>
         ))}
       </TypesPaymentsContainer>
 
@@ -173,7 +228,6 @@ const PaymentsContainer: React.FC<IProps> = ({
             payment={payment}
             removePayment={removePayment}
             loadingPayment={loadingPayment}
-            setLoadingPayment={setLoadingPayment}
           />
         ))}
       </PaymentsInfoContainer>
@@ -182,7 +236,7 @@ const PaymentsContainer: React.FC<IProps> = ({
         <ValuesContainer>
           <ValueInfo>
             R$ Diferença <br />{" "}
-            <strong style={{ color: "var(--red-600" }}>
+            <ValueAmountNegative>
               {(
                 sale?.total_paid +
                 (sale?.discount + (sale?.customer_nps_reward_discount || 0)) -
@@ -191,38 +245,36 @@ const PaymentsContainer: React.FC<IProps> = ({
               )
                 .toFixed(2)
                 .replace(".", ",")}
-            </strong>
+            </ValueAmountNegative>
           </ValueInfo>
           <ValueInfo>
             R$ Troco
             <br />{" "}
-            <strong style={{ color: "var(--red-600" }}>
+            <ValueAmountNegative>
               {(+getChangeAmount()).toFixed(2).replace(".", ",")}
-            </strong>
+            </ValueAmountNegative>
           </ValueInfo>
           <ValueInfo>
             R$ Desconto
             <br />{" "}
-            <strong style={{ color: "var(--green-600" }}>
+            <ValueAmountPositive>
               {((sale.customer_nps_reward_discount || 0) + sale?.discount)
                 .toFixed(2)
                 .replace(".", ",")}
               {sale?.discount > 0 && (
                 <RemoveIcon onClick={() => onRemoveDiscount(sale.id)} />
               )}
-            </strong>
+            </ValueAmountPositive>
           </ValueInfo>
           <ValueInfo>
             R$ Valor Pago <br />{" "}
-            <strong style={{ color: "var(--green-600" }}>
+            <ValueAmountPositive>
               {sale?.total_paid.toFixed(2).replace(".", ",")}
-            </strong>
+            </ValueAmountPositive>
           </ValueInfo>
           <ValueInfo>
             Quantidade Itens <br />{" "}
-            <strong style={{ color: "var(--grey-80" }}>
-              {sale?.quantity || 0}
-            </strong>
+            <ValueAmountMuted>{sale?.quantity || 0}</ValueAmountMuted>
           </ValueInfo>
         </ValuesContainer>
       )}
@@ -241,7 +293,7 @@ const PaymentsContainer: React.FC<IProps> = ({
             <ButtonSave
               loading={loadingPayment}
               onClick={addPayment}
-              disabled={loadingPayment}
+              disabled={loadingPayment || blockTefAction}
             >
               {settings?.should_use_tef &&
               modalTitle !== "Dinheiro" &&
@@ -254,6 +306,54 @@ const PaymentsContainer: React.FC<IProps> = ({
           </Footer>
         }
       >
+        {(showRequiredTefAlert || showRecommendedTefAlert) && tefVersionStatus && (
+          <TefVersionAlertBox>
+            <Alert
+              type={showRequiredTefAlert ? "error" : "warning"}
+              showIcon
+              message={
+                showRequiredTefAlert
+                  ? "Atualização obrigatória do ServerTEF"
+                  : "Atualização recomendada do ServerTEF"
+              }
+              description={
+                <Fragment>
+                 
+                  <TefAlertParagraph>
+                    Versão atual: {tefVersionStatus.currentVersion ?? "—"}.
+                    Versão necessária: {tefVersionStatus.requiredVersion}.
+                  </TefAlertParagraph>
+                  <TefAlertParagraph>
+                    Após baixar, feche o Gestor, execute{" "}
+                    <strong>
+                      ServerTEF-Setup-{tefVersionStatus.requiredVersion}
+                    </strong>{" "}
+                    e abra o aplicativo novamente.
+                  </TefAlertParagraph>
+                  {showRequiredTefAlert ? (
+                    <TefAlertParagraph>
+                      Para seguir sem TEF, desative a opção nas configurações.
+                      Se não puder instalar, contate o <strong>SAF</strong>.
+                    </TefAlertParagraph>
+                  ) : (
+                    <TefAlertParagraph>
+                      Se não puder instalar, contate o <strong>SAF</strong>.
+                    </TefAlertParagraph>
+                  )}
+                  {tefVersionStatus.downloadUrl?.trim() ? (
+                    <TefDownloadLinkButton
+                      type="link"
+                      onClick={openTefDownload}
+                    >
+                      Baixar instalador
+                      <TefDownloadLinkIcon />
+                    </TefDownloadLinkButton>
+                  ) : null}
+                </Fragment>
+              }
+            />
+          </TefVersionAlertBox>
+        )}
         Valor:
         <Input
           autoFocus={true}
@@ -288,7 +388,7 @@ const PaymentsContainer: React.FC<IProps> = ({
         {settings?.should_use_tef &&
           modalTitle === "PIX" &&
           settings?.cnpj_credenciadora && (
-            <div style={{ marginTop: "0.5rem" }}>
+            <PixTefEnableSection>
               Habilitar pagamento TEF
               <Form.Item>
                 <Select
@@ -300,7 +400,7 @@ const PaymentsContainer: React.FC<IProps> = ({
                   <Option key={"Sim"}>Sim</Option>
                 </Select>
               </Form.Item>
-            </div>
+            </PixTefEnableSection>
           )}
       </Modal>
     </Container>
