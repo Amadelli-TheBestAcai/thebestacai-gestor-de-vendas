@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 
-import finish_image_easter from "../../../../assets/totem/svg/finish_image_easter.svg";
+import image_balance_modal from "../../../../assets/totem/img/image_balance_modal.webp";
 
 import { Container, ButtonContinue, ButtonCancel } from "./styles";
 
@@ -34,7 +34,7 @@ const ModalWeight: React.FC<IProps> = ({
             {"e pressione o botão "}
             <span style={{fontWeight:"bold"}}>Registrar Pesagem</span>
           </span>
-          <img src={finish_image_easter} />
+          <img src={image_balance_modal} />
           <span className="modal-body">{"Ou prossiga sem pesagem"}</span>
           <span className="modal-body">{"caso apenas deseje aproveitar "}</span>
           <span className="modal-body">

@@ -10,14 +10,14 @@ export const Container = styled(ModalAnt)`
     width: 100%;
     border-radius: 6.25rem;
     padding: 5rem;
-    border-color: var(--brown-easter);
-    color: var(--brown-easter) !important;
+    border-color: var(--black);
+    color: var(--black) !important;
 
     p,
     span,
     button {
-      border-color: var(--brown-easter);
-      color: var(--brown-easter) !important;
+      border-color: var(--black);
+      color: var(--black) !important;
     }
 
     .ant-modal-body {
