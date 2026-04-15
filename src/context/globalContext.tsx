@@ -301,8 +301,8 @@ export function GlobalProvider({ children }) {
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-        (combinedDiscount + (currentSale.customer_nps_reward_discount || 0)) +
-        0.5
+      (combinedDiscount + (currentSale.customer_nps_reward_discount || 0)) +
+      0.5
     ) {
       setSavingSale(false);
       return notification.warning({
@@ -348,7 +348,7 @@ export function GlobalProvider({ children }) {
         }
       }
 
-    
+
     }
 
     const voucherDiscount =
@@ -376,7 +376,7 @@ export function GlobalProvider({ children }) {
 
     if (currentSale.customer_reward_id) {
       const payload = {
-        store_id: store.id,
+        store_id: store.company.id,
         user_name: user.name,
         user_id: user.id,
         company_name: store.company.company_name,
@@ -492,7 +492,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -513,13 +513,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
+          message: error_message,
+          duration: 5,
+        })
         : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+          message: "Erro ao finalizar venda",
+          duration: 5,
+        });
     }
 
     const { response: cashHandlers } =
