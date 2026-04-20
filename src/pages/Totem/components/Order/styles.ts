@@ -21,6 +21,9 @@ export const MenuCategory = styled.div`
   width: 27%;
   height: 100%;
   padding: 0 0.65rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 
   img {
     width: 12rem;
@@ -45,8 +48,8 @@ export const CardCategoryMenu = styled.div<IMenu>`
   display: flex;
   align-items: center;
   width: 100%;
-  height: 3.75rem;
-  margin: 1rem 0;
+  height: 4.5rem;
+  margin: 0.5rem 0;
   padding: 0.125rem;
   border-radius: 0.31rem;
   box-shadow: 0.2rem 0.2rem 0.5rem var(--black-opacity-30);
@@ -204,33 +207,12 @@ export const Footer = styled.div`
     }
   }
 `;
-interface IExtra {
-  size: number;
-}
 
-export const ExtraProductList = styled(RowAnt)<IExtra>`
+export const ExtraProductList = styled(RowAnt)`
   width: 100%;
   max-height: 55rem;
   padding: 2.5rem 0 0 0;
   overflow-y: auto;
-
-  ${({ size }) => {
-    if (size === 1) {
-      return css`
-        max-height: 55rem;
-      `;
-    }
-    if (size === 2) {
-      return css`
-        max-height: 45rem;
-      `;
-    }
-    if (size >= 3) {
-      return css`
-        max-height: 33rem;
-      `;
-    }
-  }}
 `;
 
 export const ExtraProduct = styled(ColAnt)`
