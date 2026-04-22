@@ -10,14 +10,14 @@ export const Container = styled(ModalAnt)`
     width: 100%;
     border-radius: 6.25rem;
     padding: 5rem;
-    border-color: var(--black);
-    color: var(--black) !important;
+    border-color: var(--color-theme);
+    color: var(--color-theme) !important;
 
     p,
     span,
     button {
-      border-color: var(--black);
-      color: var(--black) !important;
+      border-color: var(--color-theme);
+      color: var(--color-theme) !important;
     }
 
     .ant-modal-body {
@@ -74,7 +74,7 @@ const ButtonCSS = css`
     font-family: "VisbyCF";
     font-weight: 600;
     font-size: 2.25rem;
-    color: var(--black);
+    color: var(--color-theme);
   }
 `;
 
@@ -88,7 +88,7 @@ export const ButtonCancel = styled(ButtonAnt)`
   :hover,
   :focus {
     background: var(--white);
-    color: var(--black);
+    color: var(--color-theme);
     
   }
 `;
@@ -106,7 +106,7 @@ export const ButtonContinue = styled(ButtonAnt)<IRegisterButton>`
   :hover,
   :focus {
     background: var(--orange-250);
-    color: var(--black);
+    color: var(--color-theme);
     border: none;
   }
 
@@ -120,7 +120,7 @@ export const ButtonContinue = styled(ButtonAnt)<IRegisterButton>`
           :hover,
           :focus {
             background: var(--green-500);
-            color: var(--black);
+            color: var(--color-theme);
             border: none;
           }
         `;
