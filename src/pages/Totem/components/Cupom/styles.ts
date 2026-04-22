@@ -71,7 +71,7 @@ export const Body = styled.div`
       font-weight: 500;
       font-size: 1.75rem;
       color: var(--gray-300) !important;
-      border: 1px solid var(--black) !important;
+      border: 1px solid var(--color-theme) !important;
       border-radius: 0.5rem !important;
     }
   }

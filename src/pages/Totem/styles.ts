@@ -21,8 +21,8 @@ export const Container = styled.div`
   div,
   img,
   button {
-    color: var(--black) !important;
-    border-color: var(--black);
+    color: var(--color-theme) !important;
+    border-color: var(--color-theme);
   }
 
   * {
@@ -40,7 +40,7 @@ export const Header = styled.div`
   align-items: center;
   width: 100%;
   height: 17.81rem;
-  background-color: var(--black);
+  background-color: var(--color-theme);
 
   .logo-content {
     display: flex;
