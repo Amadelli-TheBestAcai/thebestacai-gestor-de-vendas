@@ -19,6 +19,7 @@ interface TheBestGameData {
   highlight_button_enabled: boolean;
   highlight_button_text: string;
   highlight_button_url: string;
+  title_modal: string;
 }
 
 interface TheBestGameModalProps {
@@ -75,7 +76,7 @@ const TheBestGameModal: React.FC<TheBestGameModalProps> = ({
 
   return (
     <Modal
-      title="The Best Game🔥"
+      title={gameData?.title_modal || ""}
       visible={visible}
       onCancel={handleClose}
       centered
