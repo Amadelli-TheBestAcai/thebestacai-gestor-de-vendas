@@ -112,6 +112,57 @@ const CupomModal: React.FC<ICupomProps> = ({
         .filter((item) => item.product.id === 1)
         .reduce((total, item) => total + item.total, 0);
 
+      if (response.voucher.products.length === 0) {
+        const totalCart = sale.items.reduce(
+          (total, item) => total + item.total,
+          0
+        );
+        const eligibleTotal = totalCart - totalSoldInSelfService;
+
+        if (eligibleTotal <= 0) {
+          return notification.warn({
+            message:
+              "É necessário adicionar produtos elegíveis ao carrinho para resgatar este cupom!",
+            duration: 5,
+          });
+        }
+
+        let discountAmount = 0;
+        if (response.voucher.self_service_discount_type === 1) {
+          const percent = +response.voucher.price_sell / 100;
+          discountAmount = eligibleTotal * percent;
+        } else {
+          discountAmount = +response.voucher.price_sell;
+          if (discountAmount > eligibleTotal) discountAmount = eligibleTotal;
+        }
+
+        const payload = {
+          ...sale,
+          customerVoucher: response,
+          total_sold: sale.total_sold - discountAmount,
+        };
+
+        const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
+          await window.Main.sale.updateSale(sale.id, payload);
+
+        if (errorOnUpdateSale) {
+          return notification.error({
+            message:
+              errorOnUpdateSale ||
+              "Oops, ocorreu um erro ao atualizar a venda!",
+            duration: 5,
+          });
+        }
+
+        setSale(updatedSale);
+        notification.success({
+          message: "Cupom aplicado com sucesso",
+          duration: 5,
+        });
+        setCupomModalState(false);
+        return;
+      }
+
       if (response.voucher?.self_service && totalSoldInSelfService <= 0) {
         return notification.warn({
           message:
