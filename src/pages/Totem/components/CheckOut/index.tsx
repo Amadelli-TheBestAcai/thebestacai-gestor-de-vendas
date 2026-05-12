@@ -68,19 +68,36 @@ const CheckOut: React.FC<IProps> = ({
   useEffect(() => {
     const totalSale = sale?.items?.reduce(
       (total, _item) => total + _item?.total,
-      0
+      0,
+    );
+
+    const voucherProduct = sale?.customerVoucher?.voucher?.products.filter(
+      (_product) =>
+        sale.items.some((_item) => _item.product.id === _product.product_id),
     );
 
     const voucherDiscount =
-      sale?.customerVoucher?.voucher?.products?.reduce(
-        (sum, product) => sum + +product?.price_sell,
-        0
-      ) || 0;
+      voucherProduct?.reduce((total, product) => {
+        const item = sale.items.find(
+          (_item) => _item.product.id === product.product_id,
+        );
+
+        if (!item) {
+          return total;
+        }
+
+        const discount =
+          product.discount_type === 1
+            ? item.total * (+product.price_sell / 100)
+            : +product.price_sell;
+
+        return total + discount;
+      }, 0) || 0;
 
     let points = campaign?.average_ticket
       ? Math.floor(
           (totalSale - voucherDiscount - (+sale.discount || 0)) /
-            campaign?.average_ticket
+            campaign?.average_ticket,
         )
       : 0;
     setTotalPoints(points);
@@ -93,7 +110,7 @@ const CheckOut: React.FC<IProps> = ({
         {
           ...sale,
           discount: sale.discount ? discount : sale.discount,
-        }
+        },
       );
       setSale(updatedSale);
     };
@@ -103,7 +120,7 @@ const CheckOut: React.FC<IProps> = ({
   const discountUpdate = async () => {
     const totalSale = sale?.items?.reduce(
       (total, _item) => total + _item?.total,
-      0
+      0,
     );
 
     setDiscount(+(totalSale * 0.1 || 0)?.toFixed(2));
@@ -115,7 +132,7 @@ const CheckOut: React.FC<IProps> = ({
       {
         ...sale,
         discount: sale.discount ? 0 : discount,
-      }
+      },
     );
     setSale(updatedSale);
   };
@@ -126,7 +143,7 @@ const CheckOut: React.FC<IProps> = ({
       {
         ...sale,
         [name]: check,
-      }
+      },
     );
     setSale(updatedSale);
   };
@@ -137,7 +154,7 @@ const CheckOut: React.FC<IProps> = ({
       return;
     }
     const findProduct = storeProducts.find(
-      (_product) => +_product.id === +item.store_product_id
+      (_product) => +_product.id === +item.store_product_id,
     );
     onAddItem(findProduct, 1, +findProduct.price_unit);
     discountUpdate();
@@ -145,7 +162,7 @@ const CheckOut: React.FC<IProps> = ({
 
   const onDecressItemList = async (
     item: ItemDto,
-    totemNotification: boolean
+    totemNotification: boolean,
   ) => {
     if (sale.customerVoucher) {
       setVisibleModalInfoCupom(true);
@@ -169,7 +186,7 @@ const CheckOut: React.FC<IProps> = ({
   const offerItem = async () => {
     const findItem = sale?.items?.every(
       (_item) =>
-        !_item?.product?.category?.name?.toLowerCase()?.includes("bebida")
+        !_item?.product?.category?.name?.toLowerCase()?.includes("bebida"),
     );
     if (findItem) {
       setVisibleModalOffer(true);
