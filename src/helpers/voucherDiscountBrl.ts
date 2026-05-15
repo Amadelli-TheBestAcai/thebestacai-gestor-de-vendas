@@ -25,7 +25,7 @@ function isSyntheticSelfServiceDiscountLine(
   productVoucher: {
     product_id?: number;
     product_name?: string;
-  }
+  },
 ): boolean {
   return (
     !!voucherSelfService &&
@@ -35,10 +35,9 @@ function isSyntheticSelfServiceDiscountLine(
   );
 }
 
-
 export function getVoucherDiscountBrlFromVoucherAndItems(
   voucher: VoucherForDiscount | null | undefined,
-  items: CartLineForVoucherDiscount[]
+  items: CartLineForVoucherDiscount[],
 ): number {
   if (!voucher) {
     return 0;
@@ -66,18 +65,13 @@ export function getVoucherDiscountBrlFromVoucherAndItems(
 
   for (const productVoucher of products) {
     if (
-      isSyntheticSelfServiceDiscountLine(
-        voucher.self_service,
-        productVoucher
-      )
+      isSyntheticSelfServiceDiscountLine(voucher.self_service, productVoucher)
     ) {
       totalProductsPart += +productVoucher.price_sell;
       continue;
     }
 
-    const item = items.find(
-      (i) => i.product.id === productVoucher.product_id
-    );
+    const item = items.find((i) => i.product.id === productVoucher.product_id);
 
     if (item) {
       let discountAmount = 0;
@@ -97,13 +91,9 @@ export function getVoucherDiscountBrlFromVoucherAndItems(
   return Math.abs(+totalProductsPart.toFixed(2));
 }
 
-/**
- * Valor total do desconto do cupom em reais (percentual sobre total da linha, etc.),
- * alinhado a `electron/src/helpers/voucherDiscount.ts` e ao CupomModal.
- */
 export function getCustomerVoucherDiscountBrl(sale: SaleDto): number {
   return getVoucherDiscountBrlFromVoucherAndItems(
     sale.customerVoucher?.voucher ?? null,
-    sale.items
+    sale.items,
   );
 }
