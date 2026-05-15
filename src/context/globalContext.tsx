@@ -13,6 +13,7 @@ import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
 import { CampaignDto } from "../models/dtos/campaign";
 import { CashHandlerDTO } from "../../electron/src/models/dtos";
+import { getCustomerVoucherDiscountBrl } from "../helpers/voucherDiscountBrl";
 import { TefVersionStatus } from "../models/dtos/tefVersionStatus";
 
 type GlobalContextType = {
@@ -351,11 +352,7 @@ export function GlobalProvider({ children }) {
 
     }
 
-    const voucherDiscount =
-      sale.customerVoucher?.voucher?.products?.reduce(
-        (sum, product) => sum + +product?.price_sell,
-        0
-      ) || 0;
+    const voucherDiscount = getCustomerVoucherDiscountBrl(currentSale);
 
     if (currentSale.customerVoucher?.id) {
       const { has_internal_error: errorOnMarkAsUsedVoucher, error_message } =

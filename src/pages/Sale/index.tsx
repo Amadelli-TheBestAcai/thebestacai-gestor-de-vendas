@@ -49,6 +49,7 @@ import {
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
+import { getVoucherDiscountBrlFromVoucherAndItems } from "../../helpers/voucherDiscountBrl";
 import { FlagCard } from "../../models/enums/flagCard";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
 import { PaymentDto } from "../../models/dtos/payment";
@@ -222,22 +223,9 @@ const Sale: React.FC<IProps> = () => {
     : null;
 
   const voucherDiscount =
-    voucherData?.voucher?.products?.reduce((sum, product) => {
-      const matchingItem = selectedSale.items.find(
-        (item) => item.product.id === product.product_id
-      );
-
-      if (!matchingItem || !matchingItem.storeProduct) return sum;
-
-      const priceUnit = +matchingItem.storeProduct.price_unit;
-
-      const discount =
-        product.discount_type === 1
-          ? (priceUnit * +product.price_sell) / 100
-          : +product.price_sell;
-
-      return sum + discount;
-    }, 0) || 0;
+    selectedSale && voucherData?.voucher
+      ? getVoucherDiscountBrlFromVoucherAndItems(voucherData.voucher, selectedSale.items)
+      : 0;
 
   const handleEmit = async () => {
     if (!selectedSale.items.length) {
