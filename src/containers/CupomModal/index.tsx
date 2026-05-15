@@ -250,7 +250,7 @@ const CupomModal: React.FC<ICupomProps> = ({
           let discountAmount = 0;
           if (productVoucher.discount_type === 1) {
             const percent = +productVoucher.price_sell / 100;
-            discountAmount = +product.price_unit * percent;
+            discountAmount = +item.total * percent;
           } else {
             discountAmount = +productVoucher.price_sell;
           }

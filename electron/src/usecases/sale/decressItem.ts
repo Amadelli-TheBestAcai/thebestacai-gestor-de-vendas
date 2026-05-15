@@ -4,6 +4,7 @@ import { IUseCaseFactory } from "../useCaseFactory.interface";
 import { StorageNames } from "../../repository/storageNames";
 import { getCurrentSale } from "./getCurrentSale";
 import { SaleDto } from "../../models/gestor";
+import { getCustomerVoucherDiscountBrl } from "../../helpers/voucherDiscount";
 
 interface Request {
   id: string;
@@ -42,10 +43,10 @@ class DecressItem implements IUseCaseFactory {
       .reduce((total, item) => item.total + total, 0)
       .toFixed(2);
 
-    if (sale.customerVoucher?.voucher?.products?.length)
-      sale.customerVoucher?.voucher?.products.forEach(
-        (product) => (sale.total_sold -= +product.price_sell)
-      );
+    if (sale.customerVoucher?.voucher) {
+      sale.total_sold -= getCustomerVoucherDiscountBrl(sale);
+      sale.total_sold = +sale.total_sold.toFixed(2);
+    }
 
     sale.quantity = sale.items.reduce(
       (total, item) =>
