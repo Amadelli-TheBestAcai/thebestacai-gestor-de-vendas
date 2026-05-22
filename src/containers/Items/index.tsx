@@ -14,6 +14,11 @@ import {
   ItemContainer,
   ItemContent,
   EmptyContainer,
+  CouponRow,
+  CouponLeft,
+  CouponTag,
+  CouponName,
+  CouponValue,
 } from "./styles";
 
 const Items: React.FC = () => {
@@ -51,30 +56,19 @@ const Items: React.FC = () => {
               {sale?.items?.map((item) => (
                 <Item key={item.id} item={item} />
               ))}
-              {(() => {
-                if (!sale?.customerVoucher) return null;
-                if (sale?.customerVoucher?.voucher?.products?.length) return null;
-                if (!sale?.items?.length) return null;
-                const sumItems = sale.items.reduce(
-                  (total, item) => total + item.total,
-                  0
-                );
-                const discountAmount = sumItems - sale.total_sold;
-                if (discountAmount <= 0) return null;
-                return (
-                  <Item
-                    key="cupom-general-discount"
-                    productVoucher={{
-                      product_name: `Desconto - ${
-                        sale.customerVoucher.voucher?.name || "Cupom"
-                      }`,
-                      price_sell: discountAmount.toFixed(2),
-                      is_registred: true,
-                      in_sale: true,
-                    }}
-                  />
-                );
-              })()}
+              {sale?.customerVoucher && sale?.discount > 0 && (
+                <CouponRow>
+                  <CouponLeft>
+                    <CouponTag>Cupom</CouponTag>
+                    <CouponName>
+                      {sale.customerVoucher.voucher?.name || "Desconto aplicado"}
+                    </CouponName>
+                  </CouponLeft>
+                  <CouponValue>
+                    − R$ {sale.discount.toFixed(2).replace(".", ",")}
+                  </CouponValue>
+                </CouponRow>
+              )}
             </ItemContent>
           </ItemContainer>
         </>

@@ -261,7 +261,7 @@ const PaymentsContainer: React.FC<IProps> = ({
               {((sale.customer_nps_reward_discount || 0) + sale?.discount)
                 .toFixed(2)
                 .replace(".", ",")}
-              {sale?.discount > 0 && (
+              {sale?.discount > 0 && !sale?.customerVoucher && (
                 <RemoveIcon onClick={() => onRemoveDiscount(sale.id)} />
               )}
             </ValueAmountPositive>
