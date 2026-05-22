@@ -2,7 +2,60 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 
 import { notification } from "antd";
 import { useSale } from "../../hooks/useSale";
+import {
+  computeDiscountByQuantity,
+  DiscountByQuantityResult,
+} from "../../helpers/discountByQuantity";
+import { DiscountByQuantityConfig } from "../../models/dtos/voucher";
 import { Container, Row, Col, InputCode, Button } from "./styles";
+
+type ProductForLabel = {
+  product_id?: number;
+  product?: {
+    id?: number;
+    name?: string;
+    category?: { id?: number; name?: string };
+  };
+};
+
+function buildTriggerLabel(
+  config: DiscountByQuantityConfig,
+  products: ProductForLabel[] | undefined | null,
+  fallbackCupomName: string
+): string {
+  const triggerIds = (config.trigger_ids ?? []).map((v) => Number(v));
+  const list = products ?? [];
+
+  const names: string[] = [];
+  const seen = new Set<string>();
+  const push = (name: string | undefined) => {
+    if (!name) return;
+    const trimmed = name.trim();
+    if (!trimmed || seen.has(trimmed)) return;
+    seen.add(trimmed);
+    names.push(trimmed);
+  };
+
+  if (config.trigger_mode === "product") {
+    for (const p of list) {
+      const id = p.product?.id ?? p.product_id;
+      if (id !== undefined && triggerIds.includes(Number(id))) {
+        push(p.product?.name);
+      }
+    }
+  } else {
+    for (const p of list) {
+      const catId = p.product?.category?.id;
+      if (catId !== undefined && triggerIds.includes(Number(catId))) {
+        push(p.product?.category?.name);
+      }
+    }
+  }
+
+  if (names.length === 0) return `"${fallbackCupomName}"`;
+  if (names.length <= 2) return names.join(", ");
+  return `${names.slice(0, 2).join(", ")} e outros`;
+}
 
 interface ICupomProps {
   cupomModalState: boolean;
@@ -81,6 +134,13 @@ const CupomModal: React.FC<ICupomProps> = ({
       });
     }
 
+    if (sale.discount > 0 && !sale.customerVoucher) {
+      return notification.warn({
+        message: "Remova o desconto manual antes de aplicar o cupom.",
+        duration: 5,
+      });
+    }
+
     // if (sale.items.length === 0) {
     //   return notification.warn({
     //     message:
@@ -104,6 +164,65 @@ const CupomModal: React.FC<ICupomProps> = ({
       const { response: products } = await window.Main.product.getProducts(
         true
       );
+
+      if (
+        response.voucher.voucher_type === "discount_by_quantity" &&
+        response.voucher.voucher_config
+      ) {
+        const result: DiscountByQuantityResult = computeDiscountByQuantity(
+          response.voucher.voucher_config,
+          sale.items
+        );
+
+        if (result.ok === false) {
+          const nomeCupom = response.voucher.name;
+          const rotuloGatilho = buildTriggerLabel(
+            response.voucher.voucher_config,
+            products,
+            nomeCupom
+          );
+
+          let message: string;
+          if (result.reason === "no_eligible_items") {
+            message = `O cupom "${nomeCupom}" não se aplica aos itens do carrinho. Adicione ${rotuloGatilho} para usá-lo.`;
+          } else if (result.reason === "below_min_quantity") {
+            message = `Faltam ${result.needed} item(ns) para ativar o cupom "${nomeCupom}". Você tem ${result.current} de ${result.required} necessários. Adicione mais ${rotuloGatilho} e tente novamente.`;
+          } else {
+            message = `Para o cupom "${nomeCupom}", cada item que paga precisa ter no mínimo ${result.requiredGrammage}g. Confira a pesagem dos itens antes de aplicar.`;
+          }
+
+          return notification.warn({ message, duration: 8 });
+        }
+
+        const payload = {
+          ...sale,
+          customerVoucher: response,
+          discount: +result.discountBrl.toFixed(2),
+        };
+
+        const {
+          response: updatedSale,
+          has_internal_error: errorOnUpdateSale,
+        } = await window.Main.sale.updateSale(sale.id, payload);
+
+        if (errorOnUpdateSale) {
+          return notification.error({
+            message:
+              errorOnUpdateSale ||
+              "Oops, ocorreu um erro ao atualizar a venda!",
+            duration: 5,
+          });
+        }
+
+        setSale(updatedSale);
+        notification.success({
+          message: "Cupom aplicado com sucesso",
+          duration: 5,
+        });
+        setCupomModalState(false);
+        return;
+      }
+
       delete response.voucher.companies;
 
       response.voucher.products = [...(response.voucher.products || [])];
@@ -139,7 +258,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         const payload = {
           ...sale,
           customerVoucher: response,
-          total_sold: sale.total_sold - discountAmount,
+          discount: +discountAmount.toFixed(2),
         };
 
         const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
@@ -273,7 +392,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       const payload = {
         ...sale,
         customerVoucher: response,
-        total_sold: sale.total_sold - totalDiscount,
+        discount: +totalDiscount.toFixed(2),
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =

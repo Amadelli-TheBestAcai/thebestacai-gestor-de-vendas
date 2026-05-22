@@ -63,6 +63,61 @@ export const ItemContent = styled.div`
   margin-top: 8px;
 `;
 
+export const CouponRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  margin-top: 8px;
+  background: var(--soft-orange);
+  border-left: 3px solid var(--color-theme);
+  border-radius: 3px;
+  font-size: 1rem;
+
+  @media (max-width: 1600px) {
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 1440px) {
+    font-size: 0.85rem;
+  }
+`;
+
+export const CouponLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+`;
+
+export const CouponTag = styled.span`
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-theme);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+`;
+
+export const CouponName = styled.span`
+  color: var(--gray-300);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const CouponValue = styled.span`
+  color: var(--color-theme);
+  font-weight: bold;
+  flex-shrink: 0;
+`;
+
 export const EmptyContainer = styled.div`
   display: flex;
   align-items: center;

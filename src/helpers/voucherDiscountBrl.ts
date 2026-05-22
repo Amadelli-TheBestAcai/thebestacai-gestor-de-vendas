@@ -1,8 +1,12 @@
 import { SaleDto } from "../models/dtos/sale";
+import { CouponConfig } from "../models/dtos/voucher";
+import { computeDiscountByQuantity } from "./discountByQuantity";
 
 export type CartLineForVoucherDiscount = {
-  product: { id: number };
+  id?: string;
+  product: { id: number; category?: { id: number } };
   total: number;
+  quantity?: number;
 };
 
 export type VoucherProductForDiscount = {
@@ -18,6 +22,8 @@ export type VoucherForDiscount = {
   self_service_discount_type: number;
   price_sell: string;
   products?: VoucherProductForDiscount[];
+  voucher_type?: string | null;
+  voucher_config?: CouponConfig | null;
 };
 
 function isSyntheticSelfServiceDiscountLine(
@@ -41,6 +47,14 @@ export function getVoucherDiscountBrlFromVoucherAndItems(
 ): number {
   if (!voucher) {
     return 0;
+  }
+
+  if (
+    voucher.voucher_type === "discount_by_quantity" &&
+    voucher.voucher_config
+  ) {
+    const result = computeDiscountByQuantity(voucher.voucher_config, items);
+    return result.ok ? result.discountBrl : 0;
   }
 
   const products = voucher.products ?? [];

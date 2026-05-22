@@ -50,6 +50,15 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         setVisibleInvalidCupom(true);
         return;
       }
+
+      if (response.voucher?.voucher_type === "discount_by_quantity") {
+        setErrorMesssage(
+          "Este cupom não está disponível no totem. Utilize o caixa."
+        );
+        setVisibleInvalidCupom(true);
+        return;
+      }
+
       setCustomerVoucher(response);
 
       const { response: products } =

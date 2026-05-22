@@ -17,6 +17,19 @@ export type VoucherDTO = {
   points_multiplier: number;
   companies: Company[];
   products: Product[];
+  voucher_type?: string | null;
+  voucher_config?: DiscountByQuantityConfigDTO | null;
+};
+
+export type DiscountByQuantityConfigDTO = {
+  trigger_mode: "product" | "category";
+  trigger_ids: number[];
+  min_combined_quantity: number;
+  quantity_with_discount: number;
+  apply_discount_on: "cheapest" | "most_expensive";
+  discount_value: number;
+  discount_mode: "percent" | "fixed";
+  min_item_grammage: number | null;
 };
 
 type Company = {

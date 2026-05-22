@@ -156,10 +156,23 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               </div>
             </Tooltip>
 
-            <Button onClick={() => discountModalHandler.openDiscoundModal()} disabled={isSavingSale}>
-              <OfferIcon />
-              Desconto [R]
-            </Button>
+            <Tooltip
+              title={
+                sale?.customerVoucher
+                  ? "Remova o cupom antes de aplicar desconto manual."
+                  : ""
+              }
+            >
+              <div>
+                <Button
+                  onClick={() => discountModalHandler.openDiscoundModal()}
+                  disabled={isSavingSale || !!sale?.customerVoucher}
+                >
+                  <OfferIcon />
+                  Desconto [R]
+                </Button>
+              </div>
+            </Tooltip>
 
             <Button onClick={() => setHandlerInState(true)} disabled={isSavingSale}>
               <InputIcon />

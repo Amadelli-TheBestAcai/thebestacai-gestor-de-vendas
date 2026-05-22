@@ -62,8 +62,7 @@ class AddItem implements IUseCaseFactory {
       .toFixed(2);
 
     if (sale.customerVoucher?.voucher) {
-      sale.total_sold -= getCustomerVoucherDiscountBrl(sale);
-      sale.total_sold = +sale.total_sold.toFixed(2);
+      sale.discount = +getCustomerVoucherDiscountBrl(sale).toFixed(2);
     }
 
     sale.quantity = sale.items.reduce(
