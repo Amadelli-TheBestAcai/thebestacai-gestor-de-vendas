@@ -187,13 +187,19 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
               <>
                 <Tooltip
                   title={
-                    "Não é possível criar comanda com recompensas no carrinho!"
+                    sale?.customerVoucher
+                      ? "Não é possível abrir comanda quando há cupom aplicado."
+                      : "Não é possível criar comanda com recompensas no carrinho!"
                   }
                   destroyTooltipOnHide
                 >
                   <span>
                     <ButtonCommands
-                      disabled={isSavingSale || !!sale?.customer_reward_id}
+                      disabled={
+                        isSavingSale ||
+                        !!sale?.customer_reward_id ||
+                        !!sale?.customerVoucher
+                      }
                       onClick={() => setCommandState(true)}
                     >
                       <ListIcon />
@@ -208,7 +214,9 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
             ) : (
               <Tooltip
                 title={
-                  sale?.customer_reward_id
+                  sale?.customerVoucher
+                    ? "Não é possível abrir comanda quando há cupom aplicado."
+                    : sale?.customer_reward_id
                     ? "Não é possível abrir comanda quando há recompensa aplicada."
                     : sale?.client_cpf
                     ? "Não é possível abrir comanda quando há CPF inserido na venda."
@@ -223,6 +231,7 @@ const Actions: React.FC<ComponentProps> = ({ history }) => {
                     onClick={() => setCommandState(true)}
                     disabled={
                       isSavingSale ||
+                      !!sale?.customerVoucher ||
                       !!sale?.customer_reward_id ||
                       !!sale?.client_cpf ||
                       (sale?.payments && sale.payments.length > 0)

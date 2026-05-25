@@ -57,6 +57,29 @@ function buildTriggerLabel(
   return `${names.slice(0, 2).join(", ")} e outros`;
 }
 
+const EMPTY_CUPOM = ["", "", "", ""];
+
+function normalizeCupomRaw(raw: string): string {
+  return raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 8);
+}
+
+function splitCupomCode(code: string): string[] {
+  const normalized = normalizeCupomRaw(code);
+  return [
+    normalized.slice(0, 2),
+    normalized.slice(2, 4),
+    normalized.slice(4, 6),
+    normalized.slice(6, 8),
+  ];
+}
+
+function focusCupomInput(slot: number): void {
+  const input = document.getElementsByName(String(slot))[0];
+  if (input instanceof HTMLInputElement) {
+    input.focus();
+  }
+}
+
 interface ICupomProps {
   cupomModalState: boolean;
   setCupomModalState: Dispatch<SetStateAction<boolean>>;
@@ -67,22 +90,17 @@ const CupomModal: React.FC<ICupomProps> = ({
   setCupomModalState,
 }) => {
   const { sale, setSale } = useSale();
-  const [cupom, setCupom] = useState(["", "", "", ""]);
+  const [cupom, setCupom] = useState([...EMPTY_CUPOM]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (cupomModalState) {
       const saleHashCode = sale?.customerVoucher?.hash_code;
       if (saleHashCode) {
-        setCupom([
-          `${saleHashCode[0]}${saleHashCode[1]}`,
-          `${saleHashCode[2]}${saleHashCode[3]}`,
-          `${saleHashCode[4]}${saleHashCode[5]}`,
-          `${saleHashCode[6]}${saleHashCode[7]}`,
-        ]);
+        setCupom(splitCupomCode(saleHashCode));
       }
     } else {
-      setCupom(["", "", "", ""]);
+      setCupom([...EMPTY_CUPOM]);
     }
   }, [cupomModalState, sale]);
 
@@ -96,30 +114,40 @@ const CupomModal: React.FC<ICupomProps> = ({
   const handleCupomState = (
     position: number,
     value: string,
-    name: string
   ): void => {
-    const updatedValue = cupom;
-    updatedValue[position] = value;
-    setCupom(updatedValue);
-    const input = document.getElementsByName(name)[0];
-    //@ts-ignore
-    if (input.value.toString().length === 2) {
-      const nextInputName = +name + 1 === 5 ? 4 : +name + 1;
-      const nextInput = document.getElementsByName(nextInputName.toString())[0];
-      nextInput.focus();
+    const sanitized = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+
+    if (sanitized.length > 2) {
+      const segments = splitCupomCode(sanitized);
+      setCupom(segments);
+      const firstIncomplete = segments.findIndex((part) => part.length < 2);
+      focusCupomInput(firstIncomplete === -1 ? 4 : firstIncomplete + 1);
+      return;
+    }
+
+    const next = [...cupom];
+    next[position] = sanitized;
+    setCupom(next);
+
+    if (sanitized.length === 2 && position < 3) {
+      focusCupomInput(position + 2);
     }
   };
 
-  const handleKeyDown = (key: string, name: string) => {
+  const handleCupomPaste = (
+    event: React.ClipboardEvent<HTMLInputElement>,
+  ): void => {
+    event.preventDefault();
+    const segments = splitCupomCode(event.clipboardData.getData("text"));
+    setCupom(segments);
+    const firstIncomplete = segments.findIndex((part) => part.length < 2);
+    focusCupomInput(firstIncomplete === -1 ? 4 : firstIncomplete + 1);
+  };
+
+  const handleKeyDown = (key: string, position: number) => {
     if (key === "Backspace") {
-      const input = document.getElementsByName(name)[0];
-      //@ts-ignore
-      if (input.value.toString().length === 0) {
-        const previousInputName = +name - 1 === 1 ? 1 : +name - 1;
-        const previousInput = document.getElementsByName(
-          previousInputName.toString()
-        )[0];
-        previousInput?.focus();
+      if (cupom[position].length === 0 && position > 0) {
+        focusCupomInput(position);
       }
     }
     if (key === "Enter") onFinish();
@@ -188,12 +216,12 @@ const CupomModal: React.FC<ICupomProps> = ({
           } else if (result.reason === "below_min_quantity") {
             message = `Faltam ${result.needed} item(ns) para ativar o cupom "${nomeCupom}". Você tem ${result.current} de ${result.required} necessários. Adicione mais ${rotuloGatilho} e tente novamente.`;
           } else {
-            message = `Para o cupom "${nomeCupom}", cada item que paga precisa ter no mínimo ${result.requiredGrammage}g. Confira a pesagem dos itens antes de aplicar.`;
+            message = `Faltam ${result.needed} self-service(s) de ${result.requiredGrammage}g para ativar o cupom "${nomeCupom}". Você tem ${result.current} de ${result.required} necessários. Confira a pesagem.`;
           }
 
           return notification.warn({ message, duration: 8 });
         }
-
+        
         const payload = {
           ...sale,
           customerVoucher: response,
@@ -502,50 +530,46 @@ const CupomModal: React.FC<ICupomProps> = ({
           <Row>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[0]}
+                value={cupom[0]}
                 maxLength={2}
                 name="1"
-                onChange={({ target: { value } }) =>
-                  handleCupomState(0, value, "1")
-                }
-                onKeyDown={({ key }) => handleKeyDown(key, "1")}
+                onChange={({ target: { value } }) => handleCupomState(0, value)}
+                onPaste={handleCupomPaste}
+                onKeyDown={({ key }) => handleKeyDown(key, 0)}
                 autoFocus
                 tabIndex={1}
               />
             </Col>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[1]}
+                value={cupom[1]}
                 maxLength={2}
                 name="2"
-                onKeyDown={({ key }) => handleKeyDown(key, "2")}
-                onChange={({ target: { value } }) =>
-                  handleCupomState(1, value, "2")
-                }
+                onKeyDown={({ key }) => handleKeyDown(key, 1)}
+                onChange={({ target: { value } }) => handleCupomState(1, value)}
+                onPaste={handleCupomPaste}
                 tabIndex={2}
               />
             </Col>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[2]}
+                value={cupom[2]}
                 maxLength={2}
                 name="3"
-                onKeyDown={({ key }) => handleKeyDown(key, "3")}
-                onChange={({ target: { value } }) =>
-                  handleCupomState(2, value, "3")
-                }
+                onKeyDown={({ key }) => handleKeyDown(key, 2)}
+                onChange={({ target: { value } }) => handleCupomState(2, value)}
+                onPaste={handleCupomPaste}
                 tabIndex={3}
               />
             </Col>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[3]}
+                value={cupom[3]}
                 maxLength={2}
                 name="4"
-                onKeyDown={({ key }) => handleKeyDown(key, "4")}
-                onChange={({ target: { value } }) =>
-                  handleCupomState(3, value, "4")
-                }
+                onKeyDown={({ key }) => handleKeyDown(key, 3)}
+                onChange={({ target: { value } }) => handleCupomState(3, value)}
+                onPaste={handleCupomPaste}
                 tabIndex={4}
               />
             </Col>
