@@ -24,6 +24,9 @@ export type DiscountByQuantityResult =
       ok: false;
       reason: "grammage_not_met";
       requiredGrammage: number;
+      needed: number;
+      current: number;
+      required: number;
     };
 
 type Unit = {
@@ -123,26 +126,30 @@ export function computeDiscountByQuantity(
       : b.unitPrice - a.unitPrice,
   );
 
-  // 4. Recortar as primeiras minCombined unidades; dentro do recorte,
-  //    as quantityWithDiscount primeiras são premiadas, as demais "pagas contadas".
-  const slice = units.slice(0, minCombined);
-  const awarded = slice.slice(0, quantityWithDiscount);
-  const paidCounted = slice.slice(quantityWithDiscount);
+  // 4. Premiados: quantityWithDiscount unidades de menor/maior valor (isentas de gramatura).
+  const awarded = units.slice(0, quantityWithDiscount);
+  const nonAwarded = units.slice(quantityWithDiscount);
 
-  // 5. Gramatura: aplica APENAS às "pagas contadas" que são self-service.
-  //    Premiadas, unidades fora do recorte e itens unitários ficam de fora —
-  //    a regra só faz sentido pra peso variável, e a especificação fala
-  //    em "itens não premiados que ENTRAM NA CONTAGEM".
+  // 5. Gramatura como qualificação de quem "paga": entre as não-premiadas,
+  //    precisa existir payingNeeded unidade(s) que atinjam min_item_grammage.
+  //    Itens unitários sempre qualificam; se min_item_grammage é null, todos qualificam.
   if (minGrammage !== null) {
-    const failsGrammage = paidCounted.some(
-      (u) =>
-        u.isSelfService && u.grammage !== null && u.grammage < minGrammage,
-    );
-    if (failsGrammage) {
+    const payingRequired = minCombined - quantityWithDiscount;
+    const qualifyingCount = nonAwarded.filter((u) => {
+      if (!u.isSelfService) {
+        return true;
+      }
+      return u.grammage !== null && u.grammage >= minGrammage;
+    }).length;
+
+    if (qualifyingCount < payingRequired) {
       return {
         ok: false,
         reason: "grammage_not_met",
         requiredGrammage: minGrammage,
+        required: payingRequired,
+        current: qualifyingCount,
+        needed: payingRequired - qualifyingCount,
       };
     }
   }
