@@ -82,6 +82,16 @@ const RegistrationCard: React.FC<IProps> = ({ modalState, setModalState }) => {
         duration: 5,
       });
     }
+
+    if (sale.customerVoucher) {
+      return notification.warning({
+        message: "Cupom aplicado",
+        description:
+          "Remova o cupom antes de salvar a venda na comanda.",
+        duration: 5,
+      });
+    }
+
     setLoading(true);
     await onAddToQueue(name);
     await updateOpenedStepSale();

@@ -20,6 +20,7 @@ import { PaymentNfe } from "../../models/dtos/paymentNfe";
 import { SaleFromApi } from "../../models/dtos/salesFromApi";
 
 import { useStore } from "../../hooks/useStore";
+import { getVoucherDiscountBrlFromVoucherAndItems } from "../../helpers/voucherDiscountBrl";
 
 type IProps = {
   modalState: boolean;
@@ -63,22 +64,29 @@ const NfeForm: React.FC<IProps> = ({
       setProductsNfe(products);
       setPaymentsNfe(payments);
 
-      const voucherDiscount =
-        JSON.parse(sale.cupom)?.voucher?.products?.reduce(
-          (sum, product) => sum + +product?.price_sell,
-          0
-        ) || 0;
+      // Fallback retroativo: vendas pré-migração têm discount=0 com cupom anexado.
+      // Recomputa via helper canônico (filtra por itens do carrinho — sem o bug do R$120).
+      const persistedDiscount = +sale.discount || 0;
+      const voucherForDiscount = sale.cupom
+        ? JSON.parse(sale.cupom)?.voucher
+        : null;
+      const fallbackDiscount =
+        persistedDiscount === 0 && voucherForDiscount
+          ? getVoucherDiscountBrlFromVoucherAndItems(
+              voucherForDiscount,
+              sale.items
+            )
+          : 0;
+      const effectiveDiscount = persistedDiscount || fallbackDiscount;
 
       form.setFieldsValue({
         total_sold: sale.total_sold.toFixed(2).replace(".", ","),
-        discount: (+sale.discount + voucherDiscount)
-          .toFixed(2)
-          .replace(".", ","),
+        discount: effectiveDiscount.toFixed(2).replace(".", ","),
       });
 
       setNfe((oldValues) => ({
         ...oldValues,
-        discount: +sale.discount + voucherDiscount,
+        discount: effectiveDiscount,
         change_amount: +sale.change_amount,
         total: sale.total_sold,
         store_id: store.company_id,
