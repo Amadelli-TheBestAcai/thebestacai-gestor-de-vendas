@@ -32,7 +32,6 @@ const ModalItensOffer: React.FC<IProps> = ({
       <>
         <span
           className="modal-title"
-          onClick={() => console.log(storeProducts)}
         >
           {"Que tal levar uma água?"}
         </span>

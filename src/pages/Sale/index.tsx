@@ -49,6 +49,7 @@ import {
 
 import { useUser } from "../../hooks/useUser";
 import { useStore } from "../../hooks/useStore";
+import { getVoucherDiscountBrlFromVoucherAndItems } from "../../helpers/voucherDiscountBrl";
 import { FlagCard } from "../../models/enums/flagCard";
 import { TefPaymentType } from "../../models/enums/tefPaymentType";
 import { PaymentDto } from "../../models/dtos/payment";
@@ -222,22 +223,24 @@ const Sale: React.FC<IProps> = () => {
     : null;
 
   const voucherDiscount =
-    voucherData?.voucher?.products?.reduce((sum, product) => {
-      const matchingItem = selectedSale.items.find(
-        (item) => item.product.id === product.product_id
-      );
+    selectedSale && voucherData?.voucher
+      ? getVoucherDiscountBrlFromVoucherAndItems(voucherData.voucher, selectedSale.items)
+      : 0;
 
-      if (!matchingItem || !matchingItem.storeProduct) return sum;
+  // Fallback retroativo: vendas pré-migração têm discount=0 com cupom anexado.
+  // Pós-migração, selectedSale.discount já contém o desconto correto.
+  const persistedDiscount = +(selectedSale?.discount || 0);
+  const effectiveDiscount = persistedDiscount || voucherDiscount;
 
-      const priceUnit = +matchingItem.storeProduct.price_unit;
-
-      const discount =
-        product.discount_type === 1
-          ? (priceUnit * +product.price_sell) / 100
-          : +product.price_sell;
-
-      return sum + discount;
-    }, 0) || 0;
+  // Separação semântica para UI: cupom e desconto manual são mutuamente exclusivos
+  // pós-migração. Se há cupom anexado, persistedDiscount representa o desconto do
+  // cupom (não manual). Pré-migração, persistedDiscount=0 e voucherDiscount cobre via fallback.
+  const hasVoucher = !!voucherData?.voucher;
+  const voucherDiscountAmount = hasVoucher
+    ? persistedDiscount || voucherDiscount
+    : 0;
+  const manualDiscountAmount = hasVoucher ? 0 : persistedDiscount;
+  const totalDiscountAmount = voucherDiscountAmount + manualDiscountAmount;
 
   const handleEmit = async () => {
     if (!selectedSale.items.length) {
@@ -253,7 +256,7 @@ const Sale: React.FC<IProps> = () => {
       email: "",
       store_id: store.company_id,
       total: selectedSale.total_sold,
-      discount: +selectedSale.discount + voucherDiscount,
+      discount: effectiveDiscount,
       change_amount: +selectedSale.change_amount,
       items: selectedSale.items.map((product) => ({
         product_store_id: product.product_store_id,
@@ -672,16 +675,8 @@ const Sale: React.FC<IProps> = () => {
                 </SearchContainer>
                 <ListSaleContainer>
                   <HeaderTable>
-                    <Col
-                      sm={
-                        +selectedSale?.discount > 0 || voucherDiscount > 0
-                          ? 2
-                          : 4
-                      }
-                    >
-                      ID
-                    </Col>
-                    {+selectedSale?.discount > 0 || voucherDiscount > 0 ? (
+                    <Col sm={totalDiscountAmount > 0 ? 2 : 4}>ID</Col>
+                    {totalDiscountAmount > 0 ? (
                       <Col sm={2}>DESCONTO</Col>
                     ) : null}
                     <Col sm={4}>VALOR</Col>
@@ -696,37 +691,20 @@ const Sale: React.FC<IProps> = () => {
                       <Panel
                         header={
                           <>
-                            <Col
-                              sm={
-                                +selectedSale?.discount > 0 ||
-                                voucherDiscount > 0
-                                  ? 2
-                                  : 4
-                              }
-                            >
+                            <Col sm={totalDiscountAmount > 0 ? 2 : 4}>
                               {selectedSale.id}
                             </Col>
-                            {+selectedSale?.discount > 0 ||
-                            voucherDiscount > 0 ? (
+                            {totalDiscountAmount > 0 ? (
                               <Col sm={2}>
                                 <Tooltip
                                   title={
-                                    +selectedSale.discount > 0 &&
-                                    voucherDiscount > 0
-                                      ? `Desconto manual: R$ ${currencyFormater(
-                                          +selectedSale.discount
-                                        )}, Desconto promocional: R$ ${currencyFormater(
-                                          voucherDiscount
-                                        )} - ${voucherName}`
-                                      : +selectedSale.discount > 0
-                                      ? `Desconto manual: R$ ${currencyFormater(
-                                          +selectedSale.discount
-                                        )}`
-                                      : voucherDiscount > 0
+                                    voucherDiscountAmount > 0
                                       ? `Desconto promocional: R$ ${currencyFormater(
-                                          voucherDiscount
+                                          voucherDiscountAmount
                                         )} - ${voucherName}`
-                                      : ""
+                                      : `Desconto manual: R$ ${currencyFormater(
+                                          manualDiscountAmount
+                                        )}`
                                   }
                                 >
                                   <div
@@ -737,20 +715,12 @@ const Sale: React.FC<IProps> = () => {
                                       gap: "2px",
                                     }}
                                   >
-                                    {voucherDiscount ? (
+                                    {voucherDiscountAmount > 0 ? (
                                       <IconOfferDiscount></IconOfferDiscount>
                                     ) : (
                                       <></>
                                     )}
-                                    R${" "}
-                                    {voucherDiscount
-                                      ? currencyFormater(
-                                          +selectedSale.discount +
-                                            +voucherDiscount
-                                        )
-                                      : currencyFormater(
-                                          +selectedSale.discount
-                                        )}
+                                    R$ {currencyFormater(totalDiscountAmount)}
                                   </div>
                                 </Tooltip>
                               </Col>

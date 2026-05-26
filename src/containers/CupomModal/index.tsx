@@ -2,7 +2,83 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 
 import { notification } from "antd";
 import { useSale } from "../../hooks/useSale";
+import {
+  computeDiscountByQuantity,
+  DiscountByQuantityResult,
+} from "../../helpers/discountByQuantity";
+import { DiscountByQuantityConfig } from "../../models/dtos/voucher";
 import { Container, Row, Col, InputCode, Button } from "./styles";
+
+type ProductForLabel = {
+  product_id?: number;
+  product?: {
+    id?: number;
+    name?: string;
+    category?: { id?: number; name?: string };
+  };
+};
+
+function buildTriggerLabel(
+  config: DiscountByQuantityConfig,
+  products: ProductForLabel[] | undefined | null,
+  fallbackCupomName: string
+): string {
+  const triggerIds = (config.trigger_ids ?? []).map((v) => Number(v));
+  const list = products ?? [];
+
+  const names: string[] = [];
+  const seen = new Set<string>();
+  const push = (name: string | undefined) => {
+    if (!name) return;
+    const trimmed = name.trim();
+    if (!trimmed || seen.has(trimmed)) return;
+    seen.add(trimmed);
+    names.push(trimmed);
+  };
+
+  if (config.trigger_mode === "product") {
+    for (const p of list) {
+      const id = p.product?.id ?? p.product_id;
+      if (id !== undefined && triggerIds.includes(Number(id))) {
+        push(p.product?.name);
+      }
+    }
+  } else {
+    for (const p of list) {
+      const catId = p.product?.category?.id;
+      if (catId !== undefined && triggerIds.includes(Number(catId))) {
+        push(p.product?.category?.name);
+      }
+    }
+  }
+
+  if (names.length === 0) return `"${fallbackCupomName}"`;
+  if (names.length <= 2) return names.join(", ");
+  return `${names.slice(0, 2).join(", ")} e outros`;
+}
+
+const EMPTY_CUPOM = ["", "", "", ""];
+
+function normalizeCupomRaw(raw: string): string {
+  return raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 8);
+}
+
+function splitCupomCode(code: string): string[] {
+  const normalized = normalizeCupomRaw(code);
+  return [
+    normalized.slice(0, 2),
+    normalized.slice(2, 4),
+    normalized.slice(4, 6),
+    normalized.slice(6, 8),
+  ];
+}
+
+function focusCupomInput(slot: number): void {
+  const input = document.getElementsByName(String(slot))[0];
+  if (input instanceof HTMLInputElement) {
+    input.focus();
+  }
+}
 
 interface ICupomProps {
   cupomModalState: boolean;
@@ -14,22 +90,17 @@ const CupomModal: React.FC<ICupomProps> = ({
   setCupomModalState,
 }) => {
   const { sale, setSale } = useSale();
-  const [cupom, setCupom] = useState(["", "", "", ""]);
+  const [cupom, setCupom] = useState([...EMPTY_CUPOM]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (cupomModalState) {
       const saleHashCode = sale?.customerVoucher?.hash_code;
       if (saleHashCode) {
-        setCupom([
-          `${saleHashCode[0]}${saleHashCode[1]}`,
-          `${saleHashCode[2]}${saleHashCode[3]}`,
-          `${saleHashCode[4]}${saleHashCode[5]}`,
-          `${saleHashCode[6]}${saleHashCode[7]}`,
-        ]);
+        setCupom(splitCupomCode(saleHashCode));
       }
     } else {
-      setCupom(["", "", "", ""]);
+      setCupom([...EMPTY_CUPOM]);
     }
   }, [cupomModalState, sale]);
 
@@ -43,30 +114,40 @@ const CupomModal: React.FC<ICupomProps> = ({
   const handleCupomState = (
     position: number,
     value: string,
-    name: string
   ): void => {
-    const updatedValue = cupom;
-    updatedValue[position] = value;
-    setCupom(updatedValue);
-    const input = document.getElementsByName(name)[0];
-    //@ts-ignore
-    if (input.value.toString().length === 2) {
-      const nextInputName = +name + 1 === 5 ? 4 : +name + 1;
-      const nextInput = document.getElementsByName(nextInputName.toString())[0];
-      nextInput.focus();
+    const sanitized = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+
+    if (sanitized.length > 2) {
+      const segments = splitCupomCode(sanitized);
+      setCupom(segments);
+      const firstIncomplete = segments.findIndex((part) => part.length < 2);
+      focusCupomInput(firstIncomplete === -1 ? 4 : firstIncomplete + 1);
+      return;
+    }
+
+    const next = [...cupom];
+    next[position] = sanitized;
+    setCupom(next);
+
+    if (sanitized.length === 2 && position < 3) {
+      focusCupomInput(position + 2);
     }
   };
 
-  const handleKeyDown = (key: string, name: string) => {
+  const handleCupomPaste = (
+    event: React.ClipboardEvent<HTMLInputElement>,
+  ): void => {
+    event.preventDefault();
+    const segments = splitCupomCode(event.clipboardData.getData("text"));
+    setCupom(segments);
+    const firstIncomplete = segments.findIndex((part) => part.length < 2);
+    focusCupomInput(firstIncomplete === -1 ? 4 : firstIncomplete + 1);
+  };
+
+  const handleKeyDown = (key: string, position: number) => {
     if (key === "Backspace") {
-      const input = document.getElementsByName(name)[0];
-      //@ts-ignore
-      if (input.value.toString().length === 0) {
-        const previousInputName = +name - 1 === 1 ? 1 : +name - 1;
-        const previousInput = document.getElementsByName(
-          previousInputName.toString()
-        )[0];
-        previousInput?.focus();
+      if (cupom[position].length === 0 && position > 0) {
+        focusCupomInput(position);
       }
     }
     if (key === "Enter") onFinish();
@@ -77,6 +158,13 @@ const CupomModal: React.FC<ICupomProps> = ({
       return notification.warn({
         message:
           "É necessário preencher todos os campos corretamente para adicionar o cupom!",
+        duration: 5,
+      });
+    }
+
+    if (sale.discount > 0 && !sale.customerVoucher) {
+      return notification.warn({
+        message: "Remova o desconto manual antes de aplicar o cupom.",
         duration: 5,
       });
     }
@@ -104,6 +192,65 @@ const CupomModal: React.FC<ICupomProps> = ({
       const { response: products } = await window.Main.product.getProducts(
         true
       );
+
+      if (
+        response.voucher.voucher_type === "discount_by_quantity" &&
+        response.voucher.voucher_config
+      ) {
+        const result: DiscountByQuantityResult = computeDiscountByQuantity(
+          response.voucher.voucher_config,
+          sale.items
+        );
+
+        if (result.ok === false) {
+          const nomeCupom = response.voucher.name;
+          const rotuloGatilho = buildTriggerLabel(
+            response.voucher.voucher_config,
+            products,
+            nomeCupom
+          );
+
+          let message: string;
+          if (result.reason === "no_eligible_items") {
+            message = `O cupom "${nomeCupom}" não se aplica aos itens do carrinho. Adicione ${rotuloGatilho} para usá-lo.`;
+          } else if (result.reason === "below_min_quantity") {
+            message = `Faltam ${result.needed} item(ns) para ativar o cupom "${nomeCupom}". Você tem ${result.current} de ${result.required} necessários. Adicione mais ${rotuloGatilho} e tente novamente.`;
+          } else {
+            message = `Faltam ${result.needed} self-service(s) de ${result.requiredGrammage}g para ativar o cupom "${nomeCupom}". Você tem ${result.current} de ${result.required} necessários. Confira a pesagem.`;
+          }
+
+          return notification.warn({ message, duration: 8 });
+        }
+        
+        const payload = {
+          ...sale,
+          customerVoucher: response,
+          discount: +result.discountBrl.toFixed(2),
+        };
+
+        const {
+          response: updatedSale,
+          has_internal_error: errorOnUpdateSale,
+        } = await window.Main.sale.updateSale(sale.id, payload);
+
+        if (errorOnUpdateSale) {
+          return notification.error({
+            message:
+              errorOnUpdateSale ||
+              "Oops, ocorreu um erro ao atualizar a venda!",
+            duration: 5,
+          });
+        }
+
+        setSale(updatedSale);
+        notification.success({
+          message: "Cupom aplicado com sucesso",
+          duration: 5,
+        });
+        setCupomModalState(false);
+        return;
+      }
+
       delete response.voucher.companies;
 
       response.voucher.products = [...(response.voucher.products || [])];
@@ -139,7 +286,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         const payload = {
           ...sale,
           customerVoucher: response,
-          total_sold: sale.total_sold - discountAmount,
+          discount: +discountAmount.toFixed(2),
         };
 
         const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
@@ -250,7 +397,7 @@ const CupomModal: React.FC<ICupomProps> = ({
           let discountAmount = 0;
           if (productVoucher.discount_type === 1) {
             const percent = +productVoucher.price_sell / 100;
-            discountAmount = +product.price_unit * percent;
+            discountAmount = +item.total * percent;
           } else {
             discountAmount = +productVoucher.price_sell;
           }
@@ -273,7 +420,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       const payload = {
         ...sale,
         customerVoucher: response,
-        total_sold: sale.total_sold - totalDiscount,
+        discount: +totalDiscount.toFixed(2),
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
@@ -383,50 +530,46 @@ const CupomModal: React.FC<ICupomProps> = ({
           <Row>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[0]}
+                value={cupom[0]}
                 maxLength={2}
                 name="1"
-                onChange={({ target: { value } }) =>
-                  handleCupomState(0, value, "1")
-                }
-                onKeyDown={({ key }) => handleKeyDown(key, "1")}
+                onChange={({ target: { value } }) => handleCupomState(0, value)}
+                onPaste={handleCupomPaste}
+                onKeyDown={({ key }) => handleKeyDown(key, 0)}
                 autoFocus
                 tabIndex={1}
               />
             </Col>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[1]}
+                value={cupom[1]}
                 maxLength={2}
                 name="2"
-                onKeyDown={({ key }) => handleKeyDown(key, "2")}
-                onChange={({ target: { value } }) =>
-                  handleCupomState(1, value, "2")
-                }
+                onKeyDown={({ key }) => handleKeyDown(key, 1)}
+                onChange={({ target: { value } }) => handleCupomState(1, value)}
+                onPaste={handleCupomPaste}
                 tabIndex={2}
               />
             </Col>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[2]}
+                value={cupom[2]}
                 maxLength={2}
                 name="3"
-                onKeyDown={({ key }) => handleKeyDown(key, "3")}
-                onChange={({ target: { value } }) =>
-                  handleCupomState(2, value, "3")
-                }
+                onKeyDown={({ key }) => handleKeyDown(key, 2)}
+                onChange={({ target: { value } }) => handleCupomState(2, value)}
+                onPaste={handleCupomPaste}
                 tabIndex={3}
               />
             </Col>
             <Col sm={5} xs={5}>
               <InputCode
-                defaultValue={cupom[3]}
+                value={cupom[3]}
                 maxLength={2}
                 name="4"
-                onKeyDown={({ key }) => handleKeyDown(key, "4")}
-                onChange={({ target: { value } }) =>
-                  handleCupomState(3, value, "4")
-                }
+                onKeyDown={({ key }) => handleKeyDown(key, 3)}
+                onChange={({ target: { value } }) => handleCupomState(3, value)}
+                onPaste={handleCupomPaste}
                 tabIndex={4}
               />
             </Col>

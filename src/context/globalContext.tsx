@@ -13,6 +13,7 @@ import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
 import { CampaignDto } from "../models/dtos/campaign";
 import { CashHandlerDTO } from "../../electron/src/models/dtos";
+import { getCustomerVoucherDiscountBrl } from "../helpers/voucherDiscountBrl";
 import { TefVersionStatus } from "../models/dtos/tefVersionStatus";
 
 type GlobalContextType = {
@@ -351,11 +352,14 @@ export function GlobalProvider({ children }) {
 
     }
 
+    // Fallback retroativo: vendas antigas com sale.discount=0 mas cupom anexado
+    // recomputam o desconto via helper. Vendas pós-migração já têm sale.discount populado.
+    const persistedDiscount = +currentSale.discount || 0;
     const voucherDiscount =
-      sale.customerVoucher?.voucher?.products?.reduce(
-        (sum, product) => sum + +product?.price_sell,
-        0
-      ) || 0;
+      persistedDiscount === 0 && currentSale.customerVoucher?.voucher
+        ? getCustomerVoucherDiscountBrl(currentSale)
+        : 0;
+    const effectiveDiscount = persistedDiscount || voucherDiscount;
 
     if (currentSale.customerVoucher?.id) {
       const { has_internal_error: errorOnMarkAsUsedVoucher, error_message } =
@@ -409,9 +413,7 @@ export function GlobalProvider({ children }) {
 
       const nfePayload = {
         cpf: currentSale?.cpf_used_nfce ? currentSale?.client_cpf : null,
-        discount: voucherDiscount
-          ? +currentSale?.discount + +voucherDiscount
-          : currentSale.discount,
+        discount: effectiveDiscount,
         change_amount: +currentSale.change_amount,
         total: total,
         store_id: +store.company_id,
@@ -563,15 +565,10 @@ export function GlobalProvider({ children }) {
     });
 
     if (settings.should_print_sale && settings.should_use_printer) {
-      const discountVouncherCombined = (
-        voucherDiscount
-          ? +currentSale?.discount + +voucherDiscount
-          : currentSale?.discount
-      )?.toString();
       //@ts-expect-error
       window.Main.common.printSale({
         ...currentSale,
-        discount: discountVouncherCombined,
+        discount: effectiveDiscount.toString(),
       });
     }
     const { response: _storeCash } = await window.Main.storeCash.getCurrent();
@@ -607,6 +604,14 @@ export function GlobalProvider({ children }) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
         description: `Adicione produtos para aplicar desconto`,
+        duration: 5,
+      });
+    }
+
+    if (sale.customerVoucher) {
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `Remova o cupom antes de aplicar desconto manual.`,
         duration: 5,
       });
     }
