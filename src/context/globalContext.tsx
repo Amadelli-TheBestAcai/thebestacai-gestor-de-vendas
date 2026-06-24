@@ -1,5 +1,6 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createContext } from "use-context-selector";
+import { useLocation } from "react-router-dom";
 
 import { notification } from "antd";
 
@@ -12,6 +13,8 @@ import { StoreProductDto } from "../models/dtos/storeProduct";
 import { StoreDto } from "../models/dtos/store";
 import { CampaignDto } from "../models/dtos/campaign";
 import { CashHandlerDTO } from "../../electron/src/models/dtos";
+import { getCustomerVoucherDiscountBrl } from "../helpers/voucherDiscountBrl";
+import { TefVersionStatus } from "../models/dtos/tefVersionStatus";
 
 type GlobalContextType = {
   sale: SaleDto;
@@ -52,11 +55,13 @@ type GlobalContextType = {
   openedStepSale: number;
   setOpenedStepSale: Dispatch<SetStateAction<number>>;
   hasPermission: (_permission: string) => boolean;
+  tefVersionStatus: TefVersionStatus | null;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(null);
 
 export function GlobalProvider({ children }) {
+  const location = useLocation();
   const [sale, setSale] = useState<SaleDto>();
   const [storeCash, setStoreCash] = useState<StoreCashDto>();
   const [settings, setSettings] = useState<SettingsDto>();
@@ -71,6 +76,54 @@ export function GlobalProvider({ children }) {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
   const [openedStepSale, setOpenedStepSale] = useState(0);
   const [cashHandler, setCashHandler] = useState<CashHandlerDTO | null>(null);
+  const [tefVersionStatus, setTefVersionStatus] =
+    useState<TefVersionStatus | null>(null);
+
+  /* TEMP_TEF_VERSION_GUARD_REMOVE_ME — consulta versão ServerTEF na navegação (não no modal) */
+  useEffect(() => {
+    if (!user?.id) {
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { response, has_internal_error, error_message } =
+          await window.Main.tefFactory.checkServerTefUpdate();
+        if (cancelled) {
+          return;
+        }
+        if (has_internal_error || !response) {
+          if (error_message) {
+            console.warn("[checkServerTefUpdate]", error_message);
+          }
+          setTefVersionStatus(null);
+          return;
+        }
+        if (
+          typeof response.requiredVersion !== "string" ||
+          !String(response.requiredVersion).trim()
+        ) {
+          setTefVersionStatus(null);
+          return;
+        }
+        setTefVersionStatus({
+          isRequired: response.needsUpdate,
+          currentVersion: response.currentVersion,
+          requiredVersion: String(response.requiredVersion).trim(),
+          downloadUrl: response.downloadUrl ?? "",
+          message: response.message ?? "",
+        });
+      } catch (e) {
+        console.warn("[checkServerTefUpdate]", e);
+        if (!cancelled) {
+          setTefVersionStatus(null);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname, user?.id]);
 
   useEffect(() => {
     async function init() {
@@ -249,13 +302,14 @@ export function GlobalProvider({ children }) {
     if (
       +(currentSale.total_sold.toFixed(2) || 0) >
       currentSale.total_paid +
-        (combinedDiscount + (currentSale.customer_nps_reward_discount || 0)) +
-        0.5
+      (combinedDiscount + (currentSale.customer_nps_reward_discount || 0)) +
+      0.5
     ) {
       setSavingSale(false);
       return notification.warning({
-        message: "Pagamento inválido!",
-        description: `Nenhuma forma de pagamento selecionado ou valor incorreto para pagamento.`,
+        message: "Valor pago insuficiente",
+        description:
+          "O total dos pagamentos é menor que o valor da venda. Registre mais pagamentos até cobrir o total antes de finalizar.",
         duration: 5,
       });
     }
@@ -290,27 +344,22 @@ export function GlobalProvider({ children }) {
             message: error_message_print_cupom_tef || "Erro ao imprimir cupom",
             duration: 5,
           });
+          setSavingSale(false);
+          return;
         }
       }
 
-      const { has_internal_error: errorOnFinalizaTransacao, error_message } =
-        await window.Main.tefFactory.finalizeTransaction(codes_nsu);
 
-      if (errorOnFinalizaTransacao) {
-        notification.error({
-          message: error_message || "Erro ao finalizar transação TEF",
-          duration: 5,
-        });
-        setSavingSale(false);
-        return;
-      }
     }
 
+    // Fallback retroativo: vendas antigas com sale.discount=0 mas cupom anexado
+    // recomputam o desconto via helper. Vendas pós-migração já têm sale.discount populado.
+    const persistedDiscount = +currentSale.discount || 0;
     const voucherDiscount =
-      sale.customerVoucher?.voucher?.products?.reduce(
-        (sum, product) => sum + +product?.price_sell,
-        0
-      ) || 0;
+      persistedDiscount === 0 && currentSale.customerVoucher?.voucher
+        ? getCustomerVoucherDiscountBrl(currentSale)
+        : 0;
+    const effectiveDiscount = persistedDiscount || voucherDiscount;
 
     if (currentSale.customerVoucher?.id) {
       const { has_internal_error: errorOnMarkAsUsedVoucher, error_message } =
@@ -331,7 +380,7 @@ export function GlobalProvider({ children }) {
 
     if (currentSale.customer_reward_id) {
       const payload = {
-        store_id: store.id,
+        store_id: store.company.id,
         user_name: user.name,
         user_id: user.id,
         company_name: store.company.company_name,
@@ -364,9 +413,7 @@ export function GlobalProvider({ children }) {
 
       const nfePayload = {
         cpf: currentSale?.cpf_used_nfce ? currentSale?.client_cpf : null,
-        discount: voucherDiscount
-          ? +currentSale?.discount + +voucherDiscount
-          : currentSale.discount,
+        discount: effectiveDiscount,
         change_amount: +currentSale.change_amount,
         total: total,
         store_id: +store.company_id,
@@ -447,7 +494,7 @@ export function GlobalProvider({ children }) {
       if (
         settings.should_open_casher === true &&
         error_message ===
-          "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
+        "Nenhum caixa está disponível para abertura, entre em contato com o suporte"
       ) {
         const { response: _newSettings, has_internal_error: errorOnSettings } =
           await window.Main.settings.update(settings.id, {
@@ -468,13 +515,13 @@ export function GlobalProvider({ children }) {
 
       error_message
         ? notification.warning({
-            message: error_message,
-            duration: 5,
-          })
+          message: error_message,
+          duration: 5,
+        })
         : notification.error({
-            message: "Erro ao finalizar venda",
-            duration: 5,
-          });
+          message: "Erro ao finalizar venda",
+          duration: 5,
+        });
     }
 
     const { response: cashHandlers } =
@@ -518,15 +565,10 @@ export function GlobalProvider({ children }) {
     });
 
     if (settings.should_print_sale && settings.should_use_printer) {
-      const discountVouncherCombined = (
-        voucherDiscount
-          ? +currentSale?.discount + +voucherDiscount
-          : currentSale?.discount
-      )?.toString();
       //@ts-expect-error
       window.Main.common.printSale({
         ...currentSale,
-        discount: discountVouncherCombined,
+        discount: effectiveDiscount.toString(),
       });
     }
     const { response: _storeCash } = await window.Main.storeCash.getCurrent();
@@ -562,6 +604,14 @@ export function GlobalProvider({ children }) {
       return notification.warning({
         message: "Não é possível aplicar este desconto",
         description: `Adicione produtos para aplicar desconto`,
+        duration: 5,
+      });
+    }
+
+    if (sale.customerVoucher) {
+      return notification.warning({
+        message: "Não é possível aplicar este desconto",
+        description: `Remova o cupom antes de aplicar desconto manual.`,
         duration: 5,
       });
     }
@@ -666,6 +716,7 @@ export function GlobalProvider({ children }) {
         setCampaign,
         openedStepSale,
         setOpenedStepSale,
+        tefVersionStatus,
       }}
     >
       {children}

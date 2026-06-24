@@ -25,7 +25,7 @@ const Register: React.FC = () => {
           </strong>
         </span>
       </ContentValue>
-      <ButtonFinisher onClick={onRegisterSale}>
+      <ButtonFinisher onClick={onRegisterSale} disabled={isSavingSale}>
         {" "}
         {isSavingSale ? <Spin /> : "FINALIZAR [F1]"}
       </ButtonFinisher>

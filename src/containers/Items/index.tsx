@@ -14,6 +14,11 @@ import {
   ItemContainer,
   ItemContent,
   EmptyContainer,
+  CouponRow,
+  CouponLeft,
+  CouponTag,
+  CouponName,
+  CouponValue,
 } from "./styles";
 
 const Items: React.FC = () => {
@@ -41,16 +46,29 @@ const Items: React.FC = () => {
                   ))}
                 </>
               ) : <></>}
-              {sale?.customerVoucher?.additional_items_descriptions?.length && (
+              {sale?.customerVoucher?.additional_items_descriptions?.length ? (
                 <>
                   {sale?.customerVoucher?.additional_items_descriptions.map((additional_item_description) => (
                     <Item key={additional_item_description} additional_item_description={additional_item_description} />
                   ))}
                 </>
-              )}
+              ) : null}
               {sale?.items?.map((item) => (
                 <Item key={item.id} item={item} />
               ))}
+              {sale?.customerVoucher && sale?.discount > 0 && (
+                <CouponRow>
+                  <CouponLeft>
+                    <CouponTag>Cupom</CouponTag>
+                    <CouponName>
+                      {sale.customerVoucher.voucher?.name || "Desconto aplicado"}
+                    </CouponName>
+                  </CouponLeft>
+                  <CouponValue>
+                    − R$ {sale.discount.toFixed(2).replace(".", ",")}
+                  </CouponValue>
+                </CouponRow>
+              )}
             </ItemContent>
           </ItemContainer>
         </>

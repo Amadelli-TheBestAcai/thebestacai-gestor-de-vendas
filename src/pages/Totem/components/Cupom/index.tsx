@@ -50,11 +50,19 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         setVisibleInvalidCupom(true);
         return;
       }
+
+      if (response.voucher?.voucher_type === "discount_by_quantity") {
+        setErrorMesssage(
+          "Este cupom não está disponível no totem. Utilize o caixa."
+        );
+        setVisibleInvalidCupom(true);
+        return;
+      }
+
       setCustomerVoucher(response);
 
-      const { response: products } = await window.Main.product.getProducts(
-        true
-      );
+      const { response: products } =
+        await window.Main.product.getProductsByTags(["totem"]);
 
       delete response.voucher.companies;
 
@@ -64,11 +72,33 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
 
       if (response.voucher?.self_service && totalSoldInSelfService <= 0) {
         setErrorMesssage(
-          "É necessário adicionar self-services para resgatar este cupom!"
+          "É necessário adicionar self-services para resgatar este cupom!",
         );
         setVisibleInvalidCupom(true);
         return;
       }
+
+      const hasVoucherProduct = response.voucher.products.some(
+        (voucherProduct) =>
+          sale.items.some(
+            (item) => item.product.id === voucherProduct.product_id,
+          ),
+      );
+
+      if (!hasVoucherProduct) {
+        setErrorMesssage(
+          "Esse cupom não pode ser aplicado a nenhum item da sacola!",
+        );
+        setVisibleInvalidCupom(true);
+        return;
+      }
+
+      response.voucher.products = response.voucher.products.filter(
+        (voucherProduct) =>
+          sale.items.some(
+            (item) => item.product.id === voucherProduct.product_id,
+          ),
+      );
 
       let totalOfSelfServiceDiscount = 0;
 
@@ -76,6 +106,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         if (response.voucher.self_service_discount_type === 1) {
           const percentOfDiscount =
             +response.voucher.self_service_discount_amount / 100;
+
           totalOfSelfServiceDiscount =
             totalSoldInSelfService * percentOfDiscount;
 
@@ -106,52 +137,59 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         }
       }
 
-      let totalOfCupomProducs = 0;
-
+      let totalOfCupomProducts = 0;
       response.voucher.products.forEach((productVoucher, index) => {
-        const product = products.find(
-          (product) => product.product_id === productVoucher.product_id
-        );
-        const item = sale.items.find(
-          (item) => item.product.id === productVoucher.product_id
-        );
-
-        if (product) {
-          let price_sell = 0;
+        if (
+          response.voucher.self_service &&
+          productVoucher.product_id === 1 &&
+          productVoucher.product_name?.includes("Desconto de") &&
+          productVoucher.product_name?.includes("Self-service")
+        ) {
           response.voucher.products[index].is_registred = true;
-          if (productVoucher.product_id !== 1) {
-            if (item)
-              price_sell = +product.price_unit - +productVoucher.price_sell;
-            response.voucher.products[index].price_sell = price_sell.toFixed(2);
-          }
-          totalOfCupomProducs += price_sell;
-        } else {
-          response.voucher.products[index].is_registred = false;
-          response.voucher.products[index].price_sell = "0.00";
+          response.voucher.products[index].in_sale = true;
+          return;
         }
 
-        if (item) {
+        const product = products.find(
+          (product) => product.product_id === productVoucher.product_id,
+        );
+
+        const item = sale.items.find(
+          (item) => item.product.id === productVoucher.product_id,
+        );
+
+        if (product && item) {
+          response.voucher.products[index].is_registred = true;
           response.voucher.products[index].in_sale = true;
+
+          let discountAmount = 0;
+
+          if (productVoucher.discount_type === 1) {
+            const percent = +productVoucher.price_sell / 100;
+
+            discountAmount = +item.total * percent;
+          } else {
+            discountAmount = +productVoucher.price_sell;
+          }
+
+          totalOfCupomProducts += discountAmount;
         } else {
+          response.voucher.products[index].is_registred = false;
           response.voucher.products[index].in_sale = false;
         }
 
-        if (response.voucher.products[index].additional_value) {
-          response.voucher.products[index].price_sell =
-            response.voucher.products[index].additional_value;
-          totalOfCupomProducs -=
-            +response.voucher.products[index].additional_value;
+        if (productVoucher.additional_value) {
+          totalOfCupomProducts -= +productVoucher.additional_value;
         }
       });
-
-      totalOfSelfServiceDiscount = Math.abs(totalOfSelfServiceDiscount);
-
-      totalOfSelfServiceDiscount += totalOfCupomProducs;
+      const totalDiscount = Math.abs(
+        totalOfSelfServiceDiscount + totalOfCupomProducts,
+      );
 
       const payload = {
         ...sale,
         customerVoucher: response,
-        total_sold: sale.total_sold - totalOfSelfServiceDiscount,
+        total_sold: sale.total_sold - totalDiscount,
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =

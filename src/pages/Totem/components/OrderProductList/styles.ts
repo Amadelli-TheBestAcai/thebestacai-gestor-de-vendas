@@ -41,6 +41,11 @@ export const OrderProduct = styled(ColAnt)<IProduct>`
     display: flex;
     flex-direction: row;
     align-items: center;
+
+    img {
+      width: 4rem;
+      height: 4rem;
+    }
   }
 
   .order-item-name {

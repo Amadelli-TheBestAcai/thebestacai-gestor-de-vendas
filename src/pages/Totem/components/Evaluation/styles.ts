@@ -51,10 +51,18 @@ export const Footer = styled.div`
 
 export const Modal = styled(ModalAnt)`
   transition: height 1s ease;
+  p,
+  span,
+  button {
+    border-color: var(--color-theme);
+    color: var(--color-theme) !important;
+  }
   .modal-title {
     font-family: "VisbyCF";
     font-size: 3.75rem;
     font-weight: 600;
+    border-color: var(--color-theme);
+    color: var(--color-theme) !important;
   }
 
   .ant-modal-content {

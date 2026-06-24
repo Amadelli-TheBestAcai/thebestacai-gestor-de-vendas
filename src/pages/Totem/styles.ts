@@ -9,6 +9,22 @@ export const Container = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
+
+  p,
+  span,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  b,
+  div,
+  img,
+  button {
+    color: var(--color-theme) !important;
+    border-color: var(--color-theme);
+  }
+
   * {
     font-family: "VisbyCF";
   }
@@ -24,7 +40,7 @@ export const Header = styled.div`
   align-items: center;
   width: 100%;
   height: 17.81rem;
-  background-color: black;
+  background-color: var(--color-theme);
 
   .logo-content {
     display: flex;
@@ -57,6 +73,7 @@ export const Content = styled.div<IContent>`
 `;
 
 export const Modal = styled(ModalAnt)`
+  z-index: 1000;
   .ant-modal-content {
     height: 100%;
     width: 100%;

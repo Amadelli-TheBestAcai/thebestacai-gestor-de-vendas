@@ -8,3 +8,4 @@ export * from "./salesFromApi";
 export * from "./storeCashHistory";
 export * from "./customerVoucher";
 export * from "./configTef"
+export * from "./checkServerTefUpdate"

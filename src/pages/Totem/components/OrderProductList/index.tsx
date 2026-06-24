@@ -3,8 +3,6 @@ import React, { Dispatch, SetStateAction } from "react";
 import plus from "../../../../assets/totem/svg/plus.svg";
 import minus from "../../../../assets/totem/svg/minus.svg";
 import trash from "../../../../assets/totem/svg/trash.svg";
-import cupom from "../../../../assets/totem/svg/cupom.svg";
-import discount from "../../../../assets/totem/svg/discount.svg";
 
 import { getCategoryIcon } from "../../helpers/getCategoryIcon";
 
@@ -33,17 +31,72 @@ const OrderProductList: React.FC<IProps> = ({
 }) => {
   const { sale } = useSale();
   const { settings } = useSettings();
+
+  const handleCustomerVoucher = () => {
+    const voucherProduct = sale?.customerVoucher?.voucher?.products.filter(
+      (_product) =>
+        sale.items.some((_item) => _item.product.id === _product.product_id),
+    );
+
+    return voucherProduct.map((_product) => (
+      <OrderProduct key={_product.id} sm={24} type={"cupom"}>
+        <div className="order-item-content">
+          <span className="order-item-name">
+            {"[CUPOM] " + _product.product_name}
+          </span>
+        </div>
+
+        <div className="order-item-actions">
+          <span>
+            <img
+              className="order-item-image"
+              src={trash}
+              onClick={() =>
+                setVisibleModalRemoveCupom && setVisibleModalRemoveCupom(true)
+              }
+            />
+          </span>
+          <span
+            className="order-item-price"
+           
+          >
+            R${" "}
+            {_product?.additional_value
+              ? "+ "
+              : "- " +
+                (_product.discount_type === 1
+                  ? (
+                      +(
+                        sale.items.find(
+                          (_item) => _item.product.id === _product.product_id,
+                        )?.total || 0
+                      ) *
+                      ((+_product.price_sell || 0) / 100)
+                    )
+                      .toFixed(2)
+                      .replace(".", ",")
+                  : (+_product.price_sell || 0).toFixed(2).replace(".", ","))}
+          </span>
+        </div>
+      </OrderProduct>
+    ));
+  };
+
   return (
     <Container>
       {sale.items
         .map((item) => (
           <OrderProduct key={item.id} sm={24}>
             <div className="order-item-content">
-              <span className="order-item-name">
-                {item.product.id !== 1
-                  ? `${item.quantity}x ${item.product.name}`
-                  : item.product.name}
-              </span>
+              <img
+                src={
+                  item?.product?.upload_url
+                    ? item?.product?.upload_url?.toString()
+                    : getCategoryIcon(item.product.category)
+                }
+                alt="Imagem dos produtos"
+              />
+              <span className="order-item-name">{item.product.name}</span>
             </div>
 
             <div className="order-item-actions">
@@ -76,37 +129,7 @@ const OrderProductList: React.FC<IProps> = ({
           </OrderProduct>
         ))
         .reverse()}
-      {useCupom &&
-        sale.customerVoucher &&
-        sale?.customerVoucher?.voucher?.products?.map((_product) => (
-          <OrderProduct key={_product.id} sm={24} type={"cupom"}>
-            <div className="order-item-content">
-              <span className="order-item-name">
-                {"[CUPOM] " + _product.product_name}
-              </span>
-            </div>
-
-            <div className="order-item-actions">
-              <span>
-                <img
-                  className="order-item-image"
-                  src={trash}
-                  onClick={() =>
-                    setVisibleModalRemoveCupom &&
-                    setVisibleModalRemoveCupom(true)
-                  }
-                />
-              </span>
-              <span className="order-item-price">
-                R${" "}
-                {_product?.additional_value
-                  ? "+ "
-                  : "- " +
-                    (+_product?.price_sell || 0)?.toFixed(2)?.replace(".", ",")}
-              </span>
-            </div>
-          </OrderProduct>
-        ))}
+      {useCupom && sale.customerVoucher && handleCustomerVoucher()}
       {useDiscount &&
         sale?.discount &&
         settings?.should_active_discount_storekeeper && (

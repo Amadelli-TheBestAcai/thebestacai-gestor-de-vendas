@@ -5,8 +5,6 @@ import { StorageNames } from "../../repository/storageNames";
 import { useCaseFactory } from "../useCaseFactory";
 import midasApi from "../../providers/midasApi";
 import { salesFormaterToIntegrate } from "../../helpers/salesFormaterToIntegrate";
-import { redeemReward } from "./redeemReward";
-import { getUser } from "../user";
 import { getSalesByCashHistories } from "./getSaleByCashHistory";
 
 class SynchronizeSales implements IUseCaseFactory {
@@ -25,8 +23,6 @@ class SynchronizeSales implements IUseCaseFactory {
         ),
         private storeRepository = new BaseRepository<StoreDto>(StorageNames.Store),
         private getSalesByCashHistoriesUseCase = getSalesByCashHistories,
-        private redeemRewardUseCase = redeemReward,
-        private getUserUseCase = getUser
     ) { }
 
     async execute(): Promise<void> {
@@ -74,19 +70,6 @@ class SynchronizeSales implements IUseCaseFactory {
                 await Promise.all(
                     salesNotInApi.map(async (salePayload) => {
                         try {
-                            if (salePayload.customer_reward_id) {
-                                const user = await this.getUserUseCase.execute();
-                                const redeemPayload = {
-                                    store_id: store.company_id,
-                                    user_name: user?.name as string,
-                                    user_id: user?.id as number,
-                                    company_name: store.company.company_name,
-                                };
-                                await this.redeemRewardUseCase.execute({
-                                    id: salePayload.customer_reward_id,
-                                    payload: redeemPayload,
-                                });
-                            }
                             let payload = salesFormaterToIntegrate(salePayload, storeCash);
                             payload = payload.map((sale) => ({
                                 ...sale,

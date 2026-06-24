@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 import MonetaryInput from "../../components/MonetaryInput";
 import { Trash } from "../../styles/Icons";
@@ -11,6 +11,7 @@ import {
   TicketAlt,
   CreditCard2BackFill,
   CheckboxChecked,
+  ArrowRight,
 } from "../../styles/Icons";
 
 const ButtonCSS = css`
@@ -178,12 +179,28 @@ export const ValueInfo = styled.div`
   }
 `;
 
+export const ValueAmountNegative = styled.strong`
+  color: var(--red-600);
+`;
+
+export const ValueAmountPositive = styled.strong`
+  color: var(--green-600);
+`;
+
+export const ValueAmountMuted = styled.strong`
+  color: var(--grey-80);
+`;
+
 export const Button = styled.button`
   ${ButtonCSS}
 
   :disabled {
     cursor: no-drop;
   }
+`;
+
+export const PaymentMethodButton = styled(Button)<{ $background: string }>`
+  background: ${(p) => p.$background};
 `;
 
 export const Footer = styled.div`
@@ -312,4 +329,48 @@ export const RemoveIcon = styled(Trash)`
     width: 1rem;
     height: 1rem;
   }
+`;
+
+/* TEMP_TEF_VERSION_GUARD_REMOVE_ME */
+const tefVersionPulse = keyframes`
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.55);
+    border-color: var(--orange-400);
+  }
+  50% {
+    box-shadow: 0 0 14px 3px rgba(230, 126, 34, 0.35);
+    border-color: var(--orange-500);
+  }
+`;
+
+export const TefVersionAlertBox = styled.div`
+  margin-bottom: 12px;
+  border-radius: 8px;
+  padding: 2px;
+  border: 2px solid var(--orange-400);
+  animation: ${tefVersionPulse} 1.4s ease-in-out infinite;
+`;
+
+export const TefDownloadLinkIcon = styled(ArrowRight)`
+  width: 0.85rem;
+  height: 0.85rem;
+  transform: rotate(-45deg);
+  vertical-align: middle;
+  margin-left: 4px;
+`;
+
+export const TefAlertParagraph = styled.p`
+  margin-bottom: 8px;
+`;
+
+export const TefDownloadLinkButton = styled(ButtonAnt)`
+  &.ant-btn-link {
+    padding-left: 0;
+    height: auto;
+  }
+`;
+
+export const PixTefEnableSection = styled.div`
+  margin-top: 0.5rem;
 `;
