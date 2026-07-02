@@ -4,6 +4,7 @@ import { useSale } from "../../hooks/useSale";
 
 import EmptyImg from "../../assets/svg/addCart.svg";
 import { Empty } from "antd";
+import { GiftOutlined } from "@ant-design/icons";
 
 import Item from "../../components/Item";
 
@@ -23,6 +24,15 @@ import {
 
 const Items: React.FC = () => {
   const { sale } = useSale();
+
+  const giftVoucher =
+    sale?.customerVoucher?.voucher?.voucher_type === "gift_by_subtotal"
+      ? sale.customerVoucher.voucher
+      : null;
+  const giftConfig: any = giftVoucher?.voucher_config;
+  const giftDescription =
+    giftConfig?.gift_description || giftVoucher?.name || "Brinde";
+
   return (
     <Container>
       <Header>
@@ -34,7 +44,7 @@ const Items: React.FC = () => {
       </Header>
 
       {sale?.items?.length ||
-      sale?.customerVoucher?.voucher?.products?.length || 
+      sale?.customerVoucher?.voucher?.products?.length ||
       sale?.customerVoucher?.additional_items_descriptions ? (
         <>
           <ItemContainer>
@@ -42,15 +52,27 @@ const Items: React.FC = () => {
               {sale?.customerVoucher?.voucher?.products?.length ? (
                 <>
                   {sale?.customerVoucher.voucher.products.map((product) => (
-                    <Item key={product.id||product.product_name} productVoucher={product} />
+                    <Item
+                      key={product.id || product.product_name}
+                      productVoucher={product}
+                    />
                   ))}
                 </>
-              ) : <></>}
+              ) : (
+                <></>
+              )}
               {sale?.customerVoucher?.additional_items_descriptions?.length ? (
                 <>
-                  {sale?.customerVoucher?.additional_items_descriptions.map((additional_item_description) => (
-                    <Item key={additional_item_description} additional_item_description={additional_item_description} />
-                  ))}
+                  {sale?.customerVoucher?.additional_items_descriptions.map(
+                    (additional_item_description) => (
+                      <Item
+                        key={additional_item_description}
+                        additional_item_description={
+                          additional_item_description
+                        }
+                      />
+                    ),
+                  )}
                 </>
               ) : null}
               {sale?.items?.map((item) => (
@@ -61,12 +83,23 @@ const Items: React.FC = () => {
                   <CouponLeft>
                     <CouponTag>Cupom</CouponTag>
                     <CouponName>
-                      {sale.customerVoucher.voucher?.name || "Desconto aplicado"}
+                      {sale.customerVoucher.voucher?.name ||
+                        "Desconto aplicado"}
                     </CouponName>
                   </CouponLeft>
                   <CouponValue>
                     − R$ {sale.discount.toFixed(2).replace(".", ",")}
                   </CouponValue>
+                </CouponRow>
+              )}
+              {giftVoucher && (
+                <CouponRow>
+                  <CouponLeft>
+                    <CouponTag>
+                      <GiftOutlined /> Brinde
+                    </CouponTag>
+                    <CouponName>Brinde liberado: {giftDescription}</CouponName>
+                  </CouponLeft>
                 </CouponRow>
               )}
             </ItemContent>

@@ -21,7 +21,7 @@ export type Voucher = {
   voucher_config?: CouponConfig | null;
 };
 
-export type CouponConfig = DiscountByQuantityConfig;
+export type CouponConfig = DiscountByQuantityConfig | GiftBySubtotalConfig;
 
 export type DiscountByQuantityConfig = {
   trigger_mode: "product" | "category";
@@ -32,6 +32,13 @@ export type DiscountByQuantityConfig = {
   discount_value: number;
   discount_mode: "percent" | "fixed";
   min_item_grammage: number | null;
+};
+
+export type GiftBySubtotalConfig = {
+  trigger_mode: "product" | "category";
+  trigger_ids: number[];
+  min_subtotal: number;
+  gift_description: string;
 };
 
 type Company = {
