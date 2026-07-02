@@ -49,11 +49,16 @@ export function getVoucherDiscountBrlFromVoucherAndItems(
     return 0;
   }
 
+  if (voucher.voucher_type === "gift_by_subtotal") {
+    return 0;
+  }
+
   if (
     voucher.voucher_type === "discount_by_quantity" &&
     voucher.voucher_config
   ) {
-    const result = computeDiscountByQuantity(voucher.voucher_config, items);
+    const voucherConfig: any = voucher.voucher_config;
+    const result = computeDiscountByQuantity(voucherConfig, items);
     return result.ok ? result.discountBrl : 0;
   }
 

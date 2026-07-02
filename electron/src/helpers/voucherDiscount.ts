@@ -18,6 +18,7 @@ export type VoucherForDiscount = {
   self_service_discount_type: number;
   price_sell: string;
   products?: VoucherProductForDiscount[];
+  voucher_type?: string | null;
 };
 
 function isSyntheticSelfServiceDiscountLine(
@@ -25,7 +26,7 @@ function isSyntheticSelfServiceDiscountLine(
   productVoucher: {
     product_id?: number;
     product_name?: string;
-  }
+  },
 ): boolean {
   return (
     !!voucherSelfService &&
@@ -37,9 +38,13 @@ function isSyntheticSelfServiceDiscountLine(
 
 export function getVoucherDiscountBrlFromVoucherAndItems(
   voucher: VoucherForDiscount | null | undefined,
-  items: CartLineForVoucherDiscount[]
+  items: CartLineForVoucherDiscount[],
 ): number {
   if (!voucher) {
+    return 0;
+  }
+
+  if (voucher.voucher_type === "gift_by_subtotal") {
     return 0;
   }
 
@@ -65,18 +70,13 @@ export function getVoucherDiscountBrlFromVoucherAndItems(
 
   for (const productVoucher of products) {
     if (
-      isSyntheticSelfServiceDiscountLine(
-        voucher.self_service,
-        productVoucher
-      )
+      isSyntheticSelfServiceDiscountLine(voucher.self_service, productVoucher)
     ) {
       totalProductsPart += +productVoucher.price_sell;
       continue;
     }
 
-    const item = items.find(
-      (i) => i.product.id === productVoucher.product_id
-    );
+    const item = items.find((i) => i.product.id === productVoucher.product_id);
 
     if (item) {
       let discountAmount = 0;
@@ -95,7 +95,6 @@ export function getVoucherDiscountBrlFromVoucherAndItems(
 
   return Math.abs(+totalProductsPart.toFixed(2));
 }
-
 
 export function getCustomerVoucherDiscountBrl(sale: SaleDto): number {
   const cv = sale.customerVoucher;

@@ -18,8 +18,12 @@ export type VoucherDTO = {
   companies: Company[];
   products: Product[];
   voucher_type?: string | null;
-  voucher_config?: DiscountByQuantityConfigDTO | null;
+  voucher_config?: CouponConfigDTO | null;
 };
+
+export type CouponConfigDTO =
+  | DiscountByQuantityConfigDTO
+  | GiftBySubtotalConfigDTO;
 
 export type DiscountByQuantityConfigDTO = {
   trigger_mode: "product" | "category";
@@ -30,6 +34,13 @@ export type DiscountByQuantityConfigDTO = {
   discount_value: number;
   discount_mode: "percent" | "fixed";
   min_item_grammage: number | null;
+};
+
+export type GiftBySubtotalConfigDTO = {
+  trigger_mode: "product" | "category";
+  trigger_ids: number[];
+  min_subtotal: number;
+  gift_description: string;
 };
 
 type Company = {
