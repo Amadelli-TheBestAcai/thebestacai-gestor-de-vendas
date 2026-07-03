@@ -6,6 +6,7 @@ import {
   computeDiscountByQuantity,
   DiscountByQuantityResult,
 } from "../../helpers/discountByQuantity";
+import { computeGiftBySubtotal } from "../../helpers/giftBySubtotal";
 import { DiscountByQuantityConfig } from "../../models/dtos/voucher";
 import { Container, Row, Col, InputCode, Button } from "./styles";
 
@@ -21,7 +22,7 @@ type ProductForLabel = {
 function buildTriggerLabel(
   config: DiscountByQuantityConfig,
   products: ProductForLabel[] | undefined | null,
-  fallbackCupomName: string
+  fallbackCupomName: string,
 ): string {
   const triggerIds = (config.trigger_ids ?? []).map((v) => Number(v));
   const list = products ?? [];
@@ -60,7 +61,10 @@ function buildTriggerLabel(
 const EMPTY_CUPOM = ["", "", "", ""];
 
 function normalizeCupomRaw(raw: string): string {
-  return raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 8);
+  return raw
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toUpperCase()
+    .slice(0, 8);
 }
 
 function splitCupomCode(code: string): string[] {
@@ -111,10 +115,7 @@ const CupomModal: React.FC<ICupomProps> = ({
     }
   }, [cupomModalState]);
 
-  const handleCupomState = (
-    position: number,
-    value: string,
-  ): void => {
+  const handleCupomState = (position: number, value: string): void => {
     const sanitized = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
 
     if (sanitized.length > 2) {
@@ -189,25 +190,25 @@ const CupomModal: React.FC<ICupomProps> = ({
         });
       }
 
-      const { response: products } = await window.Main.product.getProducts(
-        true
-      );
+      const { response: products } =
+        await window.Main.product.getProducts(true);
 
       if (
         response.voucher.voucher_type === "discount_by_quantity" &&
         response.voucher.voucher_config
       ) {
+        const voucherConfig: any = response.voucher.voucher_config;
         const result: DiscountByQuantityResult = computeDiscountByQuantity(
-          response.voucher.voucher_config,
-          sale.items
+          voucherConfig,
+          sale.items,
         );
 
         if (result.ok === false) {
           const nomeCupom = response.voucher.name;
           const rotuloGatilho = buildTriggerLabel(
-            response.voucher.voucher_config,
+            voucherConfig,
             products,
-            nomeCupom
+            nomeCupom,
           );
 
           let message: string;
@@ -221,17 +222,15 @@ const CupomModal: React.FC<ICupomProps> = ({
 
           return notification.warn({ message, duration: 8 });
         }
-        
+
         const payload = {
           ...sale,
           customerVoucher: response,
           discount: +result.discountBrl.toFixed(2),
         };
 
-        const {
-          response: updatedSale,
-          has_internal_error: errorOnUpdateSale,
-        } = await window.Main.sale.updateSale(sale.id, payload);
+        const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
+          await window.Main.sale.updateSale(sale.id, payload);
 
         if (errorOnUpdateSale) {
           return notification.error({
@@ -251,6 +250,55 @@ const CupomModal: React.FC<ICupomProps> = ({
         return;
       }
 
+      if (
+        response.voucher.voucher_type === "gift_by_subtotal" &&
+        response.voucher.voucher_config
+      ) {
+        const giftConfig: any = response.voucher.voucher_config;
+        const giftResult = computeGiftBySubtotal(giftConfig, sale.items);
+
+        if (giftResult.ok === false) {
+          if (giftResult.reason === "below_min_subtotal") {
+            return notification.warn({
+              message: `Faltam R$ ${giftResult.missing
+                .toFixed(2)
+                .replace(".", ",")} em compras para liberar o brinde: ${
+                giftConfig.gift_description
+              }.`,
+              duration: 8,
+            });
+          }
+          return notification.error({
+            message: "Configuração do cupom de brinde inválida.",
+            duration: 5,
+          });
+        }
+
+        const payload = {
+          ...sale,
+          customerVoucher: response,
+          discount: 0,
+        };
+
+        const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
+          await window.Main.sale.updateSale(sale.id, payload);
+
+        if (errorOnUpdateSale) {
+          return notification.error({
+            message: "Oops, ocorreu um erro ao atualizar a venda!",
+            duration: 5,
+          });
+        }
+
+        setSale(updatedSale);
+        notification.success({
+          message: "Cupom de brinde aplicado com sucesso",
+          duration: 5,
+        });
+        setCupomModalState(false);
+        return;
+      }
+
       delete response.voucher.companies;
 
       response.voucher.products = [...(response.voucher.products || [])];
@@ -262,7 +310,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       if (response.voucher.products.length === 0) {
         const totalCart = sale.items.reduce(
           (total, item) => total + item.total,
-          0
+          0,
         );
         const eligibleTotal = totalCart - totalSoldInSelfService;
 
@@ -372,7 +420,6 @@ const CupomModal: React.FC<ICupomProps> = ({
       let totalOfCupomProducs = 0;
 
       response.voucher.products.forEach((productVoucher) => {
-
         if (
           response.voucher.self_service &&
           productVoucher.product_id === 1 &&
@@ -384,10 +431,10 @@ const CupomModal: React.FC<ICupomProps> = ({
           return;
         }
         const product = products.find(
-          (product) => product.product_id === productVoucher.product_id
+          (product) => product.product_id === productVoucher.product_id,
         );
         const item = sale.items.find(
-          (item) => item.product.id === productVoucher.product_id
+          (item) => item.product.id === productVoucher.product_id,
         );
 
         if (product && item) {
@@ -414,7 +461,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       });
 
       const totalDiscount = Math.abs(
-        totalOfSelfServiceDiscount + totalOfCupomProducs
+        totalOfSelfServiceDiscount + totalOfCupomProducs,
       );
 
       const payload = {
@@ -452,7 +499,7 @@ const CupomModal: React.FC<ICupomProps> = ({
       setLoading(true);
       const newTotal = sale.items.reduce(
         (total, item) => item.total + total,
-        0
+        0,
       );
 
       const payload = {
