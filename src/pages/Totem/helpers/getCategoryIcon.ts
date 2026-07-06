@@ -1,7 +1,7 @@
-import pot_wordcup from "../../../assets/totem/svg/pot_wordcup.svg";
-import others_wordcup from "../../../assets/totem/svg/others_wordcup.svg";
-import bottle_wordcup from "../../../assets/totem/svg/bottle_wordcup.svg";
-import self_service_wordcup from "../../../assets/totem/svg/self_service_wordcup.svg";
+import pot from "../../../assets/totem/svg/pot.svg";
+import others from "../../../assets/totem/svg/others.svg";
+import bottle from "../../../assets/totem/svg/bottle.svg";
+import self_service from "../../../assets/totem/svg/self_service.svg";
 
 interface Category {
   id: number;
@@ -13,13 +13,13 @@ interface Category {
 
 export const getCategoryIcon = (_category: Category) => {
   if (_category?.name?.toLocaleLowerCase()?.includes("pote")) {
-    return pot_wordcup;
+    return pot;
   }
   if (_category?.name?.toLocaleLowerCase()?.includes("bebida")) {
-    return bottle_wordcup;
+    return bottle;
   }
   if (_category?.name?.toLocaleLowerCase()?.includes("self")) {
-    return self_service_wordcup;
+    return self_service;
   }
-  return others_wordcup;
+  return others;
 };
