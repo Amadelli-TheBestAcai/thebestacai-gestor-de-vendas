@@ -446,7 +446,15 @@ const CupomModal: React.FC<ICupomProps> = ({
             const percent = +productVoucher.price_sell / 100;
             discountAmount = +item.total * percent;
           } else {
-            discountAmount = +productVoucher.price_sell;
+            const eligibleItemsTotal = sale.items
+              .filter(
+                (cartItem) => cartItem.product.id === productVoucher.product_id,
+              )
+              .reduce((accumulated, cartItem) => accumulated + cartItem.total, 0);
+            discountAmount = Math.min(
+              +productVoucher.price_sell,
+              eligibleItemsTotal,
+            );
           }
 
           totalOfCupomProducs += discountAmount;
@@ -460,8 +468,9 @@ const CupomModal: React.FC<ICupomProps> = ({
         }
       });
 
-      const totalDiscount = Math.abs(
-        totalOfSelfServiceDiscount + totalOfCupomProducs,
+      const totalDiscount = Math.min(
+        Math.abs(totalOfSelfServiceDiscount + totalOfCupomProducs),
+        sale.total_sold,
       );
 
       const payload = {
