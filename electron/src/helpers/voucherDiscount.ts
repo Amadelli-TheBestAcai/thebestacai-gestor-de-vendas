@@ -83,7 +83,10 @@ export function getVoucherDiscountBrlFromVoucherAndItems(
       if (productVoucher.discount_type === 1) {
         discountAmount = +item.total * (+productVoucher.price_sell / 100);
       } else {
-        discountAmount = +productVoucher.price_sell;
+        const eligibleItemsTotal = items
+          .filter((cartItem) => cartItem.product.id === productVoucher.product_id)
+          .reduce((accumulated, cartItem) => accumulated + cartItem.total, 0);
+        discountAmount = Math.min(+productVoucher.price_sell, eligibleItemsTotal);
       }
       totalProductsPart += discountAmount;
     }

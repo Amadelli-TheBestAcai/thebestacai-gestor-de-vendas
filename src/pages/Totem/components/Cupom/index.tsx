@@ -169,7 +169,18 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
 
             discountAmount = +item.total * percent;
           } else {
-            discountAmount = +productVoucher.price_sell;
+            const eligibleItemsTotal = sale.items
+              .filter(
+                (cartItem) => cartItem.product.id === productVoucher.product_id,
+              )
+              .reduce(
+                (accumulated, cartItem) => accumulated + cartItem.total,
+                0,
+              );
+            discountAmount = Math.min(
+              +productVoucher.price_sell,
+              eligibleItemsTotal,
+            );
           }
 
           totalOfCupomProducts += discountAmount;
@@ -189,7 +200,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
       const payload = {
         ...sale,
         customerVoucher: response,
-        total_sold: sale.total_sold - totalDiscount,
+        total_sold: Math.max(0, sale.total_sold - totalDiscount),
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
