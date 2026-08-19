@@ -97,6 +97,27 @@ const Login: React.FC<IProps> = ({ history }) => {
   const handleState = ({ target: { name, value } }: any) =>
     setUser((oldValues) => ({ ...oldValues, [name]: value }));
 
+    const checkRestrictedCompany = async (company) => {
+    const {data} = await axios.get("https://amatech-prd.azure-api.net/api/janus/files-management/ti/configuracoes/restricted-companies.json/beautify")
+    if(data?.some(c => company.company_id)) {
+      Modal.confirm({
+        title: `Versã0 descontinuada`,
+        content: `Esta versão do Gestor de Vendas foi permanentemente descontinuada. Entre em contato com o suporte para a instalação da nova versao.`,
+        okText: "Ok",
+        okType: "default",
+        keyboard: false,
+        closable: false
+        centered: true,
+        okButtonProps: {
+          disabled: true,
+        },
+        async onOk() {
+          console.log("")
+        }
+      });
+    }
+  }
+
   const onLogin = async () => {
     setLoading(true);
     const {
@@ -133,6 +154,7 @@ const Login: React.FC<IProps> = ({ history }) => {
       setSettings(updatedSettings);
 
       if (storeContext) {
+        await checkRestrictedCompany(storeContext)
         setLoading(false);
         window.Main.message('balance:connect');
 
@@ -186,6 +208,8 @@ const Login: React.FC<IProps> = ({ history }) => {
       });
       return;
     }
+
+     await checkRestrictedCompany(_store)
 
     setContextStore(_store);
     window.Main.message('balance:connect');
