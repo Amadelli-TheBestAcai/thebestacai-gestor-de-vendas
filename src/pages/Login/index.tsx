@@ -98,39 +98,52 @@ const Login: React.FC<IProps> = ({ history }) => {
     setUser((oldValues) => ({ ...oldValues, [name]: value }));
 
 const checkRestrictedCompany = async (company) => {
-  try {
-    const response = await fetch(
-      "https://amatech-prd.azure-api.net/api/janus/files-management/ti/configuracoes/restricted-companies.json/beautify"
-    );
+    try {
+      const response = await fetch(
+        "https://amatech-prd.azure-api.net/api/janus/files-management/ti/configuracoes/restricted-companies.json/beautify"
+      );
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const restrictedCompany =
+        data?.some(companyId => companyId === company.company_id) ?? false;
+
+      if (restrictedCompany) {
+        Modal.confirm({
+          title: "Versão descontinuada",
+          content:
+            "Esta versão do Gestor de Vendas foi permanentemente descontinuada. Entre em contato com o suporte para a instalação da nova versão.",
+          keyboard: false,
+          maskClosable: false,
+          closable: false,
+          centered: true,
+          okButtonProps: {
+            style: {
+              display: "none",
+            },
+          },
+          cancelButtonProps: {
+            style: {
+              display: "none",
+            },
+          },
+        });
+      }
+
+      return restrictedCompany;
+    } catch (error) {
+      console.error(
+        "Erro ao verificar empresa restrita:",
+        error,
+        company
+      );
+
+      return false;
     }
-
-    const data = await response.json();
-
-    if (data?.some(companyId => companyId === company.company_id)) {
-      Modal.confirm({
-        title: "Versão descontinuada",
-        content:
-          "Esta versão do Gestor de Vendas foi permanentemente descontinuada. Entre em contato com o suporte para a instalação da nova versão.",
-        okText: "Ok",
-        okType: "default",
-        keyboard: false,
-        maskClosable: false,
-        closable: false,
-        centered: true,
-        okButtonProps: {
-          disabled: true,
-        },
-        async onOk() {
-          console.log("");
-        },
-      });
-    }
-  } catch (error) {
-    console.error("Erro ao verificar empresa restrita:", error, company);
-  }
   };
 
   const onLogin = async () => {
@@ -169,8 +182,12 @@ const checkRestrictedCompany = async (company) => {
       setSettings(updatedSettings);
 
       if (storeContext) {
-        await checkRestrictedCompany(storeContext)
         setLoading(false);
+        
+        const isRestricted = await checkRestrictedCompany(_store);
+
+        if (isRestricted) return;
+        
         window.Main.message('balance:connect');
 
         await window.Main.product.getProducts();
@@ -224,7 +241,9 @@ const checkRestrictedCompany = async (company) => {
       return;
     }
 
-     await checkRestrictedCompany(_store)
+    const isRestricted = await checkRestrictedCompany(_store);
+
+    if (isRestricted) return;
 
     setContextStore(_store);
     window.Main.message('balance:connect');
