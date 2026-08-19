@@ -106,7 +106,7 @@ const Login: React.FC<IProps> = ({ history }) => {
         okText: "Ok",
         okType: "default",
         keyboard: false,
-        closable: false
+        closable: false,
         centered: true,
         okButtonProps: {
           disabled: true,
