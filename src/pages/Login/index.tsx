@@ -183,8 +183,8 @@ const checkRestrictedCompany = async (company) => {
 
       if (storeContext) {
         setLoading(false);
-        
-        const isRestricted = await checkRestrictedCompany(_store);
+
+        const isRestricted = await checkRestrictedCompany(storeContext);
 
         if (isRestricted) return;
         
