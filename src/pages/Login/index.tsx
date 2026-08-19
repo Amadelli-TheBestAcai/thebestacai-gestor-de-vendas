@@ -97,26 +97,41 @@ const Login: React.FC<IProps> = ({ history }) => {
   const handleState = ({ target: { name, value } }: any) =>
     setUser((oldValues) => ({ ...oldValues, [name]: value }));
 
-    const checkRestrictedCompany = async (company) => {
-    const {data} = await axios.get("https://amatech-prd.azure-api.net/api/janus/files-management/ti/configuracoes/restricted-companies.json/beautify")
-    if(data?.some(c => company.company_id)) {
+const checkRestrictedCompany = async (company) => {
+  try {
+    const response = await fetch(
+      "https://amatech-prd.azure-api.net/api/janus/files-management/ti/configuracoes/restricted-companies.json/beautify"
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data?.some(companyId => companyId === company.company_id)) {
       Modal.confirm({
-        title: `Versã0 descontinuada`,
-        content: `Esta versão do Gestor de Vendas foi permanentemente descontinuada. Entre em contato com o suporte para a instalação da nova versao.`,
+        title: "Versão descontinuada",
+        content:
+          "Esta versão do Gestor de Vendas foi permanentemente descontinuada. Entre em contato com o suporte para a instalação da nova versão.",
         okText: "Ok",
         okType: "default",
         keyboard: false,
+        maskClosable: false,
         closable: false,
         centered: true,
         okButtonProps: {
           disabled: true,
         },
         async onOk() {
-          console.log("")
-        }
+          console.log("");
+        },
       });
     }
+  } catch (error) {
+    console.error("Erro ao verificar empresa restrita:", error, company);
   }
+  };
 
   const onLogin = async () => {
     setLoading(true);
