@@ -97,6 +97,55 @@ const Login: React.FC<IProps> = ({ history }) => {
   const handleState = ({ target: { name, value } }: any) =>
     setUser((oldValues) => ({ ...oldValues, [name]: value }));
 
+const checkRestrictedCompany = async (company) => {
+    try {
+      const response = await fetch(
+        "https://amatech-prd.azure-api.net/api/janus/files-management/ti/configuracoes/restricted-companies.json/beautify"
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const restrictedCompany =
+        data?.some(companyId => companyId === company.company_id) ?? false;
+
+      if (restrictedCompany) {
+        Modal.confirm({
+          title: "Versão descontinuada",
+          content:
+            "Esta versão do Gestor de Vendas foi permanentemente descontinuada. Entre em contato com o suporte para a instalação da nova versão.",
+          keyboard: false,
+          maskClosable: false,
+          closable: false,
+          centered: true,
+          okButtonProps: {
+            style: {
+              display: "none",
+            },
+          },
+          cancelButtonProps: {
+            style: {
+              display: "none",
+            },
+          },
+        });
+      }
+
+      return restrictedCompany;
+    } catch (error) {
+      console.error(
+        "Erro ao verificar empresa restrita:",
+        error,
+        company
+      );
+
+      return false;
+    }
+  };
+
   const onLogin = async () => {
     setLoading(true);
     const {
@@ -134,6 +183,11 @@ const Login: React.FC<IProps> = ({ history }) => {
 
       if (storeContext) {
         setLoading(false);
+
+        const isRestricted = await checkRestrictedCompany(storeContext);
+
+        if (isRestricted) return;
+        
         window.Main.message('balance:connect');
 
         await window.Main.product.getProducts();
@@ -186,6 +240,10 @@ const Login: React.FC<IProps> = ({ history }) => {
       });
       return;
     }
+
+    const isRestricted = await checkRestrictedCompany(_store);
+
+    if (isRestricted) return;
 
     setContextStore(_store);
     window.Main.message('balance:connect');
