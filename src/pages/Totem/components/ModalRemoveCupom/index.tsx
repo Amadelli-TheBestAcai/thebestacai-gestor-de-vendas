@@ -15,58 +15,24 @@ const ModalRemoveCupom: React.FC<IProps> = ({ visible, setVisible }) => {
   const onDeleteCupom = async () => {
     setLoading(true);
     try {
-      const productIdsAddedByCoupon = (
-        sale.customerVoucher?.voucher?.products || []
-      )
-        .filter((productVoucher) => productVoucher.added_to_cart_by_coupon)
-        .map((productVoucher) => productVoucher.product_id);
-
-      let saleWithoutCouponItems = sale;
-
-      for (const productId of productIdsAddedByCoupon) {
-        const itemAddedByCoupon = saleWithoutCouponItems.items.find(
-          (item) => !item.customer_reward_id && item.product.id === productId
-        );
-
-        if (!itemAddedByCoupon) {
-          continue;
-        }
-
-        const { response: saleAfterRemoval, has_internal_error: errorOnRemove } =
-          await window.Main.sale.decressItem(itemAddedByCoupon.id);
-
-        if (errorOnRemove) {
-          setSale(saleWithoutCouponItems);
-          return notification.error({
-            message: "Ops! Algo deu errado.",
-            description:
-              "Não foi possível remover o cupom. Por favor informe o atendente",
-            duration: 5,
-            className: "notification-totem",
-          });
-        }
-
-        saleWithoutCouponItems = saleAfterRemoval;
-      }
-
-      const newTotal = saleWithoutCouponItems.items.reduce(
+      setLoading(true);
+      const newTotal = sale.items.reduce(
         (total, item) => item.total + total,
         0
       );
 
       const payload = {
-        ...saleWithoutCouponItems,
+        ...sale,
         discount: 0,
         customerVoucher: null,
         total_sold: newTotal,
       };
 
       const { response: _sale, has_internal_error: errorOnUpdateSale } =
-        await window.Main.sale.updateSale(saleWithoutCouponItems.id, payload);
+        await window.Main.sale.updateSale(sale.id, payload);
 
       if (errorOnUpdateSale) {
-        setSale(saleWithoutCouponItems);
-        return notification.error({
+        return  notification.error({
           message: "Ops! Algo deu errado.",
           description:
             "Não foi possível remover o cupom. Por favor informe o atendente",
