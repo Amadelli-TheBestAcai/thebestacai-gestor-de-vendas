@@ -263,6 +263,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         await window.Main.sale.updateSale(saleWithCouponItems.id, payload);
 
       if (errorOnUpdateSale) {
+        setSale(saleWithCouponItems);
         return notification.error({
           message: "Ops! Algo deu errado.",
           description: "Por favor informe o atendente",

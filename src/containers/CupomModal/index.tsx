@@ -58,6 +58,36 @@ function buildTriggerLabel(
   return `${names.slice(0, 2).join(", ")} e outros`;
 }
 
+function buildCouponFeedbackMessage(
+  productNamesAddedToCart: string[],
+  hasDiscountOnExistingItem: boolean,
+  productNamesUnavailable: string[],
+): string {
+  const parts: string[] = [];
+
+  if (productNamesAddedToCart.length) {
+    parts.push(
+      `${productNamesAddedToCart.join(
+        ", ",
+      )} adicionado ao carrinho com o desconto do cupom.`,
+    );
+  }
+  if (hasDiscountOnExistingItem) {
+    parts.push(
+      "Desconto aplicado no item já presente no carrinho; nenhuma unidade extra foi adicionada.",
+    );
+  }
+  if (productNamesUnavailable.length) {
+    parts.push(
+      `Sem desconto para ${productNamesUnavailable.join(
+        ", ",
+      )}: produto não disponível nesta loja.`,
+    );
+  }
+
+  return parts.join(" ");
+}
+
 const EMPTY_CUPOM = ["", "", "", ""];
 
 function normalizeCupomRaw(raw: string): string {
@@ -572,20 +602,11 @@ const CupomModal: React.FC<ICupomProps> = ({
         )
         .map((productVoucher) => productVoucher.product_name);
 
-      const couponFeedback = [
-        productNamesAddedToCart.length &&
-          `${productNamesAddedToCart.join(
-            ", ",
-          )} adicionado ao carrinho com o desconto do cupom.`,
-        hasDiscountOnExistingItem &&
-          "Desconto aplicado no item já presente no carrinho; nenhuma unidade extra foi adicionada.",
-        productNamesUnavailable.length &&
-          `Sem desconto para ${productNamesUnavailable.join(
-            ", ",
-          )}: produto não disponível nesta loja.`,
-      ]
-        .filter(Boolean)
-        .join(" ");
+      const couponFeedback = buildCouponFeedbackMessage(
+        productNamesAddedToCart,
+        hasDiscountOnExistingItem,
+        productNamesUnavailable,
+      );
 
       notification.success({
         message: "Cupom aplicado com sucesso",

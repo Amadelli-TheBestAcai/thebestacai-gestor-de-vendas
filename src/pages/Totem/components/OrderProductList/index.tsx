@@ -11,6 +11,7 @@ import { useSettings } from "../../../../hooks/useSettings";
 
 import { ItemDto } from "../../../../models/dtos/item";
 import { getVoucherDiscountBrlFromVoucherAndItems } from "../../../../helpers/voucherDiscountBrl";
+import { currencyFormater } from "../../../../helpers/currencyFormater";
 
 import { AddSubItem, Container, OrderProduct } from "./styles";
 
@@ -64,7 +65,7 @@ const OrderProductList: React.FC<IProps> = ({
             />
           </span>
           <span className="order-item-price">
-            R$ {"- " + discountBrl.toFixed(2).replace(".", ",")}
+            R$ {"- " + currencyFormater(discountBrl)}
           </span>
         </div>
       </OrderProduct>
@@ -118,7 +119,7 @@ const OrderProductList: React.FC<IProps> = ({
           </OrderProduct>
         ))
         .reverse()}
-      {useCupom && sale.customerVoucher && handleCustomerVoucher()}
+      {useCupom && handleCustomerVoucher()}
       {useDiscount &&
         sale?.discount &&
         settings?.should_active_discount_storekeeper && (

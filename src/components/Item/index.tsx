@@ -48,12 +48,15 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
   const [count, setCount] = useState(Number);
   const voucher = sale.customerVoucher?.voucher;
   const isCouponDiscountApplied = !!productVoucher?.is_registred;
-  const couponDiscountBrl =
-    productVoucher && voucher
+
+  const getProductVoucherDiscountBrl = (
+    productVoucherToPrice: ProductVoucher
+  ): number =>
+    voucher
       ? getVoucherDiscountBrlFromVoucherAndItems(
           {
             ...voucher,
-            products: [{ ...productVoucher, additional_value: null }],
+            products: [{ ...productVoucherToPrice, additional_value: null }],
           },
           sale.items
         )
@@ -128,10 +131,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
 
     if (!itemProductVoucher) return null;
 
-    const discountBrl = getVoucherDiscountBrlFromVoucherAndItems(
-      { ...voucher, products: [{ ...itemProductVoucher, additional_value: null }] },
-      sale.items
-    );
+    const discountBrl = getProductVoucherDiscountBrl(itemProductVoucher);
 
     if (!discountBrl) return null;
 
@@ -239,9 +239,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
       )}
       {productVoucher && (
         <Container>
-          <Column
-            span={10}
-          >
+          <Column span={10}>
             [CUPOM] {productVoucher.product_name}
             {!isCouponDiscountApplied && (
               <Tooltip title="Produto do cupom fora do carrinho. O desconto não foi aplicado.">
@@ -255,7 +253,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
             {isCouponDiscountApplied ? (
               <>
                 R$ {productVoucher.additional_value ? "+" : "-"}
-                {currencyFormater(couponDiscountBrl)}
+                {currencyFormater(getProductVoucherDiscountBrl(productVoucher))}
               </>
             ) : (
               "—"

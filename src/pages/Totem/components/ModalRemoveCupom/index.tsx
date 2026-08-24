@@ -15,8 +15,6 @@ const ModalRemoveCupom: React.FC<IProps> = ({ visible, setVisible }) => {
   const onDeleteCupom = async () => {
     setLoading(true);
     try {
-      setLoading(true);
-
       const productIdsAddedByCoupon = (
         sale.customerVoucher?.voucher?.products || []
       )
@@ -68,7 +66,7 @@ const ModalRemoveCupom: React.FC<IProps> = ({ visible, setVisible }) => {
 
       if (errorOnUpdateSale) {
         setSale(saleWithoutCouponItems);
-        return  notification.error({
+        return notification.error({
           message: "Ops! Algo deu errado.",
           description:
             "Não foi possível remover o cupom. Por favor informe o atendente",
