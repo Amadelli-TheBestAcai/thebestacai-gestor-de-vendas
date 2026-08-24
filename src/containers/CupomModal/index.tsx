@@ -151,7 +151,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         focusCupomInput(position);
       }
     }
-    if (key === "Enter") onFinish();
+    if (key === "Enter" && !loading) onFinish();
   };
 
   const onFinish = async (): Promise<void> => {
@@ -190,8 +190,15 @@ const CupomModal: React.FC<ICupomProps> = ({
         });
       }
 
-      const { response: products } =
+      const { response: products, has_internal_error: errorOnGetProducts } =
         await window.Main.product.getProducts(true);
+
+      if (errorOnGetProducts || !products) {
+        return notification.error({
+          message: "Erro ao obter os produtos da loja.",
+          duration: 5,
+        });
+      }
 
       if (
         response.voucher.voucher_type === "discount_by_quantity" &&
@@ -366,6 +373,69 @@ const CupomModal: React.FC<ICupomProps> = ({
         });
       }
 
+      let saleWithCouponItems = sale;
+      let hasDiscountOnExistingItem = false;
+      const productNamesAddedToCart: string[] = [];
+
+      if (!response.additional_items_descriptions?.length) {
+        const couponProducts = response.voucher.products.filter(
+          (productVoucher) =>
+            productVoucher.product_id && productVoucher.product_id !== 1,
+        );
+
+        const availableCouponProducts = couponProducts.flatMap(
+          (productVoucher) => {
+            const storeProduct = products.find(
+              (product) => product.product_id === productVoucher.product_id,
+            );
+            return storeProduct ? [{ productVoucher, storeProduct }] : [];
+          },
+        );
+
+        if (
+          couponProducts.length &&
+          !availableCouponProducts.length &&
+          !response.voucher.self_service
+        ) {
+          return notification.warn({
+            message: "Produto do cupom indisponível nesta loja",
+            description:
+              "O produto vinculado a este cupom não está habilitado na loja. Cadastre-o no dashboard para poder resgatá-lo.",
+            duration: 5,
+          });
+        }
+
+        for (const { productVoucher, storeProduct } of availableCouponProducts) {
+          const isInCart = saleWithCouponItems.items.some(
+            (item) =>
+              !item.customer_reward_id &&
+              item.product.id === productVoucher.product_id,
+          );
+
+          if (isInCart) {
+            hasDiscountOnExistingItem = true;
+            continue;
+          }
+
+          const { response: saleWithNewItem, has_internal_error: errorOnAddItem } =
+            await window.Main.sale.addItem(storeProduct, 1);
+
+          if (errorOnAddItem) {
+            setSale(saleWithCouponItems);
+            return notification.error({
+              message: "Erro ao adicionar o produto do cupom ao carrinho",
+              duration: 5,
+            });
+          }
+
+          productVoucher.added_to_cart_by_coupon = true;
+          productNamesAddedToCart.push(
+            storeProduct.product?.name || productVoucher.product_name,
+          );
+          saleWithCouponItems = saleWithNewItem;
+        }
+      }
+
       let totalOfSelfServiceDiscount = 0;
 
       if (response.voucher.self_service) {
@@ -383,7 +453,7 @@ const CupomModal: React.FC<ICupomProps> = ({
             price_sell: totalOfSelfServiceDiscount.toFixed(2),
           });
         } else {
-          const totalQuantity = sale.items
+          const totalQuantity = saleWithCouponItems.items
             .filter((item) => item.product.id === 1)
             .reduce((total, item) => total + item.quantity, 0);
 
@@ -433,7 +503,7 @@ const CupomModal: React.FC<ICupomProps> = ({
         const product = products.find(
           (product) => product.product_id === productVoucher.product_id,
         );
-        const item = sale.items.find(
+        const item = saleWithCouponItems.items.find(
           (item) => item.product.id === productVoucher.product_id,
         );
 
@@ -446,7 +516,7 @@ const CupomModal: React.FC<ICupomProps> = ({
             const percent = +productVoucher.price_sell / 100;
             discountAmount = +item.total * percent;
           } else {
-            const eligibleItemsTotal = sale.items
+            const eligibleItemsTotal = saleWithCouponItems.items
               .filter(
                 (cartItem) => cartItem.product.id === productVoucher.product_id,
               )
@@ -470,19 +540,20 @@ const CupomModal: React.FC<ICupomProps> = ({
 
       const totalDiscount = Math.min(
         Math.abs(totalOfSelfServiceDiscount + totalOfCupomProducs),
-        sale.total_sold,
+        saleWithCouponItems.total_sold,
       );
 
       const payload = {
-        ...sale,
+        ...saleWithCouponItems,
         customerVoucher: response,
         discount: +totalDiscount.toFixed(2),
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
-        await window.Main.sale.updateSale(sale.id, payload);
+        await window.Main.sale.updateSale(saleWithCouponItems.id, payload);
 
       if (errorOnUpdateSale) {
+        setSale(saleWithCouponItems);
         return notification.error({
           message:
             errorOnUpdateSale || "Oops, ocorreu um erro ao atualizar a venda!",
@@ -491,10 +562,37 @@ const CupomModal: React.FC<ICupomProps> = ({
       }
 
       setSale(updatedSale);
+
+      const productNamesUnavailable = response.voucher.products
+        .filter(
+          (productVoucher) =>
+            productVoucher.product_id &&
+            productVoucher.product_id !== 1 &&
+            !productVoucher.is_registred,
+        )
+        .map((productVoucher) => productVoucher.product_name);
+
+      const couponFeedback = [
+        productNamesAddedToCart.length &&
+          `${productNamesAddedToCart.join(
+            ", ",
+          )} adicionado ao carrinho com o desconto do cupom.`,
+        hasDiscountOnExistingItem &&
+          "Desconto aplicado no item já presente no carrinho; nenhuma unidade extra foi adicionada.",
+        productNamesUnavailable.length &&
+          `Sem desconto para ${productNamesUnavailable.join(
+            ", ",
+          )}: produto não disponível nesta loja.`,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
       notification.success({
         message: "Cupom aplicado com sucesso",
-        duration: 5,
+        description: couponFeedback || undefined,
+        duration: couponFeedback ? 8 : 5,
       });
+
       setCupomModalState(false);
     } catch (e) {
       notification.error({ message: "Oops! Ocorreu um erro", duration: 5 });
@@ -506,20 +604,53 @@ const CupomModal: React.FC<ICupomProps> = ({
   const onCancel = async (): Promise<void> => {
     try {
       setLoading(true);
-      const newTotal = sale.items.reduce(
+
+      const productIdsAddedByCoupon = (
+        sale.customerVoucher?.voucher?.products || []
+      )
+        .filter((productVoucher) => productVoucher.added_to_cart_by_coupon)
+        .map((productVoucher) => productVoucher.product_id);
+
+      let saleWithoutCouponItems = sale;
+
+      for (const productId of productIdsAddedByCoupon) {
+        const itemAddedByCoupon = saleWithoutCouponItems.items.find(
+          (item) =>
+            !item.customer_reward_id && item.product.id === productId,
+        );
+
+        if (!itemAddedByCoupon) {
+          continue;
+        }
+
+        const { response: saleAfterRemoval, has_internal_error: errorOnRemove } =
+          await window.Main.sale.decressItem(itemAddedByCoupon.id);
+
+        if (errorOnRemove) {
+          setSale(saleWithoutCouponItems);
+          return notification.error({
+            message: "Erro ao remover o produto do cupom do carrinho",
+            duration: 5,
+          });
+        }
+
+        saleWithoutCouponItems = saleAfterRemoval;
+      }
+
+      const newTotal = saleWithoutCouponItems.items.reduce(
         (total, item) => item.total + total,
         0,
       );
 
       const payload = {
-        ...sale,
+        ...saleWithoutCouponItems,
         discount: 0,
         customerVoucher: null,
         total_sold: newTotal,
       };
 
       const { response: _sale, has_internal_error: errorOnUpdateSale } =
-        await window.Main.sale.updateSale(sale.id, payload);
+        await window.Main.sale.updateSale(saleWithoutCouponItems.id, payload);
 
       if (errorOnUpdateSale) {
         return notification.error({
@@ -544,7 +675,6 @@ const CupomModal: React.FC<ICupomProps> = ({
         duration: 5,
       });
     } finally {
-      setLoading(false);
       setLoading(false);
     }
   };
