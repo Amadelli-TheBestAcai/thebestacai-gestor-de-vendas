@@ -41,10 +41,9 @@ const OrderProductList: React.FC<IProps> = ({
       return null;
     }
 
-    const discountBrl = getVoucherDiscountBrlFromVoucherAndItems(
-      voucher,
-      sale.items,
-    );
+    const discountBrl = voucher.products?.length
+      ? getVoucherDiscountBrlFromVoucherAndItems(voucher, sale.items)
+      : 0;
 
     return (
       <OrderProduct sm={24} type={"cupom"}>

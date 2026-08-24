@@ -123,7 +123,7 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
   const hasPayment = sale.payments.some((payment) => payment);
 
   const renderDiscountInfo = () => {
-    if (!item || !voucher?.products) return null;
+    if (!item || item.customer_reward_id || !voucher?.products) return null;
 
     const itemProductVoucher = voucher.products.find(
       (product) => product.product_id === item.product.id

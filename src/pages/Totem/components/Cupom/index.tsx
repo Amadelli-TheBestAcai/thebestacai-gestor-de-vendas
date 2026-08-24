@@ -107,10 +107,15 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         },
       );
 
-      const canApplyCoupon =
-        !!response.voucher.self_service ||
-        hasAdditionalItems ||
-        availableCouponProducts.length > 0;
+      const canApplyCoupon = response.voucher.products.some(
+        (voucherProduct) =>
+          sale.items.some(
+            (item) => item.product.id === voucherProduct.product_id,
+          ) ||
+          products.some(
+            (product) => product.product_id === voucherProduct.product_id,
+          ),
+      );
 
       if (!canApplyCoupon) {
         setErrorMesssage(
