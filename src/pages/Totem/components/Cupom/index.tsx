@@ -61,10 +61,20 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
 
       setCustomerVoucher(response);
 
-      const { response: products } =
+      const { response: products, has_internal_error: errorOnGetProducts } =
         await window.Main.product.getProductsByTags(["totem"]);
 
+      if (errorOnGetProducts || !products) {
+        setErrorMesssage(
+          "Não foi possível carregar os produtos. Por favor informe o atendente.",
+        );
+        setVisibleInvalidCupom(true);
+        return;
+      }
+
       delete response.voucher.companies;
+
+      response.voucher.products = [...(response.voucher.products || [])];
 
       const totalSoldInSelfService = sale.items
         .filter((item) => item.product.id === 1)
@@ -78,14 +88,31 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         return;
       }
 
-      const hasVoucherProduct = response.voucher.products.some(
-        (voucherProduct) =>
-          sale.items.some(
-            (item) => item.product.id === voucherProduct.product_id,
-          ),
+      const hasAdditionalItems =
+        !!response.additional_items_descriptions?.length;
+
+      const couponProducts = hasAdditionalItems
+        ? []
+        : response.voucher.products.filter(
+            (voucherProduct) =>
+              voucherProduct.product_id && voucherProduct.product_id !== 1,
+          );
+
+      const availableCouponProducts = couponProducts.flatMap(
+        (voucherProduct) => {
+          const storeProduct = products.find(
+            (product) => product.product_id === voucherProduct.product_id,
+          );
+          return storeProduct ? [{ voucherProduct, storeProduct }] : [];
+        },
       );
 
-      if (!hasVoucherProduct) {
+      const canApplyCoupon =
+        !!response.voucher.self_service ||
+        hasAdditionalItems ||
+        availableCouponProducts.length > 0;
+
+      if (!canApplyCoupon) {
         setErrorMesssage(
           "Esse cupom não pode ser aplicado a nenhum item da sacola!",
         );
@@ -93,9 +120,38 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
         return;
       }
 
+      let saleWithCouponItems = sale;
+
+      for (const { voucherProduct, storeProduct } of availableCouponProducts) {
+        const isInCart = saleWithCouponItems.items.some(
+          (item) =>
+            !item.customer_reward_id &&
+            item.product.id === voucherProduct.product_id,
+        );
+
+        if (isInCart) {
+          continue;
+        }
+
+        const { response: saleWithNewItem, has_internal_error: errorOnAddItem } =
+          await window.Main.sale.addItem(storeProduct, 1);
+
+        if (errorOnAddItem) {
+          setSale(saleWithCouponItems);
+          setErrorMesssage(
+            "Não foi possível adicionar o produto do cupom à sacola. Por favor informe o atendente.",
+          );
+          setVisibleInvalidCupom(true);
+          return;
+        }
+
+        voucherProduct.added_to_cart_by_coupon = true;
+        saleWithCouponItems = saleWithNewItem;
+      }
+
       response.voucher.products = response.voucher.products.filter(
         (voucherProduct) =>
-          sale.items.some(
+          saleWithCouponItems.items.some(
             (item) => item.product.id === voucherProduct.product_id,
           ),
       );
@@ -118,7 +174,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
             price_sell: totalOfSelfServiceDiscount.toFixed(2),
           });
         } else {
-          const totalQuantity = sale.items
+          const totalQuantity = saleWithCouponItems.items
             .filter((item) => item.product.id === 1)
             .reduce((total, item) => total + item.quantity, 0);
 
@@ -154,7 +210,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
           (product) => product.product_id === productVoucher.product_id,
         );
 
-        const item = sale.items.find(
+        const item = saleWithCouponItems.items.find(
           (item) => item.product.id === productVoucher.product_id,
         );
 
@@ -169,7 +225,7 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
 
             discountAmount = +item.total * percent;
           } else {
-            const eligibleItemsTotal = sale.items
+            const eligibleItemsTotal = saleWithCouponItems.items
               .filter(
                 (cartItem) => cartItem.product.id === productVoucher.product_id,
               )
@@ -198,13 +254,13 @@ const Cupom: React.FC<IProps> = ({ setStep }) => {
       );
 
       const payload = {
-        ...sale,
+        ...saleWithCouponItems,
         customerVoucher: response,
-        total_sold: Math.max(0, sale.total_sold - totalDiscount),
+        total_sold: Math.max(0, saleWithCouponItems.total_sold - totalDiscount),
       };
 
       const { response: updatedSale, has_internal_error: errorOnUpdateSale } =
-        await window.Main.sale.updateSale(sale.id, payload);
+        await window.Main.sale.updateSale(saleWithCouponItems.id, payload);
 
       if (errorOnUpdateSale) {
         return notification.error({

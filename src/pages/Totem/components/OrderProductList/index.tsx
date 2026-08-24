@@ -10,6 +10,7 @@ import { useSale } from "../../../../hooks/useSale";
 import { useSettings } from "../../../../hooks/useSettings";
 
 import { ItemDto } from "../../../../models/dtos/item";
+import { getVoucherDiscountBrlFromVoucherAndItems } from "../../../../helpers/voucherDiscountBrl";
 
 import { AddSubItem, Container, OrderProduct } from "./styles";
 
@@ -33,16 +34,22 @@ const OrderProductList: React.FC<IProps> = ({
   const { settings } = useSettings();
 
   const handleCustomerVoucher = () => {
-    const voucherProduct = sale?.customerVoucher?.voucher?.products.filter(
-      (_product) =>
-        sale.items.some((_item) => _item.product.id === _product.product_id),
+    const voucher = sale?.customerVoucher?.voucher;
+
+    if (!voucher) {
+      return null;
+    }
+
+    const discountBrl = getVoucherDiscountBrlFromVoucherAndItems(
+      voucher,
+      sale.items,
     );
 
-    return voucherProduct.map((_product) => (
-      <OrderProduct key={_product.id} sm={24} type={"cupom"}>
+    return (
+      <OrderProduct sm={24} type={"cupom"}>
         <div className="order-item-content">
           <span className="order-item-name">
-            {"[CUPOM] " + _product.product_name}
+            {"[CUPOM] " + (voucher.name || "Desconto aplicado")}
           </span>
         </div>
 
@@ -56,30 +63,12 @@ const OrderProductList: React.FC<IProps> = ({
               }
             />
           </span>
-          <span
-            className="order-item-price"
-           
-          >
-            R${" "}
-            {_product?.additional_value
-              ? "+ "
-              : "- " +
-                (_product.discount_type === 1
-                  ? (
-                      +(
-                        sale.items.find(
-                          (_item) => _item.product.id === _product.product_id,
-                        )?.total || 0
-                      ) *
-                      ((+_product.price_sell || 0) / 100)
-                    )
-                      .toFixed(2)
-                      .replace(".", ",")
-                  : (+_product.price_sell || 0).toFixed(2).replace(".", ","))}
+          <span className="order-item-price">
+            R$ {"- " + discountBrl.toFixed(2).replace(".", ",")}
           </span>
         </div>
       </OrderProduct>
-    ));
+    );
   };
 
   return (
