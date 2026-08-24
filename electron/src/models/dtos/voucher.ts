@@ -62,6 +62,7 @@ type Product = {
   price_sell: string;
   is_registred?: boolean;
   in_sale?: boolean;
+  added_to_cart_by_coupon?: boolean;
   created_at?: string;
   updated_at?: string;
   deleted_at?: string;

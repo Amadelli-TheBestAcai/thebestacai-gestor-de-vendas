@@ -33,6 +33,16 @@ const Items: React.FC = () => {
   const giftDescription =
     giftConfig?.gift_description || giftVoucher?.name || "Brinde";
 
+  const voucherProductsToRender = (
+    sale?.customerVoucher?.voucher?.products || []
+  ).filter(
+    (voucherProduct) =>
+      voucherProduct.product_id === 1 ||
+      !sale?.items?.some(
+        (item) => item.product.id === voucherProduct.product_id,
+      ),
+  );
+
   return (
     <Container>
       <Header>
@@ -49,18 +59,12 @@ const Items: React.FC = () => {
         <>
           <ItemContainer>
             <ItemContent>
-              {sale?.customerVoucher?.voucher?.products?.length ? (
-                <>
-                  {sale?.customerVoucher.voucher.products.map((product) => (
-                    <Item
-                      key={product.id || product.product_name}
-                      productVoucher={product}
-                    />
-                  ))}
-                </>
-              ) : (
-                <></>
-              )}
+              {voucherProductsToRender.map((product) => (
+                <Item
+                  key={product.id || product.product_name}
+                  productVoucher={product}
+                />
+              ))}
               {sale?.customerVoucher?.additional_items_descriptions?.length ? (
                 <>
                   {sale?.customerVoucher?.additional_items_descriptions.map(

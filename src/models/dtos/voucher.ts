@@ -57,6 +57,7 @@ export type ProductVoucher = {
   additional_value?: string;
   is_registred?: boolean;
   in_sale?: boolean;
+  added_to_cart_by_coupon?: boolean;
   product_id?: number;
   category_id?: number;
   price_sell: string;
