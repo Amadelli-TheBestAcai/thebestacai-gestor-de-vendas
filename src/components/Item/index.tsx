@@ -5,6 +5,7 @@ import { ProductVoucher } from "../../models/dtos/voucher";
 
 import { useSale } from "../../hooks/useSale";
 import { currencyFormater } from "../../helpers/currencyFormater";
+import { getVoucherDiscountBrlFromVoucherAndItems } from "../../helpers/voucherDiscountBrl";
 
 import { Col, Row, Tooltip, notification } from "antd";
 
@@ -45,11 +46,21 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [form] = Form.useForm();
   const [count, setCount] = useState(Number);
-  const relatedItem = item
-    ? item
-    : productVoucher
-    ? sale.items.find((item) => item.product.id === productVoucher.product_id)
-    : undefined;
+  const voucher = sale.customerVoucher?.voucher;
+  const isCouponDiscountApplied = !!productVoucher?.is_registred;
+
+  const getProductVoucherDiscountBrl = (
+    productVoucherToPrice: ProductVoucher
+  ): number =>
+    voucher
+      ? getVoucherDiscountBrlFromVoucherAndItems(
+          {
+            ...voucher,
+            products: [{ ...productVoucherToPrice, additional_value: null }],
+          },
+          sale.items
+        )
+      : 0;
 
   const removeItem = async (): Promise<void> => {
     await form.validateFields();
@@ -112,22 +123,21 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
   const hasPayment = sale.payments.some((payment) => payment);
 
   const renderDiscountInfo = () => {
-    if (!item || !sale.customerVoucher?.voucher?.products) return null;
+    if (!item || item.customer_reward_id || !voucher?.products) return null;
 
-    const voucher = sale.customerVoucher.voucher.products.find(
+    const itemProductVoucher = voucher.products.find(
       (product) => product.product_id === item.product.id
     );
 
-    if (!voucher) return null;
+    if (!itemProductVoucher) return null;
 
-    const discountText =
-      voucher.discount_type === 1 && item.storeProduct?.price_unit
-        ? `${voucher.price_sell}%`
-        : `R$ ${currencyFormater(+voucher.price_sell)}`;
+    const discountBrl = getProductVoucherDiscountBrl(itemProductVoucher);
+
+    if (!discountBrl) return null;
 
     return (
       <span style={{ fontSize: 12, color: "red", marginLeft: 4 }}>
-        (-{discountText})
+        (-R$ {currencyFormater(discountBrl)})
       </span>
     );
   };
@@ -227,53 +237,27 @@ const Item: React.FC<IProps> = ({ item, productVoucher, additional_item_descript
           </Modal>
         </Container>
       )}
-      {/* {productVoucher?.in_sale && (
+      {productVoucher && (
         <Container>
-          <Column
-            span={10}
-            style={{
-              textDecoration: productVoucher.is_registred
-                ? "none"
-                : "line-through",
-            }}
-          >
+          <Column span={10}>
             [CUPOM] {productVoucher.product_name}
-            {!productVoucher.is_registred && (
-              <Tooltip title="Produto não cadastrado. Para cadastrar, acesse o dashboard.">
+            {!isCouponDiscountApplied && (
+              <Tooltip title="Produto do cupom fora do carrinho. O desconto não foi aplicado.">
                 <InfoIcon />
               </Tooltip>
             )}
           </Column>
-          <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
+          <Column span={4}>{isCouponDiscountApplied ? 1 : 0}</Column>
           <Column span={4}></Column>
           <Column span={4}>
-            R$ -{" "}
-            {productVoucher.discount_type === 1
-              ? currencyFormater(
-                  (productVoucher.price_sell &&
-                    relatedItem?.storeProduct?.price_unit &&
-                    +productVoucher.price_sell *
-                      (+relatedItem.storeProduct.price_unit / 100)) ||
-                    0
-                )
-              : currencyFormater(+productVoucher.price_sell || 0)}
-          </Column>
-
-          <Column span={2}></Column>
-        </Container>
-      )} */}
-      {productVoucher && (
-        <Container>
-          <Column
-            span={10}
-          >
-            [CUPOM] {productVoucher.product_name}
-          </Column>
-          <Column span={4}>{productVoucher.is_registred ? 1 : 0}</Column>
-          <Column span={4}></Column>
-          <Column span={4}>
-            R$ {productVoucher.additional_value ? "+" : "-"}
-            {(+productVoucher.price_sell).toFixed(2)}
+            {isCouponDiscountApplied ? (
+              <>
+                R$ {productVoucher.additional_value ? "+" : "-"}
+                {currencyFormater(getProductVoucherDiscountBrl(productVoucher))}
+              </>
+            ) : (
+              "—"
+            )}
           </Column>
           <Column span={2}></Column>
         </Container>
