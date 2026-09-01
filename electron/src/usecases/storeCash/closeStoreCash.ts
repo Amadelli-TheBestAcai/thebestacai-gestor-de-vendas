@@ -129,7 +129,25 @@ class CloseStoreCash implements IUseCaseFactory {
     if (errorOnSynchronizeCashHandlerUseCase) {
       throw new Error("Falha ao sincronizar movimentações de caixa");
     }
-    
+
+    const storeCash = await this.storeCashRepository.getOne();
+    try {
+      const {
+        data: { history },
+      } = await odinApi.get(
+        `/current_cash_history/${currentStore.company_id}-${code}`
+      );
+
+      if (
+        history?.closed_at ||
+        (storeCash?.history_id && history?.id != storeCash.history_id)
+      ) {
+        return this.closeCashLocal(currentStore.company_id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
     const { has_internal_error: errorOnUpdateBalanceHistory } =
       await useCaseFactory.execute<StoreCashDto>(this._updateBalanceHistory);
 
@@ -137,13 +155,24 @@ class CloseStoreCash implements IUseCaseFactory {
       throw new Error("Falha ao atualizar o histórico do caixa");
     }
 
-    await odinApi.put(
-      `/store_cashes/${currentStore.company_id}-${code}/close`,
-      {
-        amount_on_close: +amount_on_close?.toString() || 0,
-        local_closed_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+    try {
+      await odinApi.put(
+        `/store_cashes/${currentStore.company_id}-${code}/close`,
+        {
+          amount_on_close: +amount_on_close?.toString() || 0,
+          local_closed_at: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+        }
+      );
+    } catch (error: any) {
+      const message = error?.response?.data?.message || error?.message || "";
+      if (
+        message === "Caixa já esta fechado" ||
+        message === "Caixa já está fechado"
+      ) {
+        return this.closeCashLocal(currentStore.company_id);
       }
-    );
+      throw error;
+    }
 
     return this.closeCashLocal(currentStore.company_id);
   }
