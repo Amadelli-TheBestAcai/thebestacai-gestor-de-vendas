@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import moment from "moment";
 
 import cupom from "../../../../assets/totem/svg/cupom.svg";
 import arrow_left from "../../../../assets/totem/svg/arrow_left.svg";
@@ -58,8 +59,9 @@ const CheckOut: React.FC<IProps> = ({
     useState<boolean>(false);
   const [visibleModalRemoveCupom, setVisibleModalRemoveCupom] =
     useState<boolean>(false);
-  const [totalPoints, setTotalPoints] = useState<number>(0);
   const [discount, setDiscount] = useState<number>(0);
+  const [totalPoints, setTotalPoints] = useState<number>(0);
+const [isDoublePoints, setIsDoublePoints] = useState(false);
 
   useEffect(() => {
     discountUpdate();
@@ -94,13 +96,24 @@ const CheckOut: React.FC<IProps> = ({
         return total + discount;
       }, 0) || 0;
 
-    let points = campaign?.average_ticket
-      ? Math.floor(
-          (totalSale - voucherDiscount - (+sale.discount || 0)) /
-            campaign?.average_ticket,
-        )
-      : 0;
-    setTotalPoints(points);
+ const totalForPoints =
+  totalSale - voucherDiscount - (+sale.discount || 0);
+
+let points = campaign?.average_ticket
+  ? Math.floor(totalForPoints / campaign.average_ticket)
+  : 0;
+
+const doublePoints =
+  moment().isBefore(moment("2026-10-05")) &&
+  totalForPoints >= 35;
+
+setIsDoublePoints(doublePoints);
+
+if (doublePoints) {
+  points *= 2;
+}
+
+setTotalPoints(points);
   }, [sale]);
 
   useEffect(() => {
@@ -249,15 +262,23 @@ const CheckOut: React.FC<IProps> = ({
 
               <span>Clube The Best</span>
             </div>
-            <div className="info-footer">
-              {sale.client_cpf ? (
-                <span>PONTOS GANHOS NO CLUBE</span>
-              ) : (
-                <span>Você está deixando de pontuar no clube!</span>
-              )}
+         <div className="info-footer">
+  {sale.client_cpf ? (
+    isDoublePoints ? (
+      <span>
+        PONTOS EM DOBRO • ATÉ <strong>04/10</strong>
+      </span>
+    ) : (
+      <span>PONTOS GANHOS NO CLUBE</span>
+    )
+  ) : (
+    <span>Você está deixando de pontuar no clube!</span>
+  )}
 
-              <span style={{ fontWeight: "800" }}>+{totalPoints}</span>
-            </div>
+  <span style={{ fontWeight: "800" }}>
+    +{totalPoints}
+  </span>
+</div>
           </ClubInfo>
           {settings.should_active_discount_storekeeper && (
             <ClubInfo style={{ height: "6rem" }}>
